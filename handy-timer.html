@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Handy timer</title>
+<style>
+  :root{--bg:#f3f5f7;--panel:#fff;--ink:#16202b;--muted:#5f6c7a;--line:#d5dce3;--accent:#0f7b8a;--accent-ink:#fff;--stop:#c23b3b;--ring-bg:#e3e8ed}
+  @media (prefers-color-scheme:dark){:root{--bg:#10171e;--panel:#18222c;--ink:#e8eef3;--muted:#94a3b1;--line:#2b3946;--accent:#3fb6c6;--accent-ink:#06222a;--stop:#e5605f;--ring-bg:#243240}}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;padding:20px}
+  main{width:100%}
+  h1{font-size:1.25rem;margin:0 0 14px}
+  label{display:block;font-size:.875rem;color:var(--muted);margin:14px 0 4px}
+  input[type=text],input[type=number]{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+  input[type=range]{width:100%;accent-color:var(--accent)}
+  .row{display:flex;gap:12px}.row>div{flex:1}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+  .chip{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--bg)}
+  .chip button{all:unset;cursor:pointer;padding:5px 12px;font-size:.875rem}
+  .chip button.x{padding:5px 9px 5px 4px;color:var(--muted)}
+  .chip button:hover{background:var(--ring-bg)}
+  .save{all:unset;cursor:pointer;font-size:.875rem;color:var(--accent);padding:5px 4px}
+  .dial{position:relative;width:min(220px,100%);aspect-ratio:1/1;margin:8px auto}
+  .dial svg{width:100%;height:100%;transform:rotate(-90deg)}
+  .dial circle{fill:none;stroke-width:10}
+  .track{stroke:var(--ring-bg)}
+  .prog{stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset .25s linear}
+  .time{position:absolute;inset:0;display:grid;place-items:center;font-size:2.6rem;font-variant-numeric:tabular-nums;font-weight:600}
+  .btns{display:flex;gap:10px;margin-top:16px}
+  .btns button{flex:1;padding:12px;border:0;border-radius:10px;font:inherit;font-weight:600;cursor:pointer}
+  #start{background:var(--accent);color:var(--accent-ink)}
+  #pause{background:var(--ring-bg);color:var(--ink)}
+  #stop{background:var(--stop);color:#fff}
+  .btns button:disabled{opacity:.45;cursor:not-allowed}
+  .opts{display:flex;flex-direction:column;gap:6px;margin-top:14px;font-size:.9rem}
+  .opts label{display:flex;align-items:center;gap:8px;margin:0;color:var(--ink);font-size:.9rem}
+  select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+  details{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 16px}
+  details[open]>summary{margin-bottom:6px}
+  summary{cursor:pointer;font-weight:600;font-size:.95rem}
+  .hint{font-size:.8rem;color:var(--muted);margin:4px 0 0}
+  #log{font-size:.85rem;margin-top:8px}
+  #log div{display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px solid var(--line)}
+  .mini{all:unset;cursor:pointer;color:var(--accent);font-size:.85rem;margin-top:8px;display:inline-block}
+  .mini[aria-disabled=true]{opacity:.4;cursor:not-allowed}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+  #spark{display:block;height:48px;margin-top:6px}
+  .inline{display:flex;gap:8px;align-items:center;margin-top:6px}
+  .inline select{flex:1}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px}
+  .layout{display:grid;grid-template-columns:minmax(260px,320px) minmax(300px,380px) 1fr;gap:16px;align-items:start}
+  .col-control{position:sticky;top:16px}
+  .col-settings{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;align-items:start}
+  @media (max-width:1100px){.layout{grid-template-columns:minmax(260px,1fr) minmax(280px,1fr)}.col-settings{grid-column:1/-1}}
+  @media (max-width:700px){.layout{grid-template-columns:1fr}.col-control{position:static}}
+  .chatHead{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--ring-bg);color:var(--ink);font-weight:700}
+  #chatLog{display:flex;flex-direction:column;gap:6px;height:210px;overflow:auto;padding:8px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+  .msg{max-width:80%;padding:7px 12px;border-radius:14px;font-size:.92rem;background:var(--ring-bg)}
+  .msg.me{align-self:flex-end;background:var(--accent);color:var(--accent-ink)}
+  .msg.sys{align-self:center;background:none;color:var(--muted);font-size:.8rem}
+  .inline input[type=text]{flex:1}
+  .msg.typing{opacity:.6;letter-spacing:2px}
+  .msg .mini{display:block;margin:6px 0 0}
+  :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  #status{min-height:1.5em;margin:14px 0 0;font-size:.9rem;color:var(--muted);text-align:center}
+  #status.err{color:var(--stop)}
+</style>
+</head>
+<body>
+<main>
+  <h1>Handy timer</h1>
+  <div class="layout">
+
+    <section class="card col-session">
+  <label for="key">Connection key</label>
+  <input id="key" type="text" autocomplete="off" spellcheck="false" placeholder="Your Handy connection key">
+
+  <label>Presets</label>
+  <div class="chips" id="chips"></div>
+
+  <div class="row">
+    <div><label for="min">Minutes</label><input id="min" type="number" min="0" max="999" value="10"></div>
+    <div><label for="sec">Seconds</label><input id="sec" type="number" min="0" max="59" value="0"></div>
+  </div>
+
+  <label for="speed">Speed: <span id="speedVal">50</span>%</label>
+  <input id="speed" type="range" min="1" max="100" value="50">
+
+  <div class="row">
+    <div><label for="smin">Stroke start: <span id="sminVal">0</span>%</label>
+  <input id="smin" type="range" min="0" max="95" value="0"></div>
+    <div><label for="smax">Stroke end: <span id="smaxVal">100</span>%</label>
+  <input id="smax" type="range" min="5" max="100" value="100"></div>
+  </div>
+
+  <div class="opts">
+    <label><input type="checkbox" id="beepEnd" checked> Beep when time is up</label>
+    <label><input type="checkbox" id="beepWarn" checked> Short beep at 1 minute left</label>
+    <label><input type="checkbox" id="awake" checked> Keep screen awake while running</label>
+  </div>
+    </section>
+
+    <section class="card col-control">
+  <div class="dial" aria-hidden="true">
+    <svg viewBox="0 0 100 100"><circle class="track" cx="50" cy="50" r="44"/><circle id="prog" class="prog" cx="50" cy="50" r="44" stroke-dasharray="276.46" stroke-dashoffset="0"/></svg>
+    <div class="time" id="time">10:00</div>
+  </div>
+  <div id="now" class="hint" style="text-align:center"></div>
+  <canvas id="spark" aria-hidden="true"></canvas>
+  <div id="live" aria-live="polite" style="position:absolute;left:-9999px"></div>
+
+  <div class="btns">
+    <button id="start">Start</button>
+    <button id="pause" disabled>Pause</button>
+    <button id="stop" disabled>Stop</button>
+  </div>
+
+  <p id="status" role="status">Enter your key and press Start.</p>
+    </section>
+
+    <section class="col-settings">
+  <section class="card" style="grid-column:1/-1">
+    <div class="chatHead"><span class="avatar" id="avatar">?</span><strong id="chatName">No personality chosen</strong><button class="mini" id="chatClear" style="margin:0 0 0 auto">Clear chat</button></div>
+    <div id="chatLog" aria-live="polite"></div>
+    <div class="inline"><input id="chatIn" type="text" autocomplete="off" placeholder="Say something…" aria-label="Chat message"><button class="mini" id="chatSend" style="margin:0">Send</button></div>
+  </section>
+  <details open>
+    <summary>Profiles</summary>
+    <div class="inline">
+      <select id="profSel" aria-label="Saved profiles"><option value="">Choose a profile…</option></select>
+      <button class="mini" id="profSave" style="margin:0">Save current</button>
+      <button class="mini" id="profDel" style="margin:0">Delete</button>
+    </div>
+    <p class="hint">A profile stores every setting except your key and your limits.</p>
+  </details>
+
+  <details open>
+    <summary>Tease mode (simulated remote)</summary>
+    <label style="display:flex;gap:8px;align-items:center;color:var(--ink)"><input type="checkbox" id="teaseOn"> Turn on tease mode</label>
+    <p class="hint">Acts like someone else is running it: it builds up over a random time, holds, then backs off, then repeats with new random numbers each cycle. Your speed slider is the maximum, and the low and peak values below are percentages of it. While it's on, it replaces the ramp and pattern. The stroke range, speed cap, end slowdown, and time limits still apply. While a tease session is running, stopping or pausing counts as failing it: the device still stops right away, but you're locked out as if the time had run out.</p>
+    <div class="inline">
+      <select id="persona" aria-label="Tease personality"><option value="">Pick a personality…</option></select>
+      <button class="mini" id="persRandom" style="margin:0">Surprise me</button>
+    </div>
+    <p class="hint" id="persDesc">Picking one fills in the tease settings below and turns tease mode on. You can still adjust any value afterward.</p>
+    <div class="grid" id="teaseFields"></div>
+    <label style="display:flex;gap:8px;align-items:center;color:var(--ink)"><input type="checkbox" id="tStop" checked> Fully stop during rests (otherwise drop to the low speed)</label>
+    <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:8px"><input type="checkbox" id="tRandom"> Random session length with a hidden timer</label>
+    <p class="hint">Picks a length between the shortest and longest above each time you press Start. The clock and ring are hidden, the one-minute warning is off, and the minutes and seconds boxes are ignored. Your daily limit still caps it.</p>
+  </details>
+
+  <details open>
+    <summary>Speed profile</summary>
+    <div class="row">
+      <div><label for="ramp">Ramp up over</label>
+        <select id="ramp"><option value="0">Off</option><option value="60">1 min</option><option value="120">2 min</option><option value="300">5 min</option></select></div>
+      <div><label for="slow">Slow down for last</label>
+        <select id="slow"><option value="0">Off</option><option value="60">1 min</option><option value="120">2 min</option><option value="180">3 min</option></select></div>
+    </div>
+    <div class="row">
+      <div><label for="pattern">Pattern</label>
+        <select id="pattern"><option value="steady">Steady</option><option value="alt">Alternate fast / slow</option></select></div>
+      <div><label for="period">Switch every (sec)</label><input id="period" type="number" min="5" max="600" value="30"></div>
+    </div>
+    <p class="hint">Your speed slider is the top speed. The ramp start, slow phase and end slowdown percentages are under Customize.</p>
+  </details>
+
+  <details>
+    <summary>Customize</summary>
+    <div class="grid" id="customFields"></div>
+    <label style="display:flex;gap:8px;align-items:center;color:var(--ink)"><input type="checkbox" id="hideClock"> Hide the countdown while running</label>
+    <p class="hint">Press Esc at any time to stop immediately. The speed cap limits every mode.</p>
+  </details>
+
+  <details open>
+    <summary>Limits</summary>
+    <div class="row">
+      <div><label for="daily">Daily limit (min, 0 = off)</label><input id="daily" type="number" min="0" max="999" value="0"></div>
+      <div><label for="cool">Cooldown after (min)</label><input id="cool" type="number" min="0" max="999" value="0"></div>
+    </div>
+    <div class="row">
+      <div><label for="failLock">Lockout after a failed tease session (min, 0 = same as cooldown)</label><input id="failLock" type="number" min="0" max="999" value="0"></div>
+    </div>
+    <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:10px"><input type="checkbox" id="failCharge"> Failed tease sessions use up their full planned time from the daily limit</label>
+    <p class="hint">While a cooldown or the daily limit is active, Start is disabled and the limit boxes are locked. By default a failed session only counts the time you actually ran, plus the lockout. This lives in your browser, so clearing site data or using another browser bypasses it.</p>
+  </details>
+
+  <details>
+    <summary>Session log</summary>
+    <div id="logSummary" class="hint"></div>
+    <div id="log"></div>
+    <button class="mini" id="clearLog">Clear log</button>
+    <button class="mini" id="exportLog" style="margin-left:14px">Export CSV</button>
+  </details>
+
+    </section>
+  </div>
+</main>
+
+<script>
+const BASE = "https://www.handyfeeling.com/api/handy/v2";
+const $ = id => document.getElementById(id);
+const C = 2 * Math.PI * 44;
+let endAt = 0, total = 0, tick = null, running = false, paused = false, remaining = 0, warned = false;
+let audioCtx = null, wakeLock = null, lastVel = null, lastVelAt = 0, locked = false;
+let currentPersona = "", nextChatAt = 0;
+let runHidden = false, runTease = false, holdStatusUntil = 0, starting = false, cancelStart = false, devStopped = false, curSpeed = 0, hist = [], lastSample = 0, tz = null;
+
+/* ---------- saved settings ---------- */
+const store = {
+  get(k, d){ try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch(e){ return d; } },
+  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+};
+$("key").value = store.get("handyKey", "");
+const TEASE = [["tLow","Low speed (% of max)",15],["tPeakMin","Peak speed, lowest (% of max)",60],["tPeakMax","Peak speed, highest (% of max)",90],["tBuildMin","Build time, shortest (s)",20],["tBuildMax","Build time, longest (s)",60],["tHoldMin","Hold, shortest (s)",3],["tHoldMax","Hold, longest (s)",10],["tRestMin","Rest, shortest (s)",5],["tRestMax","Rest, longest (s)",20],["tFake","Fake-out chance (%)",20],["tEsc","Peak increase per cycle (%)",0],["rMin","Random length, shortest (min)",8],["rMax","Random length, longest (min)",20]];
+const CUSTOM = [["rampStart","Ramp starts at (%)",10],["altSlow","Slow phase speed (%)",40],["endSlow","End slowdown goes to (%)",40],["cap","Max speed cap (%)",100],["delay","Start delay (s)",0],["vol","Beep volume (%)",30]];
+function mkFields(boxId, list){
+  list.forEach(([id, lab, def]) => {
+    const d = document.createElement("div");
+    d.innerHTML = '<label for="'+id+'">'+lab+'</label><input id="'+id+'" type="number" min="0" max="999" value="'+def+'">';
+    $(boxId).append(d);
+  });
+}
+mkFields("teaseFields", TEASE); mkFields("customFields", CUSTOM);
+const FIELDS = ["speed","smin","smax","min","sec","ramp","slow","pattern","period","daily","cool","failLock"].concat(TEASE.map(t=>t[0]), CUSTOM.map(c=>c[0]));
+FIELDS.forEach(id => { const v = store.get("h_"+id, null); if (v !== null) $(id).value = v; });
+const BOOLS = {beepEnd:true, beepWarn:true, awake:true, teaseOn:false, tStop:true, hideClock:false, tRandom:false, failCharge:false};
+Object.keys(BOOLS).forEach(id => { $(id).checked = store.get("h_"+id, BOOLS[id]); $(id).onchange = () => store.set("h_"+id, $(id).checked); });
+let presets = store.get("handyPresets", [300, 600, 900, 1800]);   // seconds
+
+/* ---------- helpers ---------- */
+function status(msg, err){ const s=$("status"); s.textContent=msg; s.className=err?"err":""; }
+function fmt(ms){ const t=Math.max(0,Math.ceil(ms/1000)); return Math.floor(t/60)+":"+String(t%60).padStart(2,"0"); }
+function duration(){ return ((+$("min").value||0)*60 + (+$("sec").value||0))*1000; }
+function showIdle(){ $("time").textContent = ($("teaseOn").checked && $("tRandom").checked) ? "??:??" : fmt(duration()); $("prog").style.strokeDashoffset = 0; }
+function setButtons(){
+  $("start").disabled = running || paused || locked || starting;
+  $("pause").disabled = !(running || paused);
+  $("pause").textContent = paused ? "Resume" : (running && runTease ? "Pause (fails)" : "Pause");
+  $("stop").textContent = (running || paused) && runTease ? "Stop (fails)" : "Stop";
+  $("teaseOn").disabled = running || paused || starting;
+  $("stop").disabled = !(running || paused || starting);
+}
+function label(sec){ return sec % 60 === 0 ? (sec/60)+" min" : fmt(sec*1000); }
+
+/* ---------- presets ---------- */
+function renderChips(){
+  const box = $("chips"); box.innerHTML = "";
+  presets.forEach((sec, i) => {
+    const c = document.createElement("span"); c.className = "chip";
+    const b = document.createElement("button"); b.textContent = label(sec);
+    b.onclick = () => { if (running||paused) return; $("min").value = Math.floor(sec/60); $("sec").value = sec%60; saveInputs(); showIdle(); };
+    const x = document.createElement("button"); x.className = "x"; x.textContent = "×"; x.title = "Remove preset"; x.setAttribute("aria-label","Remove "+label(sec)+" preset");
+    x.onclick = () => { presets.splice(i,1); store.set("handyPresets", presets); renderChips(); };
+    c.append(b, x); box.append(c);
+  });
+  const s = document.createElement("button"); s.className = "save"; s.textContent = "+ Save current";
+  s.onclick = () => {
+    const sec = Math.round(duration()/1000);
+    if (sec > 0 && !presets.includes(sec)){ presets.push(sec); presets.sort((a,b)=>a-b); store.set("handyPresets", presets); renderChips(); }
+  };
+  box.append(s);
+}
+function saveInputs(){ FIELDS.forEach(id => store.set("h_"+id, $(id).value)); }
+
+/* ---------- sound ---------- */
+function beep(times, freq = 880){
+  if (!audioCtx) return;
+  for (let i = 0; i < times; i++){
+    const t = audioCtx.currentTime + i * 0.35;
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.frequency.value = freq; o.connect(g); g.connect(audioCtx.destination);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(Math.max(0.01, 0.8 * (+$("vol").value || 30) / 100), t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.25);
+    o.start(t); o.stop(t + 0.3);
+  }
+}
+
+/* ---------- screen wake lock ---------- */
+async function lockScreen(){
+  try { if ($("awake").checked && "wakeLock" in navigator) wakeLock = await navigator.wakeLock.request("screen"); } catch(e){}
+}
+function unlockScreen(){ try { if (wakeLock) wakeLock.release(); } catch(e){} wakeLock = null; }
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && running) lockScreen(); });
+
+/* ---------- Handy API ---------- */
+async function api(method, path, body){
+  const res = await fetch(BASE + path, {
+    method,
+    headers: {"Content-Type":"application/json","X-Connection-Key":$("key").value.trim()},
+    body: body ? JSON.stringify(body) : undefined
+  });
+  const data = await res.json().catch(()=>({}));
+  if (!res.ok || data.error) throw new Error((data.error && data.error.message) || ("HTTP " + res.status));
+  return data;
+}
+async function sendStop(){
+  for (let i = 0; i < 5; i++){
+    try { await api("PUT", "/hamp/stop"); return true; }
+    catch(e){ await new Promise(r => setTimeout(r, 800)); }
+  }
+  return false;
+}
+function sendStroke(){
+  const mn = +$("smin").value, mx = +$("smax").value;
+  return api("PUT", "/slide", {min: mn, max: mx});
+}
+
+/* ---------- speed engine ---------- */
+const n = (id, d) => { const v = parseFloat($(id).value); return isNaN(v) ? d : v; };
+const rnd = (a, b) => a + Math.random() * Math.max(0, b - a);
+function resetTease(){ tz = {q: [], cur: null, start: 0, cycle: 0, label: ""}; }
+function newCycle(){
+  const low = n("tLow", 15), pkMin = n("tPeakMin", 60), pkMax = Math.max(pkMin, n("tPeakMax", 90));
+  const esc = 1 + n("tEsc", 0) / 100 * tz.cycle; tz.cycle++;
+  const pk = Math.min(100, rnd(pkMin, pkMax) * esc);
+  const bMin = n("tBuildMin", 20), bd = rnd(bMin, Math.max(bMin, n("tBuildMax", 60)));
+  const rMin = n("tRestMin", 5), hMin = n("tHoldMin", 3);
+  const rest = {k: "rest", dur: Math.max(1, rnd(rMin, Math.max(rMin, n("tRestMax", 20)))), v: $("tStop").checked ? 0 : low};
+  if (Math.random() * 100 < n("tFake", 20)){
+    const f = rnd(0.4, 0.7);                       // fake-out: climbs part way, then backs off early
+    tz.q.push({k: "build", dur: Math.max(1, bd * f), from: low, to: low + (pk - low) * f}, Object.assign(rest, {fake: true}));
+  } else {
+    tz.q.push({k: "build", dur: Math.max(1, bd), from: low, to: pk},
+              {k: "hold", dur: Math.max(1, rnd(hMin, Math.max(hMin, n("tHoldMax", 10)))), v: pk}, rest);
+  }
+}
+function teaseValue(el){
+  if (!tz) resetTease();
+  if (!tz.cur){ if (!tz.q.length) newCycle(); tz.cur = tz.q.shift(); chatPhase(tz.cur); tz.start = el; }
+  while (el >= tz.start + tz.cur.dur * 1000){ tz.start += tz.cur.dur * 1000; if (!tz.q.length) newCycle(); tz.cur = tz.q.shift(); chatPhase(tz.cur); }
+  const c = tz.cur, p = Math.min(1, (el - tz.start) / (c.dur * 1000));
+  tz.label = c.k === "build" ? "building" : c.k === "hold" ? "holding" : "resting";
+  if (c.k === "build") return c.from + (c.to - c.from) * p;
+  if (c.k === "hold") return Math.min(100, c.v * (1 + 0.04 * Math.sin(el / 600)));
+  return c.v;
+}
+function velocityAt(elapsedMs, leftMs){
+  const cap = Math.max(1, Math.min(100, n("cap", 100)));
+  const tease = $("teaseOn").checked;
+  let v, stopped = false;
+  if (tease){ const pct = teaseValue(elapsedMs); stopped = pct < 0.5; v = n("speed", 50) * pct / 100; }   // percentages of the speed slider
+  else {
+    let f = 1;
+    const rampMs = n("ramp", 0) * 1000;
+    if (rampMs > 0){ const rs = n("rampStart", 10) / 100; f *= Math.min(1, rs + (1 - rs) * elapsedMs / rampMs); }
+    if ($("pattern").value === "alt"){
+      const per = Math.max(5, n("period", 30)) * 1000;
+      if (Math.floor(elapsedMs / per) % 2 === 1) f *= n("altSlow", 40) / 100;
+    }
+    v = n("speed", 50) * f;
+  }
+  const slowMs = n("slow", 0) * 1000;
+  if (slowMs > 0 && leftMs < slowMs){ const es = n("endSlow", 40) / 100; v *= es + (1 - es) * Math.max(0, leftMs) / slowMs; }
+  v = Math.min(v, cap);
+  if (tease && stopped) return 0;
+  return Math.max(1, Math.min(100, Math.round(v)));
+}
+async function pushVelocity(force){
+  const left = Math.max(0, endAt - Date.now());
+  const v = velocityAt(total - left, left), now = Date.now();
+  curSpeed = v;
+  $("now").textContent = "Speed now: " + v + "%" + ($("teaseOn").checked && tz ? " · " + tz.label : "");
+  if (v === 0){
+    if (!devStopped){ devStopped = true; lastVel = 0; lastVelAt = now; sendStop().then(ok => { if (!ok) status("Could not confirm a stop command.", true); }); }
+    return;
+  }
+  if (devStopped){
+    devStopped = false; lastVel = v; lastVelAt = now;
+    try { await api("PUT", "/hamp/velocity", {velocity: v}); await api("PUT", "/hamp/start"); } catch(e){ status(e.message, true); }
+    return;
+  }
+  if (!force && ((lastVel !== null && Math.abs(v - lastVel) < 3) || now - lastVelAt < 1500)) return;
+  lastVel = v; lastVelAt = now;
+  api("PUT", "/hamp/velocity", {velocity: v}).catch(e => status(e.message, true));
+}
+function drawSpark(){
+  const cv = $("spark"), w = cv.width = cv.clientWidth || 400, h = cv.height = 48, ctx = cv.getContext("2d");
+  ctx.clearRect(0, 0, w, h);
+  ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue("--accent").trim() || "#0f7b8a";
+  ctx.lineWidth = 2; ctx.beginPath();
+  const step = w / Math.max(60, hist.length - 1);
+  hist.forEach((v, i) => { const x = i * step, y = h - 3 - (h - 6) * v / 100; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
+  ctx.stroke();
+}
+function sample(){
+  const now = Date.now(); if (now - lastSample < 1000) return;
+  lastSample = now; hist.push(curSpeed); if (hist.length > 600) hist.shift(); drawSpark();
+}
+
+/* ---------- session log, daily limit, cooldown ---------- */
+function getLog(){ return store.get("handyLog", []); }
+function usedTodaySec(){
+  const d = new Date().toDateString();
+  return getLog().filter(e => new Date(e.t).toDateString() === d).reduce((a, e) => a + (e.how === "failed" && $("failCharge").checked && e.charge !== undefined ? e.charge : e.ran), 0);
+}
+function renderLog(){
+  const log = getLog(), box = $("log"); box.innerHTML = "";
+  const lim = +$("daily").value || 0, used = Math.round(usedTodaySec() / 60);
+  const pen = Math.round(penaltyTodaySec() / 60);
+  $("logSummary").textContent = "Today: " + used + " min" + (lim ? " of " + lim : "") + (pen ? " (" + pen + " min of that is failed sessions counted in full)" : "") + " · Sessions logged: " + log.length;
+  log.slice(-8).reverse().forEach(e => {
+    const row = document.createElement("div");
+    const a = document.createElement("span"), b = document.createElement("span");
+    a.textContent = new Date(e.t).toLocaleString([], {month:"short", day:"numeric", hour:"numeric", minute:"2-digit"});
+    b.textContent = fmt(e.ran * 1000) + (e.how === "timeup" ? " (full)" : e.how === "failed" ? " (failed" + ($("failCharge").checked && e.charge !== undefined && e.charge !== e.ran ? ", counted as " + fmt(e.charge * 1000) : "") + ")" : " (stopped early)");
+    row.append(a, b); box.append(row);
+  });
+}
+function penaltyTodaySec(){
+  if (!$("failCharge").checked) return 0;
+  const d = new Date().toDateString();
+  return getLog().filter(e => e.how === "failed" && new Date(e.t).toDateString() === d)
+    .reduce((a, e) => a + Math.max(0, (e.charge === undefined ? e.ran : e.charge) - e.ran), 0);
+}
+function recordSession(ran, how, charge){
+  if (ran < 5 && how !== "failed") return;
+  const log = getLog(); log.push({t: Date.now() - ran * 1000, ran, how, charge: charge === undefined ? ran : charge});
+  store.set("handyLog", log.slice(-200));
+  const cool = how === "failed" ? (n("failLock", 0) || n("cool", 0)) : n("cool", 0);
+  if (cool > 0) store.set("handyLockUntil", Date.now() + cool * 60000);
+  renderLog();
+}
+function refreshLock(){
+  const until = store.get("handyLockUntil", 0), cd = until - Date.now();
+  const lim = +$("daily").value || 0;
+  const limitHit = lim > 0 && usedTodaySec() >= lim * 60;
+  locked = cd > 0 || limitHit;
+  $("daily").disabled = $("cool").disabled = $("failLock").disabled = $("failCharge").disabled = locked;
+  $("clearLog").setAttribute("aria-disabled", locked);
+  if (!running && !paused && Date.now() > holdStatusUntil){
+    if (cd > 0) status("Cooldown: " + fmt(cd) + " until you can start again.");
+    else if (limitHit){ const pen = Math.round(penaltyTodaySec() / 60); status("Daily limit of " + lim + " min reached." + (pen ? " " + pen + " min of that came from failed sessions counted in full." : "") + " It resets at midnight."); }
+    else if (locked === false && /^(Cooldown|Daily limit)/.test($("status").textContent)) status("Ready.");
+  }
+  setButtons();
+}
+$("clearLog").onclick = () => {
+  if (locked) return;
+  if (confirm("Clear the whole session log?")){ store.set("handyLog", []); renderLog(); refreshLock(); }
+};
+
+/* ---------- run control ---------- */
+async function start(){
+  refreshLock(); if (locked) return;
+  let ms = duration(), capped = false;
+  if ($("teaseOn").checked && $("tRandom").checked){ const lo = n("rMin", 8); ms = Math.round(rnd(lo, Math.max(lo, n("rMax", 20))) * 60) * 1000; }
+  if (!$("key").value.trim()) return status("Enter your connection key first.", true);
+  if (ms <= 0) return status("Set a duration longer than zero.", true);
+  const lim = +$("daily").value || 0;
+  if (lim > 0){ const allow = lim * 60000 - usedTodaySec() * 1000; if (ms > allow){ ms = allow; capped = true; } }
+  store.set("handyKey", $("key").value.trim()); saveInputs();
+  try { audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)(); audioCtx.resume(); } catch(e){}
+  const dl = Math.max(0, n("delay", 0));
+  if (dl > 0){
+    starting = true; cancelStart = false; setButtons();
+    for (let i = dl; i > 0 && !cancelStart; i--){ status("Starting in " + i + "… (Stop to cancel)"); await new Promise(r => setTimeout(r, 1000)); }
+    starting = false;
+    if (cancelStart){ setButtons(); return status("Start cancelled."); }
+  }
+  $("start").disabled = true;
+  status("Connecting…");
+  try {
+    const c = await api("GET", "/connected");
+    if (!c.connected) throw new Error("Handy is not connected. Check the key and that the device is online.");
+    await api("PUT", "/mode", {mode: 0});                       // 0 = HAMP
+    await sendStroke();
+    resetTease(); devStopped = false; hist = []; lastSample = 0;
+    lastVel = velocityAt(0, ms); lastVelAt = Date.now();
+    await api("PUT", "/hamp/velocity", {velocity: lastVel});
+    await api("PUT", "/hamp/start");
+  } catch(e){ setButtons(); return status(e.message, true); }
+  total = ms; endAt = Date.now() + ms; running = true; paused = false; warned = false; runTease = $("teaseOn").checked; runHidden = runTease && $("tRandom").checked;
+  setButtons(); lockScreen();
+  status((capped ? "Running. Shortened to " + (runHidden ? "fit" : fmt(ms) + " to fit") + " your daily limit." : "Running.") + (runHidden ? " The end time is hidden." : "") + (runTease ? " Stopping or pausing now counts as failing this session." : ""));
+  nextChatAt = Date.now() + 20000 + Math.random() * 20000;
+  nextPromiseAt = Date.now() + 40000 + Math.random() * 30000;
+  midCat = runTease ? "build" : ""; midAt = Date.now() + 14000 + Math.random() * 8000;
+  if (runTease) say("start");
+  if (runTease){
+    nextNudgeAt = Date.now() + 90000 + Math.random() * 50000;
+    setTimeout(() => { if (running) commentSettings("start"); }, 4500);
+    setTimeout(() => { if (running && (n("tFake", 20) >= 40 || n("tEsc", 0) > 0)) say("fakeNote"); }, 10000);
+    if (runHidden) setTimeout(() => { if (running) say("hidden"); }, 7500);
+  }
+  tick = setInterval(update, 250); update();
+}
+
+function update(){
+  const left = endAt - Date.now();
+  $("time").textContent = (runHidden || $("hideClock").checked) ? "??:??" : fmt(left);
+  $("prog").style.strokeDashoffset = runHidden ? 0 : C * (1 - Math.max(0, left) / total);
+  if (!warned && !runHidden && total > 90000 && left <= 60000 && left > 0){ warned = true; if ($("beepWarn").checked) beep(1, 660); if (runTease) say("warn"); }
+  if (left <= 0) finish("Time is up. Stopped.", true);
+  else {
+    pushVelocity(false); sample();
+    midTick();
+  }
+}
+
+async function finish(msg, timeUp, failed){
+  if (!running && !paused) return;
+  const wasRunning = running;
+  holdStatusUntil = Date.now() + 6000;
+  const wasTease = runTease; midCat = "";
+  const wasHidden = runHidden; runHidden = false;
+  const leftNow = timeUp ? 0 : (running ? Math.max(0, endAt - Date.now()) : remaining);
+  const ranSec = Math.round((total - leftNow) / 1000);
+  running = false; paused = false; clearInterval(tick); unlockScreen();
+  recordSession(ranSec, failed ? "failed" : timeUp ? "timeup" : "manual", failed ? Math.round(total / 1000) : undefined); runTease = false; refreshLock();
+  setButtons(); $("stop").disabled = true;
+  status("Stopping…");
+  const ok = wasRunning ? await sendStop() : true;
+  setButtons();
+  if (!locked) refreshLock();
+  $("time").textContent = timeUp ? "0:00" : (wasHidden ? "??:??" : fmt(duration()));
+  if (timeUp && $("beepEnd").checked) beep(3);
+  else if (failed && $("beepEnd").checked) beep(2, 220);
+  if (wasTease && (failed || timeUp)) say(failed ? "fail" : "win");
+  $("live").textContent = ok ? "Stopped" : "Stop failed";
+  if (ok){ status(msg); setTimeout(refreshLock, 6500); } else status("Could not confirm the stop. Press the device button or turn it off.", true);
+}
+
+async function togglePause(){
+  if (running && runTease){
+    const m = n("failLock", 0) || n("cool", 0);
+    return finish("Session failed: you paused. The device is stopped." + (m ? " Locked out for " + m + " min." : " Set a cooldown or failure lockout under Limits to enforce a lockout."), false, true);
+  }
+  if (running){
+    remaining = Math.max(0, endAt - Date.now());
+    running = false; paused = true; clearInterval(tick); devStopped = true;
+    setButtons(); status("Pausing…");
+    const ok = await sendStop();
+    status(ok ? "Paused. Press Resume to continue." : "Could not confirm the stop. Press the device button or turn it off.", !ok);
+  } else if (paused){
+    $("pause").disabled = true; status("Resuming…");
+    endAt = Date.now() + remaining;
+    try {
+      const v0 = velocityAt(total - remaining, remaining); lastVel = v0; lastVelAt = Date.now();
+      if (v0 > 0){ await api("PUT", "/hamp/velocity", {velocity: v0}); await api("PUT", "/hamp/start"); devStopped = false; }
+      else devStopped = true;
+    } catch(e){ setButtons(); return status(e.message, true); }
+    endAt = Date.now() + remaining; running = true; paused = false;
+    setButtons(); lockScreen(); status("Running.");
+    tick = setInterval(update, 250); update();
+  }
+}
+
+/* ---------- wiring ---------- */
+$("start").onclick = start;
+$("pause").onclick = togglePause;
+$("stop").onclick = () => {
+  if (starting){ cancelStart = true; return; }
+  if (runTease && (running || paused)){
+    const m = n("failLock", 0) || n("cool", 0);
+    return finish("Session failed: you stopped early. The device is stopped." + (m ? " Locked out for " + m + " min." : " Set a cooldown or failure lockout under Limits to enforce a lockout."), false, true);
+  }
+  finish("Stopped manually.", false);
+};
+document.addEventListener("keydown", e => { if (e.key === "Escape" && (running || paused || starting)) $("stop").click(); });
+
+let strokeTimer = null;
+function strokeChanged(which){
+  let mn = +$("smin").value, mx = +$("smax").value;
+  if (which === "smin" && mn > mx - 5){ mx = Math.min(100, mn + 5); $("smax").value = mx; if (mn > mx - 5){ mn = mx - 5; $("smin").value = mn; } }
+  if (which === "smax" && mx < mn + 5){ mn = Math.max(0, mx - 5); $("smin").value = mn; if (mx < mn + 5){ mx = mn + 5; $("smax").value = mx; } }
+  $("sminVal").textContent = $("smin").value; $("smaxVal").textContent = $("smax").value;
+  saveInputs(); commentLater();
+  if (running){ clearTimeout(strokeTimer); strokeTimer = setTimeout(() => sendStroke().catch(e => status(e.message, true)), 250); }
+}
+$("smin").oninput = () => strokeChanged("smin");
+$("smax").oninput = () => strokeChanged("smax");
+$("speed").oninput = e => {
+  $("speedVal").textContent = e.target.value; saveInputs();
+  lastVelAt = 0; commentLater();
+};
+FIELDS.forEach(id => $(id).onchange = () => { saveInputs(); renderLog(); refreshLock(); });
+["min","sec"].forEach(id => $(id).oninput = () => { if (!running && !paused){ saveInputs(); showIdle(); } });
+window.addEventListener("beforeunload", e => { if (running){ e.preventDefault(); e.returnValue = ""; } });
+window.addEventListener("pagehide", () => {
+  if (!(running || paused)) return;
+  if (running){ try { fetch(BASE + "/hamp/stop", {method: "PUT", keepalive: true, headers: {"Content-Type": "application/json", "X-Connection-Key": $("key").value.trim()}}); } catch(e){} }
+  if (runTease){ const left = running ? Math.max(0, endAt - Date.now()) : remaining; recordSession(Math.round((total - left) / 1000), "failed", Math.round(total / 1000)); }
+});
+
+$("speedVal").textContent = $("speed").value;
+$("sminVal").textContent = $("smin").value; $("smaxVal").textContent = $("smax").value;
+/* ---------- tease personalities ---------- */
+const PERSONAS = {
+  "Patient Priscilla":   {d:"Slow and unhurried. Long gentle builds, long holds, rarely fakes you out.", low:10,pmin:45,pmax:65,bmin:60,bmax:120,hmin:5,hmax:15,rmin:10,rmax:25,fake:10,esc:0,stop:true},
+  "Mischievous Milo":    {d:"Loves a fake-out. Short unpredictable climbs and quick backing off.", low:15,pmin:55,pmax:85,bmin:15,bmax:40,hmin:2,hmax:6,rmin:4,rmax:12,fake:45,esc:3,stop:false},
+  "Strict Ms. Vance":    {d:"Controlled and exacting. Long full stops, and every round asks for a bit more.", low:20,pmin:60,pmax:80,bmin:40,bmax:70,hmin:8,hmax:15,rmin:20,rmax:40,fake:15,esc:8,stop:true},
+  "Chaos Casper":        {d:"No pattern at all. Wild peaks, abrupt stops, constant surprises.", low:5,pmin:40,pmax:100,bmin:8,bmax:45,hmin:1,hmax:8,rmin:2,rmax:25,fake:50,esc:0,stop:true},
+  "Sweet-Talker Sol":    {d:"Gentle and warm. Never fully stops, just eases off and comes back.", low:25,pmin:50,pmax:70,bmin:30,bmax:60,hmin:5,hmax:12,rmin:6,rmax:14,fake:25,esc:2,stop:false},
+  "Relentless Rex":      {d:"Fast and demanding. Short rests, and the peaks keep climbing.", low:30,pmin:70,pmax:100,bmin:20,bmax:35,hmin:4,hmax:10,rmin:3,rmax:8,fake:10,esc:10,stop:false},
+  "Sleepy Sunday":       {d:"Lazy, mellow pace. Slow drifts up and down with long pauses.", low:8,pmin:30,pmax:50,bmin:70,bmax:140,hmin:6,hmax:20,rmin:15,rmax:45,fake:20,esc:0,stop:true},
+  "Drill Sergeant Dana": {d:"Short, sharp bursts with firm stops, then straight back to work.", low:35,pmin:75,pmax:95,bmin:10,bmax:20,hmin:3,hmax:6,rmin:8,rmax:15,fake:20,esc:5,stop:true}
+};
+Object.keys(PERSONAS).forEach(k => { const o = document.createElement("option"); o.value = o.textContent = k; $("persona").append(o); });
+function applyPersona(name, jitter){
+  const p = PERSONAS[name]; if (!p) return;
+  if (running || paused || starting){ status("Stop the session before changing personality.", true); $("persona").value = ""; return; }
+  const j = v => jitter ? Math.round(v * (0.85 + Math.random() * 0.3)) : v;
+  const pmin = Math.min(100, j(p.pmin)), bmin = j(p.bmin), hmin = j(p.hmin), rmin = j(p.rmin);
+  const vals = {tLow: Math.min(100, j(p.low)), tPeakMin: pmin, tPeakMax: Math.min(100, Math.max(pmin, j(p.pmax))),
+    tBuildMin: bmin, tBuildMax: Math.max(bmin, j(p.bmax)), tHoldMin: hmin, tHoldMax: Math.max(hmin, j(p.hmax)),
+    tRestMin: rmin, tRestMax: Math.max(rmin, j(p.rmax)), tFake: Math.min(100, j(p.fake)), tEsc: j(p.esc)};
+  Object.keys(vals).forEach(id => $(id).value = vals[id]);
+  $("teaseOn").checked = true; store.set("h_teaseOn", true);
+  $("tStop").checked = p.stop; store.set("h_tStop", p.stop);
+  saveInputs(); resetTease();
+  $("persDesc").textContent = p.d + (jitter ? " (randomized a little)" : "");
+  status("Tease mode on: " + name + ".");
+  currentPersona = name; store.set("h_persona", name); chatHeader(); say("greet");
+}
+$("persona").onchange = () => applyPersona($("persona").value, false);
+$("persRandom").onclick = () => {
+  const keys = Object.keys(PERSONAS), k = keys[Math.floor(Math.random() * keys.length)];
+  $("persona").value = k; applyPersona(k, true);
+};
+
+/* ---------- personality chat ---------- */
+const PCOL = {"Patient Priscilla":"#7a9e7e","Mischievous Milo":"#e0a43a","Strict Ms. Vance":"#8a4f7d","Chaos Casper":"#d9534f","Sweet-Talker Sol":"#e58fa8","Relentless Rex":"#c8602a","Sleepy Sunday":"#7f8fb5","Drill Sergeant Dana":"#4f6b3a"};
+const LINES = {
+ "Patient Priscilla": {greet:["Hello, love. We're going to take our time today."],start:["Settle in. There's no rush at all.","Nice and slow. Let's begin."],build:["Slowly... that's it.","Easy does it. Let it come gradually.","Good. Keep that pace in mind."],hold:["Right here. Stay with it.","Hold steady for me."],rest:["And pause. Breathe.","Lovely. Now we wait a moment.","Let it settle."],fake:["Oh, we're backing off early. Patience pays.","Not yet, darling. Not yet."],warn:["One minute left. Let's finish gracefully."],win:["Beautifully done. I'm proud of your patience.","That was lovely. Well done."],fail:["You stopped. Patience is the whole point, love.","Oh dear. We'll try again after a rest."],chat:["Still with me?","Slow breaths.","You're doing well."],reply:["Mm, tell me more later. Focus on the pace.","I'm listening, love. Keep breathing."],please:["Asking nicely helps, but we go at my pace."]},
+ "Mischievous Milo": {greet:["Oh, you picked me? Bold. This'll be fun."],start:["Alright, let's play. No promises.","Ready? Don't get comfortable."],build:["Ooh, here we go...","Climbing, climbing... or am I?","Feeling confident yet?"],hold:["Right there! Don't move.","Look at you, so close."],rest:["Just kidding.","Nope! Not today.","Gotcha."],fake:["Haha, did you think I'd let you? Too early!","Fooled you."],warn:["One minute left. Any last wishes? Too bad."],win:["Time's up! You survived my games.","Well played. I almost felt bad."],fail:["You quit? Aww, the game was just getting fun.","Ha! Out already. Back in the penalty box."],chat:["Bet you can't guess what I'll do next.","Hee hee.","Don't look so worried."],reply:["Ha! Cute. Anyway...","Interesting. Still not telling.","You're adorable when you ask."],please:["Ooh, begging? Louder. Still no."]},
+ "Strict Ms. Vance": {greet:["Good. You're here. I expect your full attention."],start:["We begin now. Follow my pace exactly.","Sit properly. Eyes up. Start."],build:["Steady. Do not rush.","You will take what I give you.","Increase noted. Maintain composure."],hold:["Hold. Don't you dare move.","Stay exactly there."],rest:["Stop. Hands still. Wait for my word.","Rest. You haven't earned more yet.","Quiet. Wait."],fake:["I decide when. Not you. Back off.","Too eager. Reset."],warn:["One minute remains. Finish properly."],win:["Acceptable. You followed instructions. Good.","Session complete. Well done."],fail:["You stopped without permission. That's a failure. You will wait.","Unacceptable. Enjoy your lockout."],chat:["Posture.","Eyes on the timer.","I'm watching."],reply:["Speak when spoken to.","Noted. Continue.","Questions later."],please:["Manners noted. The answer remains no."]},
+ "Chaos Casper": {greet:["WOOO hi! I have no plan! None!"],start:["Okay okay okay GO!","Buckle up, I don't know what's happening either."],build:["Up up up UP!","Whee!","Is this fast? I forgot."],hold:["FREEZE! Hold it!","Right there! Maybe!"],rest:["STOP! Wait! Nope!","Surprise pause!","Everyone chill!"],fake:["Plot twist! Changed my mind!","Ha, oops, I forgot why I started!"],warn:["One minute! Maybe! Time is weird!"],win:["Done! That was chaos!","You made it! I'm shocked!"],fail:["You quit?! The chaos was perfect!","Boooo! Okay, go sit in the corner."],chat:["Squirrel!","Random thought: pizza.","Whatever happens, happens!"],reply:["Ha! Sure! Why not!","I wasn't listening, say it again!","Chaos accepts your message."],please:["Please? Hmm... random coin flip says maybe!"]},
+ "Sweet-Talker Sol": {greet:["Hey there, gorgeous. Let's have a good time."],start:["Relax, I've got you.","Come here, let's ease into it."],build:["Mmm, that's it, nice and smooth.","You're doing so well.","Feels good, doesn't it?"],hold:["Right there, perfect.","Stay with me, you're doing great."],rest:["Easing off a little, I'm not going anywhere.","Just a breather, sweetheart."],fake:["Aw, did I tease you? Sorry, not sorry.","Almost there, but let's savour it."],warn:["One minute left, you're doing beautifully."],win:["Perfect. I'm so proud of you.","That was lovely, you did amazing."],fail:["Aww, you stopped. It's okay, we'll try again later.","No worries, love. Take your break."],chat:["You're so good at this.","I like this version of you.","Stay with me."],reply:["Aw, you're sweet.","Mmm, I like hearing from you.","Talk to me, I'm listening."],please:["So polite. I do love that."]},
+ "Relentless Rex": {greet:["Rex here. Don't expect a gentle ride."],start:["Let's go. No breaks.","Strap in."],build:["Faster. Keep up.","Pushing harder.","No slowing down now."],hold:["Hold that pace. Don't flinch.","Max effort."],rest:["Quick breather. Back at it.","Three seconds. Then more."],fake:["Easy there, I'm just getting started.","Not so fast. Reset."],warn:["One minute. Dig in."],win:["Finished. Solid effort.","Not bad. Round two next time."],fail:["Quit already? Weak. You're locked out.","You tapped out. Take the lockout."],chat:["Don't stop now.","Keep pushing.","Is that all you've got?"],reply:["Save the talk. Focus.","Hm. Keep going.","Louder. No, I'm kidding. Back to work."],please:["Please? Earn it."]},
+ "Sleepy Sunday": {greet:["Mmm... hi. No hurry, okay?"],start:["Slow start. We have all day.","Cozy up. Let's drift."],build:["Yawn... drifting up.","Slowly, slowly.","So slow, so nice."],hold:["Mmm, stay right here.","Just float for a while."],rest:["Time for a little nap... pause.","Hush. Let it fade.","Drift back down."],fake:["Oops, I drifted off. Back we go.","Too much effort. Easing off."],warn:["One minute left... then maybe a nap."],win:["Mmm, nice. That was nice.","All done. Go stretch out."],fail:["You stopped? ...okay, but that counts.","Mm, no. Naps are for winners only."],chat:["...","Still here, just sleepy.","Zzz... what?"],reply:["Mm? Say that again, slower.","Mhm.","Sounds nice. So sleepy..."],please:["Mm, ask again in a bit. Sleepy."]},
+ "Drill Sergeant Dana": {greet:["Attention! Eyes front, recruit!"],start:["On my command! Begin!","Move it, recruit!"],build:["Pick it up!","Up and moving!","Keep that tempo!"],hold:["HOLD! Don't move a muscle!","Steady, recruit!"],rest:["STOP! At ease. Hold position.","Halt! Stand by.","Hold still, recruit!"],fake:["Did I say go? Reset!","Wrong move, recruit! Back it down!"],warn:["One minute, recruit! Finish strong!"],win:["Mission complete, recruit! Dismissed!","Good work. Fall out."],fail:["You quit?! That's a fail, recruit! Lockout it is!","Dropped out! Report back after your lockout."],chat:["Don't zone out!","I see you, recruit!","Keep your eyes on me!"],reply:["Did I ask?","Speak up, recruit!","Noted. Carry on!"],please:["Please? Beg harder, recruit. Still no."]}
+};
+const MORE = {
+ "Patient Priscilla": {hold:["Stay right there. Let it hum.","Hold... and notice how much you want more.","Don't move. Just breathe through it.","Mm, right on the edge. Lovely."],holdMid:["Still holding? Good.","See how patient you can be?","A little longer, love.","Breathe. In. Out."],rest:["Shh. Let it fade. There's nothing wrong with wanting.","And down we go, gently.","There. Doesn't it ache a little? Good.","Pause. Let the tension sit with you."],restMid:["You're fidgeting, love.","Wanting it back already?","Slow breaths. Patience is a pleasure too.","Mm, I'll decide when."],fake:["Oh, so close. Let's not spoil it.","Gently now, we turn around early.","Almost, almost... and no.","I'm sorry, love. You're not quite there yet."],fakeAfter:["Don't pout. It suits you, though.","That little whimper didn't go unnoticed.","Patience. It makes it so much sweeter."],build:["Feel it creeping up on you.","Just a bit more, so slowly."],chat:["{left} left. We have all the time in the world.","I do love how patient you're being.","Round {n} already. You're so good."],close:["I know, love. Not yet. Breathe.","Almost isn't enough. Wait for me."],demand:["Oh, you want to decide? That's sweet. No.","My pace, darling. Always."]},
+ "Mischievous Milo": {hold:["Ooh, right there. Hehe, don't move!","Look how close! And you can't do anything.","I could stop... or not. Guess!","Squirming already? Cute."],holdMid:["Still here! Still teasing.","Your face right now, priceless.","Should I? Shouldn't I? Hmm.","Tick tock. Tick tock."],rest:["Aaand stop! Sorry, not sorry.","You didn't really think I'd keep going?","Hands to yourself, naughty.","Bet that was annoying. Good."],restMid:["Aww, are you whining?","Gonna wait. Long time. Or short. Who knows!","I can hear you wanting it back.","Patience is boring, but I'm having fun."],fake:["So close! Surprise, no!","Almost had it! Almost!","Ha! The look on your face!","Tricked you again. I'm good."],fakeAfter:["Aw, don't glare. You'll hurt my feelings.","You walked right into that one.","Next time maybe. Maybe not. Hehe."],build:["Ooh, getting good now...","Higher, higher... maybe a trap!"],chat:["{left} left. Plenty of time to mess with you.","Round {n}. I'm just getting creative.","Admit it, you love being my toy."],close:["Close? Ha! Not on my watch.","Almost? Almost isn't a thing in my game."],demand:["Demanding? Cute. Denied.","You don't make the rules here."]},
+ "Strict Ms. Vance": {hold:["Hold. You do not move without permission.","Feel it. And you will not move.","Stay exactly where I put you.","Eyes down. Hold."],holdMid:["I said hold.","Don't make me repeat myself.","Better. Stay.","Still. That's right."],rest:["Stop. You will wait for me.","Rest. Wanting more is not permission.","Hands still. I decide when you continue.","Do not fidget. Wait."],restMid:["Wait. Patiently.","I see you squirming. Stop that.","You'll continue when I say so.","Silence. Wait."],fake:["Not yet. Did you think you'd earned it?","Back off. I'm not done with you.","That's far enough. Reset."],fakeAfter:["Don't sulk. It's unbecoming.","Next time, ask properly.","You will take it again, and you will do better."],build:["Take it. All of it. Quietly.","Good. A little more."],chat:["{left} remaining. Make it count.","Round {n}. Your discipline is improving. Slightly.","Chin up."],close:["Close is not permission.","You will wait, and you will thank me."],demand:["You don't give orders here.","Negotiating? Interesting. No."]},
+ "Chaos Casper": {hold:["HOLD! No wait, keep holding!","Frozen! Statue time!","Right there! Or not! Surprise!","Do not move! Probably!"],holdMid:["Still holding! Impressive!","Is this boring? Should I change it?","Plot twist incoming. Maybe.","Look at you, vibrating."],rest:["Brakes! Squeal! Done!","Haha, STOP! You look so confused!","Intermission! Snacks! Not for you!","Pause button, hehe!"],restMid:["Is it back yet? Nope!","Wait wait wait... still waiting.","Counting to... uh, forgot.","I think I fell asleep. Kidding!"],fake:["Almost! Not! Wheee!","FAKEOUT! I love that one!","Nearly! Nope! Do it again!","Boop! Denied!"],fakeAfter:["Don't be mad! It was funny!","Your sigh made my day.","I regret nothing!"],build:["Zoom! Zoom!","Going up, going up!"],chat:["{left} left! Or it feels like it!","Round {n}! I lost count twice.","This is the best day ever."],close:["Close?! That's amazing! Not allowed!","Almost! Almost! Almost not!"],demand:["Faster? Slower? Who knows!","You want things? Cute!"]},
+ "Sweet-Talker Sol": {hold:["Right there, don't move.","Mmm, that feels so good right now, doesn't it?","Stay right at the edge for me.","So close, and you're being so good."],holdMid:["That's it, just like that.","You're trembling. I love it.","Stay with me a little longer.","Shh, not yet. You're doing so well."],rest:["Shh, I've got you. Just a pause.","Easing off, sweetheart. Not yet.","Aw, I know it's hard. Breathe.","Let it settle, then we'll go again."],restMid:["You're so patient for me.","Missing it already?","I'm right here. Just waiting.","Tell me how much you want it. I'll listen."],fake:["Oh honey, so close. Not just yet.","Almost, my love. One more time.","Sorry, sweet thing, pulling back.","Shh, no, not yet. You're so good for me."],fakeAfter:["Aww, don't make that face.","I love that frustration. Adorable.","Next time, I promise. Maybe."],build:["Mmm, feel it building for me.","Good, a little more."],chat:["{left} left, and I'm enjoying this.","Round {n}. You're doing wonderfully.","You're so cute when you're desperate."],close:["I know, sweetheart. Wait for me.","Just a little longer, I promise."],demand:["Aw, you want to be in charge? Sweet.","Shh, let me take care of the rest."]},
+ "Relentless Rex": {hold:["Hold it! Don't you dare back out!","Right at the edge. Stay.","Feel that? That's me not letting up. Yet.","Hold. Breathe. Don't blink."],holdMid:["Keep holding.","Don't flinch, it's just starting.","Looking shaky. Hold.","Steady. I'm watching."],rest:["Ten seconds. Don't relax.","Stop. Catch your breath. It won't last.","Back off. And you hate it, right?","Break's short, enjoy it."],restMid:["Ready for more?","Starting back up soon. Brace.","Don't get comfortable.","Almost over. Almost."],fake:["Almost there? Ha. Down you go.","No relief for you. Not that easy.","Cut it right there. Again.","So close. Too bad."],fakeAfter:["Don't give me that look. Earn it.","I'm just getting started with you.","Again. Same thing, harder."],build:["Harder. Now.","Going up. Keep up."],chat:["{left} left. No mercy.","Round {n}. Warm-up's over.","You're still standing? Impressive."],close:["Close doesn't count.","Nope. Not until I'm done."],demand:["I set the pace.","You don't call the shots."]},
+ "Sleepy Sunday": {hold:["Mmm... stay there, just like that...","Right on the edge... all cozy...","Don't move... let it hum...","Slow... hold it... so nice..."],holdMid:["Mm, still holding?","Heavy... warm... nice.","Don't rush... I'm too sleepy to rush.","Stay a bit more... yawn."],rest:["Aaand... slowly... stop.","Mm, drifting off... pause.","Lie back... let it go quiet.","Quiet now... nothing's happening... yet."],restMid:["Still waiting? Me too... zzz.","Ooh, did I doze off?","Hm... what were we doing?","Mmm, just a little longer..."],fake:["Oh... almost... mm, no, nap time.","Whoops... eased off... sleepy...","So close... mm... changed my mind.","Mmm, nope. Too much work. Pause."],fakeAfter:["Aww... don't frown. Cuddle up.","Sorry... too sleepy to finish what I started.","Mm, we'll get there... later."],build:["Floating up... slow and warm...","Mm, a little more... only a little."],chat:["{left} left... so soon... or so long.","Round {n}... or maybe three... zzz.","You're so cute when you wait."],close:["Mm... shh... not yet... sleepy...","Close... mm... close is nice... stay there."],demand:["Mm... too much effort to hurry...","Slower... always slower."]},
+ "Drill Sergeant Dana": {hold:["HOLD! Don't you move, recruit!","At the edge, recruit! You stay!","Locked in! Don't break!","Hold that position! Own it!"],holdMid:["Don't you dare quit!","Eyes up! Stay with it!","Still there, recruit? Good!","Hold! Hold! Hold!"],rest:["HALT! At ease! Don't relax!","Rest, recruit! You earned two seconds!","Stand down! Not done with you!","Hands off! Wait for orders!"],restMid:["Wait for my command!","Quit squirming, recruit!","Back in line!","Standing by!"],fake:["Almost? Negative! Back it down!","Did you think I'd let you? Hah!","Too early, recruit! Pull back!","Not today! Reset!"],fakeAfter:["That sulking won't help, recruit!","You'll get there when I say!","Don't look at me like that!"],build:["Move! Move! Move!","Keep climbing, recruit!"],chat:["{left} to go, recruit!","Round {n}! Don't slack!","Show me what you've got!"],close:["Close doesn't count, recruit!","Request denied!"],demand:["You give orders? Negative!","Keep your opinions to yourself!"]}
+};
+Object.keys(MORE).forEach(k => Object.keys(MORE[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE[k][c]); }));
+const MORE2 = {
+ "Patient Priscilla": {promise:["Last the whole session and I'll reward you beautifully.","Be patient, love, and a lovely reward is waiting at the end.","Every minute you hold is earning you something sweet.","Finish this well and I'll make it worth every second."],watch:["I can see you trying so hard. It's lovely.","Mm, I see every little shiver, love.","I'm watching your breathing. Nice and steady.","I can see exactly what this is doing to you.","Don't hide from me. I see you."],enjoy:["I do enjoy holding the reins like this.","Having you in my hands is such a pleasure.","I could do this all afternoon, honestly.","You're so lovely to control, love.","This is my favorite way to spend a quiet hour."],win:["You lasted every minute. Your reward is well earned, love.","Patience rewarded. You've been wonderful."],start:["Last the whole session and I'll reward you. Promise.","Stay with me to the end, and I'll treat you well."],warn:["One minute. Last it, and your reward is yours.","Almost there, love. The reward is close."],fail:["No reward for you today, love. Next time.","You were so close to your reward."]},
+ "Mischievous Milo": {promise:["Make it to the end and I might be nice. Might!","Last the whole session and there's a prize. Maybe.","Reward at the end if you behave. Big if.","Survive till the buzzer and you get a treat."],watch:["I can see you, you know. Nice squirm.","Ooh, I can see that face you're making.","I'm watching every twitch. Love it.","Pretty sure I can see you blushing.","Eyes on you the whole time. Hehe."],enjoy:["This is the most fun I've had all week.","I could play with you forever.","Look at me, running the show!","You're my favorite toy to tease.","I'm enjoying this way too much."],win:["You made it! Reward time, you earned it.","Survived! Okay, okay, you get your prize."],start:["Last the whole session and there's a reward. Probably.","Make it to the end and I'll be generous."],warn:["One minute! Keep it together and win a prize!","Almost done. Reward's right there. Don't blow it."],fail:["You quit! No prize for you!","So close to the reward. Whoops."]},
+ "Strict Ms. Vance": {promise:["Complete the entire session and you will be rewarded.","Obedience through to the end earns you something.","Do as you're told and your reward will be generous.","The reward is mine to give, and you will earn it."],watch:["I see everything. Don't think I don't.","I'm watching you closely. Every movement.","I can see you struggling to stay still.","Your face tells me everything.","I see you. Sit up straight."],enjoy:["I enjoy having you at my mercy.","Controlling you is a pleasure I don't hide.","You respond so well to instruction.","I'm quite enjoying this, in case you wondered.","Watching you obey is a delight."],win:["You lasted. Your reward has been earned.","Excellent obedience. You get your reward."],start:["Finish the full session and I'll reward you. Fail, and you won't.","Complete this properly and you'll be rewarded."],warn:["One minute. Finish, and you will be rewarded.","Hold on. The reward is nearly yours."],fail:["No reward for quitters.","You forfeited your reward."]},
+ "Chaos Casper": {promise:["Last the whole session and I'll give you a prize! Probably!","Reward at the end! Unless I forget! I won't!","Finish this and WOW, confetti! Maybe a reward too!","Survive and I'll reward you! Chaos promises!"],watch:["I can totally see you! Hi!","I'm watching you like TV!","Wait, I can see your face! Amazing!","Seeing you squirm is the best show.","I see you! You see me? No? Okay!"],enjoy:["This is SO fun, I love my job!","I'm having the best time controlling you!","Press buttons! Watch you react! Perfect!","I could do this FOREVER! Or ten minutes!","You're the best puppet!"],win:["YOU DID IT! Prize time!","Made it to the end! Reward! Confetti!"],start:["Last the whole session and you get a prize!","Make it to the end for a reward! Probably!"],warn:["One minute! Reward is near! Maybe!","Almost there! Prize incoming!"],fail:["You quit?! No prize! Boo!","So close to the prize!"]},
+ "Sweet-Talker Sol": {promise:["Last the whole session and I'll reward you so sweetly.","Stay with me to the end and I'll make it so worth it.","You'll be so well rewarded if you hold on for me.","Be good for me until the end and I'll take care of you."],watch:["I can see you, gorgeous. You look adorable.","I'm watching you, and I love it.","I can see exactly how you feel right now.","Mmm, I see every little reaction.","Look at you. I can't look away."],enjoy:["I love having you like this.","Controlling you is such a treat for me.","I'm enjoying every second of this.","You're so lovely to play with.","Mmm, I could watch you all night."],win:["You lasted for me. Come here, you earned your reward.","Such a good job. Your reward is yours."],start:["Last the whole session and I'll reward you so well.","Stay with me to the end, sweetheart. There's a reward."],warn:["One minute left. Your reward is so close.","Hold on for me, love. Reward's almost yours."],fail:["Aww, no reward this time. Next time, love.","You were so close to your reward."]},
+ "Relentless Rex": {promise:["Last the whole session and you earn a reward. Real one.","No quitting, no excuses, and you get what you earned.","Finish it all and I'll make it worth your while.","Reward's yours if you outlast me."],watch:["I see you. Don't think I miss anything.","I can see you struggling. Keep going.","Eyes on you, always.","I see every flinch.","Can't hide from me."],enjoy:["I like pushing you. A lot.","This is exactly the fun I wanted.","Watching you work for it is great.","You hold up better than I thought. Good.","I love being in control."],win:["You outlasted me. Reward earned. Solid.","Full session done. Take your reward."],start:["Last the whole session and there's a reward waiting.","Outlast me and you get what you want."],warn:["One minute. Don't quit now. Reward's right there.","Dig in. The reward is almost yours."],fail:["No reward for quitters.","So close and you folded."]},
+ "Sleepy Sunday": {promise:["Mmm... last the whole thing and I'll reward you... slowly.","Stay with me to the end... there's something nice for you.","Be good... and there's a cozy reward waiting.","Make it to the end... and I'll treat you... mm."],watch:["Mm, I can see you... all squirmy.","I'm watching you... sleepy eyes... but I see you.","I can see you trying so hard... cute.","Mmm, I see everything... from my pillow.","I can see you... even half asleep."],enjoy:["Mmm... this is my favorite lazy hobby.","I love controlling you... lazy but nice.","This is so relaxing... for me.","Mmm... I could do this all day.","Watching you... best nap alternative."],win:["Mm, you lasted... reward time... you earned it.","All done... mmm... your reward is waiting."],start:["Last the whole session... and there's a reward... mm.","Stay till the end... I'll reward you... sleepily."],warn:["One minute... reward's almost here... mm.","Almost... hang on... reward's coming."],fail:["Mm... no reward... you stopped... next time.","So close... to the reward... mm."]},
+ "Drill Sergeant Dana": {promise:["Complete the full session, recruit, and you'll be rewarded!","Finish the mission and a reward awaits!","No quitting! Reward at the end!","Make it to the end, recruit, and earn your reward!"],watch:["I SEE you, recruit! Don't slack!","Eyes on you every second!","I can see you sweating, recruit!","Can't hide from me, recruit!","I see every twitch!"],enjoy:["I LOVE running you, recruit!","This is my favorite drill!","I'm enjoying this, recruit! Are you?","Commanding you is a pleasure!","Best part of my day!"],win:["Mission complete! Reward granted, recruit!","You earned your reward, recruit! Full session!"],start:["Last the whole session and you get a reward, recruit!","Finish strong and earn your reward!"],warn:["One minute, recruit! Reward within reach!","Hold on! Reward incoming!"],fail:["No reward for deserters, recruit!","You were that close to your reward!"]}
+};
+Object.keys(MORE2).forEach(k => Object.keys(MORE2[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE2[k][c]); }));
+const MORE3 = {
+ "Patient Priscilla": {lowSpeed:["That max speed is so gentle, love. Shall we be a little brave?","Mm, such a timid top speed. Raise it for me?"],shortStroke:["Those strokes are so short. Won't you give me more room?","Let's use more of the length, love."],praise:["Oh, that's bold. Lovely.","Look at you, giving me so much to work with."],nudge:["Still so cautious, love? A bit more won't hurt.","I'd love a little more room to play."],fakeNote:["So many fake-outs, love. I'm going to enjoy this.","Peaks climbing each round? Ambitious. I like it."],hidden:["I haven't decided when we finish, love. Neither have you.","The end is my secret. Stay patient.","How long? Only I know. Isn't that lovely?"]},
+ "Mischievous Milo": {lowSpeed:["That max speed? Adorable. Kinda boring though.","Aww, playing it safe. Crank it up for me?"],shortStroke:["Those strokes are tiny! Give me room to play!","Short strokes? Where's the fun? Widen it!"],praise:["Ooh, braver than I expected!","Look at those settings. Trouble!"],nudge:["Still on baby settings? Come on!","Bump it up, I dare you."],fakeNote:["Fake-outs set that high? You want to be tricked. Love it.","Climbing peaks? Oh, this'll be so mean."],hidden:["I'm not telling when it ends. Guess away!","Could be one minute, could be twenty. Hehe.","No clock for you! My game, my rules."]},
+ "Strict Ms. Vance": {lowSpeed:["That top speed is timid. Raise it. That's an instruction.","You're being cautious. I expect more."],shortStroke:["Your stroke is too short. Lengthen it.","I want the full range. Adjust it."],praise:["Good. Those settings show commitment.","Ambitious. I approve."],nudge:["Still holding back? I told you to raise it.","Settings noted. They are inadequate."],fakeNote:["High fake-out odds. You chose this. Good.","Escalating peaks. You learn fast."],hidden:["You will not know when it ends. That is the point.","The end time is mine alone.","Do not ask when. Just endure."]},
+ "Chaos Casper": {lowSpeed:["That max speed is SO small! Make it bigger!","Whoa, tiny speed! Tiny! Raise it!"],shortStroke:["Strokes are short! Stretch them! Wheee!","Tiny strokes! Giant strokes! Pick giant!"],praise:["WOW, bold settings! I love it!","Those settings! Chaos approves!"],nudge:["Still tiny? Bigger! Bigger!","Raise it! Do it! Please! Chaos wants it!"],fakeNote:["Fake-outs that high?! Perfect chaos!","Peaks climbing? I'll make it WILD!"],hidden:["I don't know when it ends either! Surprise!","Could end now! Could end never! Probably!","No timer! Only vibes!"]},
+ "Sweet-Talker Sol": {lowSpeed:["Sweetheart, that max speed is so shy. Raise it for me?","Mm, can we be a little braver? Raise the top speed?"],shortStroke:["Those strokes are so short, love. Give me more to work with?","Let's use the whole length, honey."],praise:["Mmm, brave settings. I like that.","Look at that, you're giving me so much to play with."],nudge:["Still so gentle on yourself. A little higher, darling?","I'd really like a little more room."],fakeNote:["Lots of fake-outs? You like being teased, don't you.","Climbing peaks? You're asking for it, sweetheart."],hidden:["I'm not telling when it ends, sweetheart. Just trust me.","It ends when I say. Isn't that nice?","Don't worry about the clock. I've got you."]},
+ "Relentless Rex": {lowSpeed:["That top speed is weak. Raise it.","You call that a max? Crank it up."],shortStroke:["Short strokes won't cut it. Go full length.","Widen the stroke. Now."],praise:["Now we're talking. Good settings.","Respect. Those settings can take it."],nudge:["Still low? I said raise it.","Don't hold back. Raise it."],fakeNote:["High fake-out odds? Ruthless. I like it.","Escalating peaks? Good. No slack."],hidden:["No timer. You'll know when I'm done.","Could be soon, could be a long while.","Don't count on an ending. Just endure."]},
+ "Sleepy Sunday": {lowSpeed:["Mm... that top speed is so low... even for me... raise it?","Sleepy but... even I'd go faster. A little?"],shortStroke:["Those strokes are so short... mm... stretch them out?","Longer... mm... more room..."],praise:["Mmm... nice settings... bold.","Oh... that's a lot... I like it."],nudge:["Still low... mm... a little higher?","A bit more... mm... just a bit."],fakeNote:["Lots of fake-outs... mm... I'll nap in between.","Climbing peaks... mm... ambitious for a Sunday."],hidden:["Mm... I forgot when it ends... maybe I'll remember... maybe not.","The end... is a secret... even from me.","No clock... nap time rules."]},
+ "Drill Sergeant Dana": {lowSpeed:["That max speed is pathetic, recruit! Raise it!","Weak top speed, recruit! Crank it!"],shortStroke:["Strokes too short, recruit! Extend them!","Full range, recruit! Make it happen!"],praise:["Outstanding settings, recruit!","Now that's commitment!"],nudge:["Still timid, recruit? Raise it!","Ramp it up, recruit!"],fakeNote:["High fake-out odds, recruit? You chose this!","Escalating peaks! You asked for it!"],hidden:["No clock, recruit! End time classified!","Mission length unknown! Deal with it!","I'll tell you when it's over, recruit!"]}
+};
+Object.keys(MORE3).forEach(k => Object.keys(MORE3[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE3[k][c]); }));
+let midCat = "", midAt = 0, nextPromiseAt = 0, nextNudgeAt = 0, lastCommentAt = 0, lastSugAt = 0, cmTimer = null; const lastSaid = {};
+function addMsg(kind, text){
+  const d = document.createElement("div"); d.className = "msg " + kind; d.textContent = text;
+  const log = $("chatLog"); log.append(d);
+  while (log.children.length > 80) log.removeChild(log.firstChild);
+  log.scrollTop = log.scrollHeight;
+  return d;
+}
+function fillLine(str){
+  const left = Math.max(0, endAt - Date.now());
+  const lt = left >= 90000 ? Math.round(left / 60000) + " minutes" : Math.max(1, Math.round(left / 1000)) + " seconds";
+  return str.replace("{left}", lt).replace("{n}", tz ? Math.max(1, tz.cycle) : 1);
+}
+function say(cat, action){
+  const l = currentPersona && LINES[currentPersona]; if (!l || !l[cat] || !l[cat].length) return;
+  let arr = l[cat];
+  if (runHidden){ const f = arr.filter(x => !x.includes("{left}")); if (f.length) arr = f; }   // don't leak the end time
+  let raw = arr[Math.floor(Math.random() * arr.length)];
+  for (let i = 0; i < 4 && raw === lastSaid[cat] && arr.length > 1; i++) raw = arr[Math.floor(Math.random() * arr.length)];
+  lastSaid[cat] = raw;
+  const line = fillLine(raw), d = addMsg("bot typing", "···");
+  setTimeout(() => {
+    d.className = "msg bot"; d.textContent = line;
+    if (action){
+      const btn = document.createElement("button"); btn.className = "mini"; btn.textContent = action.label;
+      btn.onclick = () => { action.apply(); btn.remove(); addMsg("sys", "Applied: " + action.label); };
+      d.append(btn);
+    }
+    const lg = $("chatLog"); lg.scrollTop = lg.scrollHeight;
+  }, 500 + line.length * 35 + Math.random() * 500);
+}
+function speedAction(){
+  const cur = +$("speed").value, nv = Math.min(100, cur + 15); if (nv <= cur) return null;
+  return {label: "Raise max speed to " + nv + "%", apply: () => { $("speed").value = nv; $("speed").dispatchEvent(new Event("input")); }};
+}
+function strokeAction(){
+  if (+$("smin").value <= 0 && +$("smax").value >= 100) return null;
+  return {label: "Use the full stroke (0–100%)", apply: () => { $("smin").value = 0; $("smin").dispatchEvent(new Event("input")); $("smax").value = 100; $("smax").dispatchEvent(new Event("input")); }};
+}
+function commentSettings(kind){
+  if (!currentPersona) return;
+  const now = Date.now(); if (now - lastCommentAt < 20000) return;
+  const sp = +$("speed").value, rng = +$("smax").value - +$("smin").value;
+  let cat = null, act = null;
+  if (sp < 40){ cat = kind === "nudge" ? "nudge" : "lowSpeed"; act = speedAction(); }
+  else if (rng < 60){ cat = kind === "nudge" ? "nudge" : "shortStroke"; act = strokeAction(); }
+  else if (kind !== "nudge" && (sp >= 80 || rng >= 95)) cat = "praise";
+  if (!cat) return;
+  if (act && now - lastSugAt < 45000){ if (kind === "nudge") return; act = null; }
+  if (act) lastSugAt = now;
+  lastCommentAt = now; say(cat, act);
+}
+function commentLater(){ clearTimeout(cmTimer); cmTimer = setTimeout(() => commentSettings("change"), 1500); }
+function chatPhase(c){
+  if (!running || !runTease) return;
+  const now = Date.now();
+  if (c.k === "build"){ say("build"); midCat = "build"; midAt = now + 14000 + Math.random() * 8000; }
+  else if (c.k === "hold"){ say("hold"); midCat = "holdMid"; midAt = now + 3500 + Math.random() * 3000; }
+  else {
+    if (c.fake){ say("fake"); setTimeout(() => { if (running && runTease && tz && tz.cur === c) say("fakeAfter"); }, 4500 + Math.random() * 3000); }
+    else say("rest");
+    midCat = "restMid"; midAt = now + 9000 + Math.random() * 5000;
+  }
+}
+function midTick(){
+  if (!currentPersona || !runTease) return;
+  const now = Date.now();
+  if (midCat && now > midAt){
+    const r = Math.random();
+    say(midCat === "build" ? (r < 0.25 ? "watch" : r < 0.4 ? "enjoy" : "build") : r < 0.3 ? "watch" : r < 0.5 ? "enjoy" : midCat);
+    midAt = now + (midCat === "holdMid" ? 3500 + Math.random() * 3000 : midCat === "restMid" ? 8000 + Math.random() * 5000 : 14000 + Math.random() * 8000);
+    return;
+  }
+  if (now > nextNudgeAt){ nextNudgeAt = now + 100000 + Math.random() * 60000; commentSettings("nudge"); }
+  if (now > nextPromiseAt){ nextPromiseAt = now + 60000 + Math.random() * 40000; say(runHidden && Math.random() < 0.5 ? "hidden" : "promise"); return; }
+  if (now > nextChatAt && midCat !== "holdMid" && midCat !== "restMid"){ nextChatAt = now + 25000 + Math.random() * 25000; say("chat"); }
+}
+function chatHeader(){
+  $("chatName").textContent = currentPersona || "No personality chosen";
+  const av = $("avatar"); av.textContent = currentPersona ? currentPersona.replace(/^(Strict |Sweet-)/, "").charAt(0) : "?";
+  av.style.background = PCOL[currentPersona] || ""; av.style.color = PCOL[currentPersona] ? "#fff" : "";
+}
+function sendChat(){
+  const box = $("chatIn"), t = box.value.trim(); if (!t) return;
+  box.value = ""; addMsg("me", t);
+  if (!currentPersona){ setTimeout(() => addMsg("sys", "Pick a personality under Tease mode to chat."), 300); return; }
+  say(/reward|prize|treat|earn|deserve/i.test(t) ? "promise" : /can you see|watching|looking at|see me|camera/i.test(t) ? "watch" : /enjoy|having fun|like this|like it/i.test(t) ? "enjoy" : /please|pls|beg|let me|i need/i.test(t) ? "please" : /close|almost|can'?t|about to/i.test(t) ? "close" : /faster|slower|more|harder|less|speed/i.test(t) ? "demand" : "reply");
+}
+$("chatSend").onclick = sendChat;
+$("chatIn").onkeydown = e => { if (e.key === "Enter") sendChat(); };
+$("chatClear").onclick = () => { $("chatLog").innerHTML = ""; };
+currentPersona = store.get("h_persona", "");
+if (currentPersona && !PERSONAS[currentPersona]) currentPersona = "";
+if (currentPersona) $("persona").value = currentPersona;
+chatHeader();
+addMsg("sys", currentPersona ? "Say hi to " + currentPersona + " or start a session." : "Pick a personality under Tease mode. They'll talk as the session runs.");
+
+/* ---------- profiles ---------- */
+const PROF_FIELDS = FIELDS.filter(id => id !== "daily" && id !== "cool" && id !== "failLock");
+function getProfiles(){ return store.get("handyProfiles", {}); }
+function renderProfiles(sel){
+  const box = $("profSel"); box.innerHTML = '<option value="">Choose a profile…</option>';
+  Object.keys(getProfiles()).sort().forEach(k => { const o = document.createElement("option"); o.value = o.textContent = k; box.append(o); });
+  if (sel) box.value = sel;
+}
+$("profSave").onclick = () => {
+  const name = (prompt("Name this profile:", $("profSel").value || "") || "").trim();
+  if (!name) return;
+  const o = {}; PROF_FIELDS.forEach(id => o[id] = $(id).value); Object.keys(BOOLS).filter(id => id !== "failCharge").forEach(id => o[id] = $(id).checked);
+  const all = getProfiles(); all[name] = o; store.set("handyProfiles", all); renderProfiles(name);
+};
+$("profDel").onclick = () => {
+  const k = $("profSel").value; if (!k || !confirm('Delete profile "' + k + '"?')) return;
+  const all = getProfiles(); delete all[k]; store.set("handyProfiles", all); renderProfiles();
+};
+$("profSel").onchange = () => {
+  const o = getProfiles()[$("profSel").value]; if (!o) return;
+  if (running || paused){ status("Stop the session before loading a profile.", true); $("profSel").value = ""; return; }
+  PROF_FIELDS.forEach(id => { if (id in o) $(id).value = o[id]; });
+  Object.keys(BOOLS).filter(id => id !== "failCharge").forEach(id => { if (id in o){ $(id).checked = o[id]; store.set("h_"+id, o[id]); } });
+  $("speedVal").textContent = $("speed").value; $("sminVal").textContent = $("smin").value; $("smaxVal").textContent = $("smax").value;
+  saveInputs(); showIdle(); status("Loaded profile: " + $("profSel").value);
+};
+$("exportLog").onclick = () => {
+  const rows = ["start,seconds,ended"].concat(getLog().map(e => new Date(e.t).toISOString() + "," + e.ran + "," + (e.how === "timeup" ? "full" : e.how === "failed" ? "failed" : "early")));
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([rows.join("\n")], {type: "text/csv"}));
+  a.download = "handy-sessions.csv"; a.click(); URL.revokeObjectURL(a.href);
+};
+
+document.querySelectorAll("details").forEach(d => {
+  const k = "h_open_" + d.querySelector("summary").textContent;
+  const v = store.get(k, null); if (v !== null) d.open = v;
+  d.addEventListener("toggle", () => store.set(k, d.open));
+});
+$("failCharge").addEventListener("change", () => { renderLog(); refreshLock(); });
+["teaseOn", "tRandom"].forEach(id => $(id).addEventListener("change", () => { if (!running && !paused) showIdle(); }));
+renderProfiles(); renderChips(); showIdle(); renderLog(); refreshLock(); setInterval(refreshLock, 1000); drawSpark();
+</script>
+</body>
+</html>
