@@ -62,7 +62,10 @@
   .msg.typing{opacity:.6;letter-spacing:2px}
   .msg .mini{display:block;margin:6px 0 0}
   :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-  .simPill{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border-radius:999px;background:#e0a43a;color:#2a1a00;font-size:.75rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;border:0;font-family:inherit}
+  .simPill{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border-radius:999px;background:#e0a43a;color:#2a1a00;font-size:.75rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+  .teaseBtn.simBtn{border-color:#e0a43a;color:#b47c12}
+  .teaseBtn.simBtn[aria-pressed="true"]{background:#e0a43a;color:#2a1a00}
+  .subHead{display:block;margin:18px 0 0;padding-top:12px;border-top:1px solid var(--line);font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
   .simBox{display:flex;align-items:center;gap:12px;margin:10px auto 0;padding:8px 12px;border:1px dashed var(--line);border-radius:12px;max-width:240px}
   .simRail{position:relative;width:18px;height:110px;border-radius:9px;background:var(--ring-bg);flex:none}
   .simBand{position:absolute;left:0;right:0;border-radius:9px;background:color-mix(in srgb, var(--accent) 25%, transparent)}
@@ -139,7 +142,7 @@
 </head>
 <body>
 <main>
-  <header class="top"><h1>Handy timer</h1><button type="button" id="simPill" class="simPill" hidden title="Simulation mode is on: nothing is sent to the device. Click to open Session settings.">Simulation</button><nav id="menu" aria-label="Settings menu"><button type="button" data-key="session" aria-pressed="false">Session</button><button type="button" data-key="tease" aria-pressed="false">Tease</button><button type="button" data-key="speed" aria-pressed="false">Speed</button><button type="button" data-key="customize" aria-pressed="false">Customize</button><button type="button" data-key="lube" aria-pressed="false">Lube</button><button type="button" data-key="control" aria-pressed="false">Handover</button><button type="button" data-key="limits" aria-pressed="false">Limits</button><button type="button" data-key="profiles" aria-pressed="false">Profiles</button><button type="button" data-key="log" aria-pressed="false">Log</button></nav></header>
+  <header class="top"><h1>Handy timer</h1><span id="simPill" class="simPill" hidden title="Simulation mode is on: nothing is sent to the device.">Simulation</span><nav id="menu" aria-label="Settings menu"><button type="button" data-key="session" aria-pressed="false">Session</button><button type="button" data-key="tease" aria-pressed="false">Tease</button><button type="button" data-key="personas" aria-pressed="false">Personas</button><button type="button" data-key="speed" aria-pressed="false">Speed</button><button type="button" data-key="customize" aria-pressed="false">Customize</button><button type="button" data-key="lube" aria-pressed="false">Lube</button><button type="button" data-key="limits" aria-pressed="false">Limits</button><button type="button" data-key="profiles" aria-pressed="false">Profiles</button><button type="button" data-key="log" aria-pressed="false">Log</button></nav></header>
   <div class="stage">
     <section class="card lounge" aria-label="The Lounge">
       <div class="chatHead"><strong>The Lounge</strong><span class="hint" id="roomCount" style="margin:0"></span><button class="mini" id="chatClear" style="margin:0 0 0 auto">Clear chat</button></div>
@@ -168,7 +171,9 @@
     <button id="stop" disabled>Stop</button>
   </div>
   <input type="checkbox" id="teaseOn" hidden>
-  <button type="button" id="teaseBtn" class="teaseBtn" aria-pressed="false" title="Tease settings (personality, timing, limits) are in the Tease menu">Tease mode: off</button>
+  <button type="button" id="teaseBtn" class="teaseBtn" aria-pressed="false" title="Tease timing is in the Tease menu. Personalities are in the Personas menu.">Tease mode: off</button>
+  <input type="checkbox" id="simOn" hidden>
+  <button type="button" id="simBtn" class="teaseBtn simBtn" aria-pressed="false" title="Runs everything as normal but sends nothing to the Handy. No connection key needed. Simulated sessions aren't logged and don't count toward limits or lockouts.">Simulation: off</button>
 
   <p id="status" role="status">Enter your key and press Start.</p>
   <div class="liveSet"><strong class="lsHead">Live settings</strong>
@@ -193,9 +198,7 @@
     <div class="drawerHead"><strong id="drawerTitle"></strong><button class="mini" id="drawerClose" style="margin:0">Close</button></div>
     <div id="drawerBody">
     <section class="panel" data-key="session" hidden>
-  <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:0"><input type="checkbox" id="simOn"> Simulation mode (no device needed)</label>
-  <p class="hint">Runs everything as normal but sends nothing to the Handy. An on-screen slider shows what the device would be doing. No connection key needed. Simulated sessions aren't added to the log and don't count toward your daily limit, cooldown or lockouts, but an active limit or lockout still blocks Start.</p>
-  <label for="key">Connection key</label>
+  <label for="key" style="margin-top:0">Connection key</label>
   <input id="key" type="text" autocomplete="off" spellcheck="false" placeholder="Your Handy connection key">
 
   <label>Presets</label>
@@ -206,24 +209,43 @@
     <div><label for="sec">Seconds</label><input id="sec" type="number" min="0" max="59" value="0"></div>
   </div>
 
-
   <div class="opts">
     <label><input type="checkbox" id="beepEnd" checked> Beep when time is up</label>
     <label><input type="checkbox" id="beepWarn" checked> Short beep at 1 minute left</label>
     <label><input type="checkbox" id="awake" checked> Keep screen awake while running</label>
   </div>
+
+  <strong class="subHead">Tease session options</strong>
+  <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:10px"><input type="checkbox" id="tStop" checked> Fully stop during rests (otherwise drop to the low speed)</label>
+  <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:8px"><input type="checkbox" id="tRandom"> Random session length with a hidden timer</label>
+  <div class="grid" id="sessRandFields"></div>
+  <p class="hint">Picks a length between the shortest and longest each time you press Start. The clock and ring are hidden, the one-minute warning is off, and the minutes and seconds boxes are ignored. Your daily limit still caps it.</p>
     </section>
     <section class="panel" data-key="tease" hidden>
-    <p class="hint">Acts like someone else is running it: it builds up over a random time, holds, then backs off, then repeats with new random numbers each cycle. Your speed slider is the maximum, and the low and peak values below are percentages of it. While it's on, it replaces the ramp and pattern. The stroke range, speed cap, end slowdown, and time limits still apply. While a tease session is running, stopping or pausing counts as failing it: the device still stops right away, but you're locked out as if the time had run out.</p>
+    <p class="hint" style="margin-top:0">Acts like someone else is running it: it builds up over a random time, holds, then backs off, then repeats with new random numbers each cycle. Your speed slider is the maximum, and the low and peak values below are percentages of it. While it's on, it replaces the ramp and pattern. The stroke range, speed cap, end slowdown, and time limits still apply. While a tease session is running, stopping or pausing counts as failing it: the device still stops right away, but you're locked out as if the time had run out.</p>
+    <p class="hint">Picking a personality under Personas fills these in. Stopping during rests and the random hidden length are under Session.</p>
+    <div class="grid" id="teaseFields"></div>
+  </section>
+    <section class="panel" data-key="personas" hidden>
+    <label for="persona" style="margin-top:0">Personality in control</label>
     <div class="inline">
       <select id="persona" aria-label="Tease personality"><option value="">Pick a personality…</option></select>
       <button class="mini" id="persRandom" style="margin:0">Surprise me</button>
     </div>
-    <p class="hint" id="persDesc">Picking one fills in the tease settings below and turns tease mode on. You can still adjust any value afterward.</p>
-    <div class="grid" id="teaseFields"></div>
-    <label style="display:flex;gap:8px;align-items:center;color:var(--ink)"><input type="checkbox" id="tStop" checked> Fully stop during rests (otherwise drop to the low speed)</label>
-    <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:8px"><input type="checkbox" id="tRandom"> Random session length with a hidden timer</label>
-    <p class="hint">Picks a length between the shortest and longest above each time you press Start. The clock and ring are hidden, the one-minute warning is off, and the minutes and seconds boxes are ignored. Your daily limit still caps it.</p>
+    <p class="hint" id="persDesc">Picking one fills in the Tease timing and turns tease mode on. You can still adjust any value afterward.</p>
+    <label for="nickCustom">Nickname override (blank = each personality uses her own)</label>
+    <input id="nickCustom" type="text" maxlength="24" autocomplete="off" placeholder="e.g. pet, subject, rookie">
+
+    <strong class="subHead">Behaviour</strong>
+    <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:10px"><input type="checkbox" id="interactOn"> Personalities ask questions and make demands</label>
+    <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:6px"><input type="checkbox" id="stormOn"> Personalities storm off if you refuse too many demands (each has her own tolerance)</label>
+    <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:6px"><input type="checkbox" id="privOn"> Personalities can ask to go private (locks the room, gets more intense)</label>
+    <div class="grid" id="persFields"></div>
+    <p class="hint">Whoever is in control keeps a target speed and stroke length and nudges you toward it 5 points at a time. Each demand has Do it, Match her target and Refuse buttons. Refusing makes her more insistent. Questions come with answer buttons, and a few of the answers change what happens next (a rest, a hold, a fresh build-up).</p>
+
+    <strong class="subHead">Giving up control</strong>
+    <p class="hint">The one in control may give it up when asked, and may also hand it over on her own after a few minutes. These numbers set how likely each one is to give it up. All default low.</p>
+    <div class="grid" id="yieldFields"></div>
   </section>
     <section class="panel" data-key="speed" hidden>
     <div class="row">
@@ -241,22 +263,15 @@
   </section>
     <section class="panel" data-key="customize" hidden>
     <div class="grid" id="customFields"></div>
+    <strong class="subHead">Lounge</strong>
     <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:10px"><input type="checkbox" id="fansOn"> Show a simulated audience in the lounge</label>
     <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:6px"><input type="checkbox" id="crowdBoost"> Audience raises intensity in tease mode</label>
-    <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:6px"><input type="checkbox" id="interactOn"> Personalities ask questions and make demands</label>
-    <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:6px"><input type="checkbox" id="stormOn"> Personalities storm off if you refuse too many demands (each has her own tolerance)</label>
-    <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:6px"><input type="checkbox" id="privOn"> Personalities can ask to go private (locks the room, gets more intense)</label>
-    <p class="hint">Whoever is in control keeps a target speed and stroke length and nudges you toward it 5 points at a time. Each demand has Do it, Match her target and Refuse buttons. Refusing makes her more insistent. Questions come with answer buttons, and a few of the answers change what happens next (a rest, a hold, a fresh build-up).</p>
     <p class="hint">A bigger crowd makes personalities challenge each other more and fight harder to keep control. With the second box on, it also nudges tease sessions: peaks up to 20% higher (never above your speed slider), rests up to 30% shorter, and up to 10 points more fake-outs.</p>
-    <label for="nickCustom">Nickname override (blank = each personality uses her own)</label>
-    <input id="nickCustom" type="text" maxlength="24" autocomplete="off" placeholder="e.g. pet, subject, rookie">
+    <div class="row"><div><label for="aimCtl">Control requests aimed at the one in control instead of you (%)</label><input id="aimCtl" type="number" min="0" max="100" value="35"></div></div>
+    <p class="hint">Personalities who want control either ask you (you get Grant / Deny buttons) or ask the one in control directly (she decides, using her number under Personas).</p>
+    <strong class="subHead">Display</strong>
     <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:10px"><input type="checkbox" id="hideClock"> Hide the countdown while running</label>
     <p class="hint">Press Esc at any time to stop immediately. The speed cap limits every mode.</p>
-  </section>
-    <section class="panel" data-key="control" hidden>
-    <p class="hint" style="margin-top:0">Personalities can ask you for control, or ask the one in control directly. The one in control may give it up, and may also hand it over on her own after a few minutes. These numbers set how likely each one is to give it up. All default low.</p>
-    <div class="row"><div><label for="aimCtl">Requests aimed at the controller instead of you (%)</label><input id="aimCtl" type="number" min="0" max="100" value="35"></div></div>
-    <div class="row" id="yieldFields" style="flex-wrap:wrap"></div>
   </section>
     <section class="panel" data-key="lube" hidden>
     <label style="display:flex;gap:8px;align-items:center;color:var(--ink)"><input type="checkbox" id="lubeOn" checked> Lube breaks in tease sessions</label>
@@ -321,6 +336,9 @@ function mkFields(boxId, list){
   });
 }
 mkFields("teaseFields", TEASE); mkFields("customFields", CUSTOM);
+// these live in other panels: random length under Session, persona behaviour under Personas
+["rMin","rMax"].forEach(id => $("sessRandFields").append($(id).parentElement));
+["privMin","lifeRate"].forEach(id => $("persFields").append($(id).parentElement));
 const FIELDS = ["speed","smin","smax","min","sec","ramp","slow","pattern","period","daily","cool","failLock","aimCtl","lubeEvery","lubeGap","lubePark","nickCustom"].concat(TEASE.map(t=>t[0]), CUSTOM.map(c=>c[0]));
 FIELDS.forEach(id => { const v = store.get("h_"+id, null); if (v !== null) $(id).value = v; });
 const BOOLS = {beepEnd:true, beepWarn:true, awake:true, teaseOn:false, tStop:true, hideClock:false, tRandom:false, failCharge:false, lubeOn:true, lubeReg:true, fansOn:true, crowdBoost:true, interactOn:true, stormOn:true, privOn:true, simOn:false};
@@ -338,6 +356,7 @@ function setButtons(){
   $("pause").textContent = paused ? "Resume" : (running && runTease ? "Pause (fails)" : "Pause");
   $("stop").textContent = (running || paused) && runTease ? "Stop (fails)" : "Stop";
   $("teaseOn").disabled = running || paused || starting;
+  $("simOn").disabled = running || paused || starting; if (typeof syncSimBtn === "function") syncSimBtn();
   $("stop").disabled = !(running || paused || starting);
 }
 function label(sec){ return sec % 60 === 0 ? (sec/60)+" min" : fmt(sec*1000); }
@@ -436,7 +455,8 @@ function simUI(){
   if (!running && !paused && !starting && /^(Enter your key|Ready\.|Simulation mode)/.test($("status").textContent)) status(on ? "Simulation mode: press Start. Nothing is sent to the device." : "Enter your key and press Start.");
 }
 $("simOn").addEventListener("change", () => { if (running || paused || starting){ $("simOn").checked = !$("simOn").checked; store.set("h_simOn", $("simOn").checked); status("Stop the session before switching simulation mode.", true); return; } sim.playing = false; sim.target = null; simUI(); });
-$("simPill").onclick = () => showPanel("session");
+function syncSimBtn(){ const b = $("simBtn"), c = $("simOn"); b.setAttribute("aria-pressed", c.checked ? "true" : "false"); b.textContent = "Simulation: " + (c.checked ? "on" : "off"); b.disabled = c.disabled; }
+$("simBtn").onclick = () => { const c = $("simOn"); if (c.disabled) return; c.checked = !c.checked; c.dispatchEvent(new Event("change")); syncSimBtn(); };
 requestAnimationFrame(simFrame);
 async function sendStop(){
   for (let i = 0; i < 5; i++){
@@ -1925,8 +1945,8 @@ const RENAMED = {"Mischievous Milo":"Mischievous Mia","Chaos Casper":"Chaos Cass
 currentPersona = RENAMED[currentPersona] || currentPersona;
 if (currentPersona && !PERSONAS[currentPersona]) currentPersona = "";
 if (currentPersona) $("persona").value = currentPersona;
-simUI();
-addMsg("sys", "Welcome to the lounge. Personalities drop in and out. Pick one under Tease mode to hand over control, or wait for someone to tempt you.");
+simUI(); syncSimBtn();
+addMsg("sys", "Welcome to the lounge. Personalities drop in and out. Pick one under Personas to hand over control, or wait for someone to tempt you.");
 try { if (!store.get("lubeParkMig", 0)){ if (+$("lubePark").value === 0) $("lubePark").value = 20; store.set("lubeParkMig", 1); saveInputs(); } } catch(e){}
 if (currentPersona) enterRoom(currentPersona, true); else renderRoom();
 
@@ -1962,7 +1982,7 @@ $("exportLog").onclick = () => {
   a.download = "handy-sessions.csv"; a.click(); URL.revokeObjectURL(a.href);
 };
 
-const PANELNAMES = {session:"Session", tease:"Tease mode", speed:"Speed profile", customize:"Customize", lube:"Lube break", control:"Handing over control", limits:"Limits", profiles:"Profiles", log:"Session log"};
+const PANELNAMES = {session:"Session", tease:"Tease mode", speed:"Speed profile", customize:"Customize", lube:"Lube break", personas:"Personas", limits:"Limits", profiles:"Profiles", log:"Session log"};
 let openPanel = null;
 function showPanel(k){
   openPanel = (openPanel === k) ? null : k;

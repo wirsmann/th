@@ -38,9 +38,9 @@ Speed updates are throttled: a new value is only sent when it changes by 3 or mo
 
 ## Simulation mode
 
-Turn on **Simulation mode** at the top of the Session panel to run without a Handy. Everything works as normal: timers, tease mode, personalities, demands, lube breaks and the graph. The difference is that every API call is answered by a fake device in the page, and nothing goes over the network.
+Press the **Simulation** button under the Tease mode button on the dashboard to run without a Handy. Everything works as normal: timers, tease mode, personalities, demands, lube breaks and the graph. The difference is that every API call is answered by a fake device in the page, and nothing goes over the network.
 
-- An orange **Simulation** badge appears next to the title. Click it to open the Session panel.
+- The button turns orange and a **Simulation** badge appears next to the title.
 - A "Simulated Handy" box under the speed readout shows the stroke range, a moving position marker, the current state (stroking, stopped, moving to park, parked) and strokes per second.
 - No connection key is needed.
 - Simulated sessions aren't written to the log, and they don't count toward the daily limit, cooldown or lockouts. An active limit or lockout still blocks Start.
@@ -52,7 +52,13 @@ The fake device roughly follows the real one: speed is a share of the maximum tr
 
 - **The Lounge** (left) has the chat log, the crowd/hype bar, who's in the room, and an activity graph. The graph shows speed and stroke length colored by who was in control, with markers for events like moves, fake-outs, refusals, lube breaks and private shows.
 - **Timer** (right) has the countdown dial, Start / Pause / Stop, the tease mode toggle, live speed and stroke sliders, and "Your actions". Any choice that needs an answer appears there, never inside chat messages.
-- **Settings drawer** (top menu) has these panels: Session, Tease, Speed, Customize, Lube, Handover, Limits, Profiles and Log.
+- **Settings drawer** (top menu) has these panels:
+  - **Session:** connection key, length and presets, beeps, and tease session options (fully stop during rests, random hidden length).
+  - **Tease:** tease timing (low and peak speeds, build, hold and rest times, special moves, fake-outs, escalation).
+  - **Personas:** which personality is in control, nickname override, behaviour (questions and demands, storming off, private shows, real-life interruptions) and how readily each one gives up control.
+  - **Speed:** ramp, pattern and end slowdown for regular sessions.
+  - **Customize:** percentages for ramp and slowdown, speed cap, start delay, beep volume, the lounge audience, how control requests are aimed, and hiding the clock.
+  - **Lube**, **Limits**, **Profiles** and **Log**.
 
 ## Modes
 
@@ -76,13 +82,13 @@ There are 22 personalities. Their settings live in `index.html`:
 
 Their lines live in `dialogue.js` (see below).
 
-Picking a personality fills in the tease settings and turns tease mode on. "Surprise me" picks one at random and jitters her settings slightly.
+Picking a personality (Personas panel) fills in the Tease timing and turns tease mode on. "Surprise me" picks one at random and jitters her settings slightly.
 
 ### Lounge interactions (toggles under Customize)
 - A simulated audience that grows with activity and can nudge tease intensity. The audience only joins and leaves. It never chats.
 - Personalities ask questions and make speed and stroke demands, with Do it / Match her target / Refuse buttons.
 - A personality storms off after too many refusals.
-- Personalities challenge each other for control (Grant / Deny / Deny all) and can hand control over on their own (Handover menu).
+- Personalities challenge each other for control (Grant / Deny / Deny all) and can hand control over on their own (Personas panel).
 - Private shows lock the room and raise the intensity.
 - Real-life interruptions (cat on the keyboard, doorbell, phone call, dozing off, passing out) come with wake-up or hand-off options.
 
@@ -157,5 +163,6 @@ The session log can be exported as CSV.
 
 ## Changelog
 
+- **2026-10-11:** New Personas panel (personality picker, nickname, behaviour, giving up control) replaces Handover. Tease session options moved to Session. Simulation is now a dashboard button.
 - **2026-10-11:** Added simulation mode for running without a device.
 - **2026-10-11:** Moved all dialogue into `dialogue.js` (`index.html` went from 427 KB to 148 KB). Removed the unused audience chat code (`fanSay`, `fansReact`, `FANPOOL`, `FMAP`) and the `fanReply` lines it used. The audience still joins and leaves silently, as before.
