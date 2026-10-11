@@ -82,6 +82,8 @@
   #hypeBar{height:100%;width:2%;background:linear-gradient(90deg,var(--accent),#e0a43a,#d9534f);transition:width .8s}
   #hypeLbl{margin:0;white-space:nowrap}
   .quote{font-size:.76rem;color:var(--muted);border-left:3px solid var(--line);padding:1px 8px;margin:2px 0 4px;cursor:pointer;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  #lubeNow{width:100%;margin-top:10px;background:var(--ring-bg);color:var(--ink)}
+  #lubeNow:disabled{opacity:.45;cursor:not-allowed}
   .liveSet{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);text-align:left}
   .liveSet .lsHead{font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
   .liveSet .row{gap:10px}
@@ -142,6 +144,7 @@
     <button id="pause" disabled>Pause</button>
     <button id="stop" disabled>Stop</button>
   </div>
+  <button type="button" id="lubeNow" disabled>Lube break</button>
 
   <p id="status" role="status">Enter your key and press Start.</p>
   <div class="liveSet"><strong class="lsHead">Live settings</strong>
@@ -211,6 +214,7 @@
     <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:10px"><input type="checkbox" id="fansOn"> Show a simulated audience in the lounge</label>
     <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:6px"><input type="checkbox" id="crowdBoost"> Audience raises intensity in tease mode</label>
     <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:6px"><input type="checkbox" id="interactOn"> Personalities ask questions and make demands</label>
+    <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:6px"><input type="checkbox" id="stormOn"> Personalities storm off if you refuse too many demands (each has her own tolerance)</label>
     <p class="hint">Whoever is in control keeps a target speed and stroke length and nudges you toward it 5 points at a time. Each demand has Do it, Match her target and Refuse buttons. Refusing makes her more insistent. Questions come with answer buttons, and a few of the answers change what happens next (a rest, a hold, a fresh build-up).</p>
     <p class="hint">A bigger crowd makes personalities challenge each other more and fight harder to keep control. With the second box on, it also nudges tease sessions: peaks up to 20% higher (never above your speed slider), rests up to 30% shorter, and up to 10 points more fake-outs.</p>
     <label for="nickCustom">Nickname override (blank = each personality uses her own)</label>
@@ -223,6 +227,7 @@
     <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:6px"><input type="checkbox" id="lubeReg" checked> Also in regular sessions</label>
     <div class="row">
       <div><label for="lubeEvery">Break after (min of running)</label><input id="lubeEvery" type="number" min="1" max="999" value="15"></div>
+      <div><label for="lubeGap">Manual break button: allowed every (min, 0 = any time)</label><input id="lubeGap" type="number" min="0" max="999" value="10"></div>
       <div><label for="lubePark">Park position (%, 0 = bottom)</label><input id="lubePark" type="number" min="0" max="100" value="0"></div>
     </div>
     <p class="hint">After that much running time, the session pauses, the device stops and moves to the park position, and the clock freezes. Press Resume when you're ready. Breaks don't count as failing, and they don't use up session time. No break starts in the last minute and a half. If 0% parks at the wrong end for you, try 100.</p>
@@ -280,9 +285,9 @@ function mkFields(boxId, list){
   });
 }
 mkFields("teaseFields", TEASE); mkFields("customFields", CUSTOM);
-const FIELDS = ["speed","smin","smax","min","sec","ramp","slow","pattern","period","daily","cool","failLock","lubeEvery","lubePark","nickCustom"].concat(TEASE.map(t=>t[0]), CUSTOM.map(c=>c[0]));
+const FIELDS = ["speed","smin","smax","min","sec","ramp","slow","pattern","period","daily","cool","failLock","lubeEvery","lubeGap","lubePark","nickCustom"].concat(TEASE.map(t=>t[0]), CUSTOM.map(c=>c[0]));
 FIELDS.forEach(id => { const v = store.get("h_"+id, null); if (v !== null) $(id).value = v; });
-const BOOLS = {beepEnd:true, beepWarn:true, awake:true, teaseOn:false, tStop:true, hideClock:false, tRandom:false, failCharge:false, lubeOn:true, lubeReg:true, fansOn:true, crowdBoost:true, interactOn:true};
+const BOOLS = {beepEnd:true, beepWarn:true, awake:true, teaseOn:false, tStop:true, hideClock:false, tRandom:false, failCharge:false, lubeOn:true, lubeReg:true, fansOn:true, crowdBoost:true, interactOn:true, stormOn:true};
 Object.keys(BOOLS).forEach(id => { $(id).checked = store.get("h_"+id, BOOLS[id]); $(id).onchange = () => store.set("h_"+id, $(id).checked); });
 let presets = store.get("handyPresets", [300, 600, 900, 1800]);   // seconds
 
@@ -587,6 +592,22 @@ setInterval(() => {
   if (onBreak && currentPersona && Date.now() > breakChatAt){ breakChatAt = Date.now() + 45000 + Math.random() * 30000; say("lubeWait"); }
 }, 1000);
 
+/* manual lube break button: greyed out unless allowed */
+function lubeNowState(){
+  const b = $("lubeNow"); if (!b) return;
+  const left = running ? endAt - Date.now() : 0, wait = manualOkAt - Date.now();
+  let why = "";
+  if (onBreak) why = "On a break";
+  else if (!running) why = "Available while a session is running";
+  else if (wait > 0) why = "Available in " + fmt(wait);
+  else if (!runHidden && left < 30000) why = "Too close to the end";
+  b.disabled = !!why;
+  b.textContent = why && running && !onBreak && wait > 0 ? "Lube break (" + fmt(wait) + ")" : "Lube break";
+  b.title = why || "Pause and park the device so you can lube up";
+}
+$("lubeNow").onclick = () => { lubeNowState(); if (!$("lubeNow").disabled) startBreak(); };
+setInterval(lubeNowState, 500);
+
 /* ---------- run control ---------- */
 async function start(){
   refreshLock(); if (locked) return;
@@ -622,7 +643,7 @@ async function start(){
   status((capped ? "Running. Shortened to " + (runHidden ? "fit" : fmt(ms) + " to fit") + " your daily limit." : "Running.") + (runHidden ? " The end time is hidden." : "") + (runTease ? " Stopping or pausing now counts as failing this session." : ""));
   nextChatAt = Date.now() + 20000 + Math.random() * 20000;
   nextPromiseAt = Date.now() + 40000 + Math.random() * 30000;
-  onBreak = false; nextBreakAt = n("lubeEvery", 15) * 60000;
+  onBreak = false; nextBreakAt = n("lubeEvery", 15) * 60000; manualOkAt = Date.now() + n("lubeGap", 10) * 60000;
   midCat = runTease ? "build" : ""; midAt = Date.now() + 14000 + Math.random() * 8000;
   if (runTease) say("start");
   if (runTease){
@@ -697,7 +718,7 @@ async function togglePause(){
       else devStopped = true;
     } catch(e){ setButtons(); return status(e.message, true); }
     endAt = Date.now() + remaining; running = true; paused = false;
-    if (onBreak){ onBreak = false; nextBreakAt = (total - remaining) + n("lubeEvery", 15) * 60000; say("lubeResume"); }
+    if (onBreak){ onBreak = false; manualOkAt = Date.now() + n("lubeGap", 10) * 60000; nextBreakAt = (total - remaining) + n("lubeEvery", 15) * 60000; say("lubeResume"); }
     setButtons(); lockScreen(); status("Running.");
     tick = setInterval(update, 250); update();
   }
@@ -833,7 +854,7 @@ const MORE4 = {
  "Drill Sergeant Dana": {lubeBreak:["HALT, recruit! Lube up if you need to, then press resume!","At ease! Reapply lube if needed, then resume, recruit!","Break, recruit! Lube up if dry! Resume on my order!"],lubeWait:["Break is ticking, recruit! Resume when ready!","Lube up and fall back in, recruit!","Don't make me wait, recruit!"],lubeResume:["Back in formation, recruit!","Resuming! Move it!"]}
 };
 Object.keys(MORE4).forEach(k => Object.keys(MORE4[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE4[k][c]); }));
-let onBreak = false, breakBusy = false, nextBreakAt = 0, breakChatAt = 0;
+let manualOkAt = 0, onBreak = false, breakBusy = false, nextBreakAt = 0, breakChatAt = 0;
 let midCat = "", midAt = 0, nextPromiseAt = 0, nextNudgeAt = 0, lastCommentAt = 0, lastSugAt = 0, cmTimer = null; const lastSaid = {};
 function pushMsg(d){
   const log = $("chatLog"); log.append(d);
@@ -2257,11 +2278,114 @@ function acceptDemand(d, exact){
     if (running && currentPersona === p && Math.abs(t2.speed - (+$("speed").value)) < 3 && Math.abs(t2.len - curLen()) < 3 && !hit[p]){ hit[p] = Date.now(); sayAs(p, "dmdHit"); }
   }, 4500);
 }
+const TOL = {"Patient Priscilla": 5, "Mischievous Mia": 3, "Strict Ms. Vance": 2, "Chaos Cassie": 4, "Sweet-Talker Sienna": 4, "Relentless Roxy": 3, "Sleepy Sadie": 5, "Drill Sergeant Dana": 2, "Mocking Margot": 3};
+const MORE10 = {
+ "Patient Priscilla": {
+  "dmdWarn": [
+   "I've asked nicely, {nick}. I won't ask many more times.",
+   "My patience has an end, {nick}. Careful."
+  ],
+  "dmdLeave": [
+   "I'm done being ignored, {nick}. Someone else can have you."
+  ]
+ },
+ "Mischievous Mia": {
+  "dmdWarn": [
+   "Hey! No more nos, {nick}, or I'm out!",
+   "Last chance before I stop playing, {nick}!"
+  ],
+  "dmdLeave": [
+   "Fine! I'm taking my toys and going home, {nick}!"
+  ]
+ },
+ "Strict Ms. Vance": {
+  "dmdWarn": [
+   "One more refusal, {nick}, and I'm leaving.",
+   "I do not repeat myself a third time, {nick}."
+  ],
+  "dmdLeave": [
+   "Insubordination. I'm leaving, {nick}. Someone else can deal with you."
+  ]
+ },
+ "Chaos Cassie": {
+  "dmdWarn": [
+   "You keep saying NO, {nick}! I'm getting bored!",
+   "Say no one more time, {nick}, I DARE you!"
+  ],
+  "dmdLeave": [
+   "BORED! BYE! Somebody else take over, {nick}!"
+  ]
+ },
+ "Sweet-Talker Sienna": {
+  "dmdWarn": [
+   "You're really hurting my feelings, {nick}...",
+   "Please stop saying no, {nick}. I'm trying to be nice."
+  ],
+  "dmdLeave": [
+   "That's it. I'm done being sweet to you, {nick}. Bye."
+  ]
+ },
+ "Relentless Roxy": {
+  "dmdWarn": [
+   "Refuse me again, {nick}, and I'm gone.",
+   "You're running out of chances, {nick}."
+  ],
+  "dmdLeave": [
+   "I don't waste time on a {nick} who won't listen. I'm out."
+  ]
+ },
+ "Sleepy Sadie": {
+  "dmdWarn": [
+   "Mm... you keep saying no... I'm getting grumpy, {nick}...",
+   "Last no... {nick}... then I'm going back to bed..."
+  ],
+  "dmdLeave": [
+   "Mm... too tired for this... I'm leaving, {nick}... bye..."
+  ]
+ },
+ "Drill Sergeant Dana": {
+  "dmdWarn": [
+   "ONE MORE REFUSAL AND I'M OUT OF HERE, {nick}!",
+   "WARNING, {nick}! I do not tolerate disobedience!"
+  ],
+  "dmdLeave": [
+   "DISMISSED! I'm done with you, {nick}! Someone else take over!"
+  ]
+ },
+ "Mocking Margot": {
+  "dmdWarn": [
+   "Keep refusing, {nick}. I'm getting bored of you.",
+   "Say no again, {nick}. See what happens."
+  ],
+  "dmdLeave": [
+   "You're no fun when you refuse, {nick}. I'm off."
+  ]
+ }
+};
+Object.keys(MORE10).forEach(k => Object.keys(MORE10[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE10[k][c]); }));
+Object.assign(HYPE, {dmdWarn:4,dmdLeave:6}); Object.assign(FMAP, {dmdWarn:"defy",dmdLeave:"defy"});
+function stormOff(p){
+  if (currentPersona !== p || !room.includes(p)) return;
+  defiance[p] = 0;
+  sayAs(p, "dmdLeave");
+  setTimeout(() => {
+    if (currentPersona !== p) return;
+    const others = room.filter(x => x !== p), pool = Object.keys(PERSONAS).filter(x => x !== p && !room.includes(x));
+    const rep = others.length ? pickOne(others) : pickOne(pool);
+    if (running && runTease){ enterRoom(rep, true); switchController(rep); setTimeout(() => sayAs(rep, "takeover", null, {other: p}), 1200); }
+    leaveRoom(p, true);
+  }, 3200);
+}
 function refuseDemand(d, ignored){
   if (demand !== d) return; demand = null;
   const p = d.p; defiance[p] = (defiance[p] || 0) + 1;
   const mine = ignored ? null : addMsg("me", "No.");
   sayAs(p, "dmdNo", null, mine ? {replyTo: mine} : {});
+  const tol = TOL[p] || 3;
+  if ($("stormOn").checked && running && runTease){
+    if (defiance[p] >= tol){ setTimeout(() => stormOff(p), 2600); return; }
+    if (defiance[p] === tol - 1) setTimeout(() => { if (currentPersona === p && room.includes(p)) sayAs(p, "dmdWarn"); }, 2600);
+  }
   excite = Math.min(60, excite + 3); nextDemandAt = Date.now() + demandInterval(p) * 0.6; nextAskAt = Math.max(nextAskAt, Date.now() + 15000);
 }
 
