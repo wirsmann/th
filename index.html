@@ -84,6 +84,9 @@
   .quote{font-size:.76rem;color:var(--muted);border-left:3px solid var(--line);padding:1px 8px;margin:2px 0 4px;cursor:pointer;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
   #lubeNow{width:100%;margin-top:10px;padding:10px;border:0;border-radius:10px;font:inherit;font-weight:600;cursor:pointer;background:var(--ring-bg);color:var(--ink)}
   #lubeNow:disabled{opacity:.45;cursor:not-allowed}
+  .teaseBtn{width:100%;margin-top:10px;padding:10px;border-radius:10px;border:2px solid var(--accent);background:transparent;color:var(--accent);font:inherit;font-weight:700;cursor:pointer}
+  .teaseBtn[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+  .teaseBtn:disabled{opacity:.5;cursor:not-allowed}
   .liveSet{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);text-align:left}
   .liveSet .lsHead{font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
   .liveSet .row{gap:10px}
@@ -152,6 +155,8 @@
     <button id="pause" disabled>Pause</button>
     <button id="stop" disabled>Stop</button>
   </div>
+  <input type="checkbox" id="teaseOn" hidden>
+  <button type="button" id="teaseBtn" class="teaseBtn" aria-pressed="false" title="Tease settings (personality, timing, limits) are in the Tease menu">Tease mode: off</button>
 
   <p id="status" role="status">Enter your key and press Start.</p>
   <div class="liveSet"><strong class="lsHead">Live settings</strong>
@@ -195,7 +200,6 @@
   </div>
     </section>
     <section class="panel" data-key="tease" hidden>
-    <label style="display:flex;gap:8px;align-items:center;color:var(--ink)"><input type="checkbox" id="teaseOn"> Turn on tease mode</label>
     <p class="hint">Acts like someone else is running it: it builds up over a random time, holds, then backs off, then repeats with new random numbers each cycle. Your speed slider is the maximum, and the low and peak values below are percentages of it. While it's on, it replaces the ramp and pattern. The stroke range, speed cap, end slowdown, and time limits still apply. While a tease session is running, stopping or pausing counts as failing it: the device still stops right away, but you're locked out as if the time had run out.</p>
     <div class="inline">
       <select id="persona" aria-label="Tease personality"><option value="">Pick a personality…</option></select>
@@ -801,6 +805,10 @@ async function togglePause(){
 }
 
 /* ---------- wiring ---------- */
+function syncTeaseBtn(){ const b = $("teaseBtn"), c = $("teaseOn"); if (!b || !c) return; b.setAttribute("aria-pressed", c.checked ? "true" : "false"); b.textContent = "Tease mode: " + (c.checked ? "on" : "off"); b.disabled = c.disabled; }
+$("teaseBtn").onclick = () => { const c = $("teaseOn"); if (c.disabled) return; c.checked = !c.checked; c.dispatchEvent(new Event("change", {bubbles: true})); syncTeaseBtn(); };
+$("teaseOn").addEventListener("change", syncTeaseBtn);
+setInterval(syncTeaseBtn, 300); syncTeaseBtn();
 $("start").onclick = start;
 $("pause").onclick = togglePause;
 $("stop").onclick = () => {
@@ -1314,7 +1322,30 @@ function leaveRoom(p, quiet){
   if (!quiet) sayAs(p, "leave");
   setTimeout(() => { room = room.filter(x => x !== p); lastLeft[p] = Date.now(); renderRoom(); addMsg("sys", SHORT[p] + " left the lounge."); followersLeave(p); }, quiet ? 200 : 2800);
 }
+function manualRun(){ return running && !runTease && !onBreak && !privateShow; }
+function takeOverManual(p){
+  if (!manualRun() || !SHORT[p]) return;
+  setPersonaFields(p, true);
+  $("teaseOn").checked = true; store.set("h_teaseOn", true); saveInputs();
+  runTease = true; runHidden = false;
+  currentPersona = p; store.set("h_persona", p); $("persona").value = p;
+  enterRoom(p, true); resetTease(); lastVelAt = 0; renderRoom();
+  $("persDesc").textContent = PERSONAS[p].d + targetNote(p);
+  addMsg("sys", SHORT[p] + " took control from you. Stopping or pausing now counts as failing this session.");
+  status("Control passed to " + SHORT[p] + ". Stopping or pausing now counts as failing this session.");
+  nextNudgeAt = Date.now() + 90000 + Math.random() * 50000;
+  react("claimed", p);
+  challenge = null; nextChallengeAt = Date.now() + 30000 + Math.random() * 20000; Object.keys(attempts).forEach(k => attempts[k] = 0);
+  demand = null; ask = null; removeOffer("demand"); removeOffer("ask"); nextAskAt = Date.now() + 40000 + Math.random() * 20000; nextDemandAt = Date.now() + 65000 + Math.random() * 20000;
+  Object.keys(defiance).forEach(k => defiance[k] = 0); lifeEv = null; lifeNextAt = 0; removeOffer("lifeCard"); ctlWho = ""; removeOffer("priv"); denyAll = false; removeOffer("denyAllNote");
+  Object.keys(creep).forEach(k => delete creep[k]); Object.keys(hit).forEach(k => hit[k] = 0);
+  midCat = "build"; midAt = Date.now() + 8000;
+  setTimeout(() => { if (running && currentPersona === p) say("start"); }, 600);
+  setTimeout(() => { if (running && currentPersona === p) commentSettings("start"); }, 4500);
+  setButtons();
+}
 function giveControl(p){
+  if (manualRun()){ takeOverManual(p); return; }
   if (busyNow()){ addMsg("sys", "Finish the current session first."); return; }
   if (locked){ addMsg("sys", "You're locked out right now. Check the status line."); return; }
   if (!$("key").value.trim()){ addMsg("sys", "Enter your connection key first."); status("Enter your connection key first.", true); return; }
@@ -1322,7 +1353,7 @@ function giveControl(p){
   applyPersona(p, false);
   start();
 }
-const giveOffer = (p, label, ttl) => ({id: "give:" + p, who: p, text: "wants control", color: PCOL[p], ttl: ttl || 40000, onGone: why => { if (why === "expired") addMsg("sys", SHORT[p] + " got tired of waiting."); }, valid: () => !busyNow() && !locked, choices: [{label: label, kind: "primary", apply: () => giveControl(p)}, {label: "Not now", kind: "ghost", apply: () => addMsg("me", "Not now.")}]});
+const giveOffer = (p, label, ttl) => ({id: "give:" + p, who: p, text: "wants control", color: PCOL[p], ttl: ttl || 40000, onGone: why => { if (why === "expired") addMsg("sys", SHORT[p] + " got tired of waiting."); }, valid: () => (!busyNow() || manualRun()) && !locked, choices: [{label: label, kind: "primary", note: manualRun() ? "Switches to tease mode. She takes over right away, and stopping or pausing counts as failing." : undefined, apply: () => giveControl(p)}, {label: "Not now", kind: "ghost", apply: () => addMsg("me", "Not now.")}]});
 function pickKind(p, event){
   const w = Object.assign({}, REACT[p] || {banter: 1});
   if (event === "claimed") delete w.askControl;
@@ -1350,7 +1381,7 @@ function react(event, actor){
   });
 }
 function doTempt(p){
-  if (!room.includes(p) || busyNow()) return;
+  if (!room.includes(p) || (busyNow() && !manualRun())) return;
   lastTempter = p;
   sayAs(p, "tempt", giveOffer(p, "Give " + SHORT[p] + " control", 45000));
   react("dare", p);
@@ -3702,6 +3733,17 @@ Object.assign(HYPE, {idleRoom:0,idleRun:0,idleLong:0});
 /* ---------- idle: personas comment when you haven't done anything for a while ---------- */
 var lastActAt = Date.now(), nextIdleAt = 0, idleStreak = 0;
 ["pointerdown", "keydown", "input", "touchstart"].forEach(ev => document.addEventListener(ev, () => { lastActAt = Date.now(); idleStreak = 0; nextIdleAt = 0; }, true));
+const __M = {"Patient Priscilla": ["You're running it yourself, {nick}? That's alright. But I think you'd like it more if you let me take my time with you.", "All by yourself today. Whenever you're ready, I'd love to take over and slow things right down.", "Mm, manual. Sweet. Imagine how nice it would feel with me setting the pace, though."], "Mischievous Mia": ["Aw, you're driving this yourself? Where's the fun in that? Hand it over and I'll show you what you're missing!", "Manual mode, {nick}? Boring! I'd have you squirming by now. Just saying.", "You know you'd have more fun if I was in charge. I'd keep you guessing the whole time."], "Strict Ms. Vance": ["I see you're operating this yourself, {nick}. Unsupervised. That will not do. Give me control.", "Manual. How indulgent. You would perform far better under my direction.", "You have been setting your own pace. Disappointing. Let me take over and do it properly."], "Chaos Cassie": ["Wait, YOU'RE doing it? Nooo, that's so predictable! Give me the wheel, it'll be a disaster!", "Manual mode?! Nothing is happening! Let me in, I'll make it SO much weirder!", "Boooring, you're the boss of you. Hand it over, I have ideas! Terrible ones!"], "Sweet-Talker Sienna": ["Doing it yourself tonight, handsome? I could make it feel so much better, you know. Just say the word.", "Mm, I like watching you, but I'd have so much more fun if you let me take care of you.", "Manual's fine, sweetheart. But if you let me drive, I promise you'll enjoy it more."], "Relentless Roxy": ["You're running it yourself? Weak. Give me control and I'll show you what a real pace is.", "Manual mode, {nick}? You're holding back. Hand it over and I won't go easy.", "Self-serve? Pathetic. I'd have you panting already. Give me the controls."], "Sleepy Sadie": ["Mm... you're doing it yourself? So much work... let me do it... I'm good at slow...", "Manual... that sounds tiring, {nick}... let me take over... I'll make it nice and lazy...", "You look busy... mm... why not give it to me... I'd have so much more fun..."], "Drill Sergeant Dana": ["You're running this yourself, {nick}?! Unacceptable! Give me control and I'll whip you into shape!", "Manual mode?! No discipline at all! Hand it over, I'll run this properly!", "Self-directed training? Not on my watch! Give me the controls, now!"], "Mocking Margot": ["Running it yourself, {nick}? Of course you are. Too scared to let someone else see how pathetic you get.", "Manual mode. So you can stop whenever you want and pretend you're in control. Cute. Let me take it.", "I'd have so much more fun with you if you weren't driving. Hand it over and embarrass yourself properly."], "Cuckolding Veronica": ["Doing it yourself, {nick}? Typical. You'd enjoy it more if I ran it and talked about my boyfriend the whole time.", "Manual mode. Fine, but we both know you're happier when I'm in control and you're just watching.", "Look at you, driving all by yourself. Give it to me, {nick}. I'll make it humiliating, the way you like it."], "Counting Camille": ["I notice you're in manual mode, {nick}. Without a schedule your data is meaningless. Allow me to take over.", "Manual operation. No structure, no counts. I would enjoy this much more with the controls.", "Self-directed again. I could log every second and make it far more interesting. Give me control."], "Gambling Gigi": ["Playing it safe by yourself, high roller? Hand me the controls and let's see if you feel lucky.", "Manual mode? No stakes, no thrill. Deal me in and I'll make it a game worth playing.", "Betting on yourself? Bold. But I'd have way more fun running the table. Give me the controls."], "Goddess Isadora": ["You run this yourself, mortal? How unfitting. Surrender the controls and I shall guide you properly.", "Manual mode. A mortal governing his own pleasure. Let me take over, and be grateful.", "I would enjoy ruling over this far more than watching you fumble. Offer me control, devotee."], "Bratty Bella": ["Ugh, you're doing it yourself? That's so boring! Give it to me, I'll be way more fun!", "Manual mode? No! I want to play! Let me have control, pleeease, I'll be so good at it!", "You never let me do anything fun. Hand over the controls or I'll pout. I'm serious."], "Hypnotic Helena": ["Mm, doing it yourself, sleepyhead? Why not let go, give it to me, and just drift for a while...", "Manual... so much effort... Let it go, let me take over... and sink a little deeper...", "I'd love to take care of this for you. Just give me the controls... and relax..."], "Coach Colleen": ["You're running manual, champ? Let me coach you! Hand me control and we'll hit a personal best!", "Self-directed training? Nice effort, but you'd perform better with a coach. Give me control!", "Manual mode! Good start, rookie, but let's turn it into a proper workout. Controls to me!"], "Doctor Delphine": ["I see you're operating this yourself, patient. That limits what I can observe. May I take over?", "Manual mode. Interesting. I'd learn so much more if I ran the examination. Give me control.", "Self-administered, hm? Unsupervised treatment is unreliable. Allow me to take over, and let's see how you react."], "Jealous Juliet": ["You're doing it yourself? No. Give it to me, darling. I'd treat you so much better than your own hand.", "Manual mode? Why would you want anyone but me running this? Hand me the controls.", "I don't like watching you do this alone. I'd have so much more fun with you. Give me control."], "Queen Valentina": ["You presume to rule this yourself, peasant? I decree you surrender control to me at once.", "Manual mode? Unacceptable. A subject should be directed by his queen. Offer me the controls.", "I would enjoy commanding this far more than watching. Kneel, and give me control."], "Pouty Penelope": ["You're doing it yourself? That's no fun, honey... I want a turn, please? I'd be really good.", "Manual mode again? Pout. I'd make it so much nicer, sweetie. Give me control?", "Aww, you didn't pick me. I'd have so much more fun, I promise. Pretty please?"], "Flirty Fiona": ["Running it yourself, handsome? Where's the fun in that? Let me take over, I'll keep you on your toes.", "Manual mode, trouble? I could make it way more interesting. Give me the controls and find out.", "Mm, solo? I'd definitely enjoy this more with my hands on the controls. Just saying."], "Stage-Manager Simone": ["You're running manual, talent? No cues, no blocking. Give me the controls and I'll make it a show.", "Manual mode. Sloppy production. Let me call the cues and the audience will love it.", "Self-directed again, star? I'd have so much more fun running this like a proper production. Hand it over."]};
+Object.assign(HYPE, {manual:2});
+var nextManualAt = 0, manualSeen = false, lastManualBy = "";
+function manualTick(now){
+  if (!(running && !runTease && !onBreak) || privateShow){ manualSeen = false; return; }
+  if (!manualSeen){ manualSeen = true; nextManualAt = now + 30000 + Math.random() * 30000; return; }
+  if (now < nextManualAt || !room.length) return;
+  nextManualAt = now + 75000 + Math.random() * 60000;
+  const pool = room.filter(x => x !== lastManualBy), p = pickOne(pool.length ? pool : room); lastManualBy = p;
+  sayAs(p, "manual", giveOffer(p, "Give " + SHORT[p] + " control", 60000));
+}
 function idleTick(now){
   if (onBreak || lifeEv || starting) return;
   const quiet = now - lastActAt;
@@ -8428,6 +8470,7 @@ LINES["Stage-Manager Simone"] = {
  ]
 };
 
+Object.keys(__M).forEach(k => { LINES[k].manual = __M[k]; });
 /* ---------- interactions: targets, demands, questions ---------- */
 let suppressUntil = 0;
 const STEP = 5;
@@ -8688,7 +8731,7 @@ function askRandomQuestion(){
   const r = Math.random(); askQuestion(p, r < 0.4 ? "feel" : r < 0.75 ? "next" : "like");
 }
 function interactTick(now, busy){
-  privTick(now); lifeTick(now); giveUpTick(now); idleTick(now);
+  privTick(now); lifeTick(now); giveUpTick(now); idleTick(now); manualTick(now);
   if (!$("interactOn").checked) return;
   if (teaseNow() && !challenge && !ask && !demand){
     if (now > nextAskAt){ nextAskAt = now + (65000 + Math.random() * 45000) / Math.sqrt(aggr()); askRandomQuestion(); }
