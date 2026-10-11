@@ -227,17 +227,22 @@
   <p class="hint">In tease mode, the one in control can now and then narrow the stroke to this width in the middle of your range and run it at your full speed slider, so it buzzes instead of strokes. Then she rests and your range comes back. How often and how long is set per personality under Personas.</p>
     </section>
     <section class="panel" data-key="tease" hidden>
+    <label for="activePersona" style="margin-top:0">Active persona</label>
+    <div class="inline">
+      <select id="activePersona" aria-label="Active persona"><option value="">Pick a personality…</option></select>
+      <button class="mini" id="persRandom" style="margin:0">Surprise me</button>
+    </div>
+    <p class="hint">Picking one loads her tease timing from the Personas panel, turns tease mode on and puts her in the lounge.</p>
     <p class="hint" style="margin-top:0">Acts like someone else is running it: it builds up over a random time, holds, then backs off, then repeats with new random numbers each cycle. Your speed slider is the maximum, and the low and peak values below are percentages of it. While it's on, it replaces the ramp and pattern. The stroke range, speed cap, end slowdown, and time limits still apply. While a tease session is running, stopping or pausing counts as failing it: the device still stops right away, but you're locked out as if the time had run out.</p>
-    <p class="hint">Picking a personality under Personas fills these in. Stopping during rests and the random hidden length are under Session.</p>
+    <p class="hint">The active persona fills these in from her settings under Personas. Stopping during rests and the random hidden length are under Session.</p>
     <div class="grid" id="teaseFields"></div>
   </section>
     <section class="panel" data-key="personas" hidden>
     <label for="persona" style="margin-top:0">Personality in control</label>
     <div class="inline">
-      <select id="persona" aria-label="Tease personality"><option value="">Pick a personality…</option></select>
-      <button class="mini" id="persRandom" style="margin:0">Surprise me</button>
+      <select id="persona" aria-label="Personality to configure"><option value="">Pick a personality…</option></select>
     </div>
-    <p class="hint" id="persDesc">Picking one fills in the Tease timing and turns tease mode on. You can still adjust any value afterward.</p>
+    <p class="hint" id="persDesc">Pick a personality to see and change her settings. To put her in the lounge, use Active persona under Tease mode.</p>
 
     <strong class="subHead" id="persCfgHead">Her settings</strong>
     <p class="hint" id="persCfgNone">Pick a personality above to see and change her settings.</p>
@@ -970,10 +975,12 @@ const PERSONAS = {
   "Flirty Fiona": {d:"Playful and teasing. Winks through everything, loves a light fake-out, and never lets it get too serious.", low:20, pmin:55, pmax:80, bmin:20, bmax:45, hmin:3, hmax:9, rmin:5, rmax:14, fake:30, esc:3, stop:false},
   "Stage-Manager Simone": {d:"Runs it like a production. Cues, call times, and blocking notes, with a running eye on the audience and the show's pacing.", low:20, pmin:60, pmax:90, bmin:25, bmax:50, hmin:4, hmax:10, rmin:8, rmax:18, fake:25, esc:5, stop:true}
 };
-Object.keys(PERSONAS).forEach(k => { const o = document.createElement("option"); o.value = o.textContent = k; $("persona").append(o); });
+Object.keys(PERSONAS).forEach(k => ["persona", "activePersona"].forEach(id => { const o = document.createElement("option"); o.value = o.textContent = k; $(id).append(o); }));
+/* the Personas dropdown configures; the Tease panel's dropdown is the active persona. Both follow whoever is in control. */
+function setActive(n){ $("persona").value = n || ""; $("activePersona").value = n || ""; }
 function applyPersona(name, jitter){
   if (!PERSONAS[name]) return; const p = personaCfg(name);
-  if (running || paused || starting){ status("Stop the session before changing personality.", true); $("persona").value = currentPersona || ""; renderPersCfg(); return; }
+  if (running || paused || starting){ status("Stop the session before changing personality.", true); setActive(currentPersona); renderPersCfg(); return; }
   const j = v => jitter ? Math.round(v * (0.85 + Math.random() * 0.3)) : v;
   const pmin = Math.min(100, j(p.pmin)), bmin = j(p.bmin), hmin = j(p.hmin), rmin = j(p.rmin);
   const vals = {tLow: Math.min(100, j(p.low)), tPeakMin: pmin, tPeakMax: Math.min(100, Math.max(pmin, j(p.pmax))),
@@ -985,12 +992,19 @@ function applyPersona(name, jitter){
   saveInputs(); resetTease();
   $("persDesc").textContent = p.d + targetNote(name) + (jitter ? " (randomized a little)" : "");
   status("Tease mode on: " + name + ".");
-  currentPersona = name; store.set("h_persona", name); enterRoom(name, true); chatHeader(); say("greet");
+  currentPersona = name; store.set("h_persona", name); setActive(name); enterRoom(name, true); chatHeader(); say("greet");
 }
-$("persona").onchange = () => { applyPersona($("persona").value, false); renderPersCfg(); };
+/* Tease panel: the active persona. Picking one loads her timing and turns tease on. */
+$("activePersona").onchange = () => { const name = $("activePersona").value; if (name) applyPersona(name, false); else setActive(currentPersona); renderPersCfg(); };
 $("persRandom").onclick = () => {
   const keys = Object.keys(PERSONAS), k = keys[Math.floor(Math.random() * keys.length)];
-  $("persona").value = k; applyPersona(k, true); renderPersCfg();
+  applyPersona(k, true); renderPersCfg();
+};
+/* Personas panel: the dropdown only configures. It shows her settings and never changes the lounge or tease timing. */
+$("persona").onchange = () => {
+  const name = $("persona").value;
+  if (name && PERSONAS[name]) $("persDesc").textContent = PERSONAS[name].d + targetNote(name);
+  renderPersCfg();
 };
 
 /* ---------- personality chat ---------- */
@@ -1326,7 +1340,7 @@ function takeOverManual(p){
   setPersonaFields(p, true);
   $("teaseOn").checked = true; store.set("h_teaseOn", true); saveInputs();
   runTease = true; runHidden = false;
-  currentPersona = p; store.set("h_persona", p); $("persona").value = p; renderPersCfg();
+  currentPersona = p; store.set("h_persona", p); setActive(p); renderPersCfg();
   enterRoom(p, true); resetTease(); lastVelAt = 0; renderRoom();
   $("persDesc").textContent = PERSONAS[p].d + targetNote(p);
   addMsg("sys", SHORT[p] + " took control from you. Stopping or pausing now counts as failing this session.");
@@ -1347,7 +1361,6 @@ function giveControl(p){
   if (busyNow()){ addMsg("sys", "Finish the current session first."); return; }
   if (locked){ addMsg("sys", "You're locked out right now. Check the status line."); return; }
   if (!simOn() && !$("key").value.trim()){ addMsg("sys", "Enter your connection key first."); status("Enter your connection key first.", true); return; }
-  $("persona").value = p;
   applyPersona(p, false); renderPersCfg();
   start();
 }
@@ -1453,7 +1466,7 @@ function setPersonaFields(name, jitter){
 function switchController(name){
   if (!SHORT[name] || name === currentPersona) return;
   setPersonaFields(name, true);
-  currentPersona = name; store.set("h_persona", name); $("persona").value = name; renderPersCfg();
+  currentPersona = name; store.set("h_persona", name); setActive(name); renderPersCfg();
   enterRoom(name, true); renderRoom(); resetTease(); lastVelAt = 0;
   $("persDesc").textContent = PERSONAS[name].d + targetNote(name);
   addMsg("sys", SHORT[name] + " took control.");
@@ -1997,7 +2010,7 @@ currentPersona = store.get("h_persona", "");
 const RENAMED = {"Mischievous Milo":"Mischievous Mia","Chaos Casper":"Chaos Cassie","Sweet-Talker Sol":"Sweet-Talker Sienna","Relentless Rex":"Relentless Roxy","Sleepy Sunday":"Sleepy Sadie"};
 currentPersona = RENAMED[currentPersona] || currentPersona;
 if (currentPersona && !PERSONAS[currentPersona]) currentPersona = "";
-if (currentPersona) $("persona").value = currentPersona;
+if (currentPersona) setActive(currentPersona);
 renderPersCfg();
 simUI(); syncSimBtn();
 addMsg("sys", "Welcome to the lounge. Personalities drop in and out. Pick one under Personas to hand over control, or wait for someone to tempt you.");
