@@ -15,6 +15,8 @@ Keep the two files in the same folder. `index.html` loads `dialogue.js` with a p
 
 ## Requirements
 
+You don't need a device to try it out (see Simulation mode below). For real sessions you need:
+
 - A Handy device that's online and connected to Wi-Fi
 - Its **connection key** (from the Handy app or onboarding)
 - A modern browser (Chrome, Firefox, Edge or Safari)
@@ -33,6 +35,18 @@ All control goes through the Handy REST API v2:
   - `PUT /hdsp/xpvp` moves the device slowly to the park position.
 
 Speed updates are throttled: a new value is only sent when it changes by 3 or more points, and at most every 1.5 seconds. Stop commands retry up to 5 times. Closing the tab sends a `keepalive` stop request.
+
+## Simulation mode
+
+Turn on **Simulation mode** at the top of the Session panel to run without a Handy. Everything works as normal: timers, tease mode, personalities, demands, lube breaks and the graph. The difference is that every API call is answered by a fake device in the page, and nothing goes over the network.
+
+- An orange **Simulation** badge appears next to the title. Click it to open the Session panel.
+- A "Simulated Handy" box under the speed readout shows the stroke range, a moving position marker, the current state (stroking, stopped, moving to park, parked) and strokes per second.
+- No connection key is needed.
+- Simulated sessions aren't written to the log, and they don't count toward the daily limit, cooldown or lockouts. An active limit or lockout still blocks Start.
+- You can't switch simulation on or off while a session is running.
+
+The fake device roughly follows the real one: speed is a share of the maximum travel speed, so a shorter stroke range gives more strokes per second.
 
 ## Layout
 
@@ -126,6 +140,7 @@ The session log can be exported as CSV.
 |---|---|
 | `store` / `FIELDS` / `BOOLS` | load and save settings |
 | `api`, `sendStop`, `sendStroke` | Handy API calls |
+| `simApi`, `simFrame`, `simUI` | simulation mode: fake device and its on-screen display |
 | `newCycle`, `queueMove`, `teaseValue` | tease engine |
 | `velocityAt`, `pushVelocity` | the final speed for each tick, with caps and throttling |
 | `drawGraph`, `sample`, `mark` | activity graph |
@@ -142,4 +157,5 @@ The session log can be exported as CSV.
 
 ## Changelog
 
+- **2026-10-11:** Added simulation mode for running without a device.
 - **2026-10-11:** Moved all dialogue into `dialogue.js` (`index.html` went from 427 KB to 148 KB). Removed the unused audience chat code (`fanSay`, `fansReact`, `FANPOOL`, `FMAP`) and the `fanReply` lines it used. The audience still joins and leaves silently, as before.

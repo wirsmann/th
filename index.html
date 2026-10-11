@@ -62,6 +62,13 @@
   .msg.typing{opacity:.6;letter-spacing:2px}
   .msg .mini{display:block;margin:6px 0 0}
   :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  .simPill{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border-radius:999px;background:#e0a43a;color:#2a1a00;font-size:.75rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;border:0;font-family:inherit}
+  .simBox{display:flex;align-items:center;gap:12px;margin:10px auto 0;padding:8px 12px;border:1px dashed var(--line);border-radius:12px;max-width:240px}
+  .simRail{position:relative;width:18px;height:110px;border-radius:9px;background:var(--ring-bg);flex:none}
+  .simBand{position:absolute;left:0;right:0;border-radius:9px;background:color-mix(in srgb, var(--accent) 25%, transparent)}
+  .simPuck{position:absolute;left:-5px;width:28px;height:10px;margin-bottom:-5px;border-radius:5px;background:var(--accent);box-shadow:0 1px 4px rgba(0,0,0,.3)}
+  .simInfo{font-size:.8rem;color:var(--muted);line-height:1.4}
+  .simInfo b{color:var(--ink);font-variant-numeric:tabular-nums}
   #status{min-height:1.5em;margin:14px 0 0;font-size:.9rem;color:var(--muted);text-align:center}
   #status.err{color:var(--stop)}
 
@@ -132,7 +139,7 @@
 </head>
 <body>
 <main>
-  <header class="top"><h1>Handy timer</h1><nav id="menu" aria-label="Settings menu"><button type="button" data-key="session" aria-pressed="false">Session</button><button type="button" data-key="tease" aria-pressed="false">Tease</button><button type="button" data-key="speed" aria-pressed="false">Speed</button><button type="button" data-key="customize" aria-pressed="false">Customize</button><button type="button" data-key="lube" aria-pressed="false">Lube</button><button type="button" data-key="control" aria-pressed="false">Handover</button><button type="button" data-key="limits" aria-pressed="false">Limits</button><button type="button" data-key="profiles" aria-pressed="false">Profiles</button><button type="button" data-key="log" aria-pressed="false">Log</button></nav></header>
+  <header class="top"><h1>Handy timer</h1><button type="button" id="simPill" class="simPill" hidden title="Simulation mode is on: nothing is sent to the device. Click to open Session settings.">Simulation</button><nav id="menu" aria-label="Settings menu"><button type="button" data-key="session" aria-pressed="false">Session</button><button type="button" data-key="tease" aria-pressed="false">Tease</button><button type="button" data-key="speed" aria-pressed="false">Speed</button><button type="button" data-key="customize" aria-pressed="false">Customize</button><button type="button" data-key="lube" aria-pressed="false">Lube</button><button type="button" data-key="control" aria-pressed="false">Handover</button><button type="button" data-key="limits" aria-pressed="false">Limits</button><button type="button" data-key="profiles" aria-pressed="false">Profiles</button><button type="button" data-key="log" aria-pressed="false">Log</button></nav></header>
   <div class="stage">
     <section class="card lounge" aria-label="The Lounge">
       <div class="chatHead"><strong>The Lounge</strong><span class="hint" id="roomCount" style="margin:0"></span><button class="mini" id="chatClear" style="margin:0 0 0 auto">Clear chat</button></div>
@@ -148,6 +155,10 @@
     <div class="time" id="time">10:00</div>
   </div>
   <div id="now" class="hint" style="text-align:center"></div>
+  <div class="simBox" id="simBox" hidden aria-label="Simulated device">
+    <div class="simRail"><div class="simBand" id="simBand"></div><div class="simPuck" id="simPuck"></div></div>
+    <div class="simInfo"><b>Simulated Handy</b><br><span id="simState">Stopped</span><br>Position <b id="simPos">0</b>%<br><span id="simRate"></span></div>
+  </div>
   
   <div id="live" aria-live="polite" style="position:absolute;left:-9999px"></div>
 
@@ -182,6 +193,8 @@
     <div class="drawerHead"><strong id="drawerTitle"></strong><button class="mini" id="drawerClose" style="margin:0">Close</button></div>
     <div id="drawerBody">
     <section class="panel" data-key="session" hidden>
+  <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:0"><input type="checkbox" id="simOn"> Simulation mode (no device needed)</label>
+  <p class="hint">Runs everything as normal but sends nothing to the Handy. An on-screen slider shows what the device would be doing. No connection key needed. Simulated sessions aren't added to the log and don't count toward your daily limit, cooldown or lockouts, but an active limit or lockout still blocks Start.</p>
   <label for="key">Connection key</label>
   <input id="key" type="text" autocomplete="off" spellcheck="false" placeholder="Your Handy connection key">
 
@@ -290,7 +303,7 @@ const C = 2 * Math.PI * 44;
 let endAt = 0, total = 0, tick = null, running = false, paused = false, remaining = 0, warned = false;
 let audioCtx = null, wakeLock = null, lastVel = null, lastVelAt = 0, locked = false;
 let currentPersona = "", nextChatAt = 0;
-let runHidden = false, runTease = false, holdStatusUntil = 0, starting = false, cancelStart = false, devStopped = false, curSpeed = 0, hist = [], lastSample = 0, tz = null;
+let runSim = false, runHidden = false, runTease = false, holdStatusUntil = 0, starting = false, cancelStart = false, devStopped = false, curSpeed = 0, hist = [], lastSample = 0, tz = null;
 
 /* ---------- saved settings ---------- */
 const store = {
@@ -310,7 +323,7 @@ function mkFields(boxId, list){
 mkFields("teaseFields", TEASE); mkFields("customFields", CUSTOM);
 const FIELDS = ["speed","smin","smax","min","sec","ramp","slow","pattern","period","daily","cool","failLock","aimCtl","lubeEvery","lubeGap","lubePark","nickCustom"].concat(TEASE.map(t=>t[0]), CUSTOM.map(c=>c[0]));
 FIELDS.forEach(id => { const v = store.get("h_"+id, null); if (v !== null) $(id).value = v; });
-const BOOLS = {beepEnd:true, beepWarn:true, awake:true, teaseOn:false, tStop:true, hideClock:false, tRandom:false, failCharge:false, lubeOn:true, lubeReg:true, fansOn:true, crowdBoost:true, interactOn:true, stormOn:true, privOn:true};
+const BOOLS = {beepEnd:true, beepWarn:true, awake:true, teaseOn:false, tStop:true, hideClock:false, tRandom:false, failCharge:false, lubeOn:true, lubeReg:true, fansOn:true, crowdBoost:true, interactOn:true, stormOn:true, privOn:true, simOn:false};
 Object.keys(BOOLS).forEach(id => { $(id).checked = store.get("h_"+id, BOOLS[id]); $(id).onchange = () => store.set("h_"+id, $(id).checked); });
 let presets = store.get("handyPresets", [300, 600, 900, 1800]);   // seconds
 
@@ -370,6 +383,7 @@ document.addEventListener("visibilitychange", () => { if (document.visibilitySta
 
 /* ---------- Handy API ---------- */
 async function api(method, path, body){
+  if (simOn()) return simApi(method, path, body);
   const res = await fetch(BASE + path, {
     method,
     headers: {"Content-Type":"application/json","X-Connection-Key":$("key").value.trim()},
@@ -379,6 +393,51 @@ async function api(method, path, body){
   if (!res.ok || data.error) throw new Error((data.error && data.error.message) || ("HTTP " + res.status));
   return data;
 }
+/* ---------- simulation mode: a fake device that answers the same API calls ---------- */
+const simOn = () => $("simOn").checked;
+const sim = {mode: 0, playing: false, vel: 0, min: 0, max: 100, pos: 50, dir: 1, target: null, tvel: 0, last: 0};
+const simTravel = v => 10 + 350 * Math.max(0, Math.min(100, v)) / 100;   // % of full length per second, roughly a real Handy
+async function simApi(method, path, body){
+  await new Promise(r => setTimeout(r, 30 + Math.random() * 50));        // pretend network delay
+  body = body || {};
+  if (path === "/connected") return {connected: true};
+  if (path === "/mode"){ sim.mode = body.mode; sim.playing = false; sim.target = null; }
+  else if (path === "/slide"){ sim.min = body.min; sim.max = body.max; }
+  else if (path === "/hamp/velocity") sim.vel = body.velocity;
+  else if (path === "/hamp/start"){ if (sim.mode === 0) sim.playing = true; }
+  else if (path === "/hamp/stop"){ sim.playing = false; }
+  else if (path === "/hdsp/xpvp"){ if (sim.mode === 2){ sim.target = Math.max(0, Math.min(100, body.position)); sim.tvel = body.velocity; } }
+  return {result: 0};
+}
+function simFrame(t){
+  const dt = sim.last ? Math.min(0.1, (t - sim.last) / 1000) : 0; sim.last = t;
+  if (sim.mode === 0 && sim.playing){
+    const lo = sim.min, hi = Math.max(sim.min + 1, sim.max), step = simTravel(sim.vel) * dt;
+    if (sim.pos < lo) sim.pos = Math.min(hi, sim.pos + step); else if (sim.pos > hi) sim.pos = Math.max(lo, sim.pos - step);
+    else { sim.pos += sim.dir * step; if (sim.pos >= hi){ sim.pos = hi; sim.dir = -1; } else if (sim.pos <= lo){ sim.pos = lo; sim.dir = 1; } }
+  } else if (sim.mode === 2 && sim.target !== null){
+    const d = sim.target - sim.pos, step = simTravel(sim.tvel) * dt;
+    if (Math.abs(d) <= step){ sim.pos = sim.target; sim.target = null; } else sim.pos += Math.sign(d) * step;
+  }
+  if (simOn()){
+    const lo = sim.min, hi = sim.max;
+    $("simBand").style.bottom = lo + "%"; $("simBand").style.height = Math.max(0, hi - lo) + "%";
+    $("simPuck").style.bottom = sim.pos + "%";
+    $("simPos").textContent = Math.round(sim.pos);
+    const moving = sim.mode === 0 && sim.playing;
+    $("simState").textContent = moving ? "Stroking at " + sim.vel + "%" : sim.mode === 2 ? (sim.target !== null ? "Moving to park" : "Parked") : "Stopped";
+    $("simRate").textContent = moving ? (simTravel(sim.vel) / (2 * Math.max(1, hi - lo))).toFixed(1) + " strokes/s" : "";
+  }
+  requestAnimationFrame(simFrame);
+}
+function simUI(){
+  const on = simOn();
+  $("simBox").hidden = !on; $("simPill").hidden = !on;
+  if (!running && !paused && !starting && /^(Enter your key|Ready\.|Simulation mode)/.test($("status").textContent)) status(on ? "Simulation mode: press Start. Nothing is sent to the device." : "Enter your key and press Start.");
+}
+$("simOn").addEventListener("change", () => { if (running || paused || starting){ $("simOn").checked = !$("simOn").checked; store.set("h_simOn", $("simOn").checked); status("Stop the session before switching simulation mode.", true); return; } sim.playing = false; sim.target = null; simUI(); });
+$("simPill").onclick = () => showPanel("session");
+requestAnimationFrame(simFrame);
 async function sendStop(){
   for (let i = 0; i < 5; i++){
     try { await api("PUT", "/hamp/stop"); return true; }
@@ -611,6 +670,7 @@ function penaltyTodaySec(){
     .reduce((a, e) => a + Math.max(0, (e.charge === undefined ? e.ran : e.charge) - e.ran), 0);
 }
 function recordSession(ran, how, charge){
+  if (runSim) return;
   if (ran < 5 && how !== "failed") return;
   const log = getLog(); log.push({t: Date.now() - ran * 1000, ran, how, charge: charge === undefined ? ran : charge});
   store.set("handyLog", log.slice(-200));
@@ -692,7 +752,7 @@ async function start(){
   refreshLock(); if (locked) return; exodusTok++; noJoinUntil = 0;
   let ms = duration(), capped = false;
   if ($("teaseOn").checked && $("tRandom").checked){ const lo = n("rMin", 8); ms = Math.round(rnd(lo, Math.max(lo, n("rMax", 20))) * 60) * 1000; }
-  if (!$("key").value.trim()) return status("Enter your connection key first.", true);
+  if (!simOn() && !$("key").value.trim()) return status("Enter your connection key first.", true);
   if (ms <= 0) return status("Set a duration longer than zero.", true);
   const lim = +$("daily").value || 0;
   if (lim > 0){ const allow = lim * 60000 - usedTodaySec() * 1000; if (ms > allow){ ms = allow; capped = true; } }
@@ -706,10 +766,10 @@ async function start(){
     if (cancelStart){ setButtons(); return status("Start cancelled."); }
   }
   $("start").disabled = true;
-  status("Connecting…");
+  status(simOn() ? "Starting the simulated device…" : "Connecting…"); runSim = simOn();
   try {
     const c = await api("GET", "/connected");
-    if (!c.connected) throw new Error("Handy is not connected. Check the key and that the device is online.");
+    if (!c.connected) throw new Error("Handy is not connected. Check the key and that the device is online, or turn on simulation mode under Session to try without it.");
     await api("PUT", "/mode", {mode: 0});                       // 0 = HAMP
     await sendStroke();
     resetTease(); devStopped = false; hist = []; marks = []; lastSample = 0;
@@ -719,7 +779,7 @@ async function start(){
   } catch(e){ setButtons(); return status(e.message, true); }
   total = ms; endAt = Date.now() + ms; running = true; paused = false; warned = false; runTease = $("teaseOn").checked; runHidden = runTease && $("tRandom").checked;
   setButtons(); lockScreen();
-  status((capped ? "Running. Shortened to " + (runHidden ? "fit" : fmt(ms) + " to fit") + " your daily limit." : "Running.") + (runHidden ? " The end time is hidden." : "") + (runTease ? " Stopping or pausing now counts as failing this session." : ""));
+  status((runSim ? "Simulation: " : "") + (capped ? "Running. Shortened to " + (runHidden ? "fit" : fmt(ms) + " to fit") + " your daily limit." : "Running.") + (runHidden ? " The end time is hidden." : "") + (runTease ? " Stopping or pausing now counts as failing this session." : ""));
   nextChatAt = Date.now() + 20000 + Math.random() * 20000;
   nextPromiseAt = Date.now() + 40000 + Math.random() * 30000;
   onBreak = false; nextBreakAt = n("lubeEvery", 15) * 60000; manualOkAt = Date.now() + n("lubeGap", 10) * 60000;
@@ -779,7 +839,7 @@ async function finish(msg, timeUp, failed){
 async function togglePause(){
   if (running && runTease){
     const m = n("failLock", 0) || n("cool", 0); userExodus(22000);
-    return finish("Session failed: you paused. The device is stopped." + (m ? " Locked out for " + m + " min." : " Set a cooldown or failure lockout under Limits to enforce a lockout."), false, true);
+    return finish("Session failed: you paused. The device is stopped." + (runSim ? " Simulation, so no lockout." : (m ? " Locked out for " + m + " min." : " Set a cooldown or failure lockout under Limits to enforce a lockout.")), false, true);
   }
   if (running){
     userExodus();
@@ -800,7 +860,7 @@ async function togglePause(){
     } catch(e){ setButtons(); return status(e.message, true); }
     endAt = Date.now() + remaining; running = true; paused = false; exodusTok++; noJoinUntil = 0;
     if (onBreak){ onBreak = false; manualOkAt = Date.now() + n("lubeGap", 10) * 60000; nextBreakAt = (total - remaining) + n("lubeEvery", 15) * 60000; say("lubeResume"); mark("lube", "Back from lube break"); }
-    setButtons(); lockScreen(); status("Running.");
+    setButtons(); lockScreen(); status(runSim ? "Simulation: running." : "Running.");
     tick = setInterval(update, 250); update();
   }
 }
@@ -816,7 +876,7 @@ $("stop").onclick = () => {
   if (starting){ cancelStart = true; return; }
   if (runTease && (running || paused)){
     const m = n("failLock", 0) || n("cool", 0); userExodus(22000);
-    return finish("Session failed: you stopped early. The device is stopped." + (m ? " Locked out for " + m + " min." : " Set a cooldown or failure lockout under Limits to enforce a lockout."), false, true);
+    return finish("Session failed: you stopped early. The device is stopped." + (runSim ? " Simulation, so no lockout." : (m ? " Locked out for " + m + " min." : " Set a cooldown or failure lockout under Limits to enforce a lockout.")), false, true);
   }
   userExodus(); finish("Stopped manually.", false);
 };
@@ -842,7 +902,7 @@ FIELDS.forEach(id => $(id).onchange = () => { saveInputs(); renderLog(); refresh
 window.addEventListener("beforeunload", e => { if (running){ e.preventDefault(); e.returnValue = ""; } });
 window.addEventListener("pagehide", () => {
   if (!(running || paused)) return;
-  if (running){ try { fetch(BASE + "/hamp/stop", {method: "PUT", keepalive: true, headers: {"Content-Type": "application/json", "X-Connection-Key": $("key").value.trim()}}); } catch(e){} }
+  if (running && !runSim){ try { fetch(BASE + "/hamp/stop", {method: "PUT", keepalive: true, headers: {"Content-Type": "application/json", "X-Connection-Key": $("key").value.trim()}}); } catch(e){} }
   if (runTease){ const left = running ? Math.max(0, endAt - Date.now()) : remaining; recordSession(Math.round((total - left) / 1000), "failed", Math.round(total / 1000)); }
 });
 
@@ -1249,7 +1309,7 @@ function giveControl(p){
   if (manualRun()){ takeOverManual(p); return; }
   if (busyNow()){ addMsg("sys", "Finish the current session first."); return; }
   if (locked){ addMsg("sys", "You're locked out right now. Check the status line."); return; }
-  if (!$("key").value.trim()){ addMsg("sys", "Enter your connection key first."); status("Enter your connection key first.", true); return; }
+  if (!simOn() && !$("key").value.trim()){ addMsg("sys", "Enter your connection key first."); status("Enter your connection key first.", true); return; }
   $("persona").value = p;
   applyPersona(p, false);
   start();
@@ -1865,6 +1925,7 @@ const RENAMED = {"Mischievous Milo":"Mischievous Mia","Chaos Casper":"Chaos Cass
 currentPersona = RENAMED[currentPersona] || currentPersona;
 if (currentPersona && !PERSONAS[currentPersona]) currentPersona = "";
 if (currentPersona) $("persona").value = currentPersona;
+simUI();
 addMsg("sys", "Welcome to the lounge. Personalities drop in and out. Pick one under Tease mode to hand over control, or wait for someone to tempt you.");
 try { if (!store.get("lubeParkMig", 0)){ if (+$("lubePark").value === 0) $("lubePark").value = 20; store.set("lubeParkMig", 1); saveInputs(); } } catch(e){}
 if (currentPersona) enterRoom(currentPersona, true); else renderRoom();
