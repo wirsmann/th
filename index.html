@@ -82,7 +82,7 @@
   #hypeBar{height:100%;width:2%;background:linear-gradient(90deg,var(--accent),#e0a43a,#d9534f);transition:width .8s}
   #hypeLbl{margin:0;white-space:nowrap}
   .quote{font-size:.76rem;color:var(--muted);border-left:3px solid var(--line);padding:1px 8px;margin:2px 0 4px;cursor:pointer;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-  #lubeNow{width:100%;margin-top:10px;background:var(--ring-bg);color:var(--ink)}
+  #lubeNow{width:100%;margin-top:10px;padding:10px;border:0;border-radius:10px;font:inherit;font-weight:600;cursor:pointer;background:var(--ring-bg);color:var(--ink)}
   #lubeNow:disabled{opacity:.45;cursor:not-allowed}
   .liveSet{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);text-align:left}
   .liveSet .lsHead{font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
@@ -101,7 +101,9 @@
   #gLegend{display:inline-flex;gap:10px;flex-wrap:wrap}
   .gl{display:inline-flex;align-items:center;gap:5px;font-size:.76rem;color:var(--muted)}
   #graph{display:block;width:100%;height:130px}
-  #actionRow{margin:0 0 8px;flex:none;position:sticky;top:8px;z-index:4;background:var(--panel)}
+  #actionRow{margin:8px 0;flex:none;background:var(--panel)}
+  .ptimer{height:3px;border-radius:2px;margin-top:8px;background:var(--muted);opacity:.5;transform-origin:left;animation:ptime linear forwards}
+  @keyframes ptime{from{transform:scaleX(1)}to{transform:scaleX(0)}}
   .arHead{display:flex;gap:10px;align-items:center;font-size:.85rem;margin-bottom:4px}
   #offers{display:flex;flex-wrap:wrap;gap:8px;max-height:160px;overflow:auto}
   .prompt{display:flex;flex-direction:column;gap:6px;border:2px solid var(--accent);border-radius:14px;padding:8px 10px;background:var(--panel);box-shadow:0 2px 8px rgba(0,0,0,.12);max-width:100%}
@@ -126,8 +128,8 @@
       <div class="hypeRow"><div class="hype" aria-hidden="true"><div id="hypeBar"></div></div><span id="hypeLbl" class="hint"></span></div>
       <div id="roomWho" class="chips" style="margin:0 0 8px"></div>
       <div class="graphBox"><div class="gHead"><strong>Activity</strong><span id="gLegend"></span><span class="hint" id="gInfo" style="margin:0 0 0 auto"></span></div><canvas id="graph" height="130" aria-label="History of speed and stroke length, colored by who was in control"></canvas></div>
-      <div id="actionRow"><div class="arHead"><strong>Your move</strong><span class="hint" id="arHint" style="margin:0"></span></div><div id="offers" aria-live="polite"></div><div id="quick" aria-label="Quick replies"></div></div>
       <div id="chatLog" aria-live="polite"></div>
+      <div id="actionRow"><div class="arHead"><strong>Your move</strong><span class="hint" id="arHint" style="margin:0"></span></div><div id="offers" aria-live="polite"></div><div id="quick" aria-label="Quick replies"></div></div>
       <div class="inline"><input id="chatIn" type="text" autocomplete="off" placeholder="Say something to the room…" aria-label="Chat message"><button class="mini" id="chatSend" style="margin:0">Send</button></div>
     </section>
     <aside class="card timer">
@@ -275,7 +277,7 @@ const store = {
   set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
 };
 $("key").value = store.get("handyKey", "");
-const TEASE = [["tLow","Low speed (% of max)",15],["tPeakMin","Peak speed, lowest (% of max)",60],["tPeakMax","Peak speed, highest (% of max)",90],["tBuildMin","Build time, shortest (s)",20],["tBuildMax","Build time, longest (s)",60],["tHoldMin","Hold, shortest (s)",3],["tHoldMax","Hold, longest (s)",10],["tRestMin","Rest, shortest (s)",5],["tRestMax","Rest, longest (s)",20],["tFake","Fake-out chance (%)",20],["tEsc","Peak increase per cycle (%)",0],["rMin","Random length, shortest (min)",8],["rMax","Random length, longest (min)",20]];
+const TEASE = [["tLow","Low speed (% of max)",15],["tPeakMin","Peak speed, lowest (% of max)",60],["tPeakMax","Peak speed, highest (% of max)",90],["tBuildMin","Build time, shortest (s)",20],["tBuildMax","Build time, longest (s)",60],["tHoldMin","Hold, shortest (s)",3],["tHoldMax","Hold, longest (s)",10],["tRestMin","Rest, shortest (s)",5],["tRestMax","Rest, longest (s)",20],["tAct","Special moves: chance per cycle (%)",35],["tFake","Fake-out chance (%)",20],["tEsc","Peak increase per cycle (%)",0],["rMin","Random length, shortest (min)",8],["rMax","Random length, longest (min)",20]];
 const CUSTOM = [["rampStart","Ramp starts at (%)",10],["altSlow","Slow phase speed (%)",40],["endSlow","End slowdown goes to (%)",40],["cap","Max speed cap (%)",100],["delay","Start delay (s)",0],["vol","Beep volume (%)",30]];
 function mkFields(boxId, list){
   list.forEach(([id, lab, def]) => {
@@ -371,7 +373,38 @@ function sendStroke(){
 /* ---------- speed engine ---------- */
 const n = (id, d) => { const v = parseFloat($(id).value); return isNaN(v) ? d : v; };
 const rnd = (a, b) => a + Math.random() * Math.max(0, b - a);
-function resetTease(){ tz = {q: [], cur: null, start: 0, cycle: 0, label: ""}; }
+function resetTease(){ lastMove = ""; tz = {q: [], cur: null, start: 0, cycle: 0, label: ""}; }
+
+/* ---------- special moves: extra speed shapes beyond build / hold / rest ---------- */
+const MOVES = ["push","stairs","pulse","surge","cliff","wave","flutter","slowburn"];
+const MOVE_LABEL = {push:"pushing through", stairs:"stepping up", pulse:"pulsing", surge:"surging", cliff:"sudden stop", wave:"waves", flutter:"fluttering", slowburn:"slow burn"};
+const MOVE_FAV = {"Patient Priscilla": ["slowburn", "stairs", "wave"], "Mischievous Mia": ["pulse", "flutter", "cliff"], "Strict Ms. Vance": ["stairs", "cliff", "slowburn"], "Chaos Cassie": ["flutter", "pulse", "surge"], "Sweet-Talker Sienna": ["slowburn", "wave", "pulse"], "Relentless Roxy": ["surge", "push", "wave"], "Sleepy Sadie": ["slowburn", "wave", "pulse"], "Drill Sergeant Dana": ["stairs", "push", "surge"], "Mocking Margot": ["cliff", "surge", "push"]};
+var lastMove = "";
+function pickMove(){
+  const fav = MOVE_FAV[currentPersona] || [], pool = [];
+  MOVES.forEach(m => { if (m === lastMove) return; for (let i = 0; i < (fav.includes(m) ? 3 : 1); i++) pool.push(m); });
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+const mv = (type, dur, fn) => ({k: "move", type, dur: Math.max(2, dur), fn});
+function queueMove(type, low, pk, bd){
+  const q = tz.q, hMin = n("tHoldMin", 3), hold = v => ({k: "hold", dur: Math.max(1, rnd(hMin, Math.max(hMin, n("tHoldMax", 10)))), v});
+  const rest = {k: "rest", dur: Math.max(1, rnd(n("tRestMin", 5), Math.max(n("tRestMin", 5), n("tRestMax", 20)))), v: $("tStop").checked ? 0 : low};
+  switch (type){
+    case "push": {                           // a hold that does not come back down: pauses, then keeps climbing past the peak
+      const a = low + (pk - low) * 0.7, b = Math.min(100, pk * 1.12 + 4);
+      q.push(Object.assign({k: "build", dur: Math.max(1, bd * 0.7), from: low, to: a}, {mv: "push"}),
+             {k: "hold", dur: rnd(3, 6), v: a, mvMid: true}, {k: "build", dur: Math.max(1, bd * 0.4), from: a, to: b}, hold(b), rest); break; }
+    case "stairs": q.push(mv("stairs", bd * 1.1, (p) => low + (pk - low) * Math.min(1, (Math.floor(p * 5) + 1) / 5)), hold(pk), rest); break;
+    case "pulse": q.push(mv("pulse", rnd(10, 18), (p, el) => { const lo = low + (pk - low) * 0.3; return lo + (pk - lo) * (0.5 + 0.5 * Math.sin(el / 1000 * 2.2)); }), rest); break;
+    case "surge": q.push({k: "build", dur: Math.max(1, bd * 0.35), from: low, to: low + (pk - low) * 0.35}, mv("surge", rnd(4, 7), (p) => { const lo = low + (pk - low) * 0.35; return lo + (Math.min(100, pk * 1.05) - lo) * Math.min(1, p * 6); }), rest); break;
+    case "cliff": { const a = low + (pk - low) * 0.6;       // climbs, stops dead for a few seconds, then carries on from the same level
+      q.push({k: "build", dur: Math.max(1, bd * 0.6), from: low, to: a}, mv("cliff", rnd(3, 6), () => 0), {k: "build", dur: Math.max(1, bd * 0.5), from: a, to: pk}, hold(pk), rest); break; }
+    case "wave": q.push(mv("wave", rnd(24, 36), (p) => { const mid = low + (pk - low) * 0.5, amp = (pk - low) * (0.2 + 0.3 * p); return Math.max(low, Math.min(100, mid + amp * Math.sin(p * Math.PI * 6))); }), rest); break;
+    case "flutter": q.push({k: "build", dur: Math.max(1, bd * 0.4), from: low, to: low + (pk - low) * 0.6}, mv("flutter", rnd(8, 14), (p, el) => { const b = low + (pk - low) * 0.6; return Math.max(low, Math.min(100, b + (pk - low) * 0.22 * (Math.sin(el / 130) * 0.6 + Math.sin(el / 310 + 1) * 0.4))); }), rest); break;
+    case "slowburn": q.push(mv("slowburn", Math.max(40, bd * 1.6), (p) => low + (pk * 0.5 - low) * p), {k: "build", dur: Math.max(1, bd * 0.4), from: pk * 0.5, to: pk}, hold(pk), rest); break;
+  }
+  lastMove = type;
+}
 function newCycle(){
   const low = n("tLow", 15), pkMin = n("tPeakMin", 60), pkMax = Math.max(pkMin, n("tPeakMax", 90));
   const esc = 1 + n("tEsc", 0) / 100 * tz.cycle; tz.cycle++;
@@ -380,6 +413,7 @@ function newCycle(){
   const bMin = n("tBuildMin", 20), bd = rnd(bMin, Math.max(bMin, n("tBuildMax", 60)));
   const rMin = n("tRestMin", 5), hMin = n("tHoldMin", 3);
   const rest = {k: "rest", dur: Math.max(1, rnd(rMin, Math.max(rMin, n("tRestMax", 20))) * (1 - 0.3 * cl)), v: $("tStop").checked ? 0 : low};
+  if (tz.cycle > 1 && Math.random() * 100 < n("tAct", 35)){ queueMove(pickMove(), low, pk, bd); return; }
   if (Math.random() * 100 < n("tFake", 20) + 10 * cl){
     const f = rnd(0.4, 0.7);                       // fake-out: climbs part way, then backs off early
     tz.q.push({k: "build", dur: Math.max(1, bd * f), from: low, to: low + (pk - low) * f}, Object.assign(rest, {fake: true}));
@@ -393,7 +427,8 @@ function teaseValue(el){
   if (!tz.cur){ if (!tz.q.length) newCycle(); tz.cur = tz.q.shift(); chatPhase(tz.cur); tz.start = el; }
   while (el >= tz.start + tz.cur.dur * 1000){ tz.start += tz.cur.dur * 1000; if (!tz.q.length) newCycle(); tz.cur = tz.q.shift(); chatPhase(tz.cur); }
   const c = tz.cur, p = Math.min(1, (el - tz.start) / (c.dur * 1000));
-  tz.label = c.k === "build" ? "building" : c.k === "hold" ? "holding" : "resting";
+  tz.label = c.k === "move" ? MOVE_LABEL[c.type] : c.mv === "push" || c.mvMid ? "pushing through" : c.k === "build" ? "building" : c.k === "hold" ? "holding" : "resting";
+  if (c.k === "move") return c.fn(p, el - tz.start);
   if (c.k === "build") return c.from + (c.to - c.from) * p;
   if (c.k === "hold") return Math.min(100, c.v * (1 + 0.04 * Math.sin(el / 600)));
   return c.v;
@@ -917,7 +952,8 @@ function addOffer(o){
   const row = document.createElement("div"); row.className = "pbtns";
   o.choices.forEach(c => { const b = document.createElement("button"); b.type = "button"; b.className = "pbtn " + (c.kind || "primary"); b.textContent = c.label; b.onclick = () => { removeOffer(o.id); if (c.apply) c.apply(); }; row.append(b); });
   if (o.choices.length === 1){ const x = document.createElement("button"); x.type = "button"; x.className = "pbtn ghost"; x.textContent = "✕"; x.title = "Dismiss"; x.setAttribute("aria-label", "Dismiss: " + o.choices[0].label); x.onclick = () => removeOffer(o.id); row.append(x); }
-  el.append(row); o.el = el; o.exp = Date.now() + (o.ttl || 90000); offers.push(o); $("offers").append(el); syncRow();
+  if (o.ttl && o.ttl <= 120000){ const tb = document.createElement("div"); tb.className = "ptimer"; tb.style.animationDuration = o.ttl + "ms"; el.append(row, tb); } else el.append(row);
+  o.el = el; o.exp = Date.now() + (o.ttl || 90000); offers.push(o); $("offers").append(el); syncRow();
 }
 function pruneOffers(){
   const now = Date.now();
@@ -973,7 +1009,9 @@ function commentLater(){ clearTimeout(cmTimer); cmTimer = setTimeout(() => comme
 function chatPhase(c){
   if (!running || !runTease) return;
   const now = Date.now();
-  if (c.k === "build"){ say("build"); midCat = "build"; midAt = now + 14000 + Math.random() * 8000; }
+  if (c.k === "move"){ say("act_" + c.type); midCat = "act_" + c.type; midAt = now + 5000 + Math.random() * 3000; }
+  else if (c.mv === "push"){ say("act_push"); midCat = "build"; midAt = now + 14000 + Math.random() * 8000; }
+  else if (c.k === "build"){ say("build"); midCat = "build"; midAt = now + 14000 + Math.random() * 8000; }
   else if (c.k === "hold"){ say("hold"); midCat = "holdMid"; midAt = now + 3500 + Math.random() * 3000; }
   else {
     if (c.fake){ say("fake"); setTimeout(() => { if (running && runTease && tz && tz.cur === c) say("fakeAfter"); }, 4500 + Math.random() * 3000); }
@@ -1151,7 +1189,7 @@ function giveControl(p){
   applyPersona(p, false);
   start();
 }
-const giveOffer = (p, label, ttl) => ({id: "give:" + p, who: p, text: "wants control", color: PCOL[p], ttl: ttl || 100000, valid: () => !busyNow() && !locked, choices: [{label: label, kind: "primary", apply: () => giveControl(p)}, {label: "Not now", kind: "ghost", apply: () => addMsg("me", "Not now.")}]});
+const giveOffer = (p, label, ttl) => ({id: "give:" + p, who: p, text: "wants control", color: PCOL[p], ttl: ttl || 40000, onGone: why => { if (why === "expired") addMsg("sys", SHORT[p] + " got tired of waiting."); }, valid: () => !busyNow() && !locked, choices: [{label: label, kind: "primary", apply: () => giveControl(p)}, {label: "Not now", kind: "ghost", apply: () => addMsg("me", "Not now.")}]});
 function pickKind(p, event){
   const w = Object.assign({}, REACT[p] || {banter: 1});
   if (event === "claimed") delete w.askControl;
@@ -1181,7 +1219,7 @@ function react(event, actor){
 function doTempt(p){
   if (!room.includes(p) || busyNow()) return;
   lastTempter = p;
-  sayAs(p, "tempt", giveOffer(p, "Give " + SHORT[p] + " control", 120000));
+  sayAs(p, "tempt", giveOffer(p, "Give " + SHORT[p] + " control", 45000));
   react("dare", p);
 }
 function temptUser(){
@@ -1274,7 +1312,7 @@ function beginChallenge(ch){
   const ctl = currentPersona; if (!ctl || ch === ctl) return;
   const c = challenge = {ch, ctl};
   attempts[ch] = (attempts[ch] || 0) + 1;
-  addOffer({id: "ch", who: ch, text: "wants control from " + SHORT[ctl], ttl: 60000, valid: () => challenge === c, choices: [
+  addOffer({id: "ch", who: ch, text: "wants control from " + SHORT[ctl], ttl: 30000, onGone: why => { if (challenge === c){ addMsg("sys", "No answer. " + SHORT[ctl] + " keeps control."); resolveChallenge(c, false); } }, valid: () => challenge === c, choices: [
     {label: "Grant", kind: "primary", apply: () => { addMsg("me", "Granted. " + SHORT[ch] + " takes over."); resolveChallenge(c, true); }},
     {label: "Deny", kind: "danger", apply: () => { addMsg("me", "Denied. " + SHORT[ctl] + " keeps control."); resolveChallenge(c, false); }}]});
   sayAs(ch, "challenge", null, {other: ctl, replyTo: ctl});
@@ -2196,6 +2234,316 @@ const MORE9 = {
  }
 };
 Object.keys(MORE9).forEach(k => Object.keys(MORE9[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE9[k][c]); }));
+const MORE11 = {
+ "Patient Priscilla": {
+  "act_push": [
+   "I'm not letting you down yet, {nick}. We keep climbing.",
+   "Don't expect a rest, {nick}. We go right through the top."
+  ],
+  "act_stairs": [
+   "One step at a time, {nick}. Each one a little higher.",
+   "Up we go, {nick}. Step by careful step."
+  ],
+  "act_pulse": [
+   "Feel the rhythm, {nick}. In and out, slowly.",
+   "A gentle pulse, {nick}. Let it come in waves."
+  ],
+  "act_surge": [
+   "Here comes a little surprise, {nick}.",
+   "A quick surge, {nick}. Just for a moment."
+  ],
+  "act_cliff": [
+   "Now stop. Completely, {nick}. Wait for it.",
+   "I'm freezing you right here, {nick}. Be still."
+  ],
+  "act_wave": [
+   "Waves, {nick}. Each one bigger than the last.",
+   "Let it roll over you, {nick}. Wave after wave."
+  ],
+  "act_flutter": [
+   "A flutter, {nick}. Hold steady through it.",
+   "Little trembles now, {nick}. Stay calm."
+  ],
+  "act_slowburn": [
+   "Very slowly now, {nick}. No hurry at all.",
+   "A long slow burn, {nick}. Let it build."
+  ]
+ },
+ "Mischievous Mia": {
+  "act_push": [
+   "Ooh, no break this time, {nick}! Straight on through!",
+   "Plot twist! It keeps going, {nick}!"
+  ],
+  "act_stairs": [
+   "Stairs, {nick}! Climb them, one by one!",
+   "Step, step, step! Higher, {nick}!"
+  ],
+  "act_pulse": [
+   "Pulse time, {nick}! Boom, boom, boom!",
+   "Feel that beat, {nick}? Hehe!"
+  ],
+  "act_surge": [
+   "Surprise surge! Gotcha, {nick}!",
+   "Whoosh! Did you feel that, {nick}?"
+  ],
+  "act_cliff": [
+   "FREEZE! Hehe, don't move, {nick}!",
+   "Everything stops! Surprise, {nick}!"
+  ],
+  "act_wave": [
+   "Roller coaster, {nick}! Hold on tight!",
+   "Up and down and up, {nick}! Wheee!"
+  ],
+  "act_flutter": [
+   "Flutter flutter, {nick}! Hehe, tickles!",
+   "Shaky shaky, {nick}!"
+  ],
+  "act_slowburn": [
+   "Slow and sneaky now, {nick}...",
+   "Creeping up on you, {nick}. Hehe."
+  ]
+ },
+ "Strict Ms. Vance": {
+  "act_push": [
+   "You do not rest yet, {nick}. Continue past the peak.",
+   "No release. We go beyond, {nick}."
+  ],
+  "act_stairs": [
+   "We will proceed in measured steps, {nick}.",
+   "Each step is higher than the last, {nick}. Keep pace."
+  ],
+  "act_pulse": [
+   "A steady pulse, {nick}. Keep time with it.",
+   "Follow the rhythm exactly, {nick}."
+  ],
+  "act_surge": [
+   "A sudden increase, {nick}. Do not flinch.",
+   "Brief and sharp, {nick}. Take it."
+  ],
+  "act_cliff": [
+   "Stop. Entirely. Do not touch anything, {nick}.",
+   "A pause, {nick}. You will wait until I say."
+  ],
+  "act_wave": [
+   "A series of waves, {nick}. Ride each one properly.",
+   "The waves will grow, {nick}. Stay composed."
+  ],
+  "act_flutter": [
+   "Hold still through this flutter, {nick}.",
+   "Stay composed, {nick}. This will be uneven."
+  ],
+  "act_slowburn": [
+   "A slow ascent, {nick}. Patience is a discipline.",
+   "We take our time, {nick}. All of it."
+  ]
+ },
+ "Chaos Cassie": {
+  "act_push": [
+   "NO BREAK! Keep GOING, {nick}!",
+   "Past the top and KEEP GOING, {nick}!"
+  ],
+  "act_stairs": [
+   "STAIRS! Up up up, {nick}!",
+   "Step step step STEP! Higher, {nick}!"
+  ],
+  "act_pulse": [
+   "PULSE! Boom boom boom, {nick}!",
+   "Beat drop, {nick}! Hahaha!"
+  ],
+  "act_surge": [
+   "SURGE! WHOOSH! {nick}!",
+   "Surprise blast, {nick}! Hahaha!"
+  ],
+  "act_cliff": [
+   "STOP! Everything off! Surprise, {nick}!",
+   "FREEZE! Ha! Don't move!"
+  ],
+  "act_wave": [
+   "ROLLER COASTER! Scream, {nick}!",
+   "Up! Down! UP! Down! {nick}!"
+  ],
+  "act_flutter": [
+   "JITTERS! Hahaha, {nick}!",
+   "Shaky time, {nick}! Wheee!"
+  ],
+  "act_slowburn": [
+   "Shhh... sneaking up on you, {nick}...",
+   "Slow slow slow... then BOOM. Maybe, {nick}."
+  ]
+ },
+ "Sweet-Talker Sienna": {
+  "act_push": [
+   "Don't worry, sweetheart. I'm not stopping. Keep going.",
+   "I'll take you higher, {nick}. No break, I promise."
+  ],
+  "act_stairs": [
+   "Let's go up together, {nick}. One lovely step at a time.",
+   "Step by step, {nick}. Feel each one."
+  ],
+  "act_pulse": [
+   "Feel that little pulse, {nick}? Mm, so nice.",
+   "In and out, {nick}. Just like that."
+  ],
+  "act_surge": [
+   "A little rush for you, {nick}. Mm.",
+   "Here's a treat, {nick}. A quick surge."
+  ],
+  "act_cliff": [
+   "Shh. Stop. Don't move, {nick}. Let me look at you.",
+   "Everything stops now, {nick}. Wait for me."
+  ],
+  "act_wave": [
+   "Waves, {nick}. Let them wash over you.",
+   "Ride the waves for me, {nick}."
+  ],
+  "act_flutter": [
+   "A little flutter, {nick}. Mm, don't move.",
+   "Shaky little thing, {nick}. Stay with me."
+  ],
+  "act_slowburn": [
+   "Nice and slow, {nick}. Let me take my time with you.",
+   "Mm, a long sweet burn, {nick}."
+  ]
+ },
+ "Relentless Roxy": {
+  "act_push": [
+   "No rest, {nick}. Straight through the top.",
+   "Keep climbing, {nick}. I'm not backing off."
+  ],
+  "act_stairs": [
+   "Stairs, {nick}. Each one harder than the last.",
+   "Step up, {nick}. Then step up again."
+  ],
+  "act_pulse": [
+   "Pulse, {nick}. Keep up with it.",
+   "Match the beat, {nick}. Don't miss one."
+  ],
+  "act_surge": [
+   "Surge, {nick}. Take it.",
+   "Hit it, {nick}. Hard and fast."
+  ],
+  "act_cliff": [
+   "Full stop, {nick}. Hands off. Wait.",
+   "I'm cutting it dead, {nick}. Hold still."
+  ],
+  "act_wave": [
+   "Waves, {nick}. And they're getting bigger.",
+   "Ride it out, {nick}. Each wave harder."
+  ],
+  "act_flutter": [
+   "Flutter, {nick}. Stay steady through it.",
+   "Shake it out, {nick}. I'm not slowing down."
+  ],
+  "act_slowburn": [
+   "Slow burn, {nick}. It'll wear you down.",
+   "Easy now, {nick}. It's still coming."
+  ]
+ },
+ "Sleepy Sadie": {
+  "act_push": [
+   "Mm... don't stop yet, {nick}... keep going... past it...",
+   "No rest... {nick}... keep climbing..."
+  ],
+  "act_stairs": [
+   "Mm... one step... then another... {nick}...",
+   "Stairs... {nick}... slowly up..."
+  ],
+  "act_pulse": [
+   "Mm... pulse... in... and out... {nick}...",
+   "Feel the beat... {nick}... mm..."
+  ],
+  "act_surge": [
+   "Mm... a little surge... {nick}...",
+   "Whoosh... mm... {nick}..."
+  ],
+  "act_cliff": [
+   "Mm... stop... shh... don't move, {nick}...",
+   "Freeze... mm... wait for me, {nick}..."
+  ],
+  "act_wave": [
+   "Waves... mm... rolling... {nick}...",
+   "Up... and down... mm... {nick}..."
+  ],
+  "act_flutter": [
+   "Mm... flutter... {nick}... stay still...",
+   "Little shakes... mm... {nick}..."
+  ],
+  "act_slowburn": [
+   "Mm... so slow... {nick}... drifting up...",
+   "Slow burn... mm... no rush, {nick}..."
+  ]
+ },
+ "Drill Sergeant Dana": {
+  "act_push": [
+   "NO REST, {nick}! PUSH THROUGH THE TOP!",
+   "KEEP CLIMBING, {nick}! I DIDN'T SAY STOP!"
+  ],
+  "act_stairs": [
+   "STAIRS, {nick}! One level at a time! MOVE!",
+   "UP THE STEPS, {nick}! Each one higher!"
+  ],
+  "act_pulse": [
+   "PULSE DRILL, {nick}! Keep the rhythm!",
+   "MATCH THE BEAT, {nick}!"
+  ],
+  "act_surge": [
+   "SURGE, {nick}! Take it!",
+   "SPRINT, {nick}! Hit it!"
+  ],
+  "act_cliff": [
+   "FREEZE, {nick}! Hands off! Don't move!",
+   "ALL STOP, {nick}! Hold your position!"
+  ],
+  "act_wave": [
+   "WAVES, {nick}! They get bigger! Hold on!",
+   "RIDE IT OUT, {nick}! Wave after wave!"
+  ],
+  "act_flutter": [
+   "FLUTTER DRILL, {nick}! Stay steady!",
+   "HOLD STEADY through the shakes, {nick}!"
+  ],
+  "act_slowburn": [
+   "SLOW BURN, {nick}! Endurance drill!",
+   "SLOW AND STEADY, {nick}! Don't you dare quit!"
+  ]
+ },
+ "Mocking Margot": {
+  "act_push": [
+   "Did you think I'd stop there, {nick}? Cute. Keep going.",
+   "No rest for you, {nick}. We go further."
+  ],
+  "act_stairs": [
+   "Stairs, {nick}. Let's see how high you can climb.",
+   "Step by step, {nick}. Each one makes it worse."
+  ],
+  "act_pulse": [
+   "Pulse, {nick}. Look at you twitch.",
+   "Keep time, {nick}. Or try to."
+  ],
+  "act_surge": [
+   "A little surge, {nick}. Try to look dignified.",
+   "Surprise, {nick}. Hold it together."
+  ],
+  "act_cliff": [
+   "Stop. Hands off, {nick}. Wait. Beg quietly.",
+   "Frozen, {nick}. I do love that look on your face."
+  ],
+  "act_wave": [
+   "Waves, {nick}. Just try to keep up.",
+   "Up and down, {nick}. Poor thing."
+  ],
+  "act_flutter": [
+   "Flutter, {nick}. Look at you shake.",
+   "Try to stay composed, {nick}. You can't."
+  ],
+  "act_slowburn": [
+   "A slow burn, {nick}. Let me watch you suffer.",
+   "Nice and slow, {nick}. I have all day."
+  ]
+ }
+};
+Object.keys(MORE11).forEach(k => Object.keys(MORE11[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE11[k][c]); }));
+Object.assign(HYPE, {act_push:4,act_stairs:3,act_pulse:3,act_surge:5,act_cliff:5,act_wave:3,act_flutter:3,act_slowburn:2});
 /* ---------- interactions: targets, demands, questions ---------- */
 let suppressUntil = 0;
 const STEP = 5;
@@ -2258,7 +2606,7 @@ function makeDemand(){
   const what = (useSpeed ? (up ? "speed up " : "slow down ") : (up ? "longer stroke +" : "shorter stroke −")) + step + "% → " + to + "%";
   sayAs(p, "dmd" + (useSpeed ? "Speed" : "Stroke") + (up ? "Up" : "Down"), null, {step: step, to: to, onShow: () => {
     if (demand !== d) return;
-    addOffer({id: "demand", who: p, text: "demands: " + what, ttl: 45000, valid: () => demand === d && running,
+    addOffer({id: "demand", who: p, text: "demands: " + what, ttl: 30000, valid: () => demand === d && running,
       onGone: why => { if (demand !== d) return; if (why === "expired" && running) refuseDemand(d, true); else demand = null; },
       choices: [
         {label: "Do it (" + to + "%)", kind: "primary", apply: () => acceptDemand(d, false)},
@@ -2394,7 +2742,7 @@ function askQuestion(p, qid){
   const q = QDEFS[qid], a = ask = {p, qid, el: null};
   sayAs(p, q.cat, null, {onShow: el => {
     if (ask !== a) return; a.el = el;
-    addOffer({id: "ask", who: p, text: "asks you", ttl: 60000, valid: () => ask === a && (qid === "mood" || running),
+    addOffer({id: "ask", who: p, text: "asks you", ttl: 40000, valid: () => ask === a && (qid === "mood" || running),
       onGone: () => { if (ask === a) ask = null; },
       choices: q.opts.map(o => ({label: o.label, kind: o.kind === "no" ? "ghost" : "primary", apply: () => answerQuestion(a, o)}))});
   }});
