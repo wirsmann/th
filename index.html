@@ -100,7 +100,7 @@
   .gHead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.85rem;margin-bottom:4px}
   #gLegend{display:inline-flex;gap:10px;flex-wrap:wrap}
   .gl{display:inline-flex;align-items:center;gap:5px;font-size:.76rem;color:var(--muted)}
-  #graph{display:block;width:100%;height:130px}
+  #graph{display:block;width:100%;height:150px}
   #actionRow{margin:0;flex:none;background:var(--panel)}
   #offers:not(:empty){margin:8px 0}
   .ptimer{height:3px;border-radius:2px;margin-top:8px;background:var(--muted);opacity:.5;transform-origin:left;animation:ptime linear forwards}
@@ -134,7 +134,7 @@
       <div class="chatHead"><strong>The Lounge</strong><span class="hint" id="roomCount" style="margin:0"></span><button class="mini" id="chatClear" style="margin:0 0 0 auto">Clear chat</button></div>
       <div class="hypeRow"><div class="hype" aria-hidden="true"><div id="hypeBar"></div></div><span id="hypeLbl" class="hint"></span></div>
       <div id="roomWho" class="chips" style="margin:0 0 8px"></div>
-      <div class="graphBox"><div class="gHead"><strong>Activity</strong><span id="gLegend"></span><span class="hint" id="gInfo" style="margin:0 0 0 auto"></span></div><canvas id="graph" height="130" aria-label="History of speed and stroke length, colored by who was in control"></canvas></div>
+      <div class="graphBox"><div class="gHead"><strong>Activity</strong><span id="gLegend"></span><span class="hint" id="gInfo" style="margin:0 0 0 auto"></span></div><canvas id="graph" height="150" aria-label="History of speed and stroke length, colored by who was in control"></canvas><div class="hint" id="gKey" style="margin:4px 0 0"></div></div>
       <div id="chatLog" aria-live="polite"></div>
       <div class="inline"><input id="chatIn" type="text" autocomplete="off" placeholder="Say something to the room…" aria-label="Chat message"><button class="mini" id="chatSend" style="margin:0">Send</button></div>
     </section>
@@ -492,12 +492,25 @@ const curLen = () => +$("smax").value - +$("smin").value;
 function hexA(h, a){ const m = /^#?([0-9a-f]{6})$/i.exec(h || ""); if (!m) return "rgba(15,123,138," + a + ")"; const v = parseInt(m[1], 16); return "rgba(" + ((v >> 16) & 255) + "," + ((v >> 8) & 255) + "," + (v & 255) + "," + a + ")"; }
 const whoColor = w => PCOL[w] || "#0f7b8a";
 const whoName = w => w === "__you" ? "Manual" : (SHORT[w] || w);
+var marks = [];
+const MKIND = {move:["◆","Move"], fake:["✕","Fake-out"], yes:["✓","Obeyed"], no:["✗","Refused"], free:["★","Free rein"], ask:["?","Answered"], lube:["L","Lube break"], priv:["🔒","Private show"], life:["!","Real-life event"]};
+function mark(kind, label){
+  if (!(running || paused) || !MKIND[kind]) return;
+  marks.push({i: hist.length, kind, label: label || MKIND[kind][1], who: runTease && currentPersona ? currentPersona : "__you"});
+  if (marks.length > 400) marks.shift();
+  drawGraph();
+}
 function gSummary(){
   if (hist.length < 2) return "";
   let pk = 0; hist.forEach(k => { if (k.v > pk) pk = k.v; });
   return "Elapsed " + fmt(hist.length * 1000) + " · peak " + Math.round(pk) + "% · dashed line = stroke length";
 }
+function updateKey(){
+  const k = $("gKey"); if (!k) return; const seen = []; marks.forEach(m => { if (!seen.includes(m.kind)) seen.push(m.kind); });
+  k.textContent = seen.length ? "Markers: " + seen.map(s => MKIND[s][0] + " " + MKIND[s][1]).join("  ·  ") + "  (hover the dots)" : "";
+}
 function updateLegend(){
+  updateKey();
   const box = $("gLegend"); box.innerHTML = "";
   const cnt = {}, order = [];
   hist.forEach(k => { if (!(k.who in cnt)){ cnt[k.who] = 0; order.push(k.who); } cnt[k.who]++; });
@@ -510,11 +523,11 @@ function updateLegend(){
 function drawSpark(){ drawGraph(); }
 function drawGraph(){
   const cv = $("graph"); if (!cv) return;
-  const W = cv.clientWidth || 600, H = 130, dpr = window.devicePixelRatio || 1;
+  const W = cv.clientWidth || 600, H = 150, dpr = window.devicePixelRatio || 1;
   if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)){ cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
   const g = cv.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
   const cs = getComputedStyle(document.body), muted = cs.getPropertyValue("--muted").trim() || "#888", line = cs.getPropertyValue("--line").trim() || "#ccc", ink = cs.getPropertyValue("--ink").trim() || "#222";
-  const x0 = 34, y0 = 8, pw = W - x0 - 8, ph = H - y0 - 20;
+  const x0 = 34, y0 = 24, pw = W - x0 - 8, ph = H - y0 - 20;
   g.font = "11px system-ui,sans-serif"; g.textBaseline = "middle";
   [0, 50, 100].forEach(v => { const y = y0 + ph - ph * v / 100; g.strokeStyle = line; g.lineWidth = 1; g.beginPath(); g.moveTo(x0, y); g.lineTo(x0 + pw, y); g.stroke(); g.fillStyle = muted; g.textAlign = "right"; g.fillText(v + "%", x0 - 6, y); });
   const N = hist.length;
@@ -539,19 +552,29 @@ function drawGraph(){
   g.strokeStyle = ink; g.lineWidth = 1.5; if (g.setLineDash) g.setLineDash([4, 3]); g.beginPath();
   bk.forEach((k, i) => { const x = x0 + (i + 0.5) * bw, y = y0 + ph - ph * k.r / 100; if (i) g.lineTo(x, y); else g.moveTo(x, y); });
   g.stroke(); if (g.setLineDash) g.setLineDash([]);
+  g.save(); g.textAlign = "center"; g.textBaseline = "middle"; g.font = "bold 10px system-ui,sans-serif";
+  marks.forEach(m => {
+    const x = Math.max(x0 + 6, Math.min(x0 + pw - 6, x0 + m.i / N * pw)), col = whoColor(m.who), ic = MKIND[m.kind][0];
+    g.strokeStyle = hexA(col, 0.55); g.lineWidth = 1; if (g.setLineDash) g.setLineDash([2, 3]); g.beginPath(); g.moveTo(x, y0 - 6); g.lineTo(x, y0 + ph); g.stroke(); if (g.setLineDash) g.setLineDash([]);
+    g.fillStyle = m.kind === "no" ? "#c0392b" : col; g.beginPath(); g.arc(x, y0 - 12, 7, 0, Math.PI * 2); g.fill();
+    g.fillStyle = "#fff"; g.fillText(ic, x, y0 - 11.5);
+  });
+  g.restore();
   g.fillStyle = muted; g.textBaseline = "alphabetic"; g.textAlign = "left"; g.fillText("0:00", x0, H - 4); g.textAlign = "right"; g.fillText(fmt(N * 1000), x0 + pw, H - 4);
   updateLegend(); if (!$("gInfo").dataset.hover) $("gInfo").textContent = gSummary();
 }
 function sample(){
   const now = Date.now(); if (now - lastSample < 1000) return;
   lastSample = now; hist.push({v: curSpeed, r: curLen(), who: runTease && currentPersona ? currentPersona : "__you"});
-  if (hist.length > 7200) hist.shift();
+  if (hist.length > 7200){ hist.shift(); marks.forEach(m => m.i--); marks = marks.filter(m => m.i >= 0); }
   drawGraph();
 }
 $("graph").addEventListener("mousemove", e => {
   const N = hist.length; if (N < 2) return;
   const r = e.currentTarget.getBoundingClientRect(), pw = r.width - 42;
   const i = Math.max(0, Math.min(N - 1, Math.floor((e.clientX - r.left - 34) / pw * N))), k = hist[i];
+  const mx = e.clientX - r.left - 34, near = marks.find(m => Math.abs(m.i / N * pw - mx) < 7);
+  if (near && e.clientY - r.top < 40){ $("gInfo").dataset.hover = "1"; $("gInfo").textContent = fmt(near.i * 1000) + " · " + MKIND[near.kind][0] + " " + near.label + " · " + whoName(near.who); return; }
   $("gInfo").dataset.hover = "1"; $("gInfo").textContent = fmt((i + 1) * 1000) + " · speed " + k.v + "% · stroke " + Math.round(k.r) + "% · " + whoName(k.who);
 });
 $("graph").addEventListener("mouseleave", () => { delete $("gInfo").dataset.hover; $("gInfo").textContent = gSummary(); });
@@ -619,7 +642,7 @@ function lubeDue(){
 }
 async function startBreak(){
   if (!running) return;
-  onBreak = true; breakBusy = true;
+  onBreak = true; breakBusy = true; mark("lube", "Lube break started");
   remaining = Math.max(0, endAt - Date.now());
   running = false; paused = true; clearInterval(tick); devStopped = true; midCat = "";
   setButtons();
@@ -684,7 +707,7 @@ async function start(){
     if (!c.connected) throw new Error("Handy is not connected. Check the key and that the device is online.");
     await api("PUT", "/mode", {mode: 0});                       // 0 = HAMP
     await sendStroke();
-    resetTease(); devStopped = false; hist = []; lastSample = 0;
+    resetTease(); devStopped = false; hist = []; marks = []; lastSample = 0;
     lastVel = velocityAt(0, ms); lastVelAt = Date.now();
     await api("PUT", "/hamp/velocity", {velocity: lastVel});
     await api("PUT", "/hamp/start");
@@ -771,7 +794,7 @@ async function togglePause(){
       else devStopped = true;
     } catch(e){ setButtons(); return status(e.message, true); }
     endAt = Date.now() + remaining; running = true; paused = false; exodusTok++; noJoinUntil = 0;
-    if (onBreak){ onBreak = false; manualOkAt = Date.now() + n("lubeGap", 10) * 60000; nextBreakAt = (total - remaining) + n("lubeEvery", 15) * 60000; say("lubeResume"); }
+    if (onBreak){ onBreak = false; manualOkAt = Date.now() + n("lubeGap", 10) * 60000; nextBreakAt = (total - remaining) + n("lubeEvery", 15) * 60000; say("lubeResume"); mark("lube", "Back from lube break"); }
     setButtons(); lockScreen(); status("Running.");
     tick = setInterval(update, 250); update();
   }
@@ -1067,6 +1090,9 @@ function commentLater(){ clearTimeout(cmTimer); cmTimer = setTimeout(() => comme
 function chatPhase(c){
   if (!running || !runTease) return;
   const now = Date.now();
+  if (c.k === "move") mark("move", (MOVE_LABEL[c.type] || c.type)[0].toUpperCase() + (MOVE_LABEL[c.type] || c.type).slice(1));
+  else if (c.mv === "push") mark("move", "Pushing through");
+  else if (c.fake) mark("fake", "Fake-out");
   if (c.k === "move"){ say("act_" + c.type); midCat = "act_" + c.type; midAt = now + 5000 + Math.random() * 3000; }
   else if (c.mv === "push"){ say("act_push"); midCat = "build"; midAt = now + 14000 + Math.random() * 8000; }
   else if (c.k === "build"){ say("build"); midCat = "build"; midAt = now + 14000 + Math.random() * 8000; }
@@ -2863,7 +2889,7 @@ function requestPrivate(p){
 }
 function acceptPrivate(p){
   if (!teaseNow() || currentPersona !== p || privateShow) return;
-  privateShow = {p, since: Date.now()};
+  privateShow = {p, since: Date.now()}; mark("priv", "Private show with " + SHORT[p]);
   const m = addMsg("me", "Let's go private.");
   challenge = null; removeOffer("ch"); removeOffer("demand"); removeOffer("ask"); demand = null; ask = null;
   sayAs(p, "privOn", null, {replyTo: m});
@@ -3364,7 +3390,7 @@ function startLife(type){
     sleep: {dur: rnd(60, 110), fn: (q) => 38 - 18 * q},
     pass:  {dur: rnd(170, 290), fn: (q, el) => 50 + 3 * Math.sin(el / 4000)}
   }[type];
-  const ev = lifeEv = {type, p, until: now + cfg.dur * 1000, nextSnore: now + 15000, hand: false};
+  const ev = lifeEv = {type, p, until: now + cfg.dur * 1000, nextSnore: now + 15000, hand: false}; mark("life", SHORT[p] + ": " + (MOVE_LABEL[type] || type));
   lifeNextAt = now + cfg.dur * 1000 + 180000;
   forceCur({k: "move", type, dur: cfg.dur, fn: cfg.fn});
   sayAs(p, "life_" + type);
@@ -8483,6 +8509,7 @@ function acceptDemand(d, exact){
   const p = d.p, t = targetOf(p); defiance[p] = Math.max(0, (defiance[p] || 0) - 1);
   if (exact){ setSpeedTo(t.speed); setLenTo(t.len); } else if (d.useSpeed) setSpeedTo(d.to); else setLenTo(d.to);
   excite = Math.min(60, excite + 6); nextAskAt = Math.max(nextAskAt, Date.now() + 15000);
+  if (d.free) mark("free", SHORT[p] + " has free rein"); else mark("yes", exact ? "Matched " + SHORT[p] + "'s target" : "Did what " + SHORT[p] + " asked");
   const mine = addMsg("me", exact ? "Matched " + SHORT[p] + "'s target: speed " + t.speed + "%, stroke " + t.len + "%." : (d.useSpeed ? "Speed " : "Stroke length ") + d.to + "%.");
   sayAs(p, exact ? "dmdExact" : "dmdYes", null, {replyTo: mine});
   setTimeout(() => {
@@ -8577,7 +8604,7 @@ const MORE10 = {
 Object.keys(MORE10).forEach(k => Object.keys(MORE10[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE10[k][c]); }));
 Object.assign(HYPE, {dmdWarn:4,dmdLeave:6}); Object.assign(FMAP, {dmdWarn:"defy",dmdLeave:"defy"});
 function stormOff(p){
-  if (currentPersona !== p || !room.includes(p)) return;
+  if (currentPersona !== p || !room.includes(p)) return; mark("no", SHORT[p] + " stormed off");
   if (privateShow){ privateShow = null; addMsg("sys", "🔒 The room reopens."); renderRoom(); }
   defiance[p] = 0;
   sayAs(p, "dmdLeave");
@@ -8590,7 +8617,7 @@ function stormOff(p){
   }, 3200);
 }
 function freeRein(d){
-  if (demand !== d) return;
+  if (demand !== d) return; d.free = true;
   const p = d.p; addMod(p, 10, 5, 300000);
   const mineMsg = "Do whatever you want, " + SHORT[p] + ".";
   acceptDemand(d, true);
@@ -8600,6 +8627,7 @@ function freeRein(d){
 function refuseDemand(d, ignored){
   if (demand !== d) return; demand = null;
   const p = d.p; defiance[p] = (defiance[p] || 0) + 1; addMod(p, -5, -5, 180000);
+  mark("no", ignored ? "Ignored " + SHORT[p] + "'s demand" : "Refused " + SHORT[p]);
   const mine = ignored ? null : addMsg("me", "No.");
   sayAs(p, "dmdNo", null, mine ? {replyTo: mine} : {});
   const tol = TOL[p] || 3;
@@ -8647,7 +8675,7 @@ const moodCall = kind => {
 };
 function answerQuestion(a, o){
   if (ask !== a) return; ask = null;
-  const p = a.p, mine = addMsg("me", o.label, a.el);
+  const p = a.p, mine = addMsg("me", o.label, a.el); mark("ask", "Told " + SHORT[p] + ": " + o.label);
   excite = Math.min(60, excite + 4); nextDemandAt = Math.max(nextDemandAt, Date.now() + 12000);
   if (a.qid === "mood"){
     if (o.kind === "no"){ sayAs(p, "reply", null, {replyTo: mine}); return; }
