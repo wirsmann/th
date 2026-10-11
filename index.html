@@ -8,7 +8,7 @@
   :root{--bg:#f3f5f7;--panel:#fff;--ink:#16202b;--muted:#5f6c7a;--line:#d5dce3;--accent:#0f7b8a;--accent-ink:#fff;--stop:#c23b3b;--ring-bg:#e3e8ed}
   @media (prefers-color-scheme:dark){:root{--bg:#10171e;--panel:#18222c;--ink:#e8eef3;--muted:#94a3b1;--line:#2b3946;--accent:#3fb6c6;--accent-ink:#06222a;--stop:#e5605f;--ring-bg:#243240}}
   *{box-sizing:border-box}
-  body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;padding:20px}
+  body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;padding:14px}
   main{width:100%}
   h1{font-size:1.25rem;margin:0 0 14px}
   label{display:block;font-size:.875rem;color:var(--muted);margin:14px 0 4px}
@@ -45,39 +45,107 @@
   .mini{all:unset;cursor:pointer;color:var(--accent);font-size:.85rem;margin-top:8px;display:inline-block}
   .mini[aria-disabled=true]{opacity:.4;cursor:not-allowed}
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
-  #spark{display:block;height:48px;margin-top:6px}
   .inline{display:flex;gap:8px;align-items:center;margin-top:6px}
   .inline select{flex:1}
   .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px}
-  .layout{display:grid;grid-template-columns:minmax(260px,320px) minmax(300px,380px) 1fr;gap:16px;align-items:start}
-  @media (min-width:1101px) and (min-height:520px){.col-control{position:sticky;top:16px}}
-  .col-settings{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;align-items:start}
-  @media (max-width:1100px){.layout{grid-template-columns:minmax(260px,1fr) minmax(280px,1fr)}.col-settings{grid-column:1/-1}}
-  @media (max-width:700px){.layout{grid-template-columns:1fr}.col-control{position:static}}
   .chatHead{display:flex;align-items:center;gap:10px;margin-bottom:8px}
   .avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--ring-bg);color:var(--ink);font-weight:700}
-  #chatLog{display:flex;flex-direction:column;gap:6px;height:210px;overflow:auto;padding:8px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
-  .msg{max-width:80%;padding:7px 12px;border-radius:14px;font-size:.92rem;background:var(--ring-bg)}
+  #chatLog{display:flex;flex-direction:column;gap:6px;flex:1;min-height:200px;overflow:auto;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+  .msg{max-width:88%;padding:7px 12px;border-radius:14px;font-size:.92rem;background:var(--ring-bg)}
   .msg.me{align-self:flex-end;background:var(--accent);color:var(--accent-ink)}
   .msg.bot{border-left:3px solid var(--line)}
   .who{display:block;font-weight:600;font-size:.76rem;margin-bottom:1px}
   .rchip{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;padding:2px 10px;border-radius:999px;background:var(--ring-bg)}
   .rdot{width:8px;height:8px;border-radius:50%}
-  .msg.sys{align-self:center;background:none;color:var(--muted);font-size:.8rem}
+  .msg.sys{align-self:center;background:none;color:var(--muted);font-size:.75rem;padding:0 8px;line-height:1.3}
   .inline input[type=text]{flex:1}
   .msg.typing{opacity:.6;letter-spacing:2px}
   .msg .mini{display:block;margin:6px 0 0}
   :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
   #status{min-height:1.5em;margin:14px 0 0;font-size:.9rem;color:var(--muted);text-align:center}
   #status.err{color:var(--stop)}
+
+  [hidden]{display:none!important}
+  .top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+  .top h1{margin:0;font-size:1.15rem}
+  #menu{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+  #menu button{padding:6px 14px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;cursor:pointer;font:inherit;font-size:.875rem}
+  #menu button:hover{background:var(--ring-bg)}
+  #menu button[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+  .stage{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px;align-items:start;transition:margin-right .2s}
+  .lounge{display:flex;flex-direction:column;height:calc(100vh - 84px);min-height:680px;padding:16px}
+  .timer{position:sticky;top:14px}
+  .timer .dial{width:min(190px,100%)}
+  .timer .time{font-size:2.3rem}
+  .hypeRow{display:flex;align-items:center;gap:10px;margin:0 0 8px}
+  .hype{flex:1;height:8px;border-radius:999px;background:var(--ring-bg);overflow:hidden}
+  #hypeBar{height:100%;width:2%;background:linear-gradient(90deg,var(--accent),#e0a43a,#d9534f);transition:width .8s}
+  #hypeLbl{margin:0;white-space:nowrap}
+  .quote{font-size:.76rem;color:var(--muted);border-left:3px solid var(--line);padding:1px 8px;margin:2px 0 4px;cursor:pointer;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .msg.fan{background:transparent;padding:2px 6px;font-size:.84rem;max-width:92%;opacity:.92}
+  .msg.flash{outline:2px solid var(--accent)}
+  #drawer{position:fixed;top:58px;right:0;bottom:0;width:410px;max-width:100vw;background:var(--panel);border-left:1px solid var(--line);border-top:1px solid var(--line);border-top-left-radius:14px;box-shadow:-8px 0 24px rgba(0,0,0,.2);overflow:auto;padding:16px 18px 40px;z-index:30;transform:translateX(100%);visibility:hidden;transition:transform .2s,visibility .2s}
+  #drawer.open{transform:none;visibility:visible}
+  .drawerHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-size:1.05rem}
+  @media (min-width:1200px){body.drawer-open .stage{margin-right:426px}}
+  @media (max-width:1000px){.stage{grid-template-columns:1fr}.timer{order:-1;position:static}.lounge{height:auto;min-height:680px}}
+
+  .graphBox{margin:0 0 8px;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:var(--bg);flex:none}
+  .gHead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.85rem;margin-bottom:4px}
+  #gLegend{display:inline-flex;gap:10px;flex-wrap:wrap}
+  .gl{display:inline-flex;align-items:center;gap:5px;font-size:.76rem;color:var(--muted)}
+  #graph{display:block;width:100%;height:130px}
+  #actionRow{margin:0 0 8px;flex:none;position:sticky;top:8px;z-index:4;background:var(--panel)}
+  .arHead{display:flex;gap:10px;align-items:center;font-size:.85rem;margin-bottom:4px}
+  #offers{display:flex;flex-wrap:wrap;gap:8px;max-height:160px;overflow:auto}
+  .prompt{display:flex;flex-direction:column;gap:6px;border:2px solid var(--accent);border-radius:14px;padding:8px 10px;background:var(--panel);box-shadow:0 2px 8px rgba(0,0,0,.12);max-width:100%}
+  .ptxt{font-size:.85rem}
+  .pbtns{display:flex;flex-wrap:wrap;gap:6px}
+  .pbtn{padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer;font:inherit;font-size:.85rem;font-weight:600}
+  .pbtn:hover{filter:brightness(.94)}
+  .pbtn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+  .pbtn.danger{background:var(--stop);color:#fff;border-color:var(--stop)}
+  .pbtn.ghost{font-weight:400;color:var(--muted)}
+  #quick{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+  .qchip{padding:4px 12px;border-radius:999px;border:1px dashed var(--line);background:transparent;color:var(--muted);cursor:pointer;font:inherit;font-size:.8rem}
+  .qchip:hover{color:var(--ink);border-style:solid}
 </style>
 </head>
 <body>
 <main>
-  <h1>Handy timer</h1>
-  <div class="layout">
+  <header class="top"><h1>Handy timer</h1><nav id="menu" aria-label="Settings menu"><button type="button" data-key="session" aria-pressed="false">Session</button><button type="button" data-key="tease" aria-pressed="false">Tease</button><button type="button" data-key="speed" aria-pressed="false">Speed</button><button type="button" data-key="customize" aria-pressed="false">Customize</button><button type="button" data-key="lube" aria-pressed="false">Lube</button><button type="button" data-key="limits" aria-pressed="false">Limits</button><button type="button" data-key="profiles" aria-pressed="false">Profiles</button><button type="button" data-key="log" aria-pressed="false">Log</button></nav></header>
+  <div class="stage">
+    <section class="card lounge" aria-label="The Lounge">
+      <div class="chatHead"><strong>The Lounge</strong><span class="hint" id="roomCount" style="margin:0"></span><button class="mini" id="chatClear" style="margin:0 0 0 auto">Clear chat</button></div>
+      <div class="hypeRow"><div class="hype" aria-hidden="true"><div id="hypeBar"></div></div><span id="hypeLbl" class="hint"></span></div>
+      <div id="roomWho" class="chips" style="margin:0 0 8px"></div>
+      <div class="graphBox"><div class="gHead"><strong>Activity</strong><span id="gLegend"></span><span class="hint" id="gInfo" style="margin:0 0 0 auto"></span></div><canvas id="graph" height="130" aria-label="History of speed and stroke length, colored by who was in control"></canvas></div>
+      <div id="actionRow"><div class="arHead"><strong>Your move</strong><span class="hint" id="arHint" style="margin:0"></span></div><div id="offers" aria-live="polite"></div><div id="quick" aria-label="Quick replies"></div></div>
+      <div id="chatLog" aria-live="polite"></div>
+      <div class="inline"><input id="chatIn" type="text" autocomplete="off" placeholder="Say something to the room…" aria-label="Chat message"><button class="mini" id="chatSend" style="margin:0">Send</button></div>
+    </section>
+    <aside class="card timer">
+  <div class="dial" aria-hidden="true">
+    <svg viewBox="0 0 100 100"><circle class="track" cx="50" cy="50" r="44"/><circle id="prog" class="prog" cx="50" cy="50" r="44" stroke-dasharray="276.46" stroke-dashoffset="0"/></svg>
+    <div class="time" id="time">10:00</div>
+  </div>
+  <div id="now" class="hint" style="text-align:center"></div>
+  
+  <div id="live" aria-live="polite" style="position:absolute;left:-9999px"></div>
 
-    <section class="card col-session">
+  <div class="btns">
+    <button id="start">Start</button>
+    <button id="pause" disabled>Pause</button>
+    <button id="stop" disabled>Stop</button>
+  </div>
+
+  <p id="status" role="status">Enter your key and press Start.</p>
+        </aside>
+  </div>
+  <aside id="drawer" aria-label="Settings">
+    <div class="drawerHead"><strong id="drawerTitle"></strong><button class="mini" id="drawerClose" style="margin:0">Close</button></div>
+    <div id="drawerBody">
+    <section class="panel" data-key="session" hidden>
   <label for="key">Connection key</label>
   <input id="key" type="text" autocomplete="off" spellcheck="false" placeholder="Your Handy connection key">
 
@@ -105,44 +173,7 @@
     <label><input type="checkbox" id="awake" checked> Keep screen awake while running</label>
   </div>
     </section>
-
-    <section class="card col-control">
-  <div class="dial" aria-hidden="true">
-    <svg viewBox="0 0 100 100"><circle class="track" cx="50" cy="50" r="44"/><circle id="prog" class="prog" cx="50" cy="50" r="44" stroke-dasharray="276.46" stroke-dashoffset="0"/></svg>
-    <div class="time" id="time">10:00</div>
-  </div>
-  <div id="now" class="hint" style="text-align:center"></div>
-  <canvas id="spark" aria-hidden="true"></canvas>
-  <div id="live" aria-live="polite" style="position:absolute;left:-9999px"></div>
-
-  <div class="btns">
-    <button id="start">Start</button>
-    <button id="pause" disabled>Pause</button>
-    <button id="stop" disabled>Stop</button>
-  </div>
-
-  <p id="status" role="status">Enter your key and press Start.</p>
-    </section>
-
-    <section class="col-settings">
-  <section class="card" style="grid-column:1/-1">
-    <div class="chatHead"><strong>The Lounge</strong><span class="hint" id="roomCount" style="margin:0">nobody here yet</span><button class="mini" id="chatClear" style="margin:0 0 0 auto">Clear chat</button></div>
-    <div id="roomWho" class="chips" style="margin:0 0 8px"></div>
-    <div id="chatLog" aria-live="polite"></div>
-    <div class="inline"><input id="chatIn" type="text" autocomplete="off" placeholder="Say something to the room…" aria-label="Chat message"><button class="mini" id="chatSend" style="margin:0">Send</button></div>
-  </section>
-  <details open>
-    <summary>Profiles</summary>
-    <div class="inline">
-      <select id="profSel" aria-label="Saved profiles"><option value="">Choose a profile…</option></select>
-      <button class="mini" id="profSave" style="margin:0">Save current</button>
-      <button class="mini" id="profDel" style="margin:0">Delete</button>
-    </div>
-    <p class="hint">A profile stores every setting except your key and your limits.</p>
-  </details>
-
-  <details open>
-    <summary>Tease mode (simulated remote)</summary>
+    <section class="panel" data-key="tease" hidden>
     <label style="display:flex;gap:8px;align-items:center;color:var(--ink)"><input type="checkbox" id="teaseOn"> Turn on tease mode</label>
     <p class="hint">Acts like someone else is running it: it builds up over a random time, holds, then backs off, then repeats with new random numbers each cycle. Your speed slider is the maximum, and the low and peak values below are percentages of it. While it's on, it replaces the ramp and pattern. The stroke range, speed cap, end slowdown, and time limits still apply. While a tease session is running, stopping or pausing counts as failing it: the device still stops right away, but you're locked out as if the time had run out.</p>
     <div class="inline">
@@ -154,10 +185,8 @@
     <label style="display:flex;gap:8px;align-items:center;color:var(--ink)"><input type="checkbox" id="tStop" checked> Fully stop during rests (otherwise drop to the low speed)</label>
     <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:8px"><input type="checkbox" id="tRandom"> Random session length with a hidden timer</label>
     <p class="hint">Picks a length between the shortest and longest above each time you press Start. The clock and ring are hidden, the one-minute warning is off, and the minutes and seconds boxes are ignored. Your daily limit still caps it.</p>
-  </details>
-
-  <details open>
-    <summary>Speed profile</summary>
+  </section>
+    <section class="panel" data-key="speed" hidden>
     <div class="row">
       <div><label for="ramp">Ramp up over</label>
         <select id="ramp"><option value="0">Off</option><option value="60">1 min</option><option value="120">2 min</option><option value="300">5 min</option></select></div>
@@ -170,19 +199,20 @@
       <div><label for="period">Switch every (sec)</label><input id="period" type="number" min="5" max="600" value="30"></div>
     </div>
     <p class="hint">Your speed slider is the top speed. The ramp start, slow phase and end slowdown percentages are under Customize.</p>
-  </details>
-
-  <details>
-    <summary>Customize</summary>
+  </section>
+    <section class="panel" data-key="customize" hidden>
     <div class="grid" id="customFields"></div>
+    <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:10px"><input type="checkbox" id="fansOn"> Show a simulated audience in the lounge</label>
+    <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:6px"><input type="checkbox" id="crowdBoost"> Audience raises intensity in tease mode</label>
+    <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:6px"><input type="checkbox" id="interactOn"> Personalities ask questions and make demands</label>
+    <p class="hint">Whoever is in control keeps a target speed and stroke length and nudges you toward it 5 points at a time. Each demand has Do it, Match her target and Refuse buttons. Refusing makes her more insistent. Questions come with answer buttons, and a few of the answers change what happens next (a rest, a hold, a fresh build-up).</p>
+    <p class="hint">A bigger crowd makes personalities challenge each other more and fight harder to keep control. With the second box on, it also nudges tease sessions: peaks up to 20% higher (never above your speed slider), rests up to 30% shorter, and up to 10 points more fake-outs.</p>
     <label for="nickCustom">Nickname override (blank = each personality uses her own)</label>
     <input id="nickCustom" type="text" maxlength="24" autocomplete="off" placeholder="e.g. pet, subject, rookie">
     <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:10px"><input type="checkbox" id="hideClock"> Hide the countdown while running</label>
     <p class="hint">Press Esc at any time to stop immediately. The speed cap limits every mode.</p>
-  </details>
-
-  <details open>
-    <summary>Lube break</summary>
+  </section>
+    <section class="panel" data-key="lube" hidden>
     <label style="display:flex;gap:8px;align-items:center;color:var(--ink)"><input type="checkbox" id="lubeOn" checked> Lube breaks in tease sessions</label>
     <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:6px"><input type="checkbox" id="lubeReg" checked> Also in regular sessions</label>
     <div class="row">
@@ -190,10 +220,8 @@
       <div><label for="lubePark">Park position (%, 0 = bottom)</label><input id="lubePark" type="number" min="0" max="100" value="0"></div>
     </div>
     <p class="hint">After that much running time, the session pauses, the device stops and moves to the park position, and the clock freezes. Press Resume when you're ready. Breaks don't count as failing, and they don't use up session time. No break starts in the last minute and a half. If 0% parks at the wrong end for you, try 100.</p>
-  </details>
-
-  <details open>
-    <summary>Limits</summary>
+  </section>
+    <section class="panel" data-key="limits" hidden>
     <div class="row">
       <div><label for="daily">Daily limit (min, 0 = off)</label><input id="daily" type="number" min="0" max="999" value="0"></div>
       <div><label for="cool">Cooldown after (min)</label><input id="cool" type="number" min="0" max="999" value="0"></div>
@@ -203,20 +231,24 @@
     </div>
     <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:10px"><input type="checkbox" id="failCharge"> Failed tease sessions use up their full planned time from the daily limit</label>
     <p class="hint">While a cooldown or the daily limit is active, Start is disabled and the limit boxes are locked. By default a failed session only counts the time you actually ran, plus the lockout. This lives in your browser, so clearing site data or using another browser bypasses it.</p>
-  </details>
-
-  <details>
-    <summary>Session log</summary>
+  </section>
+    <section class="panel" data-key="profiles" hidden>
+    <div class="inline">
+      <select id="profSel" aria-label="Saved profiles"><option value="">Choose a profile…</option></select>
+      <button class="mini" id="profSave" style="margin:0">Save current</button>
+      <button class="mini" id="profDel" style="margin:0">Delete</button>
+    </div>
+    <p class="hint">A profile stores every setting except your key and your limits.</p>
+  </section>
+    <section class="panel" data-key="log" hidden>
     <div id="logSummary" class="hint"></div>
     <div id="log"></div>
     <button class="mini" id="clearLog">Clear log</button>
     <button class="mini" id="exportLog" style="margin-left:14px">Export CSV</button>
-  </details>
-
-    </section>
-  </div>
+  </section>
+    </div>
+  </aside>
 </main>
-
 <script>
 const BASE = "https://www.handyfeeling.com/api/handy/v2";
 const $ = id => document.getElementById(id);
@@ -244,7 +276,7 @@ function mkFields(boxId, list){
 mkFields("teaseFields", TEASE); mkFields("customFields", CUSTOM);
 const FIELDS = ["speed","smin","smax","min","sec","ramp","slow","pattern","period","daily","cool","failLock","lubeEvery","lubePark","nickCustom"].concat(TEASE.map(t=>t[0]), CUSTOM.map(c=>c[0]));
 FIELDS.forEach(id => { const v = store.get("h_"+id, null); if (v !== null) $(id).value = v; });
-const BOOLS = {beepEnd:true, beepWarn:true, awake:true, teaseOn:false, tStop:true, hideClock:false, tRandom:false, failCharge:false, lubeOn:true, lubeReg:true};
+const BOOLS = {beepEnd:true, beepWarn:true, awake:true, teaseOn:false, tStop:true, hideClock:false, tRandom:false, failCharge:false, lubeOn:true, lubeReg:true, fansOn:true, crowdBoost:true, interactOn:true};
 Object.keys(BOOLS).forEach(id => { $(id).checked = store.get("h_"+id, BOOLS[id]); $(id).onchange = () => store.set("h_"+id, $(id).checked); });
 let presets = store.get("handyPresets", [300, 600, 900, 1800]);   // seconds
 
@@ -332,11 +364,12 @@ function resetTease(){ tz = {q: [], cur: null, start: 0, cycle: 0, label: ""}; }
 function newCycle(){
   const low = n("tLow", 15), pkMin = n("tPeakMin", 60), pkMax = Math.max(pkMin, n("tPeakMax", 90));
   const esc = 1 + n("tEsc", 0) / 100 * tz.cycle; tz.cycle++;
-  const pk = Math.min(100, rnd(pkMin, pkMax) * esc);
+  const cl = crowdLevel();
+  const pk = Math.min(100, rnd(pkMin, pkMax) * esc * (1 + 0.2 * cl));
   const bMin = n("tBuildMin", 20), bd = rnd(bMin, Math.max(bMin, n("tBuildMax", 60)));
   const rMin = n("tRestMin", 5), hMin = n("tHoldMin", 3);
-  const rest = {k: "rest", dur: Math.max(1, rnd(rMin, Math.max(rMin, n("tRestMax", 20)))), v: $("tStop").checked ? 0 : low};
-  if (Math.random() * 100 < n("tFake", 20)){
+  const rest = {k: "rest", dur: Math.max(1, rnd(rMin, Math.max(rMin, n("tRestMax", 20))) * (1 - 0.3 * cl)), v: $("tStop").checked ? 0 : low};
+  if (Math.random() * 100 < n("tFake", 20) + 10 * cl){
     const f = rnd(0.4, 0.7);                       // fake-out: climbs part way, then backs off early
     tz.q.push({k: "build", dur: Math.max(1, bd * f), from: low, to: low + (pk - low) * f}, Object.assign(rest, {fake: true}));
   } else {
@@ -393,19 +426,74 @@ async function pushVelocity(force){
   lastVel = v; lastVelAt = now;
   api("PUT", "/hamp/velocity", {velocity: v}).catch(e => status(e.message, true));
 }
-function drawSpark(){
-  const cv = $("spark"), w = cv.width = cv.clientWidth || 400, h = cv.height = 48, ctx = cv.getContext("2d");
-  ctx.clearRect(0, 0, w, h);
-  ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue("--accent").trim() || "#0f7b8a";
-  ctx.lineWidth = 2; ctx.beginPath();
-  const step = w / Math.max(60, hist.length - 1);
-  hist.forEach((v, i) => { const x = i * step, y = h - 3 - (h - 6) * v / 100; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
-  ctx.stroke();
+const curLen = () => +$("smax").value - +$("smin").value;
+function hexA(h, a){ const m = /^#?([0-9a-f]{6})$/i.exec(h || ""); if (!m) return "rgba(15,123,138," + a + ")"; const v = parseInt(m[1], 16); return "rgba(" + ((v >> 16) & 255) + "," + ((v >> 8) & 255) + "," + (v & 255) + "," + a + ")"; }
+const whoColor = w => PCOL[w] || "#0f7b8a";
+const whoName = w => w === "__you" ? "Manual" : (SHORT[w] || w);
+function gSummary(){
+  if (hist.length < 2) return "";
+  let pk = 0; hist.forEach(k => { if (k.v > pk) pk = k.v; });
+  return "Elapsed " + fmt(hist.length * 1000) + " · peak " + Math.round(pk) + "% · dashed line = stroke length";
+}
+function updateLegend(){
+  const box = $("gLegend"); box.innerHTML = "";
+  const cnt = {}, order = [];
+  hist.forEach(k => { if (!(k.who in cnt)){ cnt[k.who] = 0; order.push(k.who); } cnt[k.who]++; });
+  order.forEach(w => {
+    const c = document.createElement("span"); c.className = "gl";
+    const dot = document.createElement("span"); dot.className = "rdot"; dot.style.background = whoColor(w);
+    c.append(dot, whoName(w) + " " + Math.round(100 * cnt[w] / hist.length) + "%"); box.append(c);
+  });
+}
+function drawSpark(){ drawGraph(); }
+function drawGraph(){
+  const cv = $("graph"); if (!cv) return;
+  const W = cv.clientWidth || 600, H = 130, dpr = window.devicePixelRatio || 1;
+  if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)){ cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
+  const g = cv.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
+  const cs = getComputedStyle(document.body), muted = cs.getPropertyValue("--muted").trim() || "#888", line = cs.getPropertyValue("--line").trim() || "#ccc", ink = cs.getPropertyValue("--ink").trim() || "#222";
+  const x0 = 34, y0 = 8, pw = W - x0 - 8, ph = H - y0 - 20;
+  g.font = "11px system-ui,sans-serif"; g.textBaseline = "middle";
+  [0, 50, 100].forEach(v => { const y = y0 + ph - ph * v / 100; g.strokeStyle = line; g.lineWidth = 1; g.beginPath(); g.moveTo(x0, y); g.lineTo(x0 + pw, y); g.stroke(); g.fillStyle = muted; g.textAlign = "right"; g.fillText(v + "%", x0 - 6, y); });
+  const N = hist.length;
+  if (N < 2){ g.fillStyle = muted; g.textAlign = "center"; g.fillText("Speed and stroke history appears here once a session starts.", x0 + pw / 2, y0 + ph / 2); updateLegend(); $("gInfo").textContent = ""; return; }
+  const nB = Math.max(1, Math.min(N, Math.floor(pw / 2))), bw = pw / nB, bk = [];
+  for (let b = 0; b < nB; b++){
+    const a = Math.floor(b * N / nB), e = Math.min(N, Math.max(a + 1, Math.floor((b + 1) * N / nB)));
+    let mv = 0, sr = 0, c = 0; for (let i = a; i < e; i++){ mv = Math.max(mv, hist[i].v); sr += hist[i].r; c++; }
+    bk.push({v: mv, r: sr / c, who: hist[e - 1].who});
+  }
+  let rs = 0;
+  for (let b = 0; b <= nB; b++){
+    if (b === nB || bk[b].who !== bk[rs].who){
+      const w = bk[rs].who, xs = x0 + rs * bw, xe = x0 + b * bw;
+      g.fillStyle = hexA(whoColor(w), 0.11); g.fillRect(xs, y0, xe - xs, ph);
+      if (rs > 0){ g.strokeStyle = hexA(whoColor(w), 0.8); g.lineWidth = 1.5; g.beginPath(); g.moveTo(xs, y0); g.lineTo(xs, y0 + ph); g.stroke(); }
+      if (xe - xs > 46){ g.fillStyle = whoColor(w); g.textAlign = "left"; g.fillText(whoName(w), xs + 4, y0 + 8); }
+      rs = b;
+    }
+  }
+  bk.forEach((k, i) => { const h = ph * k.v / 100; if (h > 0){ g.fillStyle = hexA(whoColor(k.who), 0.8); g.fillRect(x0 + i * bw, y0 + ph - h, Math.ceil(bw), h); } });
+  g.strokeStyle = ink; g.lineWidth = 1.5; if (g.setLineDash) g.setLineDash([4, 3]); g.beginPath();
+  bk.forEach((k, i) => { const x = x0 + (i + 0.5) * bw, y = y0 + ph - ph * k.r / 100; if (i) g.lineTo(x, y); else g.moveTo(x, y); });
+  g.stroke(); if (g.setLineDash) g.setLineDash([]);
+  g.fillStyle = muted; g.textBaseline = "alphabetic"; g.textAlign = "left"; g.fillText("0:00", x0, H - 4); g.textAlign = "right"; g.fillText(fmt(N * 1000), x0 + pw, H - 4);
+  updateLegend(); if (!$("gInfo").dataset.hover) $("gInfo").textContent = gSummary();
 }
 function sample(){
   const now = Date.now(); if (now - lastSample < 1000) return;
-  lastSample = now; hist.push(curSpeed); if (hist.length > 600) hist.shift(); drawSpark();
+  lastSample = now; hist.push({v: curSpeed, r: curLen(), who: runTease && currentPersona ? currentPersona : "__you"});
+  if (hist.length > 7200) hist.shift();
+  drawGraph();
 }
+$("graph").addEventListener("mousemove", e => {
+  const N = hist.length; if (N < 2) return;
+  const r = e.currentTarget.getBoundingClientRect(), pw = r.width - 42;
+  const i = Math.max(0, Math.min(N - 1, Math.floor((e.clientX - r.left - 34) / pw * N))), k = hist[i];
+  $("gInfo").dataset.hover = "1"; $("gInfo").textContent = fmt((i + 1) * 1000) + " · speed " + k.v + "% · stroke " + Math.round(k.r) + "% · " + whoName(k.who);
+});
+$("graph").addEventListener("mouseleave", () => { delete $("gInfo").dataset.hover; $("gInfo").textContent = gSummary(); });
+window.addEventListener("resize", drawGraph);
 
 /* ---------- session log, daily limit, cooldown ---------- */
 function getLog(){ return store.get("handyLog", []); }
@@ -476,7 +564,7 @@ async function startBreak(){
   $("time").textContent = "Break";
   status("Break time. Lube up if you need to, then press Resume. Moving to the park position…");
   breakChatAt = Date.now() + 40000 + Math.random() * 20000;
-  say("lubeBreak", {label: "Resume session", apply: () => { if (onBreak && !breakBusy) $("pause").click(); }});
+  say("lubeBreak", {id: "lube", ttl: 7200000, valid: () => onBreak, label: "Resume session", apply: () => { if (onBreak && !breakBusy) $("pause").click(); }});
   if (!currentPersona) addMsg("sys", "Break time: lube up if you need to, then press Resume.");
   try {
     if (!(await sendStop())) throw new Error("couldn't confirm the stop");
@@ -535,6 +623,8 @@ async function start(){
     nextNudgeAt = Date.now() + 90000 + Math.random() * 50000;
     if (currentPersona){ enterRoom(currentPersona, true); react("claimed", currentPersona); }
     challenge = null; nextChallengeAt = Date.now() + 30000 + Math.random() * 20000; Object.keys(attempts).forEach(k => attempts[k] = 0);
+    demand = null; ask = null; removeOffer("demand"); removeOffer("ask"); nextAskAt = Date.now() + 40000 + Math.random() * 20000; nextDemandAt = Date.now() + 65000 + Math.random() * 20000;
+    Object.keys(defiance).forEach(k => defiance[k] = 0); Object.keys(creep).forEach(k => delete creep[k]); Object.keys(hit).forEach(k => hit[k] = 0);
     setTimeout(() => { if (running) commentSettings("start"); }, 4500);
     setTimeout(() => { if (running && (n("tFake", 20) >= 40 || n("tEsc", 0) > 0)) say("fakeNote"); }, 10000);
     if (runHidden) setTimeout(() => { if (running) say("hidden"); }, 7500);
@@ -671,7 +761,7 @@ function applyPersona(name, jitter){
   $("teaseOn").checked = true; store.set("h_teaseOn", true);
   $("tStop").checked = p.stop; store.set("h_tStop", p.stop);
   saveInputs(); resetTease();
-  $("persDesc").textContent = p.d + (jitter ? " (randomized a little)" : "");
+  $("persDesc").textContent = p.d + targetNote(name) + (jitter ? " (randomized a little)" : "");
   status("Tease mode on: " + name + ".");
   currentPersona = name; store.set("h_persona", name); enterRoom(name, true); chatHeader(); say("greet");
 }
@@ -739,33 +829,79 @@ const MORE4 = {
 Object.keys(MORE4).forEach(k => Object.keys(MORE4[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE4[k][c]); }));
 let onBreak = false, breakBusy = false, nextBreakAt = 0, breakChatAt = 0;
 let midCat = "", midAt = 0, nextPromiseAt = 0, nextNudgeAt = 0, lastCommentAt = 0, lastSugAt = 0, cmTimer = null; const lastSaid = {};
-function addMsg(kind, text){
-  const d = document.createElement("div"); d.className = "msg " + kind; d.textContent = text;
+function pushMsg(d){
   const log = $("chatLog"); log.append(d);
-  while (log.children.length > 80) log.removeChild(log.firstChild);
+  while (log.children.length > 150) log.removeChild(log.firstChild);
   log.scrollTop = log.scrollHeight;
-  return d;
+}
+function addMsg(kind, text, replyEl){
+  const d = document.createElement("div"); d.className = "msg " + kind;
+  const q = replyEl ? quoteEl(replyEl) : null;
+  if (q){ d.append(q); const b = document.createElement("span"); b.textContent = text; d.append(b); } else d.textContent = text;
+  if (kind === "me"){ d.dataset.who = "__me"; d.dataset.text = text; }
+  pushMsg(d); return d;
+}
+function fanColor(n){ let h = 0; for (const c of String(n)) h = (h * 31 + c.charCodeAt(0)) % 360; return "hsl(" + h + ",55%,45%)"; }
+function lastMsgOf(who){
+  const log = $("chatLog");
+  for (let i = log.children.length - 1; i >= 0; i--){ const c = log.children[i]; if (c.dataset && c.dataset.who === who && !c.classList.contains("typing")) return c; }
+  return null;
+}
+function quoteEl(t){
+  if (!t || !t.dataset || !t.dataset.who) return null;
+  const w = t.dataset.who, q = document.createElement("div"); q.className = "quote";
+  const nm = w === "__me" ? "You" : w.indexOf("fan:") === 0 ? w.slice(4) : (SHORT[w] || w);
+  const tx = t.dataset.text || ""; q.textContent = "↪ " + nm + ": " + (tx.length > 90 ? tx.slice(0, 90) + "…" : tx);
+  q.style.borderLeftColor = w === "__me" ? "var(--accent)" : (PCOL[w] || fanColor(nm));
+  q.onclick = () => { if (t.scrollIntoView) t.scrollIntoView({block: "center", behavior: "smooth"}); t.classList.add("flash"); setTimeout(() => t.classList.remove("flash"), 1300); };
+  return q;
 }
 function fillLine(str, vars, name){
+  vars = vars || {};
   const nk = nickFor(name), Nk = nk.charAt(0).toUpperCase() + nk.slice(1);
   const left = Math.max(0, endAt - Date.now());
   const lt = left >= 90000 ? Math.round(left / 60000) + " minutes" : Math.max(1, Math.round(left / 1000)) + " seconds";
   return str.replace(/\{left\}/g, lt).replace(/\{n\}/g, tz ? Math.max(1, tz.cycle) : 1)
-    .replace(/\{nick\}/g, nk).replace(/\{Nick\}/g, Nk).replace(/\{other\}/g, (vars && SHORT[vars.other]) || "her").replace(/\{ctrl\}/g, (vars && SHORT[vars.ctrl]) || "her");
+    .replace(/\{viewers\}/g, Math.max(1, fans.length)).replace(/\{fan\}/g, vars.fan || "friend").replace(/\{answer\}/g, vars.answer || "that").replace(/\{step\}/g, vars.step != null ? vars.step : 5).replace(/\{to\}/g, vars.to != null ? vars.to : "")
+    .replace(/\{nick\}/g, nk).replace(/\{Nick\}/g, Nk).replace(/\{other\}/g, SHORT[vars.other] || "her").replace(/\{ctrl\}/g, SHORT[vars.ctrl] || "her");
 }
 function addBot(name){
   const d = document.createElement("div"); d.className = "msg bot typing";
   d.style.borderLeftColor = PCOL[name] || "";
   const who = document.createElement("span"); who.className = "who"; who.textContent = SHORT[name] || name; who.style.color = PCOL[name] || "";
   const body = document.createElement("span"); body.textContent = "···";
-  d.append(who, body);
-  const log = $("chatLog"); log.append(d);
-  while (log.children.length > 80) log.removeChild(log.firstChild);
-  log.scrollTop = log.scrollHeight;
+  d.append(who, body); pushMsg(d);
   return {d, body};
 }
+/* Sticky offers: every button the user can press lives here, pinned above the chat, never inside a message. */
+const offers = [];
+function syncRow(){ const e = $("arHint"); if (e) e.textContent = offers.length ? "" : "Nothing needs an answer right now. Use a quick reply or say something."; }
+function removeOffer(id){ const i = offers.findIndex(o => o.id === id); if (i >= 0){ offers[i].el.remove(); offers.splice(i, 1); } syncRow(); }
+function addOffer(o){
+  removeOffer(o.id);
+  if (!o.choices) o.choices = [{label: o.label, kind: "primary", apply: o.apply}];
+  const el = document.createElement("div"); el.className = "prompt"; el.style.borderColor = o.color || PCOL[o.who] || "";
+  if (o.who || o.text){
+    const head = document.createElement("div"); head.className = "ptxt";
+    if (o.who){ const b = document.createElement("b"); b.textContent = SHORT[o.who] || o.who; b.style.color = PCOL[o.who] || ""; head.append(b, " " + (o.text || "")); } else head.textContent = o.text;
+    el.append(head);
+  }
+  const row = document.createElement("div"); row.className = "pbtns";
+  o.choices.forEach(c => { const b = document.createElement("button"); b.type = "button"; b.className = "pbtn " + (c.kind || "primary"); b.textContent = c.label; b.onclick = () => { removeOffer(o.id); if (c.apply) c.apply(); }; row.append(b); });
+  if (o.choices.length === 1){ const x = document.createElement("button"); x.type = "button"; x.className = "pbtn ghost"; x.textContent = "✕"; x.title = "Dismiss"; x.setAttribute("aria-label", "Dismiss: " + o.choices[0].label); x.onclick = () => removeOffer(o.id); row.append(x); }
+  el.append(row); o.el = el; o.exp = Date.now() + (o.ttl || 90000); offers.push(o); $("offers").append(el); syncRow();
+}
+function pruneOffers(){
+  const now = Date.now();
+  offers.slice().forEach(o => {
+    const why = now > o.exp ? "expired" : (o.valid && !o.valid() ? "invalid" : null);
+    if (why){ removeOffer(o.id); if (o.onGone) o.onGone(why); }
+  });
+}
+const HYPE = {fake:6,fakeAfter:3,hold:3,holdMid:2,rest:2,restMid:1,build:2,challenge:10,defend:5,insist:5,resist:5,takeover:14,lose:6,keep:6,fail:12,win:12,enter:4,tempt:5,askControl:5,banter:2,watch:3,enjoy:4,heckle:4,spectate:3,crowd:3,jealousStay:4,jealousLeave:5,excitedStay:4};
 function sayAs(name, cat, action, vars){
   const l = name && LINES[name]; if (!l || !l[cat] || !l[cat].length) return;
+  vars = vars || {};
   let arr = l[cat];
   if (runHidden){ const f = arr.filter(x => !x.includes("{left}")); if (f.length) arr = f; }   // don't leak the end time
   const key = name + cat; let raw = arr[Math.floor(Math.random() * arr.length)];
@@ -773,32 +909,33 @@ function sayAs(name, cat, action, vars){
   lastSaid[key] = raw;
   const line = fillLine(withNick(raw, name, cat), vars, name), m = addBot(name);
   setTimeout(() => {
+    let target = vars.replyTo; if (typeof target === "string") target = lastMsgOf(target);
+    const q = quoteEl(target); if (q) m.d.insertBefore(q, m.body);
     m.d.classList.remove("typing"); m.body.textContent = line;
-    if (action){
-      const btn = document.createElement("button"); btn.className = "mini"; btn.textContent = action.label;
-      btn.onclick = () => { btn.remove(); action.apply(); };
-      m.d.append(btn);
-    }
+    m.d.dataset.who = name; m.d.dataset.text = line;
+    if (vars.onShow) vars.onShow(m.d);
+    if (action) addOffer(Object.assign({id: action.id || (name + ":" + (action.label || "")), who: name, color: PCOL[name]}, action));
+    excite = Math.min(60, excite + (HYPE[cat] || 0)); fansReact(cat, name, m.d);
     const lg = $("chatLog"); lg.scrollTop = lg.scrollHeight;
   }, 500 + line.length * 35 + Math.random() * 500);
 }
 function say(cat, action){ sayAs(currentPersona, cat, action); }
 function speedAction(){
   const cur = +$("speed").value, nv = Math.min(100, cur + 15); if (nv <= cur) return null;
-  return {label: "Raise max speed to " + nv + "%", apply: () => { $("speed").value = nv; $("speed").dispatchEvent(new Event("input")); addMsg("sys", "Max speed raised to " + nv + "%."); }};
+  return {id: "speedUp", ttl: 60000, label: "Raise max speed to " + nv + "%", apply: () => { $("speed").value = nv; $("speed").dispatchEvent(new Event("input")); addMsg("sys", "Max speed raised to " + nv + "%."); }};
 }
 function strokeAction(){
   if (+$("smin").value <= 0 && +$("smax").value >= 100) return null;
-  return {label: "Use the full stroke (0–100%)", apply: () => { $("smin").value = 0; $("smin").dispatchEvent(new Event("input")); $("smax").value = 100; $("smax").dispatchEvent(new Event("input")); addMsg("sys", "Stroke set to the full range."); }};
+  return {id: "fullStroke", ttl: 60000, label: "Use the full stroke (0–100%)", apply: () => { $("smin").value = 0; $("smin").dispatchEvent(new Event("input")); $("smax").value = 100; $("smax").dispatchEvent(new Event("input")); addMsg("sys", "Stroke set to the full range."); }};
 }
 function commentSettings(kind){
-  if (!currentPersona) return;
+  if (!currentPersona || Date.now() < suppressUntil) return;
   const now = Date.now(); if (now - lastCommentAt < 20000) return;
   const sp = +$("speed").value, rng = +$("smax").value - +$("smin").value;
   let cat = null, act = null;
-  if (sp < 40){ cat = kind === "nudge" ? "nudge" : "lowSpeed"; act = speedAction(); }
-  else if (rng < 60){ cat = kind === "nudge" ? "nudge" : "shortStroke"; act = strokeAction(); }
-  else if (kind !== "nudge" && (sp >= 80 || rng >= 95)) cat = "praise";
+  if (sp < Math.max(15, targetOf(currentPersona).speed - 20)){ cat = kind === "nudge" ? "nudge" : "lowSpeed"; act = speedAction(); }
+  else if (rng < Math.max(20, targetOf(currentPersona).len - 25)){ cat = kind === "nudge" ? "nudge" : "shortStroke"; act = strokeAction(); }
+  else if (kind !== "nudge" && (sp >= targetOf(currentPersona).speed + 10 || rng >= 95)) cat = "praise";
   if (!cat) return;
   if (act && now - lastSugAt < 45000){ if (kind === "nudge") return; act = null; }
   if (act) lastSugAt = now;
@@ -860,6 +997,101 @@ Object.keys(MORE5).forEach(k => Object.keys(MORE5[k]).forEach(c => { LINES[k][c]
 let room = [], nextRoomAt = Date.now() + 6000 + Math.random() * 6000, nextTemptAt = Date.now() + 40000 + Math.random() * 30000, nextSpectateAt = Date.now() + 25000, lastTempter = "";
 const lastLeft = {};
 const pickOne = arr => arr[Math.floor(Math.random() * arr.length)];
+const busyNow = () => running || paused || starting;
+
+/* audience */
+const FANNAMES = ["moonlitmoth","pixelpanda","cozycrow","nightowl88","velvetfox","gigglesnort","tealtiger","midnightmilk","sparkplug","quietstorm","lazylynx","bubbletea_b","dustybison","neonfinch","paperkite","sundaysoup","crimsoncub","frostbyte","orbitoats","hazelnut_h","wobblyotter","silvermink","tangotom","cinderkit","mapleghost","juniper_j","stormpup","lemondrop42","owlish","cobaltcat","dewdrop","quokkaq","fuzzybolt","honeybadgr","ember_ash","pebbleking","sleepyfig","glitterbug","marblemoth","thistle","puddlejump","rustyrobin","kiwikat","sootsprite","clover_c","bluejayway","ginger_g","nimbus_n"];
+const FANPOOL = {
+ general:["lol","this room is something else","I love this lounge","best show on the site","how long has this been going?","brb snacks","chat is wild tonight","who's winning?","I came for this","what did I miss?"],
+ idle:["quiet in here...","anyone else waiting for a dare?","hello lounge","hi all","waiting for someone to take control","this room has vibes"],
+ hi:["hi!","hello lounge","what did I miss?","just got here, what's happening?","evening all"],
+ build:["here we go","it's building","oh this is getting good","speed up!","look at that climb"],
+ hold:["HOLD IT","don't you dare","right on the edge","this is torture lol","hang in there!"],
+ rest:["nooo it stopped","cruel!","so mean lmao","breathe!","brutal pause"],
+ fake:["FAKEOUT","she did NOT","evil. I love it","called it","this is cruelty and I'm here for it"],
+ challenge:["ooh a challenge!","SWITCH SWITCH","fight!","drama in the lounge","don't give in!","hold your ground!"],
+ resist:["not letting go lol","so stubborn!","she's not budging","respect the stubbornness","this is a standoff"],
+ takeover:["new boss!","change of command!","here we go again","oh no, new sheriff","she took over!"],
+ fail:["F","they quit!","so close!","rip","aww","lockout time"],
+ win:["LEGEND","they made it!!","gg","respect","champion energy","clap clap"],
+ enter:["welcome!","new arrival!","oh she's here","yay"],
+ dare:["say yes!","do it do it","accept the dare!","don't be shy","I'd take it"],
+ crowd:["we're growing!","so many people in here","chat is packed","this room is popping","hello new people"],
+ userReply:["haha","same","lol","you got this","respect","brave","keep going!"]
+};
+const FMAP = {fake:"fake",fakeAfter:"fake",hold:"hold",holdMid:"hold",rest:"rest",restMid:"rest",build:"build",challenge:"challenge",insist:"challenge",defend:"resist",resist:"resist",takeover:"takeover",fail:"fail",win:"win",enter:"enter",tempt:"dare",askControl:"dare",crowd:"crowd"};
+const TIERS = [[0,"Quiet"],[10,"Warming up"],[30,"Buzzing"],[55,"Packed"],[80,"Legendary"]];
+let fans = [], excite = 0, pop = 0, fame = store.get("handyFame", 0), peakFans = store.get("handyPeak", 0), lastTier = 0, nextFanAt = Date.now() + 8000, lastFanMsgAt = 0, lastFanReplyAt = 0, nextCrowdAt = Date.now() + 60000, tickN = 0;
+function level(){ return 1 + Math.floor(Math.sqrt(fame / 40)); }
+function aggr(){ return $("fansOn").checked ? 1 + Math.min(1.5, fans.length / 30) : 1; }
+function crowdLevel(){ return ($("crowdBoost").checked && $("fansOn").checked) ? Math.min(1, (aggr() - 1) / 1.5) : 0; }
+function renderCrowd(){
+  const t = TIERS.filter(x => pop >= x[0]).pop()[1];
+  $("roomCount").textContent = room.length + " in the room · " + fans.length + " watching";
+  $("hypeBar").style.width = Math.max(2, Math.min(100, pop)) + "%";
+  $("hypeLbl").textContent = t + " · Lv " + level();
+}
+function addFan(){
+  const free = FANNAMES.filter(n => !fans.includes(n));
+  const name = free.length ? pickOne(free) : pickOne(FANNAMES) + Math.floor(10 + Math.random() * 90);
+  fans.push(name);
+  if (fans.length <= 12 ? Math.random() < 0.7 : Math.random() < 0.08) addMsg("sys", name + " joined the lounge.");
+  if (Math.random() < 0.15) fanSay("hi", 1200 + Math.random() * 2000, null, null, name);
+}
+function removeFan(){
+  if (!fans.length) return;
+  const n = fans.splice(Math.floor(Math.random() * fans.length), 1)[0];
+  if (fans.length <= 8 && Math.random() < 0.4) addMsg("sys", n + " left.");
+}
+function fanSay(pool, delay, replyEl, persona, who){
+  setTimeout(() => {
+    if (!$("fansOn").checked || !fans.length) return;
+    const now = Date.now(); if (now - lastFanMsgAt < 500) return; lastFanMsgAt = now;
+    const f = who && fans.includes(who) ? who : pickOne(fans);
+    let text = pickOne(FANPOOL[pool] || FANPOOL.general), mention = null;
+    if (persona && room.includes(persona) && Math.random() < 0.45){ text = "@" + SHORT[persona] + " " + text; mention = persona; }
+    const d = document.createElement("div"); d.className = "msg fan"; d.dataset.who = "fan:" + f; d.dataset.text = text;
+    const w = document.createElement("span"); w.className = "who"; w.textContent = f; w.style.color = fanColor(f); d.append(w);
+    if (replyEl && replyEl.isConnected && Math.random() < 0.75){ const q = quoteEl(replyEl); if (q) d.append(q); }
+    const b = document.createElement("span"); b.textContent = text; d.append(b);
+    pushMsg(d);
+    if (mention && now - lastFanReplyAt > 12000 && Math.random() < 0.5){
+      lastFanReplyAt = now;
+      setTimeout(() => { if (room.includes(mention)) sayAs(mention, "fanReply", null, {fan: f, replyTo: d}); }, 1500 + Math.random() * 1500);
+    }
+  }, delay);
+}
+function fansReact(cat, name, el){
+  const pool = FMAP[cat]; if (!pool || fans.length < 3 || !$("fansOn").checked) return;
+  if (Math.random() > Math.min(0.9, 0.12 + fans.length * 0.02)) return;
+  const n = 1 + (fans.length > 20) + (fans.length > 45);
+  for (let i = 0; i < n; i++) fanSay(pool, 700 + i * 900 + Math.random() * 2200, el, name);
+}
+function personaCrowdLine(){
+  if (fans.length < 3) return;
+  const who = (running && runTease && currentPersona && room.includes(currentPersona)) ? currentPersona : (room.length ? pickOne(room) : null);
+  if (who) sayAs(who, "crowd");
+}
+function crowdTick(){
+  excite *= 0.97;
+  const base = (running ? 28 : 0) + (running && runTease ? 8 : 0) + room.length * 5 + (paused && !onBreak ? 4 : 0);
+  const hype = Math.max(0, Math.min(100, base + excite));
+  pop += (hype - pop) * 0.025;
+  if (running) fame += pop / 100;
+  const baseline = room.length ? Math.min(10, (level() - 1) * 2) : 0;
+  const target = $("fansOn").checked ? Math.round(Math.pow(pop / 100, 1.5) * 70) + baseline : 0;
+  let steps = 0;
+  while (fans.length < target && steps < (target - fans.length > 10 ? 3 : 2) && Math.random() < 0.7){ addFan(); steps++; }
+  steps = 0;
+  while (fans.length > target + 1 && steps < 2 && Math.random() < 0.6){ removeFan(); steps++; }
+  if (fans.length > peakFans) peakFans = fans.length;
+  const ti = TIERS.filter(x => pop >= x[0]).length - 1;
+  if (ti > lastTier && (running || pop > 12)){ addMsg("sys", "The lounge is now " + TIERS[ti][1] + ". " + fans.length + " watching."); personaCrowdLine(); }
+  lastTier = ti;
+  if (++tickN % 10 === 0){ store.set("handyFame", Math.round(fame)); store.set("handyPeak", peakFans); }
+  renderCrowd();
+}
+
 function renderRoom(){
   const box = $("roomWho"); box.innerHTML = "";
   room.forEach(p => {
@@ -867,7 +1099,7 @@ function renderRoom(){
     const dot = document.createElement("span"); dot.className = "rdot"; dot.style.background = PCOL[p] || "";
     c.append(dot, SHORT[p] + (p === currentPersona ? " ★" : "")); box.append(c);
   });
-  $("roomCount").textContent = room.length ? room.length + " online" : "nobody here yet";
+  renderCrowd();
 }
 function chatHeader(){ renderRoom(); }
 function enterRoom(p, silent){
@@ -883,13 +1115,14 @@ function leaveRoom(p, quiet){
   setTimeout(() => { room = room.filter(x => x !== p); lastLeft[p] = Date.now(); renderRoom(); addMsg("sys", SHORT[p] + " left the lounge."); }, quiet ? 200 : 2800);
 }
 function giveControl(p){
-  if (running || paused || starting){ addMsg("sys", "Finish the current session first."); return; }
+  if (busyNow()){ addMsg("sys", "Finish the current session first."); return; }
   if (locked){ addMsg("sys", "You're locked out right now. Check the status line."); return; }
   if (!$("key").value.trim()){ addMsg("sys", "Enter your connection key first."); status("Enter your connection key first.", true); return; }
   $("persona").value = p;
   applyPersona(p, false);
   start();
 }
+const giveOffer = (p, label, ttl) => ({id: "give:" + p, who: p, text: "wants control", color: PCOL[p], ttl: ttl || 100000, valid: () => !busyNow() && !locked, choices: [{label: label, kind: "primary", apply: () => giveControl(p)}, {label: "Not now", kind: "ghost", apply: () => addMsg("me", "Not now.")}]});
 function pickKind(p, event){
   const w = Object.assign({}, REACT[p] || {banter: 1});
   if (event === "claimed") delete w.askControl;
@@ -899,15 +1132,15 @@ function pickKind(p, event){
 }
 function doReaction(p, kind, actor){
   if (!room.includes(p)) return;
-  const vars = {other: actor};
+  const vars = {other: actor, replyTo: actor};
   if (kind === "askControl"){
-    if (running || paused || starting || locked) kind = "jealousStay";
-    else return sayAs(p, "askControl", {label: "Give " + SHORT[p] + " control instead", apply: () => giveControl(p)}, vars);
+    if (busyNow() || locked) kind = "jealousStay";
+    else return sayAs(p, "askControl", giveOffer(p, "Give " + SHORT[p] + " control instead"), vars);
   }
   if (kind === "jealousLeave" && p === currentPersona && (running || paused)) kind = "jealousStay";
   sayAs(p, kind, null, vars);
   if (kind === "jealousLeave") setTimeout(() => leaveRoom(p, true), 3500 + Math.random() * 1500);
-  if (kind === "banter" && Math.random() < 0.6) setTimeout(() => { if (room.includes(actor) && room.includes(p)) sayAs(actor, "banter", null, {other: p}); }, 4200 + Math.random() * 2500);
+  if (kind === "banter" && Math.random() < 0.6) setTimeout(() => { if (room.includes(actor) && room.includes(p)) sayAs(actor, "banter", null, {other: p, replyTo: p}); }, 4200 + Math.random() * 2500);
 }
 function react(event, actor){
   let cnt = 0;
@@ -917,9 +1150,9 @@ function react(event, actor){
   });
 }
 function doTempt(p){
-  if (!room.includes(p) || running || paused || starting) return;
+  if (!room.includes(p) || busyNow()) return;
   lastTempter = p;
-  sayAs(p, "tempt", {label: "Give " + SHORT[p] + " control", apply: () => giveControl(p)});
+  sayAs(p, "tempt", giveOffer(p, "Give " + SHORT[p] + " control", 120000));
   react("dare", p);
 }
 function temptUser(){
@@ -934,13 +1167,13 @@ function temptUser(){
   doTempt(pickOne(pool.length ? pool : room));
 }
 function ambientEvent(){
-  const busy = running || paused || starting, r = Math.random();
+  const busy = busyNow(), r = Math.random();
   const absent = ALL.filter(x => !room.includes(x) && Date.now() - (lastLeft[x] || 0) > 120000);
   if ((!room.length || (room.length < 4 && r < 0.4)) && absent.length){ enterRoom(pickOne(absent)); return; }
   if (room.length >= 2 && r < 0.8){
     const a = pickOne(room), b = pickOne(room.filter(x => x !== a));
     sayAs(a, "banter", null, {other: b});
-    if (Math.random() < 0.7) setTimeout(() => { if (room.includes(a) && room.includes(b)) sayAs(b, "banter", null, {other: a}); }, 4000 + Math.random() * 2500);
+    if (Math.random() < 0.7) setTimeout(() => { if (room.includes(a) && room.includes(b)) sayAs(b, "banter", null, {other: a, replyTo: a}); }, 4000 + Math.random() * 2500);
     return;
   }
   if (room.length >= 2){ const cand = room.filter(x => !(busy && x === currentPersona)); if (cand.length) leaveRoom(pickOne(cand)); }
@@ -948,21 +1181,29 @@ function ambientEvent(){
 function spectate(){
   const others = room.filter(p => p !== currentPersona); if (!others.length) return;
   const sp = pickOne(others);
-  sayAs(sp, Math.random() < 0.4 ? "heckle" : "spectate", null, {ctrl: currentPersona});
+  sayAs(sp, Math.random() < 0.4 ? "heckle" : "spectate", null, {ctrl: currentPersona, replyTo: currentPersona});
   if (currentPersona && room.includes(currentPersona) && Math.random() < 0.35)
-    setTimeout(() => { if (room.includes(sp) && room.includes(currentPersona)) sayAs(currentPersona, "banter", null, {other: sp}); }, 3500 + Math.random() * 2000);
+    setTimeout(() => { if (room.includes(sp) && room.includes(currentPersona)) sayAs(currentPersona, "banter", null, {other: sp, replyTo: sp}); }, 3500 + Math.random() * 2000);
 }
 function spectatorsReact(cat){
   const others = room.filter(p => p !== currentPersona); if (!others.length) return;
   const sp = pickOne(others);
-  setTimeout(() => { if (room.includes(sp)) sayAs(sp, cat, null, {ctrl: currentPersona}); }, 4000 + Math.random() * 3000);
+  setTimeout(() => { if (room.includes(sp)) sayAs(sp, cat, null, {ctrl: currentPersona, replyTo: currentPersona}); }, 4000 + Math.random() * 3000);
 }
 setInterval(() => {
-  const now = Date.now(), busy = running || paused || starting;
-  if (now > nextRoomAt){ nextRoomAt = now + 35000 + Math.random() * 45000; ambientEvent(); }
+  const now = Date.now(), busy = busyNow(), ag = aggr();
+  crowdTick(); pruneOffers();
+  if (now > nextRoomAt){ nextRoomAt = now + (35000 + Math.random() * 45000) / (1 + (ag - 1) * 0.6); ambientEvent(); }
   if (!busy && !locked && now > nextTemptAt){ nextTemptAt = now + 80000 + Math.random() * 60000; temptUser(); }
-  if (running && runTease && now > nextSpectateAt){ nextSpectateAt = now + 30000 + Math.random() * 30000; spectate(); }
+  if (running && runTease && now > nextSpectateAt){ nextSpectateAt = now + (30000 + Math.random() * 30000) / ag; spectate(); }
   if (running && runTease && !onBreak && !challenge && now > nextChallengeAt) startChallenge();
+  interactTick(now, busy);
+  if (running && runTease && fans.length >= 5 && now > nextCrowdAt){ nextCrowdAt = now + (50000 / ag) * (0.8 + Math.random() * 0.4); personaCrowdLine(); }
+  if (fans.length && $("fansOn").checked && now > nextFanAt){
+    nextFanAt = now + Math.max(1500, 11000 - fans.length * 140) * (0.6 + Math.random() * 0.8);
+    const ph = running && runTease && tz && tz.label ? ({building: "build", holding: "hold", resting: "rest"}[tz.label] || "general") : (running ? "general" : "idle");
+    fanSay(Math.random() < 0.4 ? "general" : ph, 0, null, running && runTease && Math.random() < 0.5 ? currentPersona : null);
+  }
 }, 1000);
 const MORE6 = {
  "Patient Priscilla": {challenge:["{other}, darling, you're being too hasty. Let me take over. I'll make you beg slowly.","Step aside, {other}. Patience will break you better than any trick.","My turn, {other}. I'll be the one to make you crack, gently."],defend:["Oh {other}, sweet of you, but no. I'm not done yet.","Not now, {other}. I'm enjoying this.","Wait your turn, {other}. Patience, remember?"],takeover:["Thank you, {other}. I'll take it from here, nice and slow.","Mine now, love. Let's see how long you last."],lose:["Fine, {other}. Take it. Be gentle."],keep:["Better luck next time, {other}. I'm staying right here."],retreat:["Mm, fine. I'll wait, {other}. I'm very patient."],heckle:["{ctrl} is moving too fast. A real tease takes patience.","I'd go slower than that, {ctrl}. Just saying."]},
@@ -978,6 +1219,7 @@ Object.keys(MORE6).forEach(k => Object.keys(MORE6[k]).forEach(c => { LINES[k][c]
 
 /* ---------- battle for control ---------- */
 let challenge = null, nextChallengeAt = 0; const attempts = {};
+const STUBBORN = {"Patient Priscilla":1.0,"Mischievous Mia":0.8,"Strict Ms. Vance":1.5,"Chaos Cassie":0.5,"Sweet-Talker Sienna":0.9,"Relentless Roxy":1.5,"Sleepy Sadie":0.6,"Drill Sergeant Dana":1.5,"Mocking Margot":1.3};
 function setPersonaFields(name, jitter){
   const p = PERSONAS[name]; if (!p) return;
   const j = v => jitter ? Math.round(v * (0.9 + Math.random() * 0.2)) : v;
@@ -993,7 +1235,7 @@ function switchController(name){
   setPersonaFields(name, true);
   currentPersona = name; store.set("h_persona", name); $("persona").value = name;
   enterRoom(name, true); renderRoom(); resetTease(); lastVelAt = 0;
-  $("persDesc").textContent = PERSONAS[name].d;
+  $("persDesc").textContent = PERSONAS[name].d + targetNote(name);
   addMsg("sys", SHORT[name] + " took control.");
   status("Control passed to " + SHORT[name] + ".");
   midCat = "build"; midAt = Date.now() + 8000;
@@ -1003,29 +1245,40 @@ function beginChallenge(ch){
   const ctl = currentPersona; if (!ctl || ch === ctl) return;
   const c = challenge = {ch, ctl};
   attempts[ch] = (attempts[ch] || 0) + 1;
-  sayAs(ch, "challenge", {label: "Let " + SHORT[ch] + " take over", apply: () => resolveChallenge(c, true)}, {other: ctl});
-  setTimeout(() => { if (challenge === c) sayAs(ctl, "defend", null, {other: ch}); }, 4200 + Math.random() * 1500);
+  addOffer({id: "ch", who: ch, text: "wants control from " + SHORT[ctl], ttl: 60000, valid: () => challenge === c, choices: [
+    {label: "Grant", kind: "primary", apply: () => { addMsg("me", "Granted. " + SHORT[ch] + " takes over."); resolveChallenge(c, true); }},
+    {label: "Deny", kind: "danger", apply: () => { addMsg("me", "Denied. " + SHORT[ctl] + " keeps control."); resolveChallenge(c, false); }}]});
+  sayAs(ch, "challenge", null, {other: ctl, replyTo: ctl});
+  const later = (ms, fn) => setTimeout(() => { if (challenge === c) fn(); }, ms);
+  later(4500 + Math.random() * 1200, () => sayAs(ctl, "defend", null, {other: ch, replyTo: ch}));
+  later(9000 + Math.random() * 1200, () => sayAs(ch, "insist", null, {other: ctl, replyTo: ctl}));
+  later(13000 + Math.random() * 1200, () => sayAs(ctl, "resist", null, {other: ch, replyTo: ch}));
   const by = room.filter(p => p !== ch && p !== ctl);
-  if (by.length) setTimeout(() => { if (challenge === c) sayAs(pickOne(by), "excitedStay", null, {other: ch}); }, 7500 + Math.random() * 1500);
-  setTimeout(() => { if (challenge === c) resolveChallenge(c, Math.random() < Math.min(0.8, 0.4 + 0.12 * attempts[ch])); }, 11500 + Math.random() * 2500);
+  if (by.length) later(7000 + Math.random() * 1500, () => sayAs(pickOne(by), "excitedStay", null, {other: ch, replyTo: ch}));
+  later(18000 + Math.random() * 2500, () => {
+    const cl = (aggr() - 1) / 1.5;
+    const pw = Math.max(0.05, Math.min(0.6, (0.10 + 0.09 * attempts[ch] + 0.12 * cl) / (STUBBORN[ctl] || 1)));
+    resolveChallenge(c, Math.random() < pw);
+  });
 }
 function resolveChallenge(c, win){
   if (challenge !== c) return;
-  challenge = null; nextChallengeAt = Date.now() + 50000 + Math.random() * 40000;
+  challenge = null; removeOffer("ch");
+  nextChallengeAt = Date.now() + (50000 + Math.random() * 40000) / aggr();
   if (!running || !runTease || onBreak) return;
   if (win){
     attempts[c.ch] = 0;
-    sayAs(c.ch, "takeover", null, {other: c.ctl});
-    setTimeout(() => { if (room.includes(c.ctl)) sayAs(c.ctl, "lose", null, {other: c.ch}); }, 3500);
+    sayAs(c.ch, "takeover", null, {other: c.ctl, replyTo: c.ctl});
+    setTimeout(() => { if (room.includes(c.ctl)) sayAs(c.ctl, "lose", null, {other: c.ch, replyTo: c.ch}); }, 3500);
     switchController(c.ch);
   } else {
-    sayAs(c.ctl, "keep", null, {other: c.ch});
-    setTimeout(() => { if (room.includes(c.ch)) sayAs(c.ch, "retreat", null, {other: c.ctl}); }, 3500);
+    sayAs(c.ctl, "keep", null, {other: c.ch, replyTo: c.ch});
+    setTimeout(() => { if (room.includes(c.ch)) sayAs(c.ch, "retreat", null, {other: c.ctl, replyTo: c.ctl}); }, 3500);
   }
 }
 function startChallenge(){
   if (!running || !runTease || onBreak || challenge) return;
-  nextChallengeAt = Date.now() + 50000 + Math.random() * 40000;
+  nextChallengeAt = Date.now() + (50000 + Math.random() * 40000) / aggr();
   const others = room.filter(p => p !== currentPersona);
   if (!others.length){
     const absent = ALL.filter(x => !room.includes(x) && x !== currentPersona); if (!absent.length) return;
@@ -1125,21 +1378,965 @@ LINES["Mocking Margot"] = {
  retreat:["Fine, {other}. I'll wait. I'll enjoy watching."],
  heckle:["{ctrl}, that's far too gentle. This {nick} needs mockery, not mercy.","I'd have this {nick} red-faced by now, {ctrl}."]
 };
+const MORE8 = {
+ "Patient Priscilla": {resist:["Oh, {other}, no. I haven't finished with my {nick} and I won't be hurried.","Absolutely not, {other}. Patience, remember? I'm not handing anything over.","Sweet of you to ask again, {other}. The answer is still no."],insist:["{other}, darling, you've had your fun. Hand it over.","Really, {other}? I'll just keep asking until you give in.","Be generous, {other}. Let me have a turn."],crowd:["{viewers} people are watching you right now, {nick}. Lovely, isn't it?","Such a big audience tonight. {viewers} of them, all watching you squirm, {nick}.","Look at how many came to watch. {viewers} pairs of eyes on you."],fanReply:["Thank you, {fan}. Do stay and enjoy the show.","Hello, {fan}. Isn't my {nick} doing well?"]},
+ "Mischievous Mia": {resist:["No way, {other}! You can't have my {nick} yet!","Hahaha, nope, {other}! Keep dreaming!","You'll have to take it from me, {other}!"],insist:["{other}, come on! Sharing is caring!","Oh, {other}, don't be greedy! My turn!","{other}, I'm not going away until I get a turn!"],crowd:["{viewers} people are watching you, {nick}! Wave!","Ooh, look at the crowd! {viewers} spectators, {nick}!","Everyone's watching you squirm, {nick}. All {viewers} of them!"],fanReply:["Ha! Thanks, {fan}! Keep cheering!","{fan}, you get it! This is the best show!"]},
+ "Strict Ms. Vance": {resist:["I will decide when we change hands, {other}. Not now.","Denied again, {other}. Sit down and observe.","You are testing my patience, {other}. Control stays with me."],insist:["{other}, you are wasting this {nick}. Step aside.","Last chance, {other}. Hand it over properly.","I do not take no from you, {other}."],crowd:["{viewers} witnesses, {nick}. Sit up straight and take it.","You have an audience of {viewers}. Don't embarrass yourself, {nick}.","Everyone sees you, {nick}. All {viewers} of them. Behave."],fanReply:["Noted, {fan}. Watch closely and learn.","{fan}, quiet. And enjoy the show."]},
+ "Chaos Cassie": {resist:["NOPE, {other}! Finders keepers, losers weepers!","{other}! Go away! This is MY turn!","Not giving it up, {other}! Maybe! Definitely!"],insist:["{other}! Gimme! Gimme gimme gimme!","Come ON, {other}! Chaos demands a turn!","{other}, I'll just keep shouting until you give in!"],crowd:["{viewers} people are watching you, {nick}! That's a lot of people!","Look, a crowd! {viewers} watchers! Hi crowd!","The whole world is watching you, {nick}! Okay, {viewers} people!"],fanReply:["{fan}! Hi! You're the best!","Thanks {fan}! More chaos coming!"]},
+ "Sweet-Talker Sienna": {resist:["Aw, {other}, no. I'm having far too much fun with my {nick}.","Sorry, {other}, but I'm not ready to share.","Not yet, {other}. I'm still enjoying this."],insist:["Please, {other}? Just a little turn?","{other}, you've had so long. Let me have a turn.","Come on, {other}. I'll be so gentle."],crowd:["{viewers} people are watching you, {nick}. Doesn't that feel something?","Look at everyone who came to see you, {nick}. {viewers} of them.","{viewers} sets of eyes on you, {nick}. And I love every one."],fanReply:["Thank you, {fan}. Stay a while.","Aw, {fan}, you're sweet. Enjoy the show."]},
+ "Relentless Roxy": {resist:["Forget it, {other}. I'm not done with my {nick}.","Back off, {other}. Control stays with me.","You want it? Take it from me, {other}. You can't."],insist:["{other}, you're wasting it. Move.","I'm not asking again, {other}. Hand it over.","{other}, you're too soft. Let me handle this."],crowd:["{viewers} people are watching you, {nick}. Don't disappoint them.","Big crowd, {nick}. {viewers} watching. Prove yourself.","All {viewers} of them are waiting for you to break, {nick}."],fanReply:["{fan}, good. Keep watching.","Thanks, {fan}. This'll get harder."]},
+ "Sleepy Sadie": {resist:["Mm... no, {other}... I'm comfy... still mine...","{other}... go away... I'm busy with my {nick}...","Not yet, {other}... too much effort to switch..."],insist:["{other}... please... I'll be quick... mm...","Come on, {other}... a little turn...","{other}... mm... I'll keep asking... slowly..."],crowd:["Mm... {viewers} people are watching you, {nick}... cozy...","Look at the crowd... {viewers} of them... all watching you...","So many eyes on you, {nick}... {viewers}... mm..."],fanReply:["Mm... hi, {fan}... thanks for watching...","{fan}... mm... stay and enjoy..."]},
+ "Drill Sergeant Dana": {resist:["Negative, {other}! Hold your position!","I outrank you, {other}! Control stays with me!","Request denied again, {other}! Stand down!"],insist:["{other}! I'm taking command whether you like it or not!","Stand aside, {other}! Last warning!","{other}, you're wasting this {nick}! Hand it over!"],crowd:["{viewers} people are watching you, {nick}! Don't you dare quit!","The whole barracks is watching, {nick}! That's {viewers}!","{viewers} witnesses, {nick}! Show some discipline!"],fanReply:["{fan}! Good eyes! Stay and watch!","Thanks for watching, {fan}! Stay sharp!"]},
+ "Mocking Margot": {resist:["Cute, {other}, but no. This {nick} is mine.","I'm not done humiliating my {nick}, {other}. Sit down.","Keep asking, {other}. It's very entertaining. Still no."],insist:["{other}, you're being so selfish. Hand it over.","Don't make me beg, {other}. I'll make it worse for you.","{other}, give me a turn. I'd be so much more fun to watch."],crowd:["{viewers} people are watching you right now, {nick}. Every one of them sees how needy you are.","Look at the audience, {nick}. {viewers} of them, and you're a mess in front of all of them.","{viewers} witnesses. Such a shame for you, {nick}."],fanReply:["Thank you, {fan}. You have excellent taste.","{fan}, keep watching. It only gets worse for my {nick}."]}
+};
+Object.keys(MORE8).forEach(k => Object.keys(MORE8[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE8[k][c]); }));
+const MORE9 = {
+ "Patient Priscilla": {
+  "askFeel": [
+   "How are we feeling, {nick}? Take your time and tell me honestly.",
+   "Check in with me, {nick}. How does this feel right now?"
+  ],
+  "askNext": [
+   "What would you like me to do next, {nick}? I'm in no hurry.",
+   "Shall we change things up, {nick}? You choose."
+  ],
+  "askLike": [
+   "Tell me something, {nick}. What do you enjoy most about this?",
+   "I'm curious, {nick}. What's your favorite part of all this?"
+  ],
+  "askMood": [
+   "Let me bring someone in for you, {nick}. What kind of company would you like?",
+   "Who should join us next, {nick}? Tell me the mood you're after."
+  ],
+  "qMore": [
+   "Oh, you want more? Good. Ask nicely and I'll consider it, {nick}.",
+   "More it is. Just don't rush me, {nick}."
+  ],
+  "qFine": [
+   "Lovely. Fine is a good place to be. We'll stay right here.",
+   "Fine, hm? Then we continue. Slowly."
+  ],
+  "qLot": [
+   "Too much? Then let's slow down for a moment, {nick}.",
+   "That's all right. Breathe. We can ease off."
+  ],
+  "qMercy": [
+   "Alright, I'll be kind this time, {nick}. Rest for a moment.",
+   "Mercy, then. A short breather, {nick}."
+  ],
+  "qNoMercy": [
+   "Hm. I don't think you need a break, {nick}. Keep going. Gently.",
+   "Not yet, {nick}. You're doing beautifully. Stay with me."
+  ],
+  "qTease": [
+   "Teasing it is. Slow and steady, {nick}.",
+   "Mm, let me build you up, {nick}. Nice and patient."
+  ],
+  "qHold": [
+   "Then hold right there. Stay exactly where you are, {nick}.",
+   "Hold, {nick}. Don't move. Just feel it."
+  ],
+  "qLike": [
+   "{answer}. I'll remember that, {nick}.",
+   "Ah, {answer}. Thank you for telling me, {nick}."
+  ],
+  "qMood": [
+   "{answer}? Let me see who's around, {nick}.",
+   "Good choice, {nick}. {answer}. Give me a moment."
+  ],
+  "dmdSpeedUp": [
+   "A little faster for me, {nick}. Go up {step}%, to {to}%.",
+   "Let's pick it up, {nick}. Speed up {step}%, to {to}%."
+  ],
+  "dmdSpeedDown": [
+   "Slow down a touch, {nick}. Back off {step}%, to {to}%.",
+   "Gently now. Ease the speed down {step}%, to {to}%."
+  ],
+  "dmdStrokeUp": [
+   "Longer strokes, please, {nick}. Add {step}%, to {to}%.",
+   "I'd like to see more of your stroke. Up {step}%, to {to}%."
+  ],
+  "dmdStrokeDown": [
+   "Shorter strokes for a moment, {nick}. Down {step}%, to {to}%.",
+   "Tighten that stroke, {nick}. Take off {step}%, to {to}%."
+  ],
+  "dmdYes": [
+   "Thank you, {nick}. That's exactly right.",
+   "Very good, {nick}. Just like that."
+  ],
+  "dmdExact": [
+   "Oh, you matched my target exactly. Lovely, {nick}.",
+   "Perfect, {nick}. That's precisely what I wanted."
+  ],
+  "dmdNo": [
+   "Hm. I asked politely, {nick}. I'll ask again.",
+   "You'd refuse me, {nick}? I can wait. I'm very patient."
+  ],
+  "dmdHit": [
+   "That's it. You've found my pace, {nick}. Stay there.",
+   "There. That's where I want you, {nick}."
+  ]
+ },
+ "Mischievous Mia": {
+  "askFeel": [
+   "Psst, {nick}! How are you holding up? Be honest!",
+   "So how does it feel, {nick}? Tell me everything!"
+  ],
+  "askNext": [
+   "Ooh, what should I do next, {nick}? Pick one!",
+   "Your turn to choose, {nick}! What's my next trick?"
+  ],
+  "askLike": [
+   "Okay, {nick}, be honest. What do you like best?",
+   "Ooh, tell me your favorite part, {nick}!"
+  ],
+  "askMood": [
+   "Want company, {nick}? What kind of girl should I invite in?",
+   "Let's play matchmaker, {nick}! What mood are you in?"
+  ],
+  "qMore": [
+   "More? Greedy! I like it, {nick}!",
+   "Hehe, more it is, {nick}!"
+  ],
+  "qFine": [
+   "Just fine? Hehe, I'll have to fix that.",
+   "Fine? Boring! But okay, {nick}."
+  ],
+  "qLot": [
+   "Aww, too much? Okay, okay, I'll ease up!",
+   "Too much already, {nick}? Fine, fine."
+  ],
+  "qMercy": [
+   "Okay, you've earned a breather. Just a short one, {nick}!",
+   "Fine, mercy! Quick rest, {nick}!"
+  ],
+  "qNoMercy": [
+   "Nope! No mercy today, {nick}! Hehe!",
+   "Mercy? Never heard of it, {nick}!"
+  ],
+  "qTease": [
+   "Teasing time! Hehe, hold on tight, {nick}!",
+   "Ooh, you asked for it, {nick}!"
+  ],
+  "qHold": [
+   "Freeze! Don't you dare move, {nick}!",
+   "Hold it right there, {nick}! Hehe!"
+  ],
+  "qLike": [
+   "{answer}! I knew it, {nick}! Hehe!",
+   "Ooh, {answer}. Noted, {nick}!"
+  ],
+  "qMood": [
+   "{answer}? Ooh, let me see who's around, {nick}!",
+   "{answer}, got it, {nick}! Wait here!"
+  ],
+  "dmdSpeedUp": [
+   "Faster, {nick}! Up {step}%, to {to}%! Go go go!",
+   "Pedal to the metal! Up {step}%, to {to}%, {nick}!"
+  ],
+  "dmdSpeedDown": [
+   "Whoa, slow it down, {nick}! Down {step}%, to {to}%!",
+   "Brakes, {nick}! Down {step}%, to {to}%!"
+  ],
+  "dmdStrokeUp": [
+   "Longer strokes, {nick}! Add {step}%, to {to}%! Show off!",
+   "Stretch it out, {nick}! Up {step}%, to {to}%!"
+  ],
+  "dmdStrokeDown": [
+   "Shorter strokes, {nick}! Cut {step}%, to {to}%!",
+   "Little strokes now, {nick}! Down {step}%, to {to}%!"
+  ],
+  "dmdYes": [
+   "Yay! Good {nick}!",
+   "Hehe, look at you listening!"
+  ],
+  "dmdExact": [
+   "EXACTLY right! Perfect, {nick}!",
+   "Bullseye! You nailed it, {nick}!"
+  ],
+  "dmdNo": [
+   "Booo! You said no to me, {nick}?",
+   "Hmph! I'll ask again, {nick}!"
+  ],
+  "dmdHit": [
+   "That's the spot! Stay right there, {nick}!",
+   "Yesss! Don't change a thing, {nick}!"
+  ]
+ },
+ "Strict Ms. Vance": {
+  "askFeel": [
+   "Report, {nick}. How are you feeling? Be precise.",
+   "I require an honest answer, {nick}. How does this feel?"
+  ],
+  "askNext": [
+   "I'm considering my next step, {nick}. State your preference.",
+   "Choose, {nick}. What shall I do with you next?"
+  ],
+  "askLike": [
+   "Answer me, {nick}. What do you enjoy most?",
+   "I'd like to know, {nick}. Which part appeals to you most?"
+  ],
+  "askMood": [
+   "I will arrange company for you, {nick}. State the mood you require.",
+   "Whom shall I summon, {nick}? Name the mood."
+  ],
+  "qMore": [
+   "More? Very well. Don't mistake it for generosity, {nick}.",
+   "You request more. Noted, {nick}."
+  ],
+  "qFine": [
+   "Fine is acceptable. Maintain it, {nick}.",
+   "Good. Fine means no change. Continue."
+  ],
+  "qLot": [
+   "It's a lot. Noted. I will consider your limits, {nick}.",
+   "Too much, you say. I'll adjust."
+  ],
+  "qMercy": [
+   "Very well. You may rest briefly, {nick}. Do not mistake this for weakness.",
+   "Granted. A short rest, {nick}."
+  ],
+  "qNoMercy": [
+   "Denied. You will continue, {nick}.",
+   "No rest. You can manage, {nick}."
+  ],
+  "qTease": [
+   "Tease it is. Pay attention, {nick}.",
+   "You will be built up properly, {nick}."
+  ],
+  "qHold": [
+   "Then hold, {nick}. Do not move.",
+   "Hold exactly as you are, {nick}."
+  ],
+  "qLike": [
+   "{answer}. I've made a note of that, {nick}.",
+   "{answer}. Interesting. Useful, {nick}."
+  ],
+  "qMood": [
+   "{answer}. I'll see who is available, {nick}.",
+   "Understood, {nick}. {answer}. Stand by."
+  ],
+  "dmdSpeedUp": [
+   "Increase your speed by {step}%, {nick}. Target {to}%.",
+   "Faster, {nick}. Up {step}%, to {to}%. Now."
+  ],
+  "dmdSpeedDown": [
+   "Reduce your speed by {step}%, {nick}. Target {to}%.",
+   "Slower, {nick}. Down {step}%, to {to}%. Now."
+  ],
+  "dmdStrokeUp": [
+   "Lengthen your stroke by {step}%, {nick}. Target {to}%.",
+   "Longer, {nick}. Add {step}%, to {to}%. Now."
+  ],
+  "dmdStrokeDown": [
+   "Shorten your stroke by {step}%, {nick}. Target {to}%.",
+   "Shorter, {nick}. Cut {step}%, to {to}%. Now."
+  ],
+  "dmdYes": [
+   "Good. Obedience becomes you, {nick}.",
+   "Acceptable. Well done, {nick}."
+  ],
+  "dmdExact": [
+   "Exactly to specification. Excellent, {nick}.",
+   "Precisely my target. Very good, {nick}."
+  ],
+  "dmdNo": [
+   "You refused. That was a mistake, {nick}.",
+   "Disobedience, {nick}. I will remember this."
+  ],
+  "dmdHit": [
+   "Correct. Hold that exactly, {nick}.",
+   "That is my target. Do not deviate, {nick}."
+  ]
+ },
+ "Chaos Cassie": {
+  "askFeel": [
+   "HOW DO YOU FEEL?! Tell me, {nick}! Quick!",
+   "Okay okay okay, how are you doing, {nick}?!"
+  ],
+  "askNext": [
+   "What should I do next?! I have ideas! Pick one, {nick}!",
+   "Ooh ooh, what next, {nick}?! Choose before I do!"
+  ],
+  "askLike": [
+   "What's your favorite part?! Tell me, {nick}!",
+   "Quick question, {nick}! What do you like the MOST?!"
+  ],
+  "askMood": [
+   "Ooh, who should come in?! What mood, {nick}?!",
+   "Pick a vibe, {nick}! Someone's about to crash this party!"
+  ],
+  "qMore": [
+   "MORE?! YES! Okay, {nick}!",
+   "You want MORE?! I love it!"
+  ],
+  "qFine": [
+   "Fine?! That's boring! I'll fix that, {nick}!",
+   "Just fine?! Challenge accepted!"
+  ],
+  "qLot": [
+   "Too much?! Okay okay okay, I'll slow down. Maybe!",
+   "Aww, too much? Fine! Let me think!"
+  ],
+  "qMercy": [
+   "MERCY! Fine! Breather! Go, {nick}!",
+   "Okay okay, rest! Short rest! Go!"
+  ],
+  "qNoMercy": [
+   "NO MERCY! Hahaha! Keep going, {nick}!",
+   "Mercy? I don't know her, {nick}!"
+  ],
+  "qTease": [
+   "TEASING! Yes! Buckle up, {nick}!",
+   "Teasing time! Hold on, {nick}!"
+  ],
+  "qHold": [
+   "FREEZE! Don't move, {nick}!",
+   "HOLD IT! Right there, {nick}!"
+  ],
+  "qLike": [
+   "{answer}! Ooh! I'm writing that down, {nick}!",
+   "{answer}?! Yes! Noted, {nick}!"
+  ],
+  "qMood": [
+   "{answer}! Okay! Let me look, {nick}!",
+   "{answer}! Ooh! Hold on, {nick}!"
+  ],
+  "dmdSpeedUp": [
+   "FASTER, {nick}! Up {step}%, to {to}%! Go go go!",
+   "Speed it up, {nick}! Up {step}%, to {to}%!"
+  ],
+  "dmdSpeedDown": [
+   "SLOWER, {nick}! Down {step}%, to {to}%! Wheee!",
+   "Brake brake brake! Down {step}%, to {to}%, {nick}!"
+  ],
+  "dmdStrokeUp": [
+   "LONGER, {nick}! Add {step}%, to {to}%!",
+   "Stretch it, {nick}! Up {step}%, to {to}%!"
+  ],
+  "dmdStrokeDown": [
+   "SHORTER, {nick}! Down {step}%, to {to}%!",
+   "Tiny strokes, {nick}! Cut {step}%, to {to}%!"
+  ],
+  "dmdYes": [
+   "YES! Good {nick}! Hahaha!",
+   "You did it! I love it!"
+  ],
+  "dmdExact": [
+   "EXACTLY! Perfect! I'm so happy, {nick}!",
+   "BULLSEYE! You're perfect, {nick}!"
+  ],
+  "dmdNo": [
+   "NO?! You said NO?! I'll ask again, {nick}!",
+   "Rude! Rude, rude, {nick}!"
+  ],
+  "dmdHit": [
+   "THAT'S IT! Don't touch it, {nick}!",
+   "YES! Right there! Freeze, {nick}!"
+  ]
+ },
+ "Sweet-Talker Sienna": {
+  "askFeel": [
+   "Tell me honestly. How does it feel, {nick}?",
+   "I love hearing it. How are you doing, {nick}?"
+  ],
+  "askNext": [
+   "What would make you happiest next, {nick}? I'll do anything you say.",
+   "Tell me what you want, {nick}. I'm all yours."
+  ],
+  "askLike": [
+   "What do you love most about this, {nick}? Tell me.",
+   "Mm, what's your favorite part, {nick}?"
+  ],
+  "askMood": [
+   "Shall I invite someone special, {nick}? What kind of mood?",
+   "Who would you like to see next, {nick}? Tell me."
+  ],
+  "qMore": [
+   "More? Of course, {nick}. Anything for you.",
+   "Mm, I love when you ask, {nick}. More it is."
+  ],
+  "qFine": [
+   "Fine? Mm, I want better than fine for you, {nick}.",
+   "Good. Stay there with me."
+  ],
+  "qLot": [
+   "Aww, too much? I'll be gentle, {nick}.",
+   "Poor thing. Let me ease off, {nick}."
+  ],
+  "qMercy": [
+   "Mm, I'm too sweet to say no. Rest a moment, {nick}.",
+   "There, there. A little break, {nick}."
+  ],
+  "qNoMercy": [
+   "Just a bit longer, {nick}. You can do it for me.",
+   "I know you can take more, {nick}. Stay with me."
+  ],
+  "qTease": [
+   "Mm, teasing. You'll love this, {nick}.",
+   "Ooh, let me spoil you, {nick}."
+  ],
+  "qHold": [
+   "Stay right there for me, {nick}. Don't you dare move.",
+   "Hold still, {nick}. Let me look at you."
+  ],
+  "qLike": [
+   "{answer}. Mm, I'll spoil you with that, {nick}.",
+   "Oh, {answer}. Good to know, {nick}."
+  ],
+  "qMood": [
+   "{answer}, mm. Let me find someone for you, {nick}.",
+   "{answer}? I'll see who's here, {nick}."
+  ],
+  "dmdSpeedUp": [
+   "Faster for me, {nick}? Up {step}%, to {to}%. Please?",
+   "Speed up, {nick}. Up {step}%, to {to}%. Do it for me."
+  ],
+  "dmdSpeedDown": [
+   "Slow down for me, {nick}. Down {step}%, to {to}%.",
+   "Easy now, {nick}. Down {step}%, to {to}%."
+  ],
+  "dmdStrokeUp": [
+   "Longer strokes for me, {nick}? Up {step}%, to {to}%.",
+   "Show me more, {nick}. Add {step}%, to {to}%."
+  ],
+  "dmdStrokeDown": [
+   "Shorter strokes for me, {nick}. Down {step}%, to {to}%.",
+   "Tighter, {nick}. Cut {step}%, to {to}%."
+  ],
+  "dmdYes": [
+   "Mm, good {nick}. You make me so happy.",
+   "That's my sweet {nick}."
+  ],
+  "dmdExact": [
+   "Mm, exactly what I wanted, {nick}. Perfect.",
+   "You matched it perfectly, {nick}. I'm so proud."
+  ],
+  "dmdNo": [
+   "Aw, you said no? That hurts, {nick}. I'll ask again.",
+   "Don't make me beg, {nick}. I will, though."
+  ],
+  "dmdHit": [
+   "There, right there. Stay for me, {nick}.",
+   "Mm, that's perfect. Don't change it, {nick}."
+  ]
+ },
+ "Relentless Roxy": {
+  "askFeel": [
+   "Status report, {nick}. How are you feeling?",
+   "Talk to me, {nick}. How's it feel? Straight answer."
+  ],
+  "askNext": [
+   "What's the next move, {nick}? You get one say.",
+   "Pick, {nick}. What am I doing to you next?"
+  ],
+  "askLike": [
+   "Be honest, {nick}. What do you like most?",
+   "Tell me, {nick}. What's your favorite part?"
+  ],
+  "askMood": [
+   "I'm calling in backup, {nick}. What kind?",
+   "Who do you want next, {nick}? Name the mood."
+  ],
+  "qMore": [
+   "More? Good. No complaints later, {nick}.",
+   "You asked for it, {nick}. More."
+  ],
+  "qFine": [
+   "Fine isn't enough. I'll push harder, {nick}.",
+   "Fine? I'll take that as a challenge."
+  ],
+  "qLot": [
+   "It's a lot? Good. That's the point, {nick}.",
+   "Too much? Weak. Let me think."
+  ],
+  "qMercy": [
+   "Fine. Thirty seconds, {nick}. Don't get used to it.",
+   "Rest. Short. Earn the next one, {nick}."
+  ],
+  "qNoMercy": [
+   "Negative. No rest, {nick}. Keep going.",
+   "No mercy, {nick}. Push through."
+  ],
+  "qTease": [
+   "Tease it is. Hold your ground, {nick}.",
+   "I'll wind you up, {nick}."
+  ],
+  "qHold": [
+   "Hold the line, {nick}. Don't move.",
+   "Hold. Right there, {nick}."
+  ],
+  "qLike": [
+   "{answer}. Got it. I'll use that, {nick}.",
+   "{answer}. Good to know, {nick}."
+  ],
+  "qMood": [
+   "{answer}. I'll find someone, {nick}.",
+   "Copy that, {nick}. {answer}."
+  ],
+  "dmdSpeedUp": [
+   "Faster, {nick}. Up {step}%, to {to}%. Now.",
+   "Increase speed, {nick}. Up {step}%, to {to}%."
+  ],
+  "dmdSpeedDown": [
+   "Slow it down, {nick}. Down {step}%, to {to}%.",
+   "Ease off, {nick}. Down {step}%, to {to}%."
+  ],
+  "dmdStrokeUp": [
+   "Longer strokes, {nick}. Add {step}%, to {to}%.",
+   "Extend it, {nick}. Up {step}%, to {to}%."
+  ],
+  "dmdStrokeDown": [
+   "Shorten it, {nick}. Down {step}%, to {to}%.",
+   "Shorter strokes, {nick}. Cut {step}%, to {to}%."
+  ],
+  "dmdYes": [
+   "Good. That's how it's done, {nick}.",
+   "Better. Keep following orders, {nick}."
+  ],
+  "dmdExact": [
+   "Right on target. Well done, {nick}.",
+   "Exactly. That's what I want, {nick}."
+  ],
+  "dmdNo": [
+   "Refused? Bad move, {nick}. I'll ask again.",
+   "You'll do it eventually, {nick}. They always do."
+  ],
+  "dmdHit": [
+   "That's the number. Hold it, {nick}.",
+   "Locked in. Don't drift, {nick}."
+  ]
+ },
+ "Sleepy Sadie": {
+  "askFeel": [
+   "Mm... how are you feeling, {nick}...?",
+   "Hey... {nick}... how does it feel...?"
+  ],
+  "askNext": [
+   "Mm... what should I do next, {nick}...? I don't mind...",
+   "Pick for me... {nick}... too sleepy to choose..."
+  ],
+  "askLike": [
+   "Mm... what do you like best, {nick}...?",
+   "Tell me... {nick}... your favorite part..."
+  ],
+  "askMood": [
+   "Mm... should I wake someone up for you, {nick}...? What kind...?",
+   "Who should come in... {nick}...? You choose..."
+  ],
+  "qMore": [
+   "More... mm... okay, {nick}...",
+   "Mm... more... sure..."
+  ],
+  "qFine": [
+   "Fine... mm... good... stay there, {nick}...",
+   "Fine... lovely... keep going..."
+  ],
+  "qLot": [
+   "Too much... mm... okay... slower, {nick}...",
+   "Aww... too much... easing off..."
+  ],
+  "qMercy": [
+   "Mm... rest then... shh, {nick}...",
+   "Okay... rest... I'm fine with that..."
+  ],
+  "qNoMercy": [
+   "Mm... no... keep going... a bit more, {nick}...",
+   "No rest... sorry... you can do it, {nick}..."
+  ],
+  "qTease": [
+   "Mm... teasing... slowly... {nick}...",
+   "Okay... teasing... nice and slow..."
+  ],
+  "qHold": [
+   "Hold... mm... just like that, {nick}...",
+   "Stay there... {nick}... don't move..."
+  ],
+  "qLike": [
+   "{answer}... mm... I'll remember that, {nick}...",
+   "Mm... {answer}... that's nice, {nick}..."
+  ],
+  "qMood": [
+   "{answer}... mm... I'll see who's awake, {nick}...",
+   "Okay... {answer}... wait here, {nick}..."
+  ],
+  "dmdSpeedUp": [
+   "Mm... a little faster, {nick}... up {step}%, to {to}%...",
+   "Speed up... {nick}... {step}% more... to {to}%..."
+  ],
+  "dmdSpeedDown": [
+   "Mm... slower, {nick}... down {step}%, to {to}%...",
+   "Ease off... {nick}... down {step}%, to {to}%..."
+  ],
+  "dmdStrokeUp": [
+   "Longer... mm... {nick}... up {step}%, to {to}%...",
+   "Mm... bigger strokes... {nick}... add {step}%, to {to}%..."
+  ],
+  "dmdStrokeDown": [
+   "Shorter... mm... {nick}... down {step}%, to {to}%...",
+   "Small strokes... {nick}... cut {step}%, to {to}%..."
+  ],
+  "dmdYes": [
+   "Mm... good {nick}... thank you...",
+   "Mm... that's nice... good..."
+  ],
+  "dmdExact": [
+   "Mm... exactly... perfect, {nick}...",
+   "Perfect... mm... exactly right..."
+  ],
+  "dmdNo": [
+   "Mm... no...? That's not nice, {nick}... I'll ask again...",
+   "Aww... you said no... {nick}... later then..."
+  ],
+  "dmdHit": [
+   "Mm... there... that's it... stay, {nick}...",
+   "That's perfect... mm... don't move, {nick}..."
+  ]
+ },
+ "Drill Sergeant Dana": {
+  "askFeel": [
+   "REPORT, {nick}! How do you feel?!",
+   "STATUS, {nick}! Sound off!"
+  ],
+  "askNext": [
+   "WHAT'S THE NEXT ORDER, {nick}?! Your choice!",
+   "Pick a drill, {nick}! Now!"
+  ],
+  "askLike": [
+   "TELL ME, {nick}! What do you like most?!",
+   "Speak up, {nick}! Favorite part?!"
+  ],
+  "askMood": [
+   "REINFORCEMENTS, {nick}! What kind do you want?!",
+   "Name the mood, {nick}! I'll call someone in!"
+  ],
+  "qMore": [
+   "MORE?! Outstanding, {nick}!",
+   "You want more?! Then you'll get more, {nick}!"
+  ],
+  "qFine": [
+   "FINE?! Fine isn't a standard, {nick}! Keep it up!",
+   "Fine! Hold that, {nick}!"
+  ],
+  "qLot": [
+   "TOO MUCH?! Hm! Noted, {nick}!",
+   "It's a lot?! That's the idea, {nick}!"
+  ],
+  "qMercy": [
+   "Permission granted! Short rest, {nick}!",
+   "Rest! Thirty seconds, {nick}!"
+  ],
+  "qNoMercy": [
+   "Denied! No rest, {nick}! Push through!",
+   "NEGATIVE! Keep going, {nick}!"
+  ],
+  "qTease": [
+   "Tease drill, {nick}! Hold your position!",
+   "You'll be built up properly, {nick}!"
+  ],
+  "qHold": [
+   "HOLD! Do not move, {nick}!",
+   "HOLD your position, {nick}!"
+  ],
+  "qLike": [
+   "{answer}! Noted, {nick}!",
+   "{answer}! I'll use that, {nick}!"
+  ],
+  "qMood": [
+   "{answer}! Copy that, {nick}! Standby!",
+   "Understood! {answer}! Stay put, {nick}!"
+  ],
+  "dmdSpeedUp": [
+   "SPEED UP, {nick}! Up {step}%, to {to}%! Move!",
+   "FASTER, {nick}! Up {step}%, to {to}%!"
+  ],
+  "dmdSpeedDown": [
+   "SLOW DOWN, {nick}! Down {step}%, to {to}%!",
+   "EASE OFF, {nick}! Down {step}%, to {to}%!"
+  ],
+  "dmdStrokeUp": [
+   "LONGER, {nick}! Add {step}%, to {to}%! Move!",
+   "EXTEND, {nick}! Up {step}%, to {to}%!"
+  ],
+  "dmdStrokeDown": [
+   "SHORTER, {nick}! Down {step}%, to {to}%!",
+   "TIGHTEN IT, {nick}! Cut {step}%, to {to}%!"
+  ],
+  "dmdYes": [
+   "GOOD! That's an order followed, {nick}!",
+   "OUTSTANDING, {nick}!"
+  ],
+  "dmdExact": [
+   "EXACTLY ON TARGET, {nick}! Outstanding!",
+   "PERFECT EXECUTION, {nick}!"
+  ],
+  "dmdNo": [
+   "REFUSED?! Unacceptable, {nick}! Again!",
+   "You DISOBEY?! I'll repeat the order, {nick}!"
+  ],
+  "dmdHit": [
+   "THAT'S THE TARGET! HOLD IT, {nick}!",
+   "LOCKED IN! Don't drift, {nick}!"
+  ]
+ },
+ "Mocking Margot": {
+  "askFeel": [
+   "So how does it feel, {nick}? Try not to whimper.",
+   "Tell me, {nick}. How are you holding up? Poorly, I imagine."
+  ],
+  "askNext": [
+   "What shall I do to you next, {nick}? I'll let you pretend you choose.",
+   "Go on, {nick}. Pick. It'll be entertaining either way."
+  ],
+  "askLike": [
+   "What do you enjoy most, {nick}? Do tell. I can't wait to laugh.",
+   "Confess, {nick}. What's your favorite part?"
+  ],
+  "askMood": [
+   "Shall I call in some company, {nick}? What kind of humiliation do you prefer?",
+   "Who should I invite to watch, {nick}? Name your mood."
+  ],
+  "qMore": [
+   "More? How adorable, {nick}. So needy.",
+   "Begging for more, {nick}? Cute."
+  ],
+  "qFine": [
+   "Fine? How brave. I'll fix that, {nick}.",
+   "Just fine? We can do better. Worse, for you."
+  ],
+  "qLot": [
+   "Too much? Oh, that's delightful, {nick}.",
+   "Poor thing. It's a lot, isn't it, {nick}?"
+  ],
+  "qMercy": [
+   "Ugh, fine. A pity break, {nick}.",
+   "Aww, a rest for the sad little thing."
+  ],
+  "qNoMercy": [
+   "No. I'm enjoying this too much, {nick}.",
+   "Mercy? Please, {nick}. Keep going."
+  ],
+  "qTease": [
+   "Teasing, then. Squirm for me, {nick}.",
+   "Oh, you'll love this, {nick}. Or not."
+  ],
+  "qHold": [
+   "Hold it, {nick}. Don't you dare move.",
+   "Stay there, {nick}. Let me enjoy the view."
+  ],
+  "qLike": [
+   "{answer}. How predictable, {nick}.",
+   "{answer}. Oh, I'll definitely use that, {nick}."
+  ],
+  "qMood": [
+   "{answer}. How revealing, {nick}. Let me find someone.",
+   "{answer}? Typical. Stay put, {nick}."
+  ],
+  "dmdSpeedUp": [
+   "Faster, {nick}. Up {step}%, to {to}%. Try to keep up.",
+   "Speed up, {nick}. Up {step}%, to {to}%."
+  ],
+  "dmdSpeedDown": [
+   "Slow down, {nick}. Down {step}%, to {to}%. Already tired?",
+   "Ease off, {nick}. Down {step}%, to {to}%."
+  ],
+  "dmdStrokeUp": [
+   "Longer strokes, {nick}. Add {step}%, to {to}%. Show me what you have.",
+   "Longer, {nick}. Up {step}%, to {to}%."
+  ],
+  "dmdStrokeDown": [
+   "Shorter strokes, {nick}. Down {step}%, to {to}%. Don't pout.",
+   "Smaller, {nick}. Cut {step}%, to {to}%."
+  ],
+  "dmdYes": [
+   "Good {nick}. Obedient. How pathetic.",
+   "Look at you, following orders. Adorable."
+  ],
+  "dmdExact": [
+   "Exactly right. Even you managed it, {nick}.",
+   "On target. I'm almost impressed, {nick}."
+  ],
+  "dmdNo": [
+   "Refusing me, {nick}? Cute. I'll ask again.",
+   "Oh, you said no? That won't last, {nick}."
+  ],
+  "dmdHit": [
+   "There. That's the number. Don't ruin it, {nick}.",
+   "Right on target. Stay there, {nick}."
+  ]
+ }
+};
+Object.keys(MORE9).forEach(k => Object.keys(MORE9[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE9[k][c]); }));
+/* ---------- interactions: targets, demands, questions ---------- */
+let suppressUntil = 0;
+const STEP = 5;
+const TARGETS = {"Patient Priscilla":{speed:40,len:70},"Mischievous Mia":{speed:60,len:70},"Strict Ms. Vance":{speed:60,len:100},"Chaos Cassie":{chaos:true},"Sweet-Talker Sienna":{speed:50,len:80},"Relentless Roxy":{speed:80,len:100},"Sleepy Sadie":{speed:30,len:60},"Drill Sergeant Dana":{speed:75,len:90},"Mocking Margot":{speed:70,len:85}};
+const MERCY = {"Patient Priscilla":.8,"Mischievous Mia":.3,"Strict Ms. Vance":.2,"Chaos Cassie":.5,"Sweet-Talker Sienna":.8,"Relentless Roxy":.15,"Sleepy Sadie":.9,"Drill Sergeant Dana":.25,"Mocking Margot":.1};
+const MOODSETS = {gentle:["Patient Priscilla","Sweet-Talker Sienna","Sleepy Sadie"], strict:["Strict Ms. Vance","Relentless Roxy","Drill Sergeant Dana"], mean:["Mischievous Mia","Mocking Margot","Chaos Cassie"], any:ALL};
+const QDEFS = {
+  feel: {cat:"askFeel", opts:[{label:"Give me more",kind:"more"},{label:"I'm doing fine",kind:"fine"},{label:"It's a lot",kind:"lot"},{label:"I'm close",kind:"close"}]},
+  next: {cat:"askNext", opts:[{label:"Tease me",kind:"tease"},{label:"Hold me there",kind:"hold"},{label:"Give me a rest",kind:"rest"},{label:"Surprise me",kind:"surprise"}]},
+  like: {cat:"askLike", opts:[{label:"Being teased",kind:"like"},{label:"Being told what to do",kind:"like"},{label:"Being mocked",kind:"like"},{label:"Being rewarded",kind:"like"}]},
+  mood: {cat:"askMood", opts:[{label:"Something gentle",kind:"gentle"},{label:"Something strict",kind:"strict"},{label:"Mean and teasing",kind:"mean"},{label:"Surprise me",kind:"any"},{label:"Not now",kind:"no"}]}
+};
+Object.assign(HYPE, {dmdYes:3,dmdExact:6,dmdNo:5,dmdHit:6,qMore:4,qLot:3,qTease:3,qHold:3,askFeel:2,askNext:2,askLike:2,askMood:2,dmdSpeedUp:3,dmdSpeedDown:3,dmdStrokeUp:3,dmdStrokeDown:3});
+Object.assign(FANPOOL, {demand:["do it do it","say no!","obey!","don't give in!","so bossy lol"],obey:["so obedient","ooh compliance","she's in charge","follow orders!"],defy:["REFUSED","bold move","they're in trouble now","she won't forget that"],ask:["answer her!","tell the truth","pick one!","ooh a question","what will you say?"]});
+Object.assign(FMAP, {dmdSpeedUp:"demand",dmdSpeedDown:"demand",dmdStrokeUp:"demand",dmdStrokeDown:"demand",dmdYes:"obey",dmdExact:"obey",dmdNo:"defy",askFeel:"ask",askNext:"ask",askLike:"ask",askMood:"ask"});
+const creep = {}, defiance = {}, hit = {}, chaosT = {};
+let demand = null, ask = null, nextAskAt = Date.now() + 60000, nextDemandAt = Date.now() + 80000, nextMoodAt = Date.now() + 90000;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+function rollChaos(p){ chaosT[p] = {speed: 5 * Math.round(rnd(30, 90) / 5), len: 5 * Math.round(rnd(40, 100) / 5)}; }
+function targetOf(p){
+  const t = TARGETS[p] || {speed: 50, len: 70};
+  if (t.chaos){ if (!chaosT[p]) rollChaos(p); return chaosT[p]; }
+  const c = creep[p] || {s: 0, l: 0};
+  return {speed: clamp(t.speed + c.s, 1, 100), len: clamp(t.len + c.l, 5, 100)};
+}
+function targetNote(p){ const t = TARGETS[p]; if (!t) return ""; return t.chaos ? " Her target changes every time." : " Her target: speed " + t.speed + "%, stroke length " + t.len + "%."; }
+function setSpeedTo(v){ suppressUntil = Date.now() + 5000; $("speed").value = clamp(Math.round(v), 1, 100); $("speed").dispatchEvent(new Event("input")); }
+function setLenTo(len){
+  suppressUntil = Date.now() + 5000; len = clamp(Math.round(len), 5, 100);
+  const cmn = +$("smin").value;
+  let mn = cmn, mx = cmn + len; if (mx > 100){ mx = 100; mn = 100 - len; }
+  const setMax = () => { $("smax").value = mx; $("smax").dispatchEvent(new Event("input")); };
+  const setMin = () => { $("smin").value = mn; $("smin").dispatchEvent(new Event("input")); };
+  if (mx >= cmn + 5){ setMax(); setMin(); } else { setMin(); setMax(); }
+}
+const teaseNow = () => running && runTease && !onBreak;
+function forceCur(c){ if (!tz) resetTease(); tz.q = []; tz.cur = c; tz.start = total - Math.max(0, endAt - Date.now()); }
+function forceRest(sec){ if (teaseNow()) forceCur({k: "rest", dur: sec, v: $("tStop").checked ? 0 : n("tLow", 15)}); }
+function forceBuild(){ if (!teaseNow()) return; if (!tz) resetTease(); tz.q = []; tz.cur = null; }
+function forceHold(sec){ if (teaseNow()) { const lo = n("tPeakMin", 60); forceCur({k: "hold", dur: sec, v: Math.min(100, rnd(lo, Math.max(lo, n("tPeakMax", 90))))}); } }
+
+function demandInterval(p){ return Math.max(20000, (55000 + Math.random() * 40000) / aggr() * Math.pow(0.75, defiance[p] || 0)); }
+function makeDemand(){
+  const now = Date.now(), p = currentPersona;
+  if (!p || !room.includes(p) || !teaseNow() || challenge || ask || demand || !$("interactOn").checked) return;
+  nextDemandAt = now + demandInterval(p);
+  if (TARGETS[p] && TARGETS[p].chaos) rollChaos(p);
+  const t = targetOf(p), sp = +$("speed").value, ln = curLen(), gs = t.speed - sp, gl = t.len - ln;
+  if (Math.abs(gs) < 3 && Math.abs(gl) < 3){
+    if (!hit[p]){ hit[p] = now; sayAs(p, "dmdHit"); }
+    else if (now - hit[p] > 80000){ const c = creep[p] = creep[p] || {s: 0, l: 0}; c.s = Math.min(15, c.s + 5); c.l = Math.min(10, c.l + 5); hit[p] = 0; nextDemandAt = now + 8000; }
+    return;
+  }
+  hit[p] = 0;
+  const useSpeed = Math.abs(gs) >= 3 && (Math.abs(gl) < 3 || Math.random() < 0.6);
+  const gap = useSpeed ? gs : gl, up = gap > 0;
+  const step = Math.min(Math.abs(gap), (defiance[p] || 0) >= 3 ? 2 * STEP : STEP);
+  const cur = useSpeed ? sp : ln, to = clamp(cur + (up ? step : -step), useSpeed ? 1 : 5, 100);
+  const d = demand = {p, useSpeed, to, step};
+  const what = (useSpeed ? (up ? "speed up " : "slow down ") : (up ? "longer stroke +" : "shorter stroke −")) + step + "% → " + to + "%";
+  sayAs(p, "dmd" + (useSpeed ? "Speed" : "Stroke") + (up ? "Up" : "Down"), null, {step: step, to: to, onShow: () => {
+    if (demand !== d) return;
+    addOffer({id: "demand", who: p, text: "demands: " + what, ttl: 45000, valid: () => demand === d && running,
+      onGone: why => { if (demand !== d) return; if (why === "expired" && running) refuseDemand(d, true); else demand = null; },
+      choices: [
+        {label: "Do it (" + to + "%)", kind: "primary", apply: () => acceptDemand(d, false)},
+        {label: "Match her target (speed " + t.speed + "%, stroke " + t.len + "%)", kind: "primary", apply: () => acceptDemand(d, true)},
+        {label: "Refuse", kind: "danger", apply: () => refuseDemand(d, false)}]});
+  }});
+}
+function acceptDemand(d, exact){
+  if (demand !== d) return; demand = null;
+  const p = d.p, t = targetOf(p); defiance[p] = Math.max(0, (defiance[p] || 0) - 1);
+  if (exact){ setSpeedTo(t.speed); setLenTo(t.len); } else if (d.useSpeed) setSpeedTo(d.to); else setLenTo(d.to);
+  excite = Math.min(60, excite + 6); nextAskAt = Math.max(nextAskAt, Date.now() + 15000);
+  const mine = addMsg("me", exact ? "Matched " + SHORT[p] + "'s target: speed " + t.speed + "%, stroke " + t.len + "%." : (d.useSpeed ? "Speed " : "Stroke length ") + d.to + "%.");
+  sayAs(p, exact ? "dmdExact" : "dmdYes", null, {replyTo: mine});
+  setTimeout(() => {
+    const t2 = targetOf(p);
+    if (running && currentPersona === p && Math.abs(t2.speed - (+$("speed").value)) < 3 && Math.abs(t2.len - curLen()) < 3 && !hit[p]){ hit[p] = Date.now(); sayAs(p, "dmdHit"); }
+  }, 4500);
+}
+function refuseDemand(d, ignored){
+  if (demand !== d) return; demand = null;
+  const p = d.p; defiance[p] = (defiance[p] || 0) + 1;
+  const mine = ignored ? null : addMsg("me", "No.");
+  sayAs(p, "dmdNo", null, mine ? {replyTo: mine} : {});
+  excite = Math.min(60, excite + 3); nextDemandAt = Date.now() + demandInterval(p) * 0.6; nextAskAt = Math.max(nextAskAt, Date.now() + 15000);
+}
+
+function askQuestion(p, qid){
+  if (ask || demand || challenge || !room.includes(p) || !$("interactOn").checked) return;
+  const q = QDEFS[qid], a = ask = {p, qid, el: null};
+  sayAs(p, q.cat, null, {onShow: el => {
+    if (ask !== a) return; a.el = el;
+    addOffer({id: "ask", who: p, text: "asks you", ttl: 60000, valid: () => ask === a && (qid === "mood" || running),
+      onGone: () => { if (ask === a) ask = null; },
+      choices: q.opts.map(o => ({label: o.label, kind: o.kind === "no" ? "ghost" : "primary", apply: () => answerQuestion(a, o)}))});
+  }});
+}
+function handleKind(p, kind, mine, o){
+  const say = (cat, vars, delay) => setTimeout(() => { if (room.includes(p)) sayAs(p, cat, null, Object.assign({replyTo: mine}, vars || {})); }, delay || 0);
+  const mercy = () => {
+    if (Math.random() < (MERCY[p] || 0.4)){ say("qMercy", null, 2000); setTimeout(() => forceRest(rnd(8, 12)), 2200); }
+    else say("qNoMercy", null, 2000);
+  };
+  switch (kind){
+    case "more": say("qMore"); nextDemandAt = Date.now() + 7000; defiance[p] = 0; break;
+    case "fine": say("qFine"); break;
+    case "lot": say("qLot"); mercy(); break;
+    case "close": say("close"); if (Math.random() < 0.7){ setTimeout(() => forceRest(rnd(8, 14)), 2400); say("rest", null, 2500); } break;
+    case "tease": say("qTease"); setTimeout(forceBuild, 1500); break;
+    case "hold": say("qHold"); setTimeout(() => forceHold(rnd(10, 16)), 1500); break;
+    case "rest": mercy(); break;
+    case "surprise": handleKind(p, pickOne(["tease", "hold", "rest", "lot"]), mine, o); break;
+    case "like": say("qLike", {answer: (o && o.label ? o.label : "that").toLowerCase()}); break;
+    default: break;
+  }
+}
+const moodCall = kind => {
+  const set = MOODSETS[kind] || ALL, inRoom = set.filter(x => room.includes(x)), out = set.filter(x => !room.includes(x));
+  const p = inRoom.length && (Math.random() < 0.7 || !out.length) ? pickOne(inRoom) : (out.length ? pickOne(out) : null);
+  if (!p) return; if (!room.includes(p)) enterRoom(p, true);
+  setTimeout(() => doTempt(p), 4500 + Math.random() * 1500);
+};
+function answerQuestion(a, o){
+  if (ask !== a) return; ask = null;
+  const p = a.p, mine = addMsg("me", o.label, a.el);
+  excite = Math.min(60, excite + 4); nextDemandAt = Math.max(nextDemandAt, Date.now() + 12000);
+  if (a.qid === "mood"){
+    if (o.kind === "no"){ sayAs(p, "reply", null, {replyTo: mine}); return; }
+    sayAs(p, "qMood", null, {replyTo: mine, answer: o.label.toLowerCase()}); setTimeout(() => moodCall(o.kind), 2500); return;
+  }
+  handleKind(p, o.kind, mine, o);
+}
+function askRandomQuestion(){
+  const p = currentPersona; if (!p || !room.includes(p)) return;
+  const r = Math.random(); askQuestion(p, r < 0.4 ? "feel" : r < 0.75 ? "next" : "like");
+}
+function interactTick(now, busy){
+  if (!$("interactOn").checked) return;
+  if (teaseNow() && !challenge && !ask && !demand){
+    if (now > nextAskAt){ nextAskAt = now + (65000 + Math.random() * 45000) / Math.sqrt(aggr()); askRandomQuestion(); }
+    else if (now > nextDemandAt) makeDemand();
+  }
+  if (!busy && !locked && !ask && room.length && now > nextMoodAt){ nextMoodAt = now + 110000 + Math.random() * 60000; askQuestion(pickOne(room), "mood"); }
+}
+(function(){
+  [["Please…", "Please, please…"], ["I'm close", "I'm close"], ["More", "I want more"], ["Can you see me?", "Can you see me?"], ["Reward?", "Do I get a reward?"], ["Enjoying this", "I'm enjoying this"]].forEach(q => {
+    const b = document.createElement("button"); b.type = "button"; b.className = "qchip"; b.textContent = q[0];
+    b.onclick = () => { $("chatIn").value = q[1]; sendChat(); }; $("quick").append(b);
+  });
+  syncRow();
+})();
 function sendChat(){
   const box = $("chatIn"), t = box.value.trim(); if (!t) return;
-  box.value = ""; addMsg("me", t);
+  box.value = ""; const mine = addMsg("me", t); excite = Math.min(60, excite + 2);
   if (!room.length){ setTimeout(() => addMsg("sys", "Nobody is in the lounge right now. Someone will drop in soon."), 400); nextRoomAt = Math.min(nextRoomAt, Date.now() + 4000); return; }
   const named = ALL.find(k => new RegExp("\\b" + NAMEKEY[k] + "\\b", "i").test(t));
   if (named && !room.includes(named)){ setTimeout(() => addMsg("sys", SHORT[named] + " isn't in the lounge right now."), 400); return; }
   const cat = /reward|prize|treat|earn|deserve/i.test(t) ? "promise" : /can you see|watching|looking at|see me|camera/i.test(t) ? "watch" : /enjoy|having fun|like this|like it/i.test(t) ? "enjoy" : /please|pls|beg|let me|i need/i.test(t) ? "please" : /close|almost|can'?t|about to/i.test(t) ? "close" : /faster|slower|more|harder|less|speed/i.test(t) ? "demand" : "reply";
   const ctl = runTease && currentPersona && room.includes(currentPersona) ? currentPersona : null;
   const speaker = named || ctl || pickOne(room);
-  sayAs(speaker, cat);
+  sayAs(speaker, cat, null, {replyTo: mine});
   const others = room.filter(x => x !== speaker);
   if (others.length && Math.random() < 0.35){
     const o = pickOne(others);
-    setTimeout(() => { if (room.includes(o)) sayAs(o, Math.random() < 0.5 ? "banter" : "reply", null, {other: speaker}); }, 3500 + Math.random() * 2500);
+    setTimeout(() => { if (room.includes(o)) sayAs(o, Math.random() < 0.5 ? "banter" : "reply", null, {other: speaker, replyTo: speaker}); }, 3500 + Math.random() * 2500);
   }
+  if (fans.length >= 3 && Math.random() < 0.5) fanSay("userReply", 1500 + Math.random() * 2500, mine, null);
 }
 $("chatSend").onclick = sendChat;
 $("chatIn").onkeydown = e => { if (e.key === "Enter") sendChat(); };
@@ -1184,6 +2381,19 @@ $("exportLog").onclick = () => {
   a.download = "handy-sessions.csv"; a.click(); URL.revokeObjectURL(a.href);
 };
 
+const PANELNAMES = {session:"Session", tease:"Tease mode", speed:"Speed profile", customize:"Customize", lube:"Lube break", limits:"Limits", profiles:"Profiles", log:"Session log"};
+let openPanel = null;
+function showPanel(k){
+  openPanel = (openPanel === k) ? null : k;
+  document.querySelectorAll("#drawerBody .panel").forEach(p => p.hidden = p.dataset.key !== openPanel);
+  document.querySelectorAll("#menu button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.key === openPanel)));
+  $("drawer").classList.toggle("open", !!openPanel); document.body.classList.toggle("drawer-open", !!openPanel);
+  $("drawerTitle").textContent = PANELNAMES[openPanel] || "";
+  if (openPanel === "log"){ renderLog(); }
+}
+document.querySelectorAll("#menu button").forEach(b => b.onclick = () => showPanel(b.dataset.key));
+$("drawerClose").onclick = () => { if (openPanel) showPanel(openPanel); };
+document.addEventListener("keydown", e => { if (e.key === "Escape" && openPanel && !(running || paused || starting)) showPanel(openPanel); });
 document.querySelectorAll("details").forEach(d => {
   const k = "h_open_" + d.querySelector("summary").textContent;
   const v = store.get(k, null); if (v !== null) d.open = v;
