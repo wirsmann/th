@@ -687,7 +687,7 @@ async function start(){
     if (currentPersona){ enterRoom(currentPersona, true); react("claimed", currentPersona); }
     challenge = null; nextChallengeAt = Date.now() + 30000 + Math.random() * 20000; Object.keys(attempts).forEach(k => attempts[k] = 0);
     demand = null; ask = null; removeOffer("demand"); removeOffer("ask"); nextAskAt = Date.now() + 40000 + Math.random() * 20000; nextDemandAt = Date.now() + 65000 + Math.random() * 20000;
-    Object.keys(defiance).forEach(k => defiance[k] = 0); privateShow = null; ctlWho = ""; removeOffer("priv"); Object.keys(creep).forEach(k => delete creep[k]); Object.keys(hit).forEach(k => hit[k] = 0);
+    Object.keys(defiance).forEach(k => defiance[k] = 0); privateShow = null; ctlWho = ""; removeOffer("priv"); denyAll = false; removeOffer("denyAllNote"); Object.keys(creep).forEach(k => delete creep[k]); Object.keys(hit).forEach(k => hit[k] = 0);
     setTimeout(() => { if (running) commentSettings("start"); }, 4500);
     setTimeout(() => { if (running && (n("tFake", 20) >= 40 || n("tEsc", 0) > 0)) say("fakeNote"); }, 10000);
     if (runHidden) setTimeout(() => { if (running) say("hidden"); }, 7500);
@@ -1327,13 +1327,14 @@ function switchController(name){
   midCat = "build"; midAt = Date.now() + 8000;
 }
 function beginChallenge(ch){
-  if (!running || !runTease || onBreak || challenge) return;
+  if (!running || !runTease || onBreak || challenge || denyAll || privateShow) return;
   const ctl = currentPersona; if (!ctl || ch === ctl) return;
   const c = challenge = {ch, ctl};
   attempts[ch] = (attempts[ch] || 0) + 1;
   addOffer({id: "ch", who: ch, text: "wants control from " + SHORT[ctl], ttl: 30000, onGone: why => { if (challenge === c){ addMsg("sys", "No answer. " + SHORT[ctl] + " keeps control."); resolveChallenge(c, false); } }, valid: () => challenge === c, choices: [
     {label: "Grant", kind: "primary", apply: () => { addMsg("me", "Granted. " + SHORT[ch] + " takes over."); resolveChallenge(c, true); }},
-    {label: "Deny", kind: "danger", apply: () => { addMsg("me", "Denied. " + SHORT[ctl] + " keeps control."); resolveChallenge(c, false); }}]});
+    {label: "Deny", kind: "danger", apply: () => { addMsg("me", "Denied. " + SHORT[ctl] + " keeps control."); resolveChallenge(c, false); }},
+    {label: "Deny all", kind: "danger", apply: () => { setDenyAll(true); addMsg("me", "Denied. No one else gets control. " + SHORT[ctl] + " stays in charge."); resolveChallenge(c, false); }}]});
   sayAs(ch, "challenge", null, {other: ctl, replyTo: ctl});
   const later = (ms, fn) => setTimeout(() => { if (challenge === c) fn(); }, ms);
   later(4500 + Math.random() * 1200, () => sayAs(ctl, "defend", null, {other: ch, replyTo: ch}));
@@ -1362,8 +1363,21 @@ function resolveChallenge(c, win){
     setTimeout(() => { if (room.includes(c.ch)) sayAs(c.ch, "retreat", null, {other: c.ctl, replyTo: c.ctl}); }, 3500);
   }
 }
+var denyAll = false;
+function setDenyAll(on){
+  denyAll = on; removeOffer("denyAllNote");
+  if (on){
+    nextChallengeAt = Infinity;
+    const el = document.createElement("div"); el.className = "prompt"; el.style.borderStyle = "dashed";
+    const t = document.createElement("div"); t.className = "ptxt"; t.textContent = "All requests for control are being denied.";
+    const row = document.createElement("div"); row.className = "pbtns";
+    const b = document.createElement("button"); b.type = "button"; b.className = "pbtn ghost"; b.textContent = "Allow requests again"; b.onclick = () => setDenyAll(false);
+    row.append(b); el.append(t, row);
+    offers.push({id: "denyAllNote", el, exp: Infinity, valid: () => denyAll && running}); $("offers").append(el); syncRow();
+  } else { nextChallengeAt = Date.now() + 20000; if (running) addMsg("sys", "Control requests are allowed again."); }
+}
 function startChallenge(){
-  if (!running || !runTease || onBreak || challenge || privateShow) return;
+  if (!running || !runTease || onBreak || challenge || privateShow || denyAll) return;
   nextChallengeAt = Date.now() + (50000 + Math.random() * 40000) / aggr();
   const others = room.filter(p => p !== currentPersona);
   if (!others.length){
