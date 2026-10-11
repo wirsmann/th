@@ -82,6 +82,7 @@
   #hypeBar{height:100%;width:2%;background:linear-gradient(90deg,var(--accent),#e0a43a,#d9534f);transition:width .8s}
   #hypeLbl{margin:0;white-space:nowrap}
   .quote{font-size:.76rem;color:var(--muted);border-left:3px solid var(--line);padding:1px 8px;margin:2px 0 4px;cursor:pointer;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .msg.ctl{font-weight:500;box-shadow:0 0 0 1px var(--line)}
   .msg.fan{background:transparent;padding:2px 6px;font-size:.84rem;max-width:92%;opacity:.92}
   .msg.flash{outline:2px solid var(--accent)}
   #drawer{position:fixed;top:58px;right:0;bottom:0;width:410px;max-width:100vw;background:var(--panel);border-left:1px solid var(--line);border-top:1px solid var(--line);border-top-left-radius:14px;box-shadow:-8px 0 24px rgba(0,0,0,.2);overflow:auto;padding:16px 18px 40px;z-index:30;transform:translateX(100%);visibility:hidden;transition:transform .2s,visibility .2s}
@@ -868,6 +869,7 @@ function fillLine(str, vars, name){
 function addBot(name){
   const d = document.createElement("div"); d.className = "msg bot typing";
   d.style.borderLeftColor = PCOL[name] || "";
+  if (running && name === currentPersona){ d.classList.add("ctl"); d.style.background = "color-mix(in srgb, " + (PCOL[name] || "#888") + " 20%, var(--panel))"; d.style.borderLeftWidth = "5px"; }
   const who = document.createElement("span"); who.className = "who"; who.textContent = SHORT[name] || name; who.style.color = PCOL[name] || "";
   const body = document.createElement("span"); body.textContent = "···";
   d.append(who, body); pushMsg(d);
@@ -1044,6 +1046,7 @@ function removeFan(){
   if (fans.length <= 8 && Math.random() < 0.4) addMsg("sys", n + " left.");
 }
 function fanSay(pool, delay, replyEl, persona, who){
+  return; /* spectators watch silently: they join and leave but never chat */
   setTimeout(() => {
     if (!$("fansOn").checked || !fans.length) return;
     const now = Date.now(); if (now - lastFanMsgAt < 500) return; lastFanMsgAt = now;
