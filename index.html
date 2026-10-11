@@ -110,6 +110,10 @@
   @media (max-width:1000px){.stage{grid-template-columns:1fr}.timer{order:-1;position:static}.lounge{height:auto;min-height:680px}}
 
   .heatRow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:start;margin:0 0 8px}
+  .heatLeft{display:flex;align-items:center;gap:12px;min-width:0}
+  .heatLeft .hypeRow{flex:1;min-width:0;margin:0}
+  .heatLeft .simBox{margin:0;padding:6px 10px;max-width:none;flex:none}
+  .heatLeft .simRail{height:72px}
   .heatRow .liveSet{margin:0;padding:0;border:0}
   @media (max-width:700px){.heatRow{grid-template-columns:1fr}}
   .graphBox{margin:0 0 8px;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:var(--bg);flex:none}
@@ -149,7 +153,12 @@
   <div class="stage">
     <section class="card lounge" aria-label="The Lounge">
       <div class="chatHead"><strong>The Lounge</strong><span class="hint" id="roomCount" style="margin:0"></span><button class="mini" id="chatClear" style="margin:0 0 0 auto">Clear chat</button></div>
-      <div class="heatRow"><div class="hypeRow"><div class="hype" aria-hidden="true"><div id="hypeBar"></div></div><span id="hypeLbl" class="hint"></span></div>
+      <div class="heatRow"><div class="heatLeft"><div class="hypeRow"><div class="hype" aria-hidden="true"><div id="hypeBar"></div></div><span id="hypeLbl" class="hint"></span></div>
+        <div class="simBox" id="simBox" hidden aria-label="Simulated device">
+    <div class="simRail"><div class="simBand" id="simBand"></div><div class="simPuck" id="simPuck"></div></div>
+    <div class="simInfo"><b>Simulated Handy</b><br><span id="simState">Stopped</span><br>Position <b id="simPos">0</b>%<br><span id="simRate"></span></div>
+  </div>
+      </div>
   <div class="liveSet" id="actionBox"><strong class="lsHead">Your actions</strong>
     <div id="actionRow"><div id="offers" aria-live="polite"></div><p class="hint" id="arHint" style="margin:6px 0 0">Nothing needs an answer right now.</p></div>
     <button type="button" id="lubeNow" disabled>Lube break</button>
@@ -167,11 +176,6 @@
     <div class="time" id="time">10:00</div>
   </div>
   <div id="now" class="hint" style="text-align:center"></div>
-  <div class="simBox" id="simBox" hidden aria-label="Simulated device">
-    <div class="simRail"><div class="simBand" id="simBand"></div><div class="simPuck" id="simPuck"></div></div>
-    <div class="simInfo"><b>Simulated Handy</b><br><span id="simState">Stopped</span><br>Position <b id="simPos">0</b>%<br><span id="simRate"></span></div>
-  </div>
-  
   <div id="live" aria-live="polite" style="position:absolute;left:-9999px"></div>
 
   <div class="btns">
@@ -504,7 +508,17 @@ function resetTease(){ lastMove = ""; tz = {q: [], cur: null, start: 0, cycle: 0
 const MOVES = ["push","stairs","pulse","surge","cliff","wave","flutter","slowburn"];
 const MOVE_NAME = {push:"Pushing through", stairs:"Stepping up", pulse:"Pulsing", surge:"Surging", cliff:"Sudden stop", wave:"Waves", flutter:"Fluttering", slowburn:"Slow burn"};
 const MOVE_LABEL = {vibrate:"vibrating", push:"pushing through", stairs:"stepping up", pulse:"pulsing", surge:"surging", cliff:"sudden stop", wave:"waves", flutter:"fluttering", slowburn:"slow burn"};
-const MOVE_FAV = {"Patient Priscilla": ["slowburn", "stairs", "wave"], "Mischievous Mia": ["pulse", "flutter", "cliff"], "Strict Ms. Vance": ["stairs", "cliff", "slowburn"], "Chaos Cassie": ["flutter", "pulse", "surge"], "Sweet-Talker Sienna": ["slowburn", "wave", "pulse"], "Relentless Roxy": ["surge", "push", "wave"], "Sleepy Sadie": ["slowburn", "wave", "pulse"], "Drill Sergeant Dana": ["stairs", "push", "surge"], "Mocking Margot": ["cliff", "surge", "push"], "Cuckolding Veronica": ["cliff", "pulse", "slowburn"], "Counting Camille": ["stairs", "slowburn", "pulse"], "Gambling Gigi": ["cliff", "surge", "flutter"], "Goddess Isadora": ["slowburn", "wave", "stairs"], "Bratty Bella": ["pulse", "flutter", "cliff"], "Hypnotic Helena": ["wave", "slowburn", "pulse"], "Coach Colleen": ["stairs", "push", "surge"], "Doctor Delphine": ["pulse", "slowburn", "stairs"], "Jealous Juliet": ["cliff", "pulse", "slowburn"], "Queen Valentina": ["stairs", "cliff", "slowburn"], "Pouty Penelope": ["wave", "flutter", "pulse"], "Flirty Fiona": ["flutter", "wave", "pulse"], "Stage-Manager Simone": ["stairs", "surge", "wave"]};
+const MOVE_FAV = {"Patient Priscilla": ["slowburn", "stairs", "wave"], "Mischievous Mia": ["pulse", "flutter", "cliff"], "Strict Ms. Vance": ["stairs", "cliff", "slowburn"], "Chaos Cassie": ["flutter", "pulse", "surge"], "Sweet-Talker Sienna": ["slowburn", "wave", "pulse"], "Relentless Roxy": ["surge", "push", "wave"], "Sleepy Sadie": ["slowburn", "wave", "pulse"], "Drill Sergeant Dana": ["stairs", "push", "surge"], "Mocking Margot": ["cliff", "surge", "push"], "Cuckolding Veronica": ["cliff", "pulse", "slowburn"], "Counting Camille": ["stairs", "slowburn", "pulse"], "Gambling Gigi": ["cliff", "surge", "flutter"], "Goddess Isadora": ["slowburn", "wave", "stairs"], "Bratty Bella": ["pulse", "flutter", "cliff"], "Hypnotic Helena": ["wave", "slowburn", "pulse"], "Coach Colleen": ["stairs", "push", "surge"], "Doctor Delphine": ["pulse", "slowburn", "stairs"], "Jealous Juliet": ["cliff", "pulse", "slowburn"], "Queen Valentina": ["stairs", "cliff", "slowburn"], "Pouty Penelope": ["wave", "flutter", "pulse"], "Flirty Fiona": ["flutter", "wave", "pulse"], "Stage-Manager Simone": ["stairs", "surge", "wave"],
+  "Chef Gianna": ["slowburn","wave","pulse"],
+  "Inspector Vale": ["stairs","cliff","slowburn"],
+  "Unit Nine": ["flutter","cliff","stairs"],
+  "Captain Sable": ["wave","surge","cliff"],
+  "Madame Zara": ["flutter","slowburn","wave"],
+  "Madame Olenka": ["stairs","pulse","slowburn"],
+  "Glitch": ["flutter","cliff","pulse"],
+  "Nurse Ingrid": ["slowburn","pulse","wave"],
+  "Lilith": ["wave","pulse","slowburn"]
+};
 var lastMove = "";
 /* each move has its own chance per cycle, set per persona under Personas. Defaults: favourites 8%, others 2%, and 0 for the moves MOVE_OFF lists. */
 const MOVE_OFF = {
@@ -515,7 +529,16 @@ const MOVE_OFF = {
   "Hypnotic Helena": ["cliff", "surge"],
   "Goddess Isadora": ["cliff", "flutter"],
   "Counting Camille": ["flutter", "wave"],
-  "Coach Colleen": ["wave", "slowburn"]
+  "Coach Colleen": ["wave", "slowburn"],
+  "Chef Gianna": ["surge","cliff"],
+  "Inspector Vale": ["flutter","wave"],
+  "Unit Nine": ["wave","slowburn"],
+  "Captain Sable": ["pulse"],
+  "Madame Zara": ["stairs"],
+  "Madame Olenka": ["flutter","cliff","surge"],
+  "Glitch": ["slowburn","wave"],
+  "Nurse Ingrid": ["cliff","surge","push"],
+  "Lilith": ["stairs","push"]
 };
 const moveDef = (p, m) => (MOVE_OFF[p] || []).includes(m) ? 0 : (MOVE_FAV[p] || []).includes(m) ? 8 : 2;
 function moveChance(p, m){
@@ -1009,7 +1032,16 @@ const PERSONAS = {
   "Queen Valentina": {d:"Regal and commanding. Decrees rather than asks, rules the room like a court, and rewards loyalty with grudging favour.", low:20, pmin:60, pmax:90, bmin:40, bmax:80, hmin:6, hmax:14, rmin:15, rmax:35, fake:20, esc:6, stop:true},
   "Pouty Penelope": {d:"Sweet and sulky. Tries to be tough, pouts when she cannot be, and caves with sugar whenever you whimper.", low:25, pmin:50, pmax:75, bmin:25, bmax:55, hmin:4, hmax:10, rmin:6, rmax:14, fake:20, esc:2, stop:false},
   "Flirty Fiona": {d:"Playful and teasing. Winks through everything, loves a light fake-out, and never lets it get too serious.", low:20, pmin:55, pmax:80, bmin:20, bmax:45, hmin:3, hmax:9, rmin:5, rmax:14, fake:30, esc:3, stop:false},
-  "Stage-Manager Simone": {d:"Runs it like a production. Cues, call times, and blocking notes, with a running eye on the audience and the show's pacing.", low:20, pmin:60, pmax:90, bmin:25, bmax:50, hmin:4, hmax:10, rmin:8, rmax:18, fake:25, esc:5, stop:true}
+  "Stage-Manager Simone": {d:"Runs it like a production. Cues, call times, and blocking notes, with a running eye on the audience and the show's pacing.", low:20, pmin:60, pmax:90, bmin:25, bmax:50, hmin:4, hmax:10, rmin:8, rmax:18, fake:25, esc:5, stop:true},
+  "Chef Gianna": {d:"Warm and sensual kitchen mentor. Simmers you slowly, tastes every reaction, lets the heat rest, and never rushes a dish.", low:15, pmin:45, pmax:70, bmin:50, bmax:100, hmin:6, hmax:14, rmin:8, rmax:16, fake:10, esc:2, stop:false},
+  "Inspector Vale": {d:"Calm, probing interrogator. Asks questions, reads every answer, pauses to check your statement and tightens the pressure when you contradict yourself.", low:15, pmin:55, pmax:80, bmin:30, bmax:55, hmin:6, hmax:14, rmin:10, rmax:22, fake:15, esc:5, stop:true},
+  "Unit Nine": {d:"Cold and exact. Logs every stroke, runs in short precise steps, and glitches into stutters and hard stops when a value is out of range.", low:10, pmin:60, pmax:95, bmin:8, bmax:20, hmin:2, hmax:6, rmin:3, rmax:8, fake:20, esc:4, stop:true},
+  "Captain Sable": {d:"Swaggering captain. Sails you through rough seas: swells, squalls and sudden stops, always hunting for the next storm.", low:20, pmin:60, pmax:95, bmin:15, bmax:35, hmin:3, hmax:9, rmin:6, rmax:16, fake:25, esc:6, stop:false},
+  "Madame Zara": {d:"Mystical and teasing. Reads the cards aloud, predicts your next peak, and then delays it: fake-outs, long unpredictable holds and whispered visions.", low:10, pmin:40, pmax:90, bmin:25, bmax:90, hmin:5, hmax:15, rmin:6, rmax:25, fake:40, esc:1, stop:false},
+  "Madame Olenka": {d:"Poised and exacting. Counts every beat, asks for clean measured strokes with no fidgeting, and corrects every wobble.", low:20, pmin:50, pmax:70, bmin:20, bmax:40, hmin:5, hmax:10, rmin:8, rmax:14, fake:5, esc:0, stop:true},
+  "Glitch": {d:"Hacker who narrates a breach. Stutters, drops out, flickers between speeds and vibrates when she bypasses your limits.", low:5, pmin:50, pmax:100, bmin:4, bmax:15, hmin:1, hmax:4, rmin:1, rmax:6, fake:45, esc:2, stop:true},
+  "Nurse Ingrid": {d:"Calm, caring nurse. Checks in often, stops fully during rests, and stays gentle even while in control. Still firm about what you need.", low:10, pmin:40, pmax:60, bmin:40, bmax:80, hmin:6, hmax:12, rmin:12, rmax:25, fake:5, esc:0, stop:true},
+  "Lilith": {d:"Seductive succubus. Promises pleasure, then takes it away: slow curling waves, teasing fake-outs and dark whispers about what she'll take from you.", low:20, pmin:55, pmax:90, bmin:25, bmax:55, hmin:5, hmax:12, rmin:6, rmax:14, fake:35, esc:4, stop:false}
 };
 Object.keys(PERSONAS).forEach(k => ["persona", "activePersona"].forEach(id => { const o = document.createElement("option"); o.value = o.textContent = k; $(id).append(o); }));
 /* the Personas dropdown configures; the Tease panel's dropdown is the active persona. Both follow whoever is in control. */
@@ -1044,7 +1076,17 @@ $("persona").onchange = () => {
 };
 
 /* ---------- personality chat ---------- */
-const PCOL = {"Patient Priscilla":"#7a9e7e","Mischievous Mia":"#e0a43a","Strict Ms. Vance":"#8a4f7d","Chaos Cassie":"#d9534f","Sweet-Talker Sienna":"#e58fa8","Relentless Roxy":"#c8602a","Sleepy Sadie":"#7f8fb5","Drill Sergeant Dana":"#4f6b3a","Mocking Margot":"#9b3d5a","Cuckolding Veronica":"#3d7ea6","Counting Camille":"#5f8fa8","Gambling Gigi":"#c9a227","Goddess Isadora":"#b58ad6","Bratty Bella":"#ff7eb6","Hypnotic Helena":"#6a5acd","Coach Colleen":"#2e9e6b","Doctor Delphine":"#3fb5b0","Jealous Juliet":"#c0394d","Queen Valentina":"#8e1b3f","Pouty Penelope":"#f4a6c0","Flirty Fiona":"#e8795a","Stage-Manager Simone":"#4a7fb5"};
+const PCOL = {"Patient Priscilla":"#7a9e7e","Mischievous Mia":"#e0a43a","Strict Ms. Vance":"#8a4f7d","Chaos Cassie":"#d9534f","Sweet-Talker Sienna":"#e58fa8","Relentless Roxy":"#c8602a","Sleepy Sadie":"#7f8fb5","Drill Sergeant Dana":"#4f6b3a","Mocking Margot":"#9b3d5a","Cuckolding Veronica":"#3d7ea6","Counting Camille":"#5f8fa8","Gambling Gigi":"#c9a227","Goddess Isadora":"#b58ad6","Bratty Bella":"#ff7eb6","Hypnotic Helena":"#6a5acd","Coach Colleen":"#2e9e6b","Doctor Delphine":"#3fb5b0","Jealous Juliet":"#c0394d","Queen Valentina":"#8e1b3f","Pouty Penelope":"#f4a6c0","Flirty Fiona":"#e8795a","Stage-Manager Simone":"#4a7fb5",
+  "Chef Gianna":"#d4824a",
+  "Inspector Vale":"#5d6b7a",
+  "Unit Nine":"#6fd3e8",
+  "Captain Sable":"#2b6e8a",
+  "Madame Zara":"#7b4fb0",
+  "Madame Olenka":"#b3577a",
+  "Glitch":"#3ccf6e",
+  "Nurse Ingrid":"#8fb3d9",
+  "Lilith":"#8b0a1a"
+};
 Object.keys(MORE).forEach(k => Object.keys(MORE[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE[k][c]); }));
 Object.keys(MORE2).forEach(k => Object.keys(MORE2[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE2[k][c]); }));
 Object.keys(MORE3).forEach(k => Object.keys(MORE3[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE3[k][c]); }));
@@ -1241,8 +1283,28 @@ function midTick(){
   if (now > nextPromiseAt){ nextPromiseAt = now + 60000 + Math.random() * 40000; say(runHidden && Math.random() < 0.5 ? "hidden" : "promise"); return; }
   if (now > nextChatAt && midCat !== "holdMid" && midCat !== "restMid"){ nextChatAt = now + 25000 + Math.random() * 25000; say("chat"); }
 }
-const SHORT = {"Patient Priscilla":"Priscilla","Mischievous Mia":"Mia","Strict Ms. Vance":"Ms. Vance","Chaos Cassie":"Cassie","Sweet-Talker Sienna":"Sienna","Relentless Roxy":"Roxy","Sleepy Sadie":"Sadie","Drill Sergeant Dana":"Dana","Mocking Margot":"Margot","Cuckolding Veronica":"Veronica","Counting Camille":"Camille","Gambling Gigi":"Gigi","Goddess Isadora":"Isadora","Bratty Bella":"Bella","Hypnotic Helena":"Helena","Coach Colleen":"Colleen","Doctor Delphine":"Delphine","Jealous Juliet":"Juliet","Queen Valentina":"Valentina","Pouty Penelope":"Penelope","Flirty Fiona":"Fiona","Stage-Manager Simone":"Simone"};
-const NAMEKEY = {"Patient Priscilla":"priscilla","Mischievous Mia":"mia","Strict Ms. Vance":"vance","Chaos Cassie":"cassie","Sweet-Talker Sienna":"sienna","Relentless Roxy":"roxy","Sleepy Sadie":"sadie","Drill Sergeant Dana":"dana","Mocking Margot":"margot","Cuckolding Veronica":"veronica","Counting Camille":"camille","Gambling Gigi":"gigi","Goddess Isadora":"isadora","Bratty Bella":"bella","Hypnotic Helena":"helena","Coach Colleen":"colleen","Doctor Delphine":"delphine","Jealous Juliet":"juliet","Queen Valentina":"valentina","Pouty Penelope":"penelope","Flirty Fiona":"fiona","Stage-Manager Simone":"simone"};
+const SHORT = {"Patient Priscilla":"Priscilla","Mischievous Mia":"Mia","Strict Ms. Vance":"Ms. Vance","Chaos Cassie":"Cassie","Sweet-Talker Sienna":"Sienna","Relentless Roxy":"Roxy","Sleepy Sadie":"Sadie","Drill Sergeant Dana":"Dana","Mocking Margot":"Margot","Cuckolding Veronica":"Veronica","Counting Camille":"Camille","Gambling Gigi":"Gigi","Goddess Isadora":"Isadora","Bratty Bella":"Bella","Hypnotic Helena":"Helena","Coach Colleen":"Colleen","Doctor Delphine":"Delphine","Jealous Juliet":"Juliet","Queen Valentina":"Valentina","Pouty Penelope":"Penelope","Flirty Fiona":"Fiona","Stage-Manager Simone":"Simone",
+  "Chef Gianna":"Gianna",
+  "Inspector Vale":"Vale",
+  "Unit Nine":"Nine",
+  "Captain Sable":"Sable",
+  "Madame Zara":"Zara",
+  "Madame Olenka":"Olenka",
+  "Glitch":"Glitch",
+  "Nurse Ingrid":"Ingrid",
+  "Lilith":"Lilith"
+};
+const NAMEKEY = {"Patient Priscilla":"priscilla","Mischievous Mia":"mia","Strict Ms. Vance":"vance","Chaos Cassie":"cassie","Sweet-Talker Sienna":"sienna","Relentless Roxy":"roxy","Sleepy Sadie":"sadie","Drill Sergeant Dana":"dana","Mocking Margot":"margot","Cuckolding Veronica":"veronica","Counting Camille":"camille","Gambling Gigi":"gigi","Goddess Isadora":"isadora","Bratty Bella":"bella","Hypnotic Helena":"helena","Coach Colleen":"colleen","Doctor Delphine":"delphine","Jealous Juliet":"juliet","Queen Valentina":"valentina","Pouty Penelope":"penelope","Flirty Fiona":"fiona","Stage-Manager Simone":"simone",
+  "Chef Gianna":"gianna",
+  "Inspector Vale":"vale",
+  "Unit Nine":"nine",
+  "Captain Sable":"sable",
+  "Madame Zara":"zara",
+  "Madame Olenka":"olenka",
+  "Glitch":"glitch",
+  "Nurse Ingrid":"ingrid",
+  "Lilith":"lilith"
+};
 const ALL = Object.keys(SHORT);
 const REACT = {
  "Patient Priscilla": {excitedStay:3, jealousStay:2, askControl:2, jealousLeave:1, banter:2},
@@ -1266,7 +1328,16 @@ const REACT = {
  "Queen Valentina": {excitedStay:2, jealousStay:3, askControl:4, jealousLeave:3, banter:3},
  "Pouty Penelope": {excitedStay:3, jealousStay:3, askControl:2, jealousLeave:2, banter:2},
  "Flirty Fiona": {excitedStay:4, jealousStay:2, askControl:3, jealousLeave:1, banter:4},
- "Stage-Manager Simone": {excitedStay:3, jealousStay:2, askControl:3, jealousLeave:2, banter:4}
+ "Stage-Manager Simone": {excitedStay:3, jealousStay:2, askControl:3, jealousLeave:2, banter:4},
+  "Chef Gianna": {excitedStay:3,jealousStay:2,askControl:2,jealousLeave:1,banter:3},
+  "Inspector Vale": {excitedStay:2,jealousStay:2,askControl:3,jealousLeave:1,banter:3},
+  "Unit Nine": {excitedStay:1,jealousStay:2,askControl:3,jealousLeave:2,banter:2},
+  "Captain Sable": {excitedStay:4,jealousStay:2,askControl:3,jealousLeave:1,banter:4},
+  "Madame Zara": {excitedStay:3,jealousStay:2,askControl:3,jealousLeave:2,banter:3},
+  "Madame Olenka": {excitedStay:1,jealousStay:3,askControl:3,jealousLeave:3,banter:2},
+  "Glitch": {excitedStay:4,jealousStay:1,askControl:4,jealousLeave:1,banter:4},
+  "Nurse Ingrid": {excitedStay:2,jealousStay:2,askControl:2,jealousLeave:2,banter:2},
+  "Lilith": {excitedStay:3,jealousStay:3,askControl:4,jealousLeave:2,banter:4}
 };
 Object.keys(MORE5).forEach(k => Object.keys(MORE5[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE5[k][c]); }));
 
@@ -1504,7 +1575,17 @@ Object.keys(MORE6).forEach(k => Object.keys(MORE6[k]).forEach(c => { LINES[k][c]
 
 /* ---------- battle for control ---------- */
 let challenge = null, nextChallengeAt = 0; const attempts = {};
-const STUBBORN = {"Patient Priscilla":1.0,"Mischievous Mia":0.8,"Strict Ms. Vance":1.5,"Chaos Cassie":0.5,"Sweet-Talker Sienna":0.9,"Relentless Roxy":1.5,"Sleepy Sadie":0.6,"Drill Sergeant Dana":1.5,"Mocking Margot":1.3,"Cuckolding Veronica":1.2,"Counting Camille":1.2,"Gambling Gigi":0.8,"Goddess Isadora":1.5,"Bratty Bella":1.0,"Hypnotic Helena":0.8,"Coach Colleen":1.3,"Doctor Delphine":1.1,"Jealous Juliet":1.7,"Queen Valentina":1.6,"Pouty Penelope":0.7,"Flirty Fiona":0.9,"Stage-Manager Simone":1.1};
+const STUBBORN = {"Patient Priscilla":1.0,"Mischievous Mia":0.8,"Strict Ms. Vance":1.5,"Chaos Cassie":0.5,"Sweet-Talker Sienna":0.9,"Relentless Roxy":1.5,"Sleepy Sadie":0.6,"Drill Sergeant Dana":1.5,"Mocking Margot":1.3,"Cuckolding Veronica":1.2,"Counting Camille":1.2,"Gambling Gigi":0.8,"Goddess Isadora":1.5,"Bratty Bella":1.0,"Hypnotic Helena":0.8,"Coach Colleen":1.3,"Doctor Delphine":1.1,"Jealous Juliet":1.7,"Queen Valentina":1.6,"Pouty Penelope":0.7,"Flirty Fiona":0.9,"Stage-Manager Simone":1.1,
+  "Chef Gianna":1,
+  "Inspector Vale":1.3,
+  "Unit Nine":1.2,
+  "Captain Sable":1,
+  "Madame Zara":0.9,
+  "Madame Olenka":1.4,
+  "Glitch":0.7,
+  "Nurse Ingrid":0.6,
+  "Lilith":1.4
+};
 function setPersonaFields(name, jitter){
   if (!PERSONAS[name]) return; const p = personaCfg(name);
   const j = v => jitter ? Math.round(v * (0.9 + Math.random() * 0.2)) : v;
@@ -1590,8 +1671,28 @@ function startChallenge(){
   for (let i = 0; i < others.length; i++){ r -= w[i]; if (r <= 0){ ch = others[i]; break; } }
   if (Math.random() * 100 < n("aimCtl", 35)) beginDirect(ch); else beginChallenge(ch);
 }
-const NICKS = {"Patient Priscilla":["pet","darling","good boy"],"Mischievous Mia":["toy","plaything","loser"],"Strict Ms. Vance":["subject","sub","slave"],"Chaos Cassie":["pawn","puppet","guinea pig"],"Sweet-Talker Sienna":["sweet thing","baby","sweetheart"],"Relentless Roxy":["rookie","peon","dog"],"Sleepy Sadie":["sleepyhead","puppy","plaything"],"Drill Sergeant Dana":["recruit","private","maggot"],"Mocking Margot":["worm","needy mess","little loser"],"Cuckolding Veronica":["cuck","cuckold","little cuck"],"Counting Camille":["test subject", "specimen", "dear"],"Gambling Gigi":["high roller", "sucker", "chip"],"Goddess Isadora":["mortal", "devotee", "worshipper"],"Bratty Bella":["servant", "errand boy", "lackey"],"Hypnotic Helena":["sleepyhead", "dreamer", "good boy"],"Coach Colleen":["champ", "rookie", "trainee"],"Doctor Delphine":["patient", "subject", "case study"],"Jealous Juliet":["my pet", "darling", "sweet thing"],"Queen Valentina":["peasant", "servant", "knight"],"Pouty Penelope":["honey", "sweetie", "silly"],"Flirty Fiona":["handsome", "trouble", "cutie"],"Stage-Manager Simone":["talent", "star", "performer"]};
-const NICKRATE = {"Patient Priscilla":.35,"Mischievous Mia":.4,"Strict Ms. Vance":.55,"Chaos Cassie":.4,"Sweet-Talker Sienna":.35,"Relentless Roxy":.5,"Sleepy Sadie":.4,"Drill Sergeant Dana":.5,"Mocking Margot":.6,"Cuckolding Veronica":.6,"Counting Camille":0.4,"Gambling Gigi":0.4,"Goddess Isadora":0.55,"Bratty Bella":0.5,"Hypnotic Helena":0.4,"Coach Colleen":0.5,"Doctor Delphine":0.45,"Jealous Juliet":0.5,"Queen Valentina":0.55,"Pouty Penelope":0.4,"Flirty Fiona":0.4,"Stage-Manager Simone":0.45};const NICKCATS = ["greet","start","build","hold","holdMid","rest","restMid","fake","fakeAfter","warn","win","fail","chat","reply","please","close","demand","promise","watch","enjoy","lowSpeed","shortStroke","praise","nudge","fakeNote","hidden","lubeBreak","lubeWait","lubeResume","tempt"];
+const NICKS = {"Patient Priscilla":["pet","darling","good boy"],"Mischievous Mia":["toy","plaything","loser"],"Strict Ms. Vance":["subject","sub","slave"],"Chaos Cassie":["pawn","puppet","guinea pig"],"Sweet-Talker Sienna":["sweet thing","baby","sweetheart"],"Relentless Roxy":["rookie","peon","dog"],"Sleepy Sadie":["sleepyhead","puppy","plaything"],"Drill Sergeant Dana":["recruit","private","maggot"],"Mocking Margot":["worm","needy mess","little loser"],"Cuckolding Veronica":["cuck","cuckold","little cuck"],"Counting Camille":["test subject", "specimen", "dear"],"Gambling Gigi":["high roller", "sucker", "chip"],"Goddess Isadora":["mortal", "devotee", "worshipper"],"Bratty Bella":["servant", "errand boy", "lackey"],"Hypnotic Helena":["sleepyhead", "dreamer", "good boy"],"Coach Colleen":["champ", "rookie", "trainee"],"Doctor Delphine":["patient", "subject", "case study"],"Jealous Juliet":["my pet", "darling", "sweet thing"],"Queen Valentina":["peasant", "servant", "knight"],"Pouty Penelope":["honey", "sweetie", "silly"],"Flirty Fiona":["handsome", "trouble", "cutie"],"Stage-Manager Simone":["talent", "star", "performer"],
+  "Chef Gianna":["sugar","sweet pea","darling"],
+  "Inspector Vale":["suspect","detainee","pal"],
+  "Unit Nine":["user","test unit","input"],
+  "Captain Sable":["landlubber","deckhand","matey"],
+  "Madame Zara":["seeker","dear one","darling"],
+  "Madame Olenka":["pupil","little swan","dancer"],
+  "Glitch":["mark","node","user"],
+  "Nurse Ingrid":["dear","patient","hon"],
+  "Lilith":["mortal","sinner","sweet soul"]
+};
+const NICKRATE = {"Patient Priscilla":.35,"Mischievous Mia":.4,"Strict Ms. Vance":.55,"Chaos Cassie":.4,"Sweet-Talker Sienna":.35,"Relentless Roxy":.5,"Sleepy Sadie":.4,"Drill Sergeant Dana":.5,"Mocking Margot":.6,"Cuckolding Veronica":.6,"Counting Camille":0.4,"Gambling Gigi":0.4,"Goddess Isadora":0.55,"Bratty Bella":0.5,"Hypnotic Helena":0.4,"Coach Colleen":0.5,"Doctor Delphine":0.45,"Jealous Juliet":0.5,"Queen Valentina":0.55,"Pouty Penelope":0.4,"Flirty Fiona":0.4,"Stage-Manager Simone":0.45,
+  "Chef Gianna":0.45,
+  "Inspector Vale":0.5,
+  "Unit Nine":0.4,
+  "Captain Sable":0.5,
+  "Madame Zara":0.45,
+  "Madame Olenka":0.5,
+  "Glitch":0.4,
+  "Nurse Ingrid":0.4,
+  "Lilith":0.6
+};const NICKCATS = ["greet","start","build","hold","holdMid","rest","restMid","fake","fakeAfter","warn","win","fail","chat","reply","please","close","demand","promise","watch","enjoy","lowSpeed","shortStroke","praise","nudge","fakeNote","hidden","lubeBreak","lubeWait","lubeResume","tempt"];
 function nickFor(name){
   const arr = personaNicks(name).length ? personaNicks(name) : ["pet"];
   return Math.random() < 0.7 ? arr[0] : arr[Math.floor(Math.random() * arr.length)];
@@ -1732,10 +1833,30 @@ function handOff(ev, name){
 }
 Object.keys(MORE13).forEach(k => LINES[k].giveUp = MORE13[k].giveUp);
 Object.assign(HYPE, {giveUp:3});
-const YIELD_DEF = {"Patient Priscilla": 12, "Mischievous Mia": 8, "Strict Ms. Vance": 3, "Chaos Cassie": 15, "Sweet-Talker Sienna": 10, "Relentless Roxy": 3, "Sleepy Sadie": 15, "Drill Sergeant Dana": 3, "Mocking Margot": 5, "Cuckolding Veronica": 6, "Counting Camille": 8, "Gambling Gigi": 8, "Goddess Isadora": 3, "Bratty Bella": 5, "Hypnotic Helena": 12, "Coach Colleen": 5, "Doctor Delphine": 6, "Jealous Juliet": 2, "Queen Valentina": 3, "Pouty Penelope": 14, "Flirty Fiona": 10, "Stage-Manager Simone": 6};
+const YIELD_DEF = {"Patient Priscilla": 12, "Mischievous Mia": 8, "Strict Ms. Vance": 3, "Chaos Cassie": 15, "Sweet-Talker Sienna": 10, "Relentless Roxy": 3, "Sleepy Sadie": 15, "Drill Sergeant Dana": 3, "Mocking Margot": 5, "Cuckolding Veronica": 6, "Counting Camille": 8, "Gambling Gigi": 8, "Goddess Isadora": 3, "Bratty Bella": 5, "Hypnotic Helena": 12, "Coach Colleen": 5, "Doctor Delphine": 6, "Jealous Juliet": 2, "Queen Valentina": 3, "Pouty Penelope": 14, "Flirty Fiona": 10, "Stage-Manager Simone": 6,
+  "Chef Gianna": 10,
+  "Inspector Vale": 4,
+  "Unit Nine": 2,
+  "Captain Sable": 8,
+  "Madame Zara": 9,
+  "Madame Olenka": 3,
+  "Glitch": 18,
+  "Nurse Ingrid": 14,
+  "Lilith": 4
+};
 
 /* ---------- vibration bursts: per-persona chance (% per tease cycle) and length (s) ---------- */
-const VIB_DEF = {"Patient Priscilla":[2,6], "Mischievous Mia":[6,6], "Strict Ms. Vance":[3,8], "Chaos Cassie":[8,5], "Sweet-Talker Sienna":[3,8], "Relentless Roxy":[6,10], "Sleepy Sadie":[2,5], "Drill Sergeant Dana":[5,8], "Mocking Margot":[5,8], "Cuckolding Veronica":[4,8], "Counting Camille":[3,10], "Gambling Gigi":[6,6], "Goddess Isadora":[2,10], "Bratty Bella":[6,6], "Hypnotic Helena":[3,12], "Coach Colleen":[5,10], "Doctor Delphine":[5,8], "Jealous Juliet":[4,8], "Queen Valentina":[3,8], "Pouty Penelope":[3,5], "Flirty Fiona":[5,6], "Stage-Manager Simone":[4,8]};
+const VIB_DEF = {"Patient Priscilla":[2,6], "Mischievous Mia":[6,6], "Strict Ms. Vance":[3,8], "Chaos Cassie":[8,5], "Sweet-Talker Sienna":[3,8], "Relentless Roxy":[6,10], "Sleepy Sadie":[2,5], "Drill Sergeant Dana":[5,8], "Mocking Margot":[5,8], "Cuckolding Veronica":[4,8], "Counting Camille":[3,10], "Gambling Gigi":[6,6], "Goddess Isadora":[2,10], "Bratty Bella":[6,6], "Hypnotic Helena":[3,12], "Coach Colleen":[5,10], "Doctor Delphine":[5,8], "Jealous Juliet":[4,8], "Queen Valentina":[3,8], "Pouty Penelope":[3,5], "Flirty Fiona":[5,6], "Stage-Manager Simone":[4,8],
+  "Chef Gianna":[3,8],
+  "Inspector Vale":[4,6],
+  "Unit Nine":[7,4],
+  "Captain Sable":[5,6],
+  "Madame Zara":[4,10],
+  "Madame Olenka":[2,6],
+  "Glitch":[9,4],
+  "Nurse Ingrid":[2,6],
+  "Lilith":[6,8]
+};
 const vibNum = (pfx, p, i, lo, hi) => { const e = document.getElementById(pfx + NAMEKEY[p]); const v = e ? parseFloat(e.value) : NaN; return Math.max(lo, Math.min(hi, isNaN(v) ? ((VIB_DEF[p] || [3, 8])[i]) : v)); };
 const vibChance = p => vibNum("vibC_", p, 0, 0, 100);
 const vibSecs = p => vibNum("vibS_", p, 1, 2, 60);
@@ -1852,6 +1973,15 @@ LINES["Doctor Delphine"] = PERSONA_LINES["Doctor Delphine"];
 LINES["Jealous Juliet"] = PERSONA_LINES["Jealous Juliet"];
 LINES["Queen Valentina"] = PERSONA_LINES["Queen Valentina"];
 LINES["Pouty Penelope"] = PERSONA_LINES["Pouty Penelope"];
+LINES["Chef Gianna"] = PERSONA_LINES["Chef Gianna"];
+LINES["Inspector Vale"] = PERSONA_LINES["Inspector Vale"];
+LINES["Unit Nine"] = PERSONA_LINES["Unit Nine"];
+LINES["Captain Sable"] = PERSONA_LINES["Captain Sable"];
+LINES["Madame Zara"] = PERSONA_LINES["Madame Zara"];
+LINES["Madame Olenka"] = PERSONA_LINES["Madame Olenka"];
+LINES["Glitch"] = PERSONA_LINES["Glitch"];
+LINES["Nurse Ingrid"] = PERSONA_LINES["Nurse Ingrid"];
+LINES["Lilith"] = PERSONA_LINES["Lilith"];
 LINES["Flirty Fiona"] = PERSONA_LINES["Flirty Fiona"];
 LINES["Stage-Manager Simone"] = PERSONA_LINES["Stage-Manager Simone"];
 
@@ -1862,9 +1992,29 @@ Object.assign(HYPE, {quitCtl:3,quitSpec:3});
 /* ---------- interactions: targets, demands, questions ---------- */
 let suppressUntil = 0;
 const STEP = 5;
-const TARGETS = {"Patient Priscilla":{speed:60,len:80},"Mischievous Mia":{speed:65,len:80},"Strict Ms. Vance":{speed:70,len:100},"Chaos Cassie":{chaos:true},"Sweet-Talker Sienna":{speed:65,len:85},"Relentless Roxy":{speed:85,len:100},"Sleepy Sadie":{speed:60,len:80},"Drill Sergeant Dana":{speed:80,len:95},"Mocking Margot":{speed:75,len:90},"Cuckolding Veronica":{speed:70,len:85},"Counting Camille":{speed:65,len:85},"Gambling Gigi":{speed:70,len:90},"Goddess Isadora":{speed:65,len:85},"Bratty Bella":{speed:75,len:85},"Hypnotic Helena":{speed:60,len:80},"Coach Colleen":{speed:80,len:95},"Doctor Delphine":{speed:65,len:85},"Jealous Juliet":{speed:70,len:85},"Queen Valentina":{speed:70,len:90},"Pouty Penelope":{speed:60,len:80},"Flirty Fiona":{speed:65,len:85},"Stage-Manager Simone":{speed:70,len:90}};
-const MERCY = {"Patient Priscilla":.8,"Mischievous Mia":.3,"Strict Ms. Vance":.2,"Chaos Cassie":.5,"Sweet-Talker Sienna":.8,"Relentless Roxy":.15,"Sleepy Sadie":.9,"Drill Sergeant Dana":.25,"Mocking Margot":.1,"Cuckolding Veronica":.12,"Counting Camille":0.5,"Gambling Gigi":0.4,"Goddess Isadora":0.3,"Bratty Bella":0.25,"Hypnotic Helena":0.7,"Coach Colleen":0.3,"Doctor Delphine":0.5,"Jealous Juliet":0.4,"Queen Valentina":0.2,"Pouty Penelope":0.8,"Flirty Fiona":0.6,"Stage-Manager Simone":0.4};
-const MOODSETS = {gentle:["Patient Priscilla","Sweet-Talker Sienna","Sleepy Sadie","Hypnotic Helena","Pouty Penelope","Flirty Fiona"], strict:["Strict Ms. Vance","Relentless Roxy","Drill Sergeant Dana","Counting Camille","Goddess Isadora","Coach Colleen","Queen Valentina"], mean:["Mischievous Mia","Mocking Margot","Chaos Cassie","Cuckolding Veronica","Bratty Bella"], any:ALL};
+const TARGETS = {"Patient Priscilla":{speed:60,len:80},"Mischievous Mia":{speed:65,len:80},"Strict Ms. Vance":{speed:70,len:100},"Chaos Cassie":{chaos:true},"Sweet-Talker Sienna":{speed:65,len:85},"Relentless Roxy":{speed:85,len:100},"Sleepy Sadie":{speed:60,len:80},"Drill Sergeant Dana":{speed:80,len:95},"Mocking Margot":{speed:75,len:90},"Cuckolding Veronica":{speed:70,len:85},"Counting Camille":{speed:65,len:85},"Gambling Gigi":{speed:70,len:90},"Goddess Isadora":{speed:65,len:85},"Bratty Bella":{speed:75,len:85},"Hypnotic Helena":{speed:60,len:80},"Coach Colleen":{speed:80,len:95},"Doctor Delphine":{speed:65,len:85},"Jealous Juliet":{speed:70,len:85},"Queen Valentina":{speed:70,len:90},"Pouty Penelope":{speed:60,len:80},"Flirty Fiona":{speed:65,len:85},"Stage-Manager Simone":{speed:70,len:90},
+  "Chef Gianna":{speed:55,len:85},
+  "Inspector Vale":{speed:60,len:85},
+  "Unit Nine":{speed:70,len:100},
+  "Captain Sable":{speed:75,len:90},
+  "Madame Zara":{speed:60,len:80},
+  "Madame Olenka":{speed:60,len:95},
+  "Glitch":{chaos:true},
+  "Nurse Ingrid":{speed:50,len:75},
+  "Lilith":{speed:70,len:90}
+};
+const MERCY = {"Patient Priscilla":.8,"Mischievous Mia":.3,"Strict Ms. Vance":.2,"Chaos Cassie":.5,"Sweet-Talker Sienna":.8,"Relentless Roxy":.15,"Sleepy Sadie":.9,"Drill Sergeant Dana":.25,"Mocking Margot":.1,"Cuckolding Veronica":.12,"Counting Camille":0.5,"Gambling Gigi":0.4,"Goddess Isadora":0.3,"Bratty Bella":0.25,"Hypnotic Helena":0.7,"Coach Colleen":0.3,"Doctor Delphine":0.5,"Jealous Juliet":0.4,"Queen Valentina":0.2,"Pouty Penelope":0.8,"Flirty Fiona":0.6,"Stage-Manager Simone":0.4,
+  "Chef Gianna":0.6,
+  "Inspector Vale":0.3,
+  "Unit Nine":0.1,
+  "Captain Sable":0.3,
+  "Madame Zara":0.5,
+  "Madame Olenka":0.2,
+  "Glitch":0.4,
+  "Nurse Ingrid":0.95,
+  "Lilith":0.25
+};
+const MOODSETS = {gentle:["Patient Priscilla","Sweet-Talker Sienna","Sleepy Sadie","Hypnotic Helena","Pouty Penelope","Flirty Fiona","Chef Gianna","Nurse Ingrid"], strict:["Strict Ms. Vance","Relentless Roxy","Drill Sergeant Dana","Counting Camille","Goddess Isadora","Coach Colleen","Queen Valentina","Inspector Vale","Unit Nine","Madame Olenka"], mean:["Mischievous Mia","Mocking Margot","Chaos Cassie","Cuckolding Veronica","Bratty Bella","Captain Sable","Glitch","Lilith"], any:ALL};
 const QDEFS = {
   feel: {cat:"askFeel", opts:[{label:"Give me more",kind:"more"},{label:"I'm doing fine",kind:"fine"},{label:"It's a lot",kind:"lot"},{label:"I'm close",kind:"close"}]},
   next: {cat:"askNext", opts:[{label:"Tease me",kind:"tease"},{label:"Hold me there",kind:"hold"},{label:"Give me a rest",kind:"rest"},{label:"Surprise me",kind:"surprise"}]},
@@ -1946,7 +2096,17 @@ function acceptDemand(d, exact){
     if (running && currentPersona === p && Math.abs(t2.speed - (+$("speed").value)) < 3 && Math.abs(t2.len - curLen()) < 3 && !hit[p]){ hit[p] = Date.now(); sayAs(p, "dmdHit"); }
   }, 4500);
 }
-const TOL = {"Patient Priscilla": 5, "Mischievous Mia": 3, "Strict Ms. Vance": 2, "Chaos Cassie": 4, "Sweet-Talker Sienna": 4, "Relentless Roxy": 3, "Sleepy Sadie": 5, "Drill Sergeant Dana": 2, "Mocking Margot": 3, "Cuckolding Veronica": 3, "Counting Camille": 4, "Gambling Gigi": 3, "Goddess Isadora": 2, "Bratty Bella": 3, "Hypnotic Helena": 5, "Coach Colleen": 3, "Doctor Delphine": 4, "Jealous Juliet": 2, "Queen Valentina": 2, "Pouty Penelope": 5, "Flirty Fiona": 4, "Stage-Manager Simone": 3};
+const TOL = {"Patient Priscilla": 5, "Mischievous Mia": 3, "Strict Ms. Vance": 2, "Chaos Cassie": 4, "Sweet-Talker Sienna": 4, "Relentless Roxy": 3, "Sleepy Sadie": 5, "Drill Sergeant Dana": 2, "Mocking Margot": 3, "Cuckolding Veronica": 3, "Counting Camille": 4, "Gambling Gigi": 3, "Goddess Isadora": 2, "Bratty Bella": 3, "Hypnotic Helena": 5, "Coach Colleen": 3, "Doctor Delphine": 4, "Jealous Juliet": 2, "Queen Valentina": 2, "Pouty Penelope": 5, "Flirty Fiona": 4, "Stage-Manager Simone": 3,
+  "Chef Gianna": 4,
+  "Inspector Vale": 3,
+  "Unit Nine": 2,
+  "Captain Sable": 3,
+  "Madame Zara": 4,
+  "Madame Olenka": 2,
+  "Glitch": 4,
+  "Nurse Ingrid": 6,
+  "Lilith": 3
+};
 Object.keys(MORE10).forEach(k => Object.keys(MORE10[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE10[k][c]); }));
 Object.assign(HYPE, {dmdWarn:4,dmdLeave:6});
 function stormOff(p){

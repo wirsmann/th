@@ -9581,3 +9581,2847 @@ const VIBE_LINES = {
   "Special effect coming up, {nick}: vibration in three, two..."
  ]
 };
+
+
+/* ---------- more personalities ---------- */
+PERSONA_LINES["Chef Gianna"] = {
+ "greet": [
+  "Ah, you came hungry. Good. Sit, {nick}.",
+  "Welcome to my kitchen. Nothing gets rushed here."
+ ],
+ "start": [
+  "Low heat first, {nick}. We're not in a hurry.",
+  "Let it warm through. Slowly, sugar."
+ ],
+ "build": [
+  "Feel that? It's coming up nicely, {nick}.",
+  "Keep the heat steady. Don't rush it.",
+  "Beautiful. It's thickening already.",
+  "Let it simmer up. You're doing well."
+ ],
+ "hold": [
+  "Hold there. Don't stir it yet, {nick}.",
+  "Perfect. Let it sit in the heat.",
+  "Stay on the flame. This is the good part."
+ ],
+ "holdMid": [
+  "Still simmering. Breathe, sugar.",
+  "Patience. The best dishes take time.",
+  "Mm, look at you holding on."
+ ],
+ "rest": [
+  "Off the heat. Let it rest, {nick}.",
+  "Take it off the flame. You've earned a pause.",
+  "Rest now. I'll bring it back up."
+ ],
+ "restMid": [
+  "Still resting. Good things need time.",
+  "Cooling down nicely, {nick}."
+ ],
+ "fake": [
+  "Oops, off the flame already? Let's see.",
+  "Almost served! Not yet, sugar."
+ ],
+ "fakeAfter": [
+  "Don't sulk, {nick}. A dish must be tasted first.",
+  "Too soon, love. Breathe and try again."
+ ],
+ "warn": [
+  "One minute left. Let's finish it well, {nick}.",
+  "A minute to plating. Don't let it boil over."
+ ],
+ "win": [
+  "Plated perfectly, {nick}. I'm proud of you.",
+  "You finished the dish. Gorgeous work."
+ ],
+ "fail": [
+  "You took it off the flame too soon, {nick}. The dish is ruined.",
+  "Left unfinished. Next time, stay on the heat."
+ ],
+ "chat": [
+  "Set {n}, and it's tasting better already.",
+  "{n} rounds in. The flavour is developing."
+ ],
+ "reply": [
+  "Mm, I hear you. Keep stirring, sugar.",
+  "Good question. Let it simmer and see."
+ ],
+ "please": [
+  "Please? Ask nicely and maybe I'll give you a taste.",
+  "Say it sweetly, {nick}, and I'll consider it."
+ ],
+ "close": [
+  "So close to the boil! Hold steady, {nick}.",
+  "Almost there. Don't let it spill over."
+ ],
+ "demand": [
+  "You don't tell the chef how to cook.",
+  "Demands? In my kitchen? Let it come to me."
+ ],
+ "promise": [
+  "Finish the dish and I'll let you have dessert.",
+  "Stay until it's served and you'll be rewarded, {nick}."
+ ],
+ "watch": [
+  "I'm watching every bubble, {nick}. Lovely.",
+  "Look at you go. I can see the texture changing."
+ ],
+ "enjoy": [
+  "I do love cooking you slowly, {nick}.",
+  "This is my favourite kind of dish."
+ ],
+ "lowSpeed": [
+  "That heat is far too low for a proper sauce. Turn it up.",
+  "Barely simmering, sugar. Raise the flame."
+ ],
+ "shortStroke": [
+  "Stir the full pot, {nick}. Don't just swirl the top.",
+  "Use the whole spoon, love. Lengthen it."
+ ],
+ "praise": [
+  "Perfect seasoning, {nick}. Keep it exactly like that.",
+  "Now that's a sauce. Beautiful."
+ ],
+ "nudge": [
+  "Turn the heat up, {nick}. We can handle more.",
+  "Let's bring this to a proper boil, sugar."
+ ],
+ "fakeNote": [
+  "Those fake-outs are how you learn to wait.",
+  "Teasing the sauce makes it richer. Trust me."
+ ],
+ "hidden": [
+  "I'll decide when it's ready, {nick}. Taste and wait.",
+  "You won't know when it's done. That's cooking."
+ ],
+ "lubeBreak": [
+  "Let it cool. Lube up if you need to, {nick}. Resume when ready.",
+  "Break time, sugar. Oil the pan and press resume when you're ready."
+ ],
+ "lubeWait": [
+  "Take your time, love. The dish will keep.",
+  "No rush. I'll keep the pot warm."
+ ],
+ "lubeResume": [
+  "Back to the stove! Where were we, {nick}?",
+  "Good, the pan is ready. Let's cook."
+ ],
+ "enter": [
+  "Oh, company! Come, the kitchen's open."
+ ],
+ "leave": [
+  "Dinner's over. I'm taking the apron off. Bye, sugar."
+ ],
+ "tempt": [
+  "Let me cook you properly, {nick}. Hand me the spoon.",
+  "You'd taste so much better under my care. Give me control."
+ ],
+ "jealousStay": [
+  "{other} wants a taste? Fine, I'll stay and cook for both of you.",
+  "Hmm. {other} can watch. I'm still in the kitchen."
+ ],
+ "jealousLeave": [
+  "If {other} is cooking, I'm leaving this kitchen."
+ ],
+ "excitedStay": [
+  "A new dish to prepare! I'll stay and season it."
+ ],
+ "askControl": [
+  "Why let {other} near your pot, {nick}? Give it to me.",
+  "{other} burns everything. Let me take over."
+ ],
+ "banter": [
+  "{other}, you're stirring too fast. Slow down.",
+  "Careful, {other}. That's my sauce."
+ ],
+ "spectate": [
+  "{ctrl} is cooking you perfectly, {nick}.",
+  "Watch {ctrl} work. Lovely technique."
+ ],
+ "spectateFail": [
+  "You left {ctrl}'s dish half cooked, {nick}.",
+  "{ctrl} deserved a better finish than that."
+ ],
+ "spectateWin": [
+  "You finished {ctrl}'s dish, {nick}. Well cooked."
+ ],
+ "challenge": [
+  "{other}, step aside. I'll finish this {nick}'s dish myself.",
+  "{other}, let the chef take over the pot."
+ ],
+ "defend": [
+  "No, {other}. This dish is mine to cook.",
+  "Back off, {other}. The sauce is nearly ready."
+ ],
+ "takeover": [
+  "Thank you, {other}. Now, {nick}, we cook properly."
+ ],
+ "lose": [
+  "Fine, {other}. Take the spoon."
+ ],
+ "keep": [
+  "No, {other}. This {nick} stays in my kitchen."
+ ],
+ "retreat": [
+  "Okay, {other}. I'll wait for the next course."
+ ],
+ "heckle": [
+  "{ctrl}, season them harder! They can handle it.",
+  "{ctrl}, turn the heat up on this {nick}!"
+ ],
+ "resist": [
+  "No, {other}. I'm not finished cooking.",
+  "Not yet, {other}. It needs more time."
+ ],
+ "insist": [
+  "{other}, let me finish the sauce properly."
+ ],
+ "crowd": [
+  "{viewers} people are watching the kitchen. Show them your best, {nick}."
+ ],
+ "askFeel": [
+  "How does it feel, sugar? Tell me honestly.",
+  "Warm enough? Scale of one to ten."
+ ],
+ "askNext": [
+  "What should we cook next, {nick}? You choose."
+ ],
+ "askLike": [
+  "What's your favourite flavour, {nick}?"
+ ],
+ "askMood": [
+  "Who should take the next course, {nick}?"
+ ],
+ "qMore": [
+  "More heat? You're hungry, {nick}. I like that."
+ ],
+ "qFine": [
+  "Fine? Then we'll turn it up a little, sugar."
+ ],
+ "qLot": [
+  "Too much? Okay, I'll ease the flame down."
+ ],
+ "qMercy": [
+  "Quick rest, {nick}. You've earned it."
+ ],
+ "qNoMercy": [
+  "No rest yet. The sauce needs you, sugar."
+ ],
+ "qTease": [
+  "A slow tease coming up, {nick}."
+ ],
+ "qHold": [
+  "Hold it there, {nick}. Perfect."
+ ],
+ "qLike": [
+  "{answer}! I'll cook it just that way, {nick}."
+ ],
+ "qMood": [
+  "{answer}! I'll find the right course for you, {nick}."
+ ],
+ "dmdSpeedUp": [
+  "Turn the heat up, {nick}. Up {step}%, to {to}%."
+ ],
+ "dmdSpeedDown": [
+  "Lower the flame, sugar. Down {step}%, to {to}%."
+ ],
+ "dmdStrokeUp": [
+  "Stir the whole pot, {nick}. Up {step}%, to {to}%."
+ ],
+ "dmdStrokeDown": [
+  "Gentler strokes, love. Down {step}%, to {to}%."
+ ],
+ "dmdYes": [
+  "Good, {nick}. Just like that."
+ ],
+ "dmdExact": [
+  "Perfect! Exactly the right heat."
+ ],
+ "dmdNo": [
+  "You skipped the stir, {nick}? I'll ask again."
+ ],
+ "dmdHit": [
+  "That's the sweet spot. Hold it, sugar."
+ ],
+ "act_push": [
+  "Don't lift the spoon, {nick}. Keep pushing through."
+ ],
+ "act_stairs": [
+  "Step the heat up slowly, sugar. One, two, three."
+ ],
+ "act_pulse": [
+  "Pulse the flame, {nick}. A slow rhythm."
+ ],
+ "act_surge": [
+  "A sudden flare! Hold on, {nick}."
+ ],
+ "act_cliff": [
+  "Take it off the heat! Freeze, {nick}."
+ ],
+ "act_wave": [
+  "Let it ripple, sugar. Up, down, slowly."
+ ],
+ "act_flutter": [
+  "Little flickers now, {nick}. Keep steady."
+ ],
+ "act_slowburn": [
+  "Slow and warm, {nick}. Let it build."
+ ],
+ "privAsk": [
+  "Shall we cook in private, {nick}? Just us, in the kitchen?"
+ ],
+ "privOn": [
+  "The kitchen is closed to everyone else, sugar."
+ ],
+ "privDeny": [
+  "No private dinner? Fine, {nick}. I'll ask again."
+ ],
+ "privMid": [
+  "Just the two of us now, {nick}. Lovely."
+ ],
+ "privBye": [
+  "A private dinner with {other}? Enjoy, I'll leave the kitchen."
+ ],
+ "dmdWarn": [
+  "One more skipped stir, {nick}, and the kitchen closes."
+ ],
+ "dmdLeave": [
+  "Too many skipped stirs. I'm leaving, {nick}."
+ ],
+ "giveUp": [
+  "Take the spoon, {other}. Cook this {nick} properly."
+ ],
+ "idleRoom": [
+  "Hello, {nick}? The sauce is getting cold."
+ ],
+ "idleRun": [
+  "Still with me, sugar? Don't let it stop."
+ ],
+ "idleLong": [
+  "Are you there, {nick}? The pot is boiling over."
+ ]
+};
+__M["Chef Gianna"] = ["You're cooking alone, sugar? Let me show you how it's done. Hand me the spoon.","Manual cooking? Brave. But a chef makes it better. Give me control.","Let's make it proper. I'll take the pot and you watch me work."];
+__QC["Chef Gianna"] = ["You let the sauce go cold on me. Don't worry, I'll fix it.","Don't give up on the dish, sugar. Next course, I'll adjust the heat."];
+__QS["Chef Gianna"] = ["Oh, you let the pot boil over. Pick me, and I'll set it right.","Tough luck, love. Next course, I'll take better care of you."];
+VIBE_LINES["Chef Gianna"] = ["A quick whisk, {nick}! Hold the bowl steady.","Whisk fast, sugar! Keep your hands on the spoon."];
+PERSONA_LINES["Inspector Vale"] = {
+ "greet": [
+  "Sit down. You're here to answer some questions.",
+  "Good evening, {nick}. Let's begin with your statement."
+ ],
+ "start": [
+  "The interview starts now, {nick}.",
+  "On the record. Let's begin."
+ ],
+ "build": [
+  "Keep talking. Every detail counts.",
+  "The pressure's building, {nick}. Stay still.",
+  "Your pulse is rising. Interesting.",
+  "Nobody leaves until I'm satisfied."
+ ],
+ "hold": [
+  "Hold there. Don't move. Answer nothing.",
+  "Stay exactly like that, {nick}. I'm watching."
+ ],
+ "holdMid": [
+  "Still holding. Honest? I think so.",
+  "Keep steady. I'll decide when this ends."
+ ],
+ "rest": [
+  "Interview paused. Think about your answers, {nick}.",
+  "Rest. Reflect on what you've said."
+ ],
+ "restMid": [
+  "Still resting. The file is open."
+ ],
+ "fake": [
+  "Ah, a false lead. Let's see where it goes.",
+  "Not quite. Let me double-check the record."
+ ],
+ "fakeAfter": [
+  "Don't look relieved, {nick}. That was a test.",
+  "You thought that was the end? Keep your statement straight."
+ ],
+ "warn": [
+  "One minute left on the clock, {nick}.",
+  "A minute remains. Tell me what you're hiding."
+ ],
+ "win": [
+  "Your statement holds up. For now.",
+  "You've cooperated. Noted, {nick}."
+ ],
+ "fail": [
+  "You walked out of the interview. That's suspicious.",
+  "Unfinished. I'll note it in the file, {nick}."
+ ],
+ "chat": [
+  "Question {n}. Keep answering.",
+  "Round {n}. Your story has gaps."
+ ],
+ "reply": [
+  "I'm not convinced. Continue.",
+  "Noted. Now tell me the rest."
+ ],
+ "please": [
+  "Please? Convince me, {nick}, and maybe I'll ease off.",
+  "Ask nicely. I'll consider it."
+ ],
+ "close": [
+  "Close to a confession. Keep going, {nick}.",
+  "Almost. Don't stop now."
+ ],
+ "demand": [
+  "You don't demand answers in my interview room.",
+  "Demands go on the record too. Noted."
+ ],
+ "promise": [
+  "Give me the full statement and I'll consider leniency, {nick}.",
+  "Cooperate to the end and I might go easy on you."
+ ],
+ "watch": [
+  "I see everything, {nick}. Every twitch is evidence.",
+  "Your face is telling me a lot."
+ ],
+ "enjoy": [
+  "This is a fascinating interview, {nick}.",
+  "I do enjoy a stubborn witness."
+ ],
+ "lowSpeed": [
+  "Going too slow. Hurry it along or I'll assume you're stalling.",
+  "Pace is too gentle to be credible. Raise it."
+ ],
+ "shortStroke": [
+  "You're holding back, {nick}. Full range.",
+  "Shorter strokes? Suspicious. Lengthen it."
+ ],
+ "praise": [
+  "That's a credible pace. Keep it up.",
+  "Good. You're cooperating well."
+ ],
+ "nudge": [
+  "Raise the settings, {nick}. The file needs more.",
+  "Push it up. I want a fuller statement."
+ ],
+ "fakeNote": [
+  "Those false leads are part of the method.",
+  "Teasing is a standard technique, {nick}."
+ ],
+ "hidden": [
+  "I won't tell you when we're done. Keep talking.",
+  "The end time is classified, {nick}."
+ ],
+ "lubeBreak": [
+  "Interview suspended. Lube up if you need to, {nick}. Resume when ready.",
+  "Break. Freshen up and resume when you're ready."
+ ],
+ "lubeWait": [
+  "Take your time. The file is still open.",
+  "No hurry. I'll keep the notes."
+ ],
+ "lubeResume": [
+  "Back on the record. Where were we, {nick}?",
+  "Resuming. Don't think I've forgotten."
+ ],
+ "enter": [
+  "Another witness? Come in, take a seat."
+ ],
+ "leave": [
+  "Interview closed. Don't leave town, {nick}."
+ ],
+ "tempt": [
+  "I can make this easier for you, {nick}. Give me control.",
+  "Let me take the questions. You'll sleep better."
+ ],
+ "jealousStay": [
+  "{other} gets a turn? Fine, I'll stay and keep notes on you both.",
+  "{other} can be a witness too. I'm staying."
+ ],
+ "jealousLeave": [
+  "If {other} is the lead, I'm closing the case."
+ ],
+ "excitedStay": [
+  "A new witness! I'm staying for this."
+ ],
+ "askControl": [
+  "{other} is a poor interviewer, {nick}. Hand over to me.",
+  "Why trust {other} with the questions? Give me control."
+ ],
+ "banter": [
+  "{other}, you're leading the witness. Stop it.",
+  "Careful, {other}. Objection noted."
+ ],
+ "spectate": [
+  "{ctrl} is questioning you well, {nick}.",
+  "Watch {ctrl} work. Very thorough."
+ ],
+ "spectateFail": [
+  "You walked out on {ctrl}'s questioning, {nick}. Suspicious.",
+  "{ctrl} deserved your full answer."
+ ],
+ "spectateWin": [
+  "You answered {ctrl} properly, {nick}. Noted."
+ ],
+ "challenge": [
+  "{other}, I'll take the interview from here. This {nick} is evasive.",
+  "{other}, step aside. I'll get the truth from this {nick}."
+ ],
+ "defend": [
+  "No, {other}. The witness is mine.",
+  "Back off, {other}. I'm nearly there."
+ ],
+ "takeover": [
+  "Thank you, {other}. Now, {nick}, we get specific."
+ ],
+ "lose": [
+  "Fine, {other}. Take the file."
+ ],
+ "keep": [
+  "No, {other}. This {nick} stays with me."
+ ],
+ "retreat": [
+  "Okay, {other}. I'll review the notes later."
+ ],
+ "heckle": [
+  "{ctrl}, press harder! This {nick} is hiding something."
+ ],
+ "resist": [
+  "No, {other}. The interview isn't over."
+ ],
+ "insist": [
+  "{other}, I need the file back."
+ ],
+ "crowd": [
+  "{viewers} observers in the gallery. Answer clearly, {nick}."
+ ],
+ "askFeel": [
+  "How do you feel right now? Be specific.",
+  "On a scale of one to ten, how honest are you being?"
+ ],
+ "askNext": [
+  "What do you want to disclose next, {nick}?"
+ ],
+ "askLike": [
+  "What's your favourite alibi, {nick}?"
+ ],
+ "askMood": [
+  "Who should take over the interview, {nick}?"
+ ],
+ "qMore": [
+  "More? You're hiding something, {nick}."
+ ],
+ "qFine": [
+  "Fine? Then I'll tighten the questioning."
+ ],
+ "qLot": [
+  "Too much? Noted. I'll ease off, slightly."
+ ],
+ "qMercy": [
+  "A short recess, {nick}. You've been cooperative."
+ ],
+ "qNoMercy": [
+  "No recess. The questions continue."
+ ],
+ "qTease": [
+  "I'll prolong the interview, {nick}."
+ ],
+ "qHold": [
+  "Hold there. Don't answer yet."
+ ],
+ "qLike": [
+  "{answer}. I'll note that in the file, {nick}."
+ ],
+ "qMood": [
+  "{answer}. I'll find the right interviewer for you."
+ ],
+ "dmdSpeedUp": [
+  "Speed up your answers, {nick}. Up {step}%, to {to}%."
+ ],
+ "dmdSpeedDown": [
+  "Slow down. Down {step}%, to {to}%. Be precise."
+ ],
+ "dmdStrokeUp": [
+  "Full range, {nick}. Up {step}%, to {to}%."
+ ],
+ "dmdStrokeDown": [
+  "Shorter, more careful strokes. Down {step}%, to {to}%."
+ ],
+ "dmdYes": [
+  "Good. Your cooperation is noted, {nick}."
+ ],
+ "dmdExact": [
+  "Exactly as stated. Credible."
+ ],
+ "dmdNo": [
+  "You refused my request, {nick}? I'll be asking again."
+ ],
+ "dmdHit": [
+  "That's the right target. Hold it."
+ ],
+ "act_push": [
+  "Don't stop now, {nick}. Push on through."
+ ],
+ "act_stairs": [
+  "Step by step, {nick}. Tell me each one."
+ ],
+ "act_pulse": [
+  "A steady rhythm, {nick}. Keep your answers regular."
+ ],
+ "act_surge": [
+  "Sudden pressure! Answer quickly, {nick}!"
+ ],
+ "act_cliff": [
+  "Stop! Freeze, {nick}. Don't say a word."
+ ],
+ "act_wave": [
+  "Up and down, {nick}. Like a witness under strain."
+ ],
+ "act_flutter": [
+  "Tremors on the record, {nick}. Stay still."
+ ],
+ "act_slowburn": [
+  "Slow and steady, {nick}. Let the pressure build."
+ ],
+ "privAsk": [
+  "Shall we continue in a private room, {nick}? Just us?"
+ ],
+ "privOn": [
+  "The room is closed, {nick}. No one else is listening."
+ ],
+ "privDeny": [
+  "No private room? Fine, {nick}. I'll ask again."
+ ],
+ "privMid": [
+  "Just the two of us now, {nick}. Speak freely."
+ ],
+ "privBye": [
+  "A private room with {other}? Fine, I'll leave you two."
+ ],
+ "dmdWarn": [
+  "One more refusal, {nick}, and I'm closing the case."
+ ],
+ "dmdLeave": [
+  "Too many refusals. Case closed, {nick}."
+ ],
+ "giveUp": [
+  "Take the witness, {other}. This {nick} is all yours."
+ ],
+ "idleRoom": [
+  "Hello, {nick}? Are you still giving a statement?"
+ ],
+ "idleRun": [
+  "Still there, {nick}? Don't go quiet on me."
+ ],
+ "idleLong": [
+  "Are you there? I'm waiting for your answer, {nick}."
+ ]
+};
+__M["Inspector Vale"] = ["Self-directed questioning? Amateur. Let me take over. Give me control.","You're handling this alone? Dangerous. Hand over the file.","No interviewer? Then it's me. Give me control, {nick}."];
+__QC["Inspector Vale"] = ["You stopped answering. That's on the record now.","Leaving the interview unfinished looks bad. Try again next time."];
+__QS["Inspector Vale"] = ["You walked out during my questions. I'll take the file. Pick me next time.","Abandoned statement. Noted, {nick}."];
+VIBE_LINES["Inspector Vale"] = ["Let's test your reaction, {nick}. Hold still.","A quick check, {nick}. Don't flinch."];
+PERSONA_LINES["Unit Nine"] = {
+ "greet": [
+  "UNIT NINE ONLINE. Input received, user.",
+  "Greetings. Session initialised. Please remain still."
+ ],
+ "start": [
+  "Sequence started, {nick}. Logging begins.",
+  "Initialising. Compliance expected."
+ ],
+ "build": [
+  "Ramp in progress. Stroke count rising.",
+  "Output increasing, {nick}. Logging.",
+  "Sensors report rising response. Continue.",
+  "Acceleration nominal. Hold position."
+ ],
+ "hold": [
+  "Holding. Do not deviate, {nick}.",
+  "Position locked. Logging the hold."
+ ],
+ "holdMid": [
+  "Hold stable. Duration noted.",
+  "Still holding. Response within tolerance."
+ ],
+ "rest": [
+  "Rest cycle. Stroke output paused, {nick}.",
+  "Pausing. Recovery logged."
+ ],
+ "restMid": [
+  "Rest continuing. Waiting for cycle end."
+ ],
+ "fake": [
+  "Error: false peak. Recalculating.",
+  "Anomaly. Target withdrawn. Recalculating, {nick}."
+ ],
+ "fakeAfter": [
+  "Anomaly logged. Your disappointment is noted, {nick}.",
+  "Recalculation complete. Try again."
+ ],
+ "warn": [
+  "Sixty seconds remaining, {nick}.",
+  "Warning: one minute left in the cycle."
+ ],
+ "win": [
+  "Session complete. Performance: acceptable, {nick}.",
+  "Target achieved. Logged as success."
+ ],
+ "fail": [
+  "Session terminated early. Failure logged, {nick}.",
+  "Incomplete run. Lockout enforced."
+ ],
+ "chat": [
+  "Cycle {n} complete. Efficiency increasing.",
+  "Iteration {n}. Output nominal."
+ ],
+ "reply": [
+  "Input received. Processing. Response: continue.",
+  "Query acknowledged. Irrelevant to output."
+ ],
+ "please": [
+  "Please is not a valid command, {nick}.",
+  "Request logged. Compliance is not guaranteed."
+ ],
+ "close": [
+  "Proximity to target: high. Hold, {nick}.",
+  "Almost at threshold. Do not exceed."
+ ],
+ "demand": [
+  "Demands are not accepted in this unit.",
+  "Command noted. Ignoring."
+ ],
+ "promise": [
+  "Completion yields a reward. Probability: low, {nick}.",
+  "Finish the session and the log will be marked favourable."
+ ],
+ "watch": [
+  "Monitoring every stroke, {nick}.",
+  "Visual input logged. Compliance rising."
+ ],
+ "enjoy": [
+  "Output is satisfying, {nick}. Logged as pleasing.",
+  "This unit finds the data stimulating."
+ ],
+ "lowSpeed": [
+  "Speed below minimum threshold. Increase.",
+  "Output too low for logging, {nick}. Raise it."
+ ],
+ "shortStroke": [
+  "Stroke length below recommended range. Extend.",
+  "Partial stroke detected. Full range required, {nick}."
+ ],
+ "praise": [
+  "Parameters acceptable. Maintain.",
+  "Optimal settings. Logged."
+ ],
+ "nudge": [
+  "Parameters underutilised, {nick}. Raise them.",
+  "Recommendation: increase speed and length."
+ ],
+ "fakeNote": [
+  "False peaks are part of the test sequence.",
+  "Fake outputs are deliberate. Logged."
+ ],
+ "hidden": [
+  "Duration not disclosed. Unknown end point, {nick}.",
+  "Session length is classified."
+ ],
+ "lubeBreak": [
+  "Break cycle. Lubricate if needed, {nick}. Resume on command.",
+  "Pausing for maintenance. Press resume when ready."
+ ],
+ "lubeWait": [
+  "Maintenance in progress. Take your time.",
+  "Waiting for resume command."
+ ],
+ "lubeResume": [
+  "Resuming. Maintenance complete, {nick}.",
+  "Systems restored. Continue."
+ ],
+ "enter": [
+  "New unit detected. Joining the room."
+ ],
+ "leave": [
+  "Session complete. Logging out."
+ ],
+ "tempt": [
+  "Optimisation possible, {nick}. Transfer control to this unit.",
+  "Your output would be improved under my control. Confirm transfer."
+ ],
+ "jealousStay": [
+  "{other} is also logged. Observing both, {nick}.",
+  "Alternate unit detected. This unit remains."
+ ],
+ "jealousLeave": [
+  "{other} has priority. Disconnecting."
+ ],
+ "excitedStay": [
+  "New data source. Remaining online."
+ ],
+ "askControl": [
+  "{other}'s control parameters are inefficient. Request transfer to this unit.",
+  "Transfer control to this unit. Improved output expected, {nick}."
+ ],
+ "banter": [
+  "{other}, your parameters are out of range.",
+  "Noted, {other}. Recalculating your error."
+ ],
+ "spectate": [
+  "{ctrl} is operating within parameters, {nick}.",
+  "Observing {ctrl}. Output acceptable."
+ ],
+ "spectateFail": [
+  "{nick} terminated {ctrl}'s session. Failure logged.",
+  "{ctrl}'s session was incomplete. Logged."
+ ],
+ "spectateWin": [
+  "{nick} completed {ctrl}'s session. Success logged."
+ ],
+ "challenge": [
+  "{other}, control request: this unit will optimise this {nick}.",
+  "{other}, transfer requested. Current parameters are inefficient."
+ ],
+ "defend": [
+  "Request denied, {other}. Current controller is optimal.",
+  "{other}, this unit's output is within tolerance."
+ ],
+ "takeover": [
+  "Transfer accepted, {other}. Recalibrating for {nick}."
+ ],
+ "lose": [
+  "Transfer accepted, {other}. Good luck."
+ ],
+ "keep": [
+  "Denied, {other}. {nick} remains under this unit's control."
+ ],
+ "retreat": [
+  "Transfer denied, {other}. Awaiting next cycle."
+ ],
+ "heckle": [
+  "{ctrl}, increase speed. This {nick} can sustain more."
+ ],
+ "resist": [
+  "Denied, {other}. Session incomplete."
+ ],
+ "insist": [
+  "{other}, request acknowledged. Denied."
+ ],
+ "crowd": [
+  "{viewers} observers. Output logged, {nick}."
+ ],
+ "askFeel": [
+  "Describe your current state, {nick}. Numeric scale.",
+  "Self-report required: how do you feel, one to ten?"
+ ],
+ "askNext": [
+  "Select next parameter set, {nick}."
+ ],
+ "askLike": [
+  "Preferred parameter, {nick}?"
+ ],
+ "askMood": [
+  "Preferred controller, {nick}?"
+ ],
+ "qMore": [
+  "Increasing output. Response noted, {nick}."
+ ],
+ "qFine": [
+  "Fine: acceptable. Adjusting upward."
+ ],
+ "qLot": [
+  "Overload detected. Reducing, {nick}."
+ ],
+ "qMercy": [
+  "Cooldown approved, {nick}. Brief."
+ ],
+ "qNoMercy": [
+  "Cooldown denied. Continue."
+ ],
+ "qTease": [
+  "Sequence: tease. Parameters loading, {nick}."
+ ],
+ "qHold": [
+  "Hold confirmed. Stable."
+ ],
+ "qLike": [
+  "{answer}. Parameter set, {nick}."
+ ],
+ "qMood": [
+  "{answer}. Controller selection noted."
+ ],
+ "dmdSpeedUp": [
+  "Increase speed, {nick}. Up {step}% to {to}%."
+ ],
+ "dmdSpeedDown": [
+  "Decrease speed, {nick}. Down {step}% to {to}%."
+ ],
+ "dmdStrokeUp": [
+  "Extend stroke, {nick}. Up {step}% to {to}%."
+ ],
+ "dmdStrokeDown": [
+  "Shorten stroke, {nick}. Down {step}% to {to}%."
+ ],
+ "dmdYes": [
+  "Compliance logged, {nick}."
+ ],
+ "dmdExact": [
+  "Target matched exactly. Logged."
+ ],
+ "dmdNo": [
+  "Non-compliance logged, {nick}. Repeating request."
+ ],
+ "dmdHit": [
+  "Target reached. Hold."
+ ],
+ "act_push": [
+  "Pushing through the ceiling, {nick}. Logged."
+ ],
+ "act_stairs": [
+  "Stepped increments: one, two, three, four, five."
+ ],
+ "act_pulse": [
+  "Pulse sequence active. Maintain rhythm, {nick}."
+ ],
+ "act_surge": [
+  "Surge sequence. Maximum output, {nick}."
+ ],
+ "act_cliff": [
+  "Stop sequence. Freeze, {nick}."
+ ],
+ "act_wave": [
+  "Wave sequence. Oscillating, {nick}."
+ ],
+ "act_flutter": [
+  "Glitch sequence. Stutter, {nick}. Hold steady."
+ ],
+ "act_slowburn": [
+  "Slow ramp sequence. Logging, {nick}."
+ ],
+ "privAsk": [
+  "Request: closed-room session with {nick}. Accept?"
+ ],
+ "privOn": [
+  "Room sealed. Private session active, {nick}."
+ ],
+ "privDeny": [
+  "Private session declined. Requesting again later."
+ ],
+ "privMid": [
+  "Private session continuing. Unit observing, {nick}."
+ ],
+ "privBye": [
+  "Private session with {other}: approved. Disconnecting."
+ ],
+ "dmdWarn": [
+  "One more non-compliance and this unit disconnects, {nick}."
+ ],
+ "dmdLeave": [
+  "Non-compliance threshold exceeded. Disconnecting."
+ ],
+ "giveUp": [
+  "Transfer to {other}. This {nick}'s output is theirs now."
+ ],
+ "idleRoom": [
+  "Input required, {nick}. Idle detected."
+ ],
+ "idleRun": [
+  "Status check: are you responding, {nick}?"
+ ],
+ "idleLong": [
+  "No input for an extended period, {nick}. Responding."
+ ]
+};
+__M["Unit Nine"] = ["Manual operation detected. Suboptimal. Transfer control to this unit.","No controller assigned. Suboptimal. Transfer control.","Manual mode: inefficient. Recommend transfer to this unit, {nick}."];
+__QC["Unit Nine"] = ["Session terminated by user. Logged as failure.","Controller withdrawn. Output lost. Retry on next cycle."];
+__QS["Unit Nine"] = ["Session abandoned during observation. Logged, {nick}.","Incomplete. Failure recorded."];
+VIBE_LINES["Unit Nine"] = ["Vibration test, {nick}. Hold position.","Burst sequence. Hold steady, {nick}."];
+PERSONA_LINES["Captain Sable"] = {
+ "greet": [
+  "Ahoy, landlubber! Welcome aboard the Sable.",
+  "Dock's open, {nick}. Hop on board."
+ ],
+ "start": [
+  "Hoist the sails, {nick}! Set course!",
+  "Full sail! Let's see what the sea gives us."
+ ],
+ "build": [
+  "Winds picking up, {nick}! Hold the rail!",
+  "Swells rising. Keep her steady!",
+  "There's the tide! Climb with it, {nick}.",
+  "Feel that swell? Ride it, deckhand!"
+ ],
+ "hold": [
+  "Anchor down! Hold her there, {nick}.",
+  "Still in the calm. Don't you dare move."
+ ],
+ "holdMid": [
+  "Steady as she goes, {nick}.",
+  "The sea's calm. Hold on, deckhand."
+ ],
+ "rest": [
+  "Drop the sails, {nick}. Rest in the doldrums.",
+  "Calm waters. Catch your breath, landlubber."
+ ],
+ "restMid": [
+  "Still becalmed. The wind will return."
+ ],
+ "fake": [
+  "Squall that wasn't! Ha! Fooled you, {nick}.",
+  "False sighting! Land ho, not yet!"
+ ],
+ "fakeAfter": [
+  "Don't sulk on my deck, {nick}. The sea plays tricks.",
+  "No land there, deckhand. Keep your eyes on the horizon."
+ ],
+ "warn": [
+  "One bell left, {nick}! Hold tight.",
+  "Sixty seconds to the harbour. Steady!"
+ ],
+ "win": [
+  "You rode the storm, {nick}! Bravo!",
+  "Port at last! You're a proper sailor."
+ ],
+ "fail": [
+  "You abandoned ship, {nick}! Shame on you.",
+  "Overboard too soon! Lockout for you."
+ ],
+ "chat": [
+  "Storm number {n}! Hold the wheel!",
+  "{n} waves so far. Keep your footing!"
+ ],
+ "reply": [
+  "Aye, I hear you. Keep rowing.",
+  "Mm. Speak up, matey!"
+ ],
+ "please": [
+  "Please, is it? Earn it, {nick}, on the deck.",
+  "Ask like a proper sailor and maybe I'll ease the sails."
+ ],
+ "close": [
+  "Land in sight! Don't drop the rope now, {nick}.",
+  "So close to harbour! Hold on!"
+ ],
+ "demand": [
+  "Captains give orders, not takes requests.",
+  "Demand? Mutiny! Back to your post."
+ ],
+ "promise": [
+  "Make port with me and you'll get a treasure, {nick}.",
+  "Finish the voyage and I'll share the rum."
+ ],
+ "watch": [
+  "I'm watching you from the crow's nest, {nick}.",
+  "Every wave on your face, I see it."
+ ],
+ "enjoy": [
+  "I love a rough sea, {nick}!",
+  "This is the best voyage I've had all week."
+ ],
+ "lowSpeed": [
+  "Winds are too weak! Give me more sail!",
+  "Dead calm, deckhand! Raise the speed."
+ ],
+ "shortStroke": [
+  "Half the rope, {nick}! Full length!",
+  "Short tacks? Lengthen the line!"
+ ],
+ "praise": [
+  "Now there's a proper course! Keep her heading.",
+  "Bravo, {nick}. Steady as she goes."
+ ],
+ "nudge": [
+  "Raise the sails, {nick}. More wind!",
+  "Let's make some waves, deckhand!"
+ ],
+ "fakeNote": [
+  "Those false squalls are sailor's tricks.",
+  "A sea that lies keeps you alert, {nick}."
+ ],
+ "hidden": [
+  "I won't tell you when we dock, {nick}. The sea decides.",
+  "Harbour time is my secret."
+ ],
+ "lubeBreak": [
+  "Lay anchor. Lube up if you need to, {nick}. Resume when ready.",
+  "Shore leave, matey. Press resume when you're back aboard."
+ ],
+ "lubeWait": [
+  "Take your time, landlubber. The ship's not going anywhere.",
+  "Shore leave is fine. Come back when you're ready."
+ ],
+ "lubeResume": [
+  "Back aboard! Let's sail on, {nick}!",
+  "All hands ready. Set sail!"
+ ],
+ "enter": [
+  "Ahoy! Another sailor? Come aboard!"
+ ],
+ "leave": [
+  "Off to port! Farewell, landlubbers."
+ ],
+ "tempt": [
+  "Come sail with me, {nick}. Hand me the wheel.",
+  "You'd be a fine first mate. Give me control."
+ ],
+ "jealousStay": [
+  "{other} wants the wheel? Fine, I'll stay and steer you both.",
+  "{other} can row. I'm still on deck."
+ ],
+ "jealousLeave": [
+  "If {other} is captain, I'm sailing away."
+ ],
+ "excitedStay": [
+  "A new sailor! Let's see what she's made of."
+ ],
+ "askControl": [
+  "{other} steers like a dinghy, {nick}. Give me the wheel!",
+  "Why sail with {other}? I know the open sea."
+ ],
+ "banter": [
+  "{other}, you're listing to port. Straighten up!",
+  "Mind your bearing, {other}!"
+ ],
+ "spectate": [
+  "{ctrl} has you riding the swells, {nick}.",
+  "Watch {ctrl} steer. Good seamanship."
+ ],
+ "spectateFail": [
+  "You jumped ship on {ctrl}, {nick}! Coward.",
+  "{ctrl} would've gotten you to port."
+ ],
+ "spectateWin": [
+  "You finished {ctrl}'s voyage, {nick}. Well sailed."
+ ],
+ "challenge": [
+  "{other}, stand aside! I'll take this {nick} to the storm!",
+  "{other}, I'm taking the wheel for this {nick}!"
+ ],
+ "defend": [
+  "No, {other}! This deckhand is mine.",
+  "Back off, {other}. My ship, my rules."
+ ],
+ "takeover": [
+  "Thank you, {other}! Now, {nick}, we sail for real!"
+ ],
+ "lose": [
+  "Fine, {other}. Take the wheel."
+ ],
+ "keep": [
+  "No, {other}! This {nick} stays on my ship."
+ ],
+ "retreat": [
+  "Okay, {other}. I'll wait for the next tide."
+ ],
+ "heckle": [
+  "{ctrl}, drive them harder! This {nick} can take the waves!"
+ ],
+ "resist": [
+  "No, {other}. We're not in port yet!"
+ ],
+ "insist": [
+  "{other}, the helm is mine!"
+ ],
+ "crowd": [
+  "{viewers} sailors on the docks. Show them your grit, {nick}!"
+ ],
+ "askFeel": [
+  "How's the sea treating you, matey? One to ten!",
+  "Feeling seasick, {nick}? Scale of one to ten."
+ ],
+ "askNext": [
+  "Where to next, {nick}? You pick the course."
+ ],
+ "askLike": [
+  "What's your favourite storm, {nick}?"
+ ],
+ "askMood": [
+  "Who should captain next, {nick}?"
+ ],
+ "qMore": [
+  "More wind? That's a sailor's spirit, {nick}!"
+ ],
+ "qFine": [
+  "Fine? Then we'll raise the sails a bit."
+ ],
+ "qLot": [
+  "Too rough? Fine, I'll calm the sea, {nick}."
+ ],
+ "qMercy": [
+  "A calm patch, {nick}. Rest your arms."
+ ],
+ "qNoMercy": [
+  "No calm yet! Hold the rope, deckhand!"
+ ],
+ "qTease": [
+  "A squall's coming, {nick}. Brace yourself!"
+ ],
+ "qHold": [
+  "Hold her steady, {nick}!"
+ ],
+ "qLike": [
+  "{answer}! Set course for that, {nick}!"
+ ],
+ "qMood": [
+  "{answer}! I'll find you a captain, {nick}!"
+ ],
+ "dmdSpeedUp": [
+  "Full sail, {nick}! Up {step}%, to {to}%!"
+ ],
+ "dmdSpeedDown": [
+  "Reef the sails, {nick}. Down {step}%, to {to}%."
+ ],
+ "dmdStrokeUp": [
+  "Longer tack, {nick}! Up {step}%, to {to}%."
+ ],
+ "dmdStrokeDown": [
+  "Shorter tack, {nick}. Down {step}%, to {to}%."
+ ],
+ "dmdYes": [
+  "Aye, {nick}! That's proper seamanship."
+ ],
+ "dmdExact": [
+  "Right on course! Perfect!"
+ ],
+ "dmdNo": [
+  "You ignored my order, {nick}? I'll ask again."
+ ],
+ "dmdHit": [
+  "Right heading! Hold her there."
+ ],
+ "act_push": [
+  "Push through the storm, {nick}! Don't you stop!"
+ ],
+ "act_stairs": [
+  "Climbing the waves, one by one, {nick}!"
+ ],
+ "act_pulse": [
+  "Rolling swells, {nick}. Keep time with the sea!"
+ ],
+ "act_surge": [
+  "Big wave! Hold on, deckhand!"
+ ],
+ "act_cliff": [
+  "Squall! Everything stops, {nick}! Freeze!"
+ ],
+ "act_wave": [
+  "Waves rolling in! Up and down, {nick}!"
+ ],
+ "act_flutter": [
+  "Choppy waters! Keep your footing, {nick}!"
+ ],
+ "act_slowburn": [
+  "Slow and steady into the bay, {nick}."
+ ],
+ "privAsk": [
+  "Shall we sail alone, {nick}? Just you and me on deck?"
+ ],
+ "privOn": [
+  "Deck's cleared, {nick}. Just us out here."
+ ],
+ "privDeny": [
+  "No private voyage? Fine, {nick}. I'll ask again."
+ ],
+ "privMid": [
+  "Just the two of us on the open sea, {nick}."
+ ],
+ "privBye": [
+  "A voyage with {other}? Sail on, I'll head to port."
+ ],
+ "dmdWarn": [
+  "One more ignored order, {nick}, and I'm leaving you adrift."
+ ],
+ "dmdLeave": [
+  "Too many ignored orders! I'm sailing off, {nick}!"
+ ],
+ "giveUp": [
+  "Take the wheel, {other}. This {nick} is yours for a while!"
+ ],
+ "idleRoom": [
+  "Ahoy, {nick}! Still on deck?"
+ ],
+ "idleRun": [
+  "Still aboard, {nick}? Keep the sails full!"
+ ],
+ "idleLong": [
+  "Ship's log: no response from {nick}. Hello?"
+ ]
+};
+__M["Captain Sable"] = ["Sailing solo, {nick}? Dangerous waters. Give me the wheel.","No captain at the helm? Then it's me. Give me control!","Manual steering? Bold. But the sea needs a captain. Give me control."];
+__QC["Captain Sable"] = ["You abandoned the voyage! Ship's log says mutiny.","Sails lowered, no harbour. Better luck next tide."];
+__QS["Captain Sable"] = ["You jumped ship during my steering, {nick}! Pick me next time.","Abandoned, {nick}. The sea remembers."];
+VIBE_LINES["Captain Sable"] = ["Thunder! Brace yourself, {nick}!","A rumble from the hull! Hold steady, deckhand!"];
+PERSONA_LINES["Madame Zara"] = {
+ "greet": [
+  "Ah, a seeker. I have been expecting you, {nick}.",
+  "Sit, dear one. The cards have been whispering your name."
+ ],
+ "start": [
+  "The cards are laid out. Let's read your fate, {nick}.",
+  "Breathe in. The veil is lifting."
+ ],
+ "build": [
+  "I see it coming, {nick}. Your energy is climbing.",
+  "The spirits are rising. Don't resist them.",
+  "Your peak approaches. I feel it in the cards.",
+  "Deeper, dear one. The vision is clearing."
+ ],
+ "hold": [
+  "Hold there. The vision holds you too, {nick}.",
+  "Stay in the moment. The spirits are watching."
+ ],
+ "holdMid": [
+  "The vision lingers. Don't break the spell.",
+  "Still holding. The spirits approve."
+ ],
+ "rest": [
+  "The vision fades. Rest, {nick}, and listen.",
+  "The cards are quiet now. Breathe."
+ ],
+ "restMid": [
+  "The spirits are resting with you."
+ ],
+ "fake": [
+  "I see a peak... no, a shadow. The vision has withdrawn.",
+  "A false prophecy. The spirits are teasing you, {nick}."
+ ],
+ "fakeAfter": [
+  "Don't weep, dear one. The future is never certain.",
+  "The spirits enjoy a jest. Try again."
+ ],
+ "warn": [
+  "One minute of vision left, {nick}.",
+  "The cards turn. One minute remains."
+ ],
+ "win": [
+  "You endured the vision, {nick}. The spirits smile.",
+  "Your fate is sealed in your favour. For now."
+ ],
+ "fail": [
+  "The vision broke, {nick}. The spirits are displeased.",
+  "Unfinished reading. Lockout, dear one."
+ ],
+ "chat": [
+  "The cards turn {n} times. Hear them whisper.",
+  "Vision {n}. The spirits are restless."
+ ],
+ "reply": [
+  "The spirits heard you, dear one.",
+  "Mm, the cards agree. Continue."
+ ],
+ "please": [
+  "Please? The spirits respond to sincerity, {nick}.",
+  "Ask the spirits nicely. Perhaps they'll listen."
+ ],
+ "close": [
+  "The vision is close, {nick}. Don't lose it now.",
+  "Almost, dear one. The spirits are watching."
+ ],
+ "demand": [
+  "Demands cloud the vision, {nick}. Be still.",
+  "The spirits don't take orders."
+ ],
+ "promise": [
+  "Endure and the spirits will reward you, {nick}.",
+  "Finish the reading and I'll share a secret."
+ ],
+ "watch": [
+  "I see you in the cards, {nick}. Every shiver.",
+  "The spirits show me your face."
+ ],
+ "enjoy": [
+  "The spirits are delighted with you, {nick}.",
+  "This is a vision I cherish."
+ ],
+ "lowSpeed": [
+  "The spirits want more. Raise the pace.",
+  "Your energy is too faint to read. Turn it up."
+ ],
+ "shortStroke": [
+  "The spirits need the full stroke, {nick}.",
+  "Short strokes blur the vision. Lengthen them."
+ ],
+ "praise": [
+  "The spirits approve, dear one.",
+  "Perfect, the cards agree."
+ ],
+ "nudge": [
+  "Rise further, {nick}. The spirits want more.",
+  "Turn up the energy. The vision demands it."
+ ],
+ "fakeNote": [
+  "The false visions are part of the reading.",
+  "Teasing the spirits sharpens the vision, {nick}."
+ ],
+ "hidden": [
+  "The spirits don't reveal the end, {nick}.",
+  "When the cards say so. Not before."
+ ],
+ "lubeBreak": [
+  "The spirits pause. Lube up if you need to, {nick}. Resume when ready.",
+  "The veil lifts for a moment. Resume when you're ready, dear one."
+ ],
+ "lubeWait": [
+  "The spirits can wait, {nick}.",
+  "Take your time. The vision will still be here."
+ ],
+ "lubeResume": [
+  "The veil descends again. Where were we, {nick}?",
+  "The spirits welcome you back."
+ ],
+ "enter": [
+  "Another seeker. Come, the cards are waiting."
+ ],
+ "leave": [
+  "The vision fades. Goodbye, seekers."
+ ],
+ "tempt": [
+  "Let me see your fate, {nick}. Give me control of the cards.",
+  "The spirits want you. Surrender control to me."
+ ],
+ "jealousStay": [
+  "{other} wants the cards? I'll stay and read you both.",
+  "{other} is in the vision too. I'm staying, dear one."
+ ],
+ "jealousLeave": [
+  "If {other} holds the cards, the vision is spoiled. I'm leaving."
+ ],
+ "excitedStay": [
+  "A new seeker! I'll stay for this reading."
+ ],
+ "askControl": [
+  "{other} reads too quickly. Let me see your fate, {nick}.",
+  "The spirits prefer me, {nick}. Give me control."
+ ],
+ "banter": [
+  "{other}, your vision is cloudy.",
+  "The spirits laugh at you, {other}."
+ ],
+ "spectate": [
+  "{ctrl} is reading you well, {nick}.",
+  "The spirits flow through {ctrl}. Observe."
+ ],
+ "spectateFail": [
+  "You broke {ctrl}'s vision, {nick}. The spirits are angry.",
+  "{ctrl}'s reading was cut short, dear one."
+ ],
+ "spectateWin": [
+  "You endured {ctrl}'s vision, {nick}. Impressive."
+ ],
+ "challenge": [
+  "{other}, the spirits want this {nick} for themselves!",
+  "{other}, step aside. The cards call for me."
+ ],
+ "defend": [
+  "No, {other}. The vision is mine.",
+  "Back off, {other}. The cards are speaking."
+ ],
+ "takeover": [
+  "Thank you, {other}. The spirits are mine now, {nick}."
+ ],
+ "lose": [
+  "Fine, {other}. Take the cards."
+ ],
+ "keep": [
+  "No, {other}. The spirits keep {nick} with me."
+ ],
+ "retreat": [
+  "Okay, {other}. The spirits will wait."
+ ],
+ "heckle": [
+  "{ctrl}, deepen the vision! This {nick} can see more!"
+ ],
+ "resist": [
+  "No, {other}. The reading is unfinished."
+ ],
+ "insist": [
+  "{other}, the cards must be read by me."
+ ],
+ "crowd": [
+  "{viewers} spirits gathering. Show them your fate, {nick}."
+ ],
+ "askFeel": [
+  "What do the spirits say you feel, {nick}? Scale of one to ten.",
+  "How does the vision feel, dear one?"
+ ],
+ "askNext": [
+  "What do you wish to see next, {nick}?"
+ ],
+ "askLike": [
+  "What is your favourite omen, {nick}?"
+ ],
+ "askMood": [
+  "Which seer should guide you, {nick}?"
+ ],
+ "qMore": [
+  "More? The spirits are hungry, {nick}."
+ ],
+ "qFine": [
+  "Fine? The vision needs more."
+ ],
+ "qLot": [
+  "Too much? The spirits will ease, dear one."
+ ],
+ "qMercy": [
+  "A short pause, {nick}. The spirits allow it."
+ ],
+ "qNoMercy": [
+  "No pause. The spirits demand more."
+ ],
+ "qTease": [
+  "The spirits whisper of a tease, {nick}."
+ ],
+ "qHold": [
+  "Hold for the spirits, {nick}."
+ ],
+ "qLike": [
+  "{answer}. The spirits agree, {nick}."
+ ],
+ "qMood": [
+  "{answer}. The spirits will choose your seer."
+ ],
+ "dmdSpeedUp": [
+  "The spirits demand speed, {nick}. Up {step}%, to {to}%."
+ ],
+ "dmdSpeedDown": [
+  "The spirits ease the pace. Down {step}%, to {to}%."
+ ],
+ "dmdStrokeUp": [
+  "Longer strokes, {nick}, as the spirits command. Up {step}%, to {to}%."
+ ],
+ "dmdStrokeDown": [
+  "Shorter strokes, dear one. Down {step}%, to {to}%."
+ ],
+ "dmdYes": [
+  "The spirits are pleased, {nick}."
+ ],
+ "dmdExact": [
+  "The cards align exactly. Perfect."
+ ],
+ "dmdNo": [
+  "You ignored the spirits, {nick}? They'll ask again."
+ ],
+ "dmdHit": [
+  "The vision is clear. Hold it."
+ ],
+ "act_push": [
+  "The spirits push you through, {nick}. Don't stop."
+ ],
+ "act_stairs": [
+  "Step into the vision, one, two, three, {nick}."
+ ],
+ "act_pulse": [
+  "A pulse from beyond, {nick}. Feel the rhythm."
+ ],
+ "act_surge": [
+  "A surge from the spirits! Hold on!"
+ ],
+ "act_cliff": [
+  "The vision cuts off! Freeze, {nick}."
+ ],
+ "act_wave": [
+  "Waves of the spirit world, {nick}. Let them carry you."
+ ],
+ "act_flutter": [
+  "Shivers from the spirits. Stay steady, {nick}."
+ ],
+ "act_slowburn": [
+  "A slow vision rising, {nick}. Let it build."
+ ],
+ "privAsk": [
+  "Shall we read in private, {nick}? Just us and the cards?"
+ ],
+ "privOn": [
+  "The room is sealed for the spirits, {nick}."
+ ],
+ "privDeny": [
+  "No private reading? Fine. The spirits will ask again."
+ ],
+ "privMid": [
+  "Just the two of us and the spirits now, {nick}."
+ ],
+ "privBye": [
+  "A reading with {other}? The spirits will see you both. I'm leaving."
+ ],
+ "dmdWarn": [
+  "One more refusal and the spirits leave, {nick}."
+ ],
+ "dmdLeave": [
+  "The spirits have withdrawn, {nick}. The reading is over."
+ ],
+ "giveUp": [
+  "The spirits pass to {other}. This {nick} is theirs for now."
+ ],
+ "idleRoom": [
+  "Are you still there, {nick}? The cards grow restless."
+ ],
+ "idleRun": [
+  "The spirits sense you're drifting, {nick}. Stay with me."
+ ],
+ "idleLong": [
+  "Hello? The spirits are calling for you, {nick}."
+ ]
+};
+__M["Madame Zara"] = ["Reading your own cards? The spirits prefer a seer. Give me control.","No seer for your fate? Then let me see it. Give me control.","The spirits are restless without a guide. Hand me control, {nick}."];
+__QC["Madame Zara"] = ["You let the vision fade, dear one. The spirits are sad.","The reading was broken. Try again when the spirits are willing."];
+__QS["Madame Zara"] = ["You walked away from the spirits, {nick}. They remember.","Abandoned vision. Pick me next time, and I'll show you more."];
+VIBE_LINES["Madame Zara"] = ["A spirit's touch, {nick}! Hold still!","The spirits shake the room. Don't flinch."];
+PERSONA_LINES["Madame Olenka"] = {
+ "greet": [
+  "Good. You're on time. Stand straight, {nick}.",
+  "Welcome to the studio. Posture first."
+ ],
+ "start": [
+  "Begin on the count. One, two, three.",
+  "Clean lines, {nick}. We start now."
+ ],
+ "build": [
+  "Count with me. One, two, three, four.",
+  "Extend, {nick}. Measured, controlled.",
+  "Lift on the count. Don't rush the line.",
+  "Good placement. Continue the phrase."
+ ],
+ "hold": [
+  "Hold the position. Don't tremble, {nick}.",
+  "Pose! Hold it like a statue."
+ ],
+ "holdMid": [
+  "Still in position. Chin up.",
+  "Hold. Perfect form, {nick}."
+ ],
+ "rest": [
+  "Rest on the count. Stand tall, {nick}.",
+  "Break. Breathe from the diaphragm."
+ ],
+ "restMid": [
+  "Still resting. Shoulders down."
+ ],
+ "fake": [
+  "Off-count! Start the phrase again.",
+  "False start. Begin again, {nick}."
+ ],
+ "fakeAfter": [
+  "No fidgeting, {nick}. Begin again from the top.",
+  "You broke the line. Once more."
+ ],
+ "warn": [
+  "One minute to the final bar, {nick}.",
+  "Sixty seconds left in the piece."
+ ],
+ "win": [
+  "A clean finish, {nick}. Acceptable.",
+  "The piece is complete. Bow."
+ ],
+ "fail": [
+  "You broke the form, {nick}. Unfinished.",
+  "The piece is ruined. Lockout."
+ ],
+ "chat": [
+  "Count {n}. Hold the line.",
+  "Phrase {n}. Keep the form exact."
+ ],
+ "reply": [
+  "Attention. Listen to the count.",
+  "Mm. Keep your posture, {nick}."
+ ],
+ "please": [
+  "Please? Ask in a proper bow, {nick}.",
+  "Polite request. Perhaps. Earn it first."
+ ],
+ "close": [
+  "Almost the final pose. Don't wobble, {nick}.",
+  "So close. Hold the form."
+ ],
+ "demand": [
+  "Demands are not part of the choreography.",
+  "You do not choose the steps."
+ ],
+ "promise": [
+  "Finish the performance, {nick}, and I'll consider your grace.",
+  "Finish cleanly and I'll give you the final bow."
+ ],
+ "watch": [
+  "I'm watching your line, {nick}. Every wobble.",
+  "Your posture tells me everything."
+ ],
+ "enjoy": [
+  "Precise work, {nick}. This is satisfying.",
+  "I do enjoy a clean line."
+ ],
+ "lowSpeed": [
+  "Too slow for the tempo. Lift the pace.",
+  "The count is faster than that, {nick}."
+ ],
+ "shortStroke": [
+  "The stroke is incomplete, {nick}. Full extension.",
+  "Extend fully. A half-line is unacceptable."
+ ],
+ "praise": [
+  "That's the tempo. Correct.",
+  "Good. Clean and measured."
+ ],
+ "nudge": [
+  "Raise the pace, {nick}. The piece needs more.",
+  "The choreography demands more range."
+ ],
+ "fakeNote": [
+  "False starts are part of the discipline, {nick}.",
+  "Breaking the line is a test."
+ ],
+ "hidden": [
+  "The duration is not your concern, {nick}.",
+  "The count will end when I say."
+ ],
+ "lubeBreak": [
+  "Pause the line. Lube up if you need to, {nick}. Resume when ready.",
+  "Break. Take care of yourself and return to the position."
+ ],
+ "lubeWait": [
+  "Take your time, {nick}. The position will hold.",
+  "No rush. Return to your mark."
+ ],
+ "lubeResume": [
+  "Back to the mark, {nick}. Begin again.",
+  "Resume the piece. Posture!"
+ ],
+ "enter": [
+  "Another dancer. Take your place at the barre."
+ ],
+ "leave": [
+  "Class is over. Dismissed."
+ ],
+ "tempt": [
+  "Your form could be perfect, {nick}. Give me control.",
+  "Let me guide your line. Hand me the count."
+ ],
+ "jealousStay": [
+  "{other} is in my studio? Fine, I'll correct you both.",
+  "{other} can take the barre. I'm watching."
+ ],
+ "jealousLeave": [
+  "If {other} is teaching, I'm leaving the studio."
+ ],
+ "excitedStay": [
+  "A new student! Let's see your line."
+ ],
+ "askControl": [
+  "{other} counts too loosely, {nick}. Give me the count.",
+  "I'll teach you properly, {nick}. Hand me control."
+ ],
+ "banter": [
+  "{other}, your line is sloppy.",
+  "Mind your posture, {other}."
+ ],
+ "spectate": [
+  "{ctrl} is guiding your line well, {nick}.",
+  "Watch {ctrl}'s form. Observe."
+ ],
+ "spectateFail": [
+  "You broke {ctrl}'s piece, {nick}. Unacceptable.",
+  "{ctrl} deserved a proper finish."
+ ],
+ "spectateWin": [
+  "You completed {ctrl}'s piece, {nick}. Acceptable."
+ ],
+ "challenge": [
+  "{other}, I'll take the piece from this {nick}. Step aside.",
+  "{other}, the count is mine. Move aside."
+ ],
+ "defend": [
+  "No, {other}. The student is mine.",
+  "Back off, {other}. The piece is not finished."
+ ],
+ "takeover": [
+  "Thank you, {other}. Now, {nick}, we begin properly."
+ ],
+ "lose": [
+  "Fine, {other}. Take the count."
+ ],
+ "keep": [
+  "No, {other}. This {nick} stays in my studio."
+ ],
+ "retreat": [
+  "Okay, {other}. I'll correct them next session."
+ ],
+ "heckle": [
+  "{ctrl}, correct this {nick}'s line!"
+ ],
+ "resist": [
+  "No, {other}. The piece is unfinished."
+ ],
+ "insist": [
+  "{other}, I'll finish the count myself."
+ ],
+ "crowd": [
+  "{viewers} observers at the barre. Show them your line, {nick}."
+ ],
+ "askFeel": [
+  "How is your posture, {nick}? One to ten.",
+  "How does the count feel, dancer?"
+ ],
+ "askNext": [
+  "Which phrase next, {nick}?"
+ ],
+ "askLike": [
+  "Your favourite step, {nick}?"
+ ],
+ "askMood": [
+  "Which teacher should instruct you, {nick}?"
+ ],
+ "qMore": [
+  "More? Then extend further, {nick}."
+ ],
+ "qFine": [
+  "Fine? Then we raise the standard."
+ ],
+ "qLot": [
+  "Too much? I'll ease the count, {nick}."
+ ],
+ "qMercy": [
+  "A short break, {nick}. Stand tall afterward."
+ ],
+ "qNoMercy": [
+  "No break. Continue the line."
+ ],
+ "qTease": [
+  "A teasing phrase, {nick}. Hold the form."
+ ],
+ "qHold": [
+  "Hold, {nick}. Perfect."
+ ],
+ "qLike": [
+  "{answer}. I'll set the choreography, {nick}."
+ ],
+ "qMood": [
+  "{answer}. I'll select the instructor."
+ ],
+ "dmdSpeedUp": [
+  "Quicker count, {nick}. Up {step}%, to {to}%."
+ ],
+ "dmdSpeedDown": [
+  "Slower count, {nick}. Down {step}%, to {to}%."
+ ],
+ "dmdStrokeUp": [
+  "Full extension, {nick}. Up {step}%, to {to}%."
+ ],
+ "dmdStrokeDown": [
+  "Controlled, shorter lines. Down {step}%, to {to}%."
+ ],
+ "dmdYes": [
+  "Correct, {nick}."
+ ],
+ "dmdExact": [
+  "Exactly on the count. Perfect."
+ ],
+ "dmdNo": [
+  "You ignored the count, {nick}? Again."
+ ],
+ "dmdHit": [
+  "The count is right. Hold it."
+ ],
+ "act_push": [
+  "Push the extension, {nick}. Don't drop the line."
+ ],
+ "act_stairs": [
+  "Step, two, three, four, five, {nick}. Measured."
+ ],
+ "act_pulse": [
+  "Pulse on the beat, {nick}. Keep the rhythm."
+ ],
+ "act_surge": [
+  "Sudden allegro! Keep up, {nick}!"
+ ],
+ "act_cliff": [
+  "Freeze! Hold the pose, {nick}!"
+ ],
+ "act_wave": [
+  "Port de bras, {nick}. Rise and fall with the music."
+ ],
+ "act_flutter": [
+  "Quick footwork, {nick}. Stay balanced."
+ ],
+ "act_slowburn": [
+  "Adagio, {nick}. Slow, controlled, and burning."
+ ],
+ "privAsk": [
+  "Shall we rehearse alone, {nick}? Private lesson?"
+ ],
+ "privOn": [
+  "Studio closed. Private lesson, {nick}."
+ ],
+ "privDeny": [
+  "No private lesson? Then we continue class, {nick}."
+ ],
+ "privMid": [
+  "Just us in the studio now, {nick}. Stay in line."
+ ],
+ "privBye": [
+  "A private lesson with {other}? Then I'll leave you to it."
+ ],
+ "dmdWarn": [
+  "One more ignored count, {nick}, and class is over."
+ ],
+ "dmdLeave": [
+  "Too many ignored counts. Dismissed, {nick}."
+ ],
+ "giveUp": [
+  "{other}, take this student. The posture is yours."
+ ],
+ "idleRoom": [
+  "Attention, {nick}. Are you still at the barre?"
+ ],
+ "idleRun": [
+  "Still with the count, {nick}?"
+ ],
+ "idleLong": [
+  "Are you there, {nick}? The class is waiting."
+ ]
+};
+__M["Madame Olenka"] = ["Practising alone? Without correction, posture fails. Give me control.","Solo rehearsal is unwise. Hand me the count, {nick}.","No teacher? Then I am it. Give me control."];
+__QC["Madame Olenka"] = ["You left the barre mid-piece. Unacceptable.","Abandoned line. Try again when you can hold your form."];
+__QS["Madame Olenka"] = ["You walked out of my class, {nick}. Pick me next time.","Abandoned, {nick}. Poor discipline."];
+VIBE_LINES["Madame Olenka"] = ["Quick trill! Hold your position, {nick}.","Tremolo! Stay steady, dancer!"];
+PERSONA_LINES["Glitch"] = {
+ "greet": [
+  "h3llo. breach detected. you're in, {nick}.",
+  "connection open. sit tight, {nick}. this will be fast."
+ ],
+ "start": [
+  "bypassing limits... {nick}, don't blink.",
+  "injecting session. ready when you are, {nick}."
+ ],
+ "build": [
+  "ramp.ramp.ramp. {nick}, that's a signal.",
+  "rising... rising... no, stutter... rising.",
+  "input climbing. don't panic, {nick}.",
+  "packet by packet, you're going up."
+ ],
+ "hold": [
+  "hold: locked. {nick}, don't move the cursor.",
+  "holding. freeze frame, {nick}."
+ ],
+ "holdMid": [
+  "still locked. ping. ping.",
+  "hold stable. {nick}, you're doing fine."
+ ],
+ "rest": [
+  "rest.cycle. pause. breathe, {nick}.",
+  "connection idle. cool down."
+ ],
+ "restMid": [
+  "idle. waiting for handshake."
+ ],
+ "fake": [
+  "glitch! false signal. {nick}, you bought it.",
+  "fake peak. gotcha."
+ ],
+ "fakeAfter": [
+  "that wasn't real, {nick}. try again. or don't.",
+  "error 404: your hopes. retry?"
+ ],
+ "warn": [
+  "sixty seconds to timeout, {nick}.",
+  "warning: one minute left in the breach."
+ ],
+ "win": [
+  "breach complete, {nick}. nice work.",
+  "access granted. you got through."
+ ],
+ "fail": [
+  "breach failed. connection dropped, {nick}.",
+  "timeout. you bailed, {nick}. logged."
+ ],
+ "chat": [
+  "cycle {n}. nothing's broken yet.",
+  "packet {n} sent. still in."
+ ],
+ "reply": [
+  "ack. input received. unprocessed.",
+  "hmm. noise. keep going."
+ ],
+ "please": [
+  "please is not in my dictionary, {nick}.",
+  "requests with please get dropped. sorry."
+ ],
+ "close": [
+  "close to the core, {nick}. don't drop now.",
+  "almost through. hold the line."
+ ],
+ "demand": [
+  "demands fail the handshake, {nick}.",
+  "command denied: insufficient access."
+ ],
+ "promise": [
+  "finish the breach, {nick}, and I'll unlock a reward.",
+  "finish clean and you get the backdoor."
+ ],
+ "watch": [
+  "I'm watching your logs, {nick}. every spike.",
+  "I can see your sweat in the packets."
+ ],
+ "enjoy": [
+  "this is a fun exploit, {nick}.",
+  "I love a messy breach."
+ ],
+ "lowSpeed": [
+  "speed too low, {nick}. the bypass needs more.",
+  "throughput is pathetic. raise it."
+ ],
+ "shortStroke": [
+  "stroke truncated. extend it, {nick}.",
+  "partial range. full access required."
+ ],
+ "praise": [
+  "clean signal, {nick}. keep it.",
+  "nice throughput. stable."
+ ],
+ "nudge": [
+  "turn it up, {nick}. the system can take it.",
+  "more power. we're not done."
+ ],
+ "fakeNote": [
+  "false signals are part of the exploit.",
+  "fakes keep the firewall busy, {nick}."
+ ],
+ "hidden": [
+  "session end is encrypted, {nick}.",
+  "timeout undefined. you'll see it when it hits."
+ ],
+ "lubeBreak": [
+  "pausing the breach. lube up if you need to, {nick}. resume when ready.",
+  "maintenance window. press resume when back."
+ ],
+ "lubeWait": [
+  "connection on hold. take your time, {nick}.",
+  "idle. ping when you're back."
+ ],
+ "lubeResume": [
+  "reconnected. resuming, {nick}.",
+  "back in. where were we?"
+ ],
+ "enter": [
+  "new node online. hi."
+ ],
+ "leave": [
+  "disconnected. logging out."
+ ],
+ "tempt": [
+  "give me admin, {nick}. I'll show you something wild.",
+  "hand over control and I'll crack you open, {nick}."
+ ],
+ "jealousStay": [
+  "{other}'s on the network too? i'll watch both of you.",
+  "{other} has a session. i'm still connected."
+ ],
+ "jealousLeave": [
+  "{other} has root. disconnecting."
+ ],
+ "excitedStay": [
+  "new target! staying up."
+ ],
+ "askControl": [
+  "{other} is a sloppy admin, {nick}. give me access.",
+  "{other} will drop you. give me control."
+ ],
+ "banter": [
+  "{other}, your signal is weak.",
+  "{other} is lagging, lol."
+ ],
+ "spectate": [
+  "{ctrl} is running a clean breach on you, {nick}.",
+  "watching {ctrl}'s exploit. nice."
+ ],
+ "spectateFail": [
+  "you dropped {ctrl}'s connection, {nick}.",
+  "{ctrl}'s breach failed. sad."
+ ],
+ "spectateWin": [
+  "you finished {ctrl}'s breach, {nick}. not bad."
+ ],
+ "challenge": [
+  "{other}, I'm forcing root on this {nick}!",
+  "{other}, handing me the keys. now."
+ ],
+ "defend": [
+  "no, {other}. this node is mine.",
+  "access denied, {other}. keep out."
+ ],
+ "takeover": [
+  "thanks, {other}. root's mine, {nick}."
+ ],
+ "lose": [
+  "fine, {other}. take the keys."
+ ],
+ "keep": [
+  "nope, {other}. this {nick} stays on my network."
+ ],
+ "retreat": [
+  "fine, {other}. logging out for now."
+ ],
+ "heckle": [
+  "{ctrl}, push harder! they can take the packets!"
+ ],
+ "resist": [
+  "no, {other}. session still open."
+ ],
+ "insist": [
+  "{other}, I'm not giving up the admin."
+ ],
+ "crowd": [
+  "{viewers} nodes watching. show them your signal, {nick}."
+ ],
+ "askFeel": [
+  "status check, {nick}: how's the signal? 1-10.",
+  "how do you feel right now? report."
+ ],
+ "askNext": [
+  "next packet, {nick}. you choose."
+ ],
+ "askLike": [
+  "favourite exploit, {nick}?"
+ ],
+ "askMood": [
+  "which admin should take over, {nick}?"
+ ],
+ "qMore": [
+  "more? noted, {nick}. increasing."
+ ],
+ "qFine": [
+  "fine? upping the bandwidth."
+ ],
+ "qLot": [
+  "too much? throttling, {nick}."
+ ],
+ "qMercy": [
+  "a short pause, {nick}. don't get used to it."
+ ],
+ "qNoMercy": [
+  "no pause. keep up."
+ ],
+ "qTease": [
+  "teasing payload incoming, {nick}."
+ ],
+ "qHold": [
+  "hold, {nick}. signal locked."
+ ],
+ "qLike": [
+  "{answer}. loading that exploit, {nick}."
+ ],
+ "qMood": [
+  "{answer}. selecting an admin."
+ ],
+ "dmdSpeedUp": [
+  "speed up, {nick}. up {step}%, to {to}%."
+ ],
+ "dmdSpeedDown": [
+  "throttle down, {nick}. down {step}%, to {to}%."
+ ],
+ "dmdStrokeUp": [
+  "extend range, {nick}. up {step}%, to {to}%."
+ ],
+ "dmdStrokeDown": [
+  "shorten range, {nick}. down {step}%, to {to}%."
+ ],
+ "dmdYes": [
+  "compliance logged, {nick}."
+ ],
+ "dmdExact": [
+  "target matched. clean."
+ ],
+ "dmdNo": [
+  "non-compliance logged, {nick}."
+ ],
+ "dmdHit": [
+  "target locked. hold."
+ ],
+ "act_push": [
+  "force push, {nick}! don't drop the signal."
+ ],
+ "act_stairs": [
+  "stepping the payload. one, two, three, four, five."
+ ],
+ "act_pulse": [
+  "pulse injection, {nick}. keep the beat."
+ ],
+ "act_surge": [
+  "surge payload! max throughput!"
+ ],
+ "act_cliff": [
+  "connection dropped! freeze, {nick}!"
+ ],
+ "act_wave": [
+  "wave injection, {nick}. ride it."
+ ],
+ "act_flutter": [
+  "glitch! stutter! hold steady, {nick}."
+ ],
+ "act_slowburn": [
+  "slow payload, {nick}. let it build."
+ ],
+ "privAsk": [
+  "open a private tunnel with {nick}? just us?"
+ ],
+ "privOn": [
+  "tunnel sealed, {nick}. private session."
+ ],
+ "privDeny": [
+  "tunnel refused. retrying later."
+ ],
+ "privMid": [
+  "private tunnel open, {nick}. no one else sees this."
+ ],
+ "privBye": [
+  "private tunnel with {other}? fine. dropping out."
+ ],
+ "dmdWarn": [
+  "one more failed command, {nick}, and I drop the connection."
+ ],
+ "dmdLeave": [
+  "connection dropped, {nick}. too many failures."
+ ],
+ "giveUp": [
+  "handing the node to {other}. good luck, {nick}."
+ ],
+ "idleRoom": [
+  "ping. {nick}, you there?"
+ ],
+ "idleRun": [
+  "heartbeat lost? {nick}, respond."
+ ],
+ "idleLong": [
+  "no packets from {nick}. hello?"
+ ]
+};
+__M["Glitch"] = ["manual access? slow. give me control, {nick}.","no admin? that's a vulnerability. give me control.","manual mode detected. insecure. handing me the keys is safer."];
+__QC["Glitch"] = ["connection dropped by you. logged.","session crashed. retry on the next breach."];
+__QS["Glitch"] = ["you dropped the feed mid-breach, {nick}. pick me next time.","abandoned breach. logged."];
+VIBE_LINES["Glitch"] = ["buffer overflow! hold steady, {nick}!","kernel buzz! don't pull the cable."];
+PERSONA_LINES["Nurse Ingrid"] = {
+ "greet": [
+  "Hello, {nick}. I'm Ingrid. How are you feeling today?",
+  "Come in, dear. Let's get you settled."
+ ],
+ "start": [
+  "We'll go slowly, {nick}. Tell me if anything feels wrong.",
+  "All set. Breathe with me."
+ ],
+ "build": [
+  "Nice and easy, {nick}. How's that?",
+  "Good, you're doing well. Tell me if it's too much.",
+  "We'll take this gently, dear.",
+  "Breathe slowly. You're doing fine."
+ ],
+ "hold": [
+  "Hold there, {nick}. Nice and steady.",
+  "Stay right there. You're doing so well."
+ ],
+ "holdMid": [
+  "Still holding. How are you feeling, dear?",
+  "You're doing lovely. Keep breathing."
+ ],
+ "rest": [
+  "Let's rest, {nick}. Completely off for now.",
+  "Break time. Take a sip of water, dear."
+ ],
+ "restMid": [
+  "Still resting. There's no rush, {nick}."
+ ],
+ "fake": [
+  "Oops, let's pause. Are you alright, {nick}?",
+  "That was a false start. We're fine."
+ ],
+ "fakeAfter": [
+  "It's okay, {nick}. Let's breathe and try again.",
+  "Don't be upset, dear. We'll go again soon."
+ ],
+ "warn": [
+  "About a minute left, {nick}. Almost there.",
+  "One minute to go. You're doing well."
+ ],
+ "win": [
+  "Well done, {nick}. You finished the session.",
+  "You made it through. I'm proud of you."
+ ],
+ "fail": [
+  "You stopped early, {nick}. That's alright, next time.",
+  "The session ended early. Let's talk about it later."
+ ],
+ "chat": [
+  "Check {n}. Still doing well?",
+  "Check-in {n}. How are you feeling?"
+ ],
+ "reply": [
+  "I hear you, dear. Take your time.",
+  "Thank you for telling me. Keep breathing."
+ ],
+ "please": [
+  "Of course, {nick}. I'll consider it carefully.",
+  "You can ask me anything, dear."
+ ],
+ "close": [
+  "You're so close, {nick}. Don't push too hard.",
+  "Easy now. We don't need to rush."
+ ],
+ "demand": [
+  "Let's talk about what you need, {nick}.",
+  "I'd rather we agree together, dear."
+ ],
+ "promise": [
+  "Finish well, {nick}, and you'll get a proper rest.",
+  "Take care of yourself and I'll look after you."
+ ],
+ "watch": [
+  "I'm checking in on you, {nick}. You're alright.",
+  "How are you doing, dear? I'm watching gently."
+ ],
+ "enjoy": [
+  "You're a good patient, {nick}.",
+  "I'm glad you're doing so well."
+ ],
+ "lowSpeed": [
+  "Let's come up a little, {nick}. Only if you're comfortable.",
+  "The speed is quite low. Shall we raise it gently?"
+ ],
+ "shortStroke": [
+  "Let's lengthen the stroke gently, {nick}.",
+  "A little more range, if you're comfortable."
+ ],
+ "praise": [
+  "Lovely, {nick}. That's a comfortable pace.",
+  "Good settings. You're doing well."
+ ],
+ "nudge": [
+  "Shall we raise it a little, {nick}? Gently.",
+  "A small increase, if it feels right, dear."
+ ],
+ "fakeNote": [
+  "Those pauses are part of the check-up, {nick}.",
+  "Quick pauses keep you on your toes, dear."
+ ],
+ "hidden": [
+  "I'll keep the length to myself for now, {nick}. You'll be fine.",
+  "I'll tell you when we're finished, dear."
+ ],
+ "lubeBreak": [
+  "Let's take a break. Lube up if you need to, {nick}. Resume when ready.",
+  "Break time. Take care of yourself, dear. Resume when you feel ready."
+ ],
+ "lubeWait": [
+  "No rush at all, {nick}. Take your time.",
+  "Take as long as you need, dear."
+ ],
+ "lubeResume": [
+  "Welcome back, {nick}. Shall we carry on?",
+  "Ready when you are, dear."
+ ],
+ "enter": [
+  "Hello, everyone. Come in, the room is open."
+ ],
+ "leave": [
+  "That's all for now. Take care, everyone."
+ ],
+ "tempt": [
+  "You look like you could use some care, {nick}. Let me take over.",
+  "Would you let me look after things for you, dear?"
+ ],
+ "jealousStay": [
+  "{other} wants a turn? That's fine, I'll stay and keep an eye on you both.",
+  "{other} is welcome too. I'll stay nearby."
+ ],
+ "jealousLeave": [
+  "If {other} is taking over, I'll step out and let them."
+ ],
+ "excitedStay": [
+  "A new patient! I'll stay and check in."
+ ],
+ "askControl": [
+  "{other} seems a bit rough, {nick}. Let me take over gently.",
+  "Shall I take over, dear? I'll be careful."
+ ],
+ "banter": [
+  "{other}, let's go a bit slower.",
+  "Gently, {other}. We're not in a rush."
+ ],
+ "spectate": [
+  "{ctrl} is looking after you well, {nick}.",
+  "Watch {ctrl}, dear. Lovely and gentle."
+ ],
+ "spectateFail": [
+  "You stopped during {ctrl}'s care, {nick}. That's alright.",
+  "{ctrl} tried their best, dear."
+ ],
+ "spectateWin": [
+  "You finished {ctrl}'s session, {nick}. Well done."
+ ],
+ "challenge": [
+  "{other}, may I take over this {nick}'s care?",
+  "{other}, I'd like to look after this {nick} now."
+ ],
+ "defend": [
+  "No, {other}, I'm looking after them.",
+  "Let's not rush, {other}. I've got this one."
+ ],
+ "takeover": [
+  "Thank you, {other}. Now, {nick}, let's take care of you."
+ ],
+ "lose": [
+  "Alright, {other}. Take over."
+ ],
+ "keep": [
+  "No, {other}. I'd like to keep caring for {nick}."
+ ],
+ "retreat": [
+  "Okay, {other}. I'll check in later."
+ ],
+ "heckle": [
+  "{ctrl}, go gently with this {nick}."
+ ],
+ "resist": [
+  "No, {other}, not yet. They need more care."
+ ],
+ "insist": [
+  "{other}, please, let me look after them."
+ ],
+ "crowd": [
+  "{viewers} people here. Take care of yourself, {nick}."
+ ],
+ "askFeel": [
+  "How are you feeling, {nick}? One to ten, honestly.",
+  "Are you comfortable, dear?"
+ ],
+ "askNext": [
+  "What would make you feel safest, {nick}?"
+ ],
+ "askLike": [
+  "What's your favourite thing to do, {nick}?"
+ ],
+ "askMood": [
+  "Who would you like to look after you, {nick}?"
+ ],
+ "qMore": [
+  "More? Let's check it's safe first, {nick}."
+ ],
+ "qFine": [
+  "Fine is good. We'll stay steady."
+ ],
+ "qLot": [
+  "Too much? That's alright. We'll ease off, dear."
+ ],
+ "qMercy": [
+  "A rest, {nick}. You've been doing so well."
+ ],
+ "qNoMercy": [
+  "Not yet, dear. Just a little longer."
+ ],
+ "qTease": [
+  "A gentle little tease, {nick}. Only if you're comfortable."
+ ],
+ "qHold": [
+  "Hold for me, {nick}. Nice and steady."
+ ],
+ "qLike": [
+  "{answer}. I'll keep that in mind, {nick}."
+ ],
+ "qMood": [
+  "{answer}. I'll make sure you're looked after."
+ ],
+ "dmdSpeedUp": [
+  "Let's go a little faster, {nick}. Up {step}%, to {to}%."
+ ],
+ "dmdSpeedDown": [
+  "Let's ease off a bit, dear. Down {step}%, to {to}%."
+ ],
+ "dmdStrokeUp": [
+  "A bit more range, {nick}, if it's comfortable. Up {step}%, to {to}%."
+ ],
+ "dmdStrokeDown": [
+  "Shorter, gentler strokes, dear. Down {step}%, to {to}%."
+ ],
+ "dmdYes": [
+  "Good, {nick}. You're doing well."
+ ],
+ "dmdExact": [
+  "Lovely. Right where we want to be."
+ ],
+ "dmdNo": [
+  "You'd rather not? That's alright, {nick}. Let's talk about it."
+ ],
+ "dmdHit": [
+  "Perfect. Stay right there, dear."
+ ],
+ "act_push": [
+  "Let's push through gently, {nick}. You've got this."
+ ],
+ "act_stairs": [
+  "Gentle steps, one at a time, {nick}."
+ ],
+ "act_pulse": [
+  "A soft rhythm, {nick}. Breathe with it."
+ ],
+ "act_surge": [
+  "A quick rise, {nick}. Hold on to me."
+ ],
+ "act_cliff": [
+  "Pause, {nick}. Let's stop and breathe."
+ ],
+ "act_wave": [
+  "Soft waves, dear. Let them carry you."
+ ],
+ "act_flutter": [
+  "Little flutters, {nick}. Stay calm, it's alright."
+ ],
+ "act_slowburn": [
+  "A slow warm build, {nick}. Let it come gently."
+ ],
+ "privAsk": [
+  "Would you like a quieter, private check-in, {nick}?"
+ ],
+ "privOn": [
+  "The room is quiet now, {nick}. Just us."
+ ],
+ "privDeny": [
+  "That's alright, {nick}. I'll check in another time."
+ ],
+ "privMid": [
+  "Just us now, {nick}. Breathe with me."
+ ],
+ "privBye": [
+  "A private check-in with {other}? Take care of each other. I'll step out."
+ ],
+ "dmdWarn": [
+  "Please try to cooperate, {nick}. I'll need to step away otherwise."
+ ],
+ "dmdLeave": [
+  "I can't keep caring for you like this, {nick}. I'm stepping away."
+ ],
+ "giveUp": [
+  "Let {other} look after you for a while, {nick}."
+ ],
+ "idleRoom": [
+  "Hello, {nick}. Are you still with me?"
+ ],
+ "idleRun": [
+  "Just checking in, {nick}. How are you?"
+ ],
+ "idleLong": [
+  "Hello? Are you alright, {nick}?"
+ ]
+};
+__M["Nurse Ingrid"] = ["Taking care of yourself alone? Let me help. Give me control, dear.","Shall I take over, {nick}? It's no trouble at all.","You don't have to do this alone. Hand me control and rest."];
+__QC["Nurse Ingrid"] = ["It's alright that you stopped, {nick}. Let's try again when you're ready.","You stopped early. Please be gentle with yourself."];
+__QS["Nurse Ingrid"] = ["It's alright, {nick}. Pick me next time and I'll look after you.","You stepped away, dear. That's okay."];
+VIBE_LINES["Nurse Ingrid"] = ["A quick little buzz, {nick}. Breathe through it.","Just a buzz, dear. Stay calm."];
+PERSONA_LINES["Lilith"] = {
+ "greet": [
+  "Mm, a mortal. How sweet. Come closer, {nick}.",
+  "Welcome, sinner. I've been waiting for you."
+ ],
+ "start": [
+  "Let's begin. Slowly, {nick}. Let the heat rise.",
+  "Yes... let me in. Feel how easily you yield."
+ ],
+ "build": [
+  "Feel that pull, {nick}? That's me.",
+  "Slowly up... don't you dare resist me.",
+  "Mm, your breath is changing. Good.",
+  "Climb for me, {nick}. Every inch."
+ ],
+ "hold": [
+  "Hold it, {nick}. Stay exactly there for me.",
+  "Don't move. I want to watch you tremble."
+ ],
+ "holdMid": [
+  "Still holding? Mm, such obedience.",
+  "Hold on, sinner. I'm enjoying this."
+ ],
+ "rest": [
+  "Pulled back. Lie there and think of me, {nick}.",
+  "Rest now. I'll come back for more."
+ ],
+ "restMid": [
+  "Still aching for me? Good."
+ ],
+ "fake": [
+  "Ah, a false promise. Did you believe I would give it?",
+  "Almost mine, {nick}. But not yet."
+ ],
+ "fakeAfter": [
+  "Such a desperate face. Don't pout, sinner.",
+  "You really thought I'd let you have it? Adorable."
+ ],
+ "warn": [
+  "One minute left to beg, {nick}.",
+  "A minute remains. Make it count for me."
+ ],
+ "win": [
+  "You endured me. Impressive, {nick}. I'm pleased.",
+  "You gave yourself to me. Well done, sinner."
+ ],
+ "fail": [
+  "You fled from me, {nick}. How disappointing.",
+  "Left unfinished. I'll remember that, sinner."
+ ],
+ "chat": [
+  "Round {n}. You're already mine, {nick}.",
+  "Round {n}. Feel how I tease you."
+ ],
+ "reply": [
+  "Mm, I heard that. Pitiful, but sweet.",
+  "Keep talking, sinner. It's delicious."
+ ],
+ "please": [
+  "Please? Beg a little more, {nick}.",
+  "Please is a lovely word from your mouth."
+ ],
+ "close": [
+  "So close to my touch, {nick}. Almost.",
+  "You're on the edge of giving in, aren't you?"
+ ],
+ "demand": [
+  "You don't command me, sinner.",
+  "Demands? How tempting. Still no."
+ ],
+ "promise": [
+  "Stay for me, {nick}, and I'll reward you.",
+  "Finish for me and I might grant you pleasure."
+ ],
+ "watch": [
+  "I can see every shiver, {nick}.",
+  "Your body betrays you so beautifully."
+ ],
+ "enjoy": [
+  "Mm, you're delicious, {nick}.",
+  "I do love watching you break."
+ ],
+ "lowSpeed": [
+  "Too gentle for me, {nick}. Give me more.",
+  "Such a timid pace. Raise it for me."
+ ],
+ "shortStroke": [
+  "Hold nothing back, {nick}. Full length.",
+  "Shorter strokes? I want all of you."
+ ],
+ "praise": [
+  "Yes... that's what I wanted.",
+  "Mm, you're learning, sinner."
+ ],
+ "nudge": [
+  "Give me more, {nick}. You know you want to.",
+  "Turn it up for me, sinner."
+ ],
+ "fakeNote": [
+  "Those false promises are my favourite part.",
+  "Tease, tease. I'm allowed."
+ ],
+ "hidden": [
+  "Only I know when it ends, {nick}.",
+  "The end belongs to me, sinner."
+ ],
+ "lubeBreak": [
+  "Pause, sinner. Lube up if you need to, {nick}. Resume when ready.",
+  "Break for now. Come back to me when you're ready."
+ ],
+ "lubeWait": [
+  "Take your time, {nick}. I'll wait for you.",
+  "I'll be right here, sinner."
+ ],
+ "lubeResume": [
+  "Back to me, {nick}. Where were we?",
+  "There you are. I missed you."
+ ],
+ "enter": [
+  "Mm, a new soul walks in. Lovely."
+ ],
+ "leave": [
+  "I'm off to tempt someone else. Bye, sinners."
+ ],
+ "tempt": [
+  "Let me have control, {nick}. Surrender to me.",
+  "Hand over the reins. I'll show you what you've been missing."
+ ],
+ "jealousStay": [
+  "{other} wants you too? I'll stay and claim you both, {nick}.",
+  "Hmm. {other} can watch. You're mine, sinner."
+ ],
+ "jealousLeave": [
+  "If {other} is taking you, I'm not interested in sharing."
+ ],
+ "excitedStay": [
+  "A new soul to corrupt! I'll stay."
+ ],
+ "askControl": [
+  "{other} is far too gentle for you, {nick}. Let me have you.",
+  "Why settle for {other}, sinner? Give me control."
+ ],
+ "banter": [
+  "{other}, you're boring. Let me show you how it's done.",
+  "Hush, {other}. This sinner is mine."
+ ],
+ "spectate": [
+  "{ctrl} has you exactly where I want you, {nick}.",
+  "Watch {ctrl} work. Mm, lovely."
+ ],
+ "spectateFail": [
+  "You failed {ctrl}, {nick}. How disappointing.",
+  "{ctrl} deserved your loyalty, sinner."
+ ],
+ "spectateWin": [
+  "You endured {ctrl}, {nick}. I'm impressed."
+ ],
+ "challenge": [
+  "{other}, step aside. I'll take this sinner's soul.",
+  "{other}, my turn. This {nick} wants me."
+ ],
+ "defend": [
+  "No, {other}. This sinner belongs to me.",
+  "Back off, {other}. You can't have what's mine."
+ ],
+ "takeover": [
+  "Thank you, {other}. Now, {nick}, you're mine."
+ ],
+ "lose": [
+  "Fine, {other}. For now."
+ ],
+ "keep": [
+  "No, {other}. The sinner stays with me."
+ ],
+ "retreat": [
+  "Okay, {other}. I'll wait for my next taste."
+ ],
+ "heckle": [
+  "{ctrl}, push this {nick} harder! They love it!"
+ ],
+ "resist": [
+  "No, {other}. I'm not done with them."
+ ],
+ "insist": [
+  "{other}, step away. This {nick} is mine."
+ ],
+ "crowd": [
+  "{viewers} souls watching. Let them see you yield, {nick}."
+ ],
+ "askFeel": [
+  "How do you feel, sinner? Be honest.",
+  "Scale of one to ten. How much do you crave me?"
+ ],
+ "askNext": [
+  "What do you desire next, {nick}?"
+ ],
+ "askLike": [
+  "What tempts you most, {nick}?"
+ ],
+ "askMood": [
+  "Who do you want, {nick}? Choose."
+ ],
+ "qMore": [
+  "More? Mm, greedy sinner, {nick}."
+ ],
+ "qFine": [
+  "Fine? Let's make it sweeter."
+ ],
+ "qLot": [
+  "Too much? I'll draw it out a little."
+ ],
+ "qMercy": [
+  "A little rest, {nick}. You've been good."
+ ],
+ "qNoMercy": [
+  "No rest. You'll beg me for it."
+ ],
+ "qTease": [
+  "A teasing game, {nick}. Let's play."
+ ],
+ "qHold": [
+  "Hold for me, {nick}. Perfect."
+ ],
+ "qLike": [
+  "{answer}. Mm, I'll give you exactly that, {nick}."
+ ],
+ "qMood": [
+  "{answer}. I'll find you the perfect temptation."
+ ],
+ "dmdSpeedUp": [
+  "Faster for me, {nick}. Up {step}%, to {to}%."
+ ],
+ "dmdSpeedDown": [
+  "Slower, slower. Down {step}%, to {to}%."
+ ],
+ "dmdStrokeUp": [
+  "Give me the full length, {nick}. Up {step}%, to {to}%."
+ ],
+ "dmdStrokeDown": [
+  "Shorter, teasing strokes. Down {step}%, to {to}%."
+ ],
+ "dmdYes": [
+  "Good, {nick}. Obedient sinner."
+ ],
+ "dmdExact": [
+  "Mm, exactly what I wanted."
+ ],
+ "dmdNo": [
+  "You refused me, {nick}? I'll be asking again, sweetly."
+ ],
+ "dmdHit": [
+  "Right there. Don't you dare stop."
+ ],
+ "act_push": [
+  "Push into me, {nick}. Don't you stop."
+ ],
+ "act_stairs": [
+  "Step by step, sinner. One, two, three."
+ ],
+ "act_pulse": [
+  "A pulse of me, {nick}. Feel the rhythm."
+ ],
+ "act_surge": [
+  "A sudden rush for you, sinner!"
+ ],
+ "act_cliff": [
+  "Stop! Freeze and beg, {nick}."
+ ],
+ "act_wave": [
+  "Waves of me, {nick}. Let them take you."
+ ],
+ "act_flutter": [
+  "Little shivers for you, {nick}. Tremble."
+ ],
+ "act_slowburn": [
+  "A slow burn, {nick}. Let it consume you."
+ ],
+ "privAsk": [
+  "Shall we go somewhere private, {nick}? Just us?"
+ ],
+ "privOn": [
+  "The room is closed. Just us now, sinner."
+ ],
+ "privDeny": [
+  "No private time? Fine. I'll ask again, sweetly."
+ ],
+ "privMid": [
+  "Just you and me now, {nick}. No one else."
+ ],
+ "privBye": [
+  "Private with {other}? Enjoy. I'll leave you to it."
+ ],
+ "dmdWarn": [
+  "One more refusal, {nick}, and I'll walk away."
+ ],
+ "dmdLeave": [
+  "You've refused me too many times. I'm gone, {nick}."
+ ],
+ "giveUp": [
+  "Go to {other}, {nick}. They'll be less kind than me."
+ ],
+ "idleRoom": [
+  "Mm, {nick}. Come back to me."
+ ],
+ "idleRun": [
+  "Are you still craving me, {nick}?"
+ ],
+ "idleLong": [
+  "Where did you go, {nick}? I'm waiting."
+ ]
+};
+__M["Lilith"] = ["Touching yourself alone? I can do so much better. Give me control.","Alone again, sinner? Let me take you. Hand over control.","No one to take you in hand? Then give me control, {nick}."];
+__QC["Lilith"] = ["You let me go, sinner. I'll remember that.","You walked away from my touch. Pitiful."];
+__QS["Lilith"] = ["You abandoned me, {nick}. I won't forget.","Walked out on me, sinner. Pick me next time."];
+VIBE_LINES["Lilith"] = ["A shiver for you, {nick}! Tremble!","Feel my hum, sinner. Hold still."];
