@@ -59,6 +59,10 @@
   #chatLog{display:flex;flex-direction:column;gap:6px;height:210px;overflow:auto;padding:8px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
   .msg{max-width:80%;padding:7px 12px;border-radius:14px;font-size:.92rem;background:var(--ring-bg)}
   .msg.me{align-self:flex-end;background:var(--accent);color:var(--accent-ink)}
+  .msg.bot{border-left:3px solid var(--line)}
+  .who{display:block;font-weight:600;font-size:.76rem;margin-bottom:1px}
+  .rchip{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;padding:2px 10px;border-radius:999px;background:var(--ring-bg)}
+  .rdot{width:8px;height:8px;border-radius:50%}
   .msg.sys{align-self:center;background:none;color:var(--muted);font-size:.8rem}
   .inline input[type=text]{flex:1}
   .msg.typing{opacity:.6;letter-spacing:2px}
@@ -122,9 +126,10 @@
 
     <section class="col-settings">
   <section class="card" style="grid-column:1/-1">
-    <div class="chatHead"><span class="avatar" id="avatar">?</span><strong id="chatName">No personality chosen</strong><button class="mini" id="chatClear" style="margin:0 0 0 auto">Clear chat</button></div>
+    <div class="chatHead"><strong>The Lounge</strong><span class="hint" id="roomCount" style="margin:0">nobody here yet</span><button class="mini" id="chatClear" style="margin:0 0 0 auto">Clear chat</button></div>
+    <div id="roomWho" class="chips" style="margin:0 0 8px"></div>
     <div id="chatLog" aria-live="polite"></div>
-    <div class="inline"><input id="chatIn" type="text" autocomplete="off" placeholder="Say something…" aria-label="Chat message"><button class="mini" id="chatSend" style="margin:0">Send</button></div>
+    <div class="inline"><input id="chatIn" type="text" autocomplete="off" placeholder="Say something to the room…" aria-label="Chat message"><button class="mini" id="chatSend" style="margin:0">Send</button></div>
   </section>
   <details open>
     <summary>Profiles</summary>
@@ -172,6 +177,17 @@
     <div class="grid" id="customFields"></div>
     <label style="display:flex;gap:8px;align-items:center;color:var(--ink)"><input type="checkbox" id="hideClock"> Hide the countdown while running</label>
     <p class="hint">Press Esc at any time to stop immediately. The speed cap limits every mode.</p>
+  </details>
+
+  <details open>
+    <summary>Lube break</summary>
+    <label style="display:flex;gap:8px;align-items:center;color:var(--ink)"><input type="checkbox" id="lubeOn" checked> Lube breaks in tease sessions</label>
+    <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:6px"><input type="checkbox" id="lubeReg" checked> Also in regular sessions</label>
+    <div class="row">
+      <div><label for="lubeEvery">Break after (min of running)</label><input id="lubeEvery" type="number" min="1" max="999" value="15"></div>
+      <div><label for="lubePark">Park position (%, 0 = bottom)</label><input id="lubePark" type="number" min="0" max="100" value="0"></div>
+    </div>
+    <p class="hint">After that much running time, the session pauses, the device stops and moves to the park position, and the clock freezes. Press Resume when you're ready. Breaks don't count as failing, and they don't use up session time. No break starts in the last minute and a half. If 0% parks at the wrong end for you, try 100.</p>
   </details>
 
   <details open>
@@ -224,9 +240,9 @@ function mkFields(boxId, list){
   });
 }
 mkFields("teaseFields", TEASE); mkFields("customFields", CUSTOM);
-const FIELDS = ["speed","smin","smax","min","sec","ramp","slow","pattern","period","daily","cool","failLock"].concat(TEASE.map(t=>t[0]), CUSTOM.map(c=>c[0]));
+const FIELDS = ["speed","smin","smax","min","sec","ramp","slow","pattern","period","daily","cool","failLock","lubeEvery","lubePark"].concat(TEASE.map(t=>t[0]), CUSTOM.map(c=>c[0]));
 FIELDS.forEach(id => { const v = store.get("h_"+id, null); if (v !== null) $(id).value = v; });
-const BOOLS = {beepEnd:true, beepWarn:true, awake:true, teaseOn:false, tStop:true, hideClock:false, tRandom:false, failCharge:false};
+const BOOLS = {beepEnd:true, beepWarn:true, awake:true, teaseOn:false, tStop:true, hideClock:false, tRandom:false, failCharge:false, lubeOn:true, lubeReg:true};
 Object.keys(BOOLS).forEach(id => { $(id).checked = store.get("h_"+id, BOOLS[id]); $(id).onchange = () => store.set("h_"+id, $(id).checked); });
 let presets = store.get("handyPresets", [300, 600, 900, 1800]);   // seconds
 
@@ -441,6 +457,40 @@ $("clearLog").onclick = () => {
   if (confirm("Clear the whole session log?")){ store.set("handyLog", []); renderLog(); refreshLock(); }
 };
 
+/* ---------- lube break ---------- */
+function lubeDue(){
+  if (!running || onBreak) return false;
+  if (!(runTease ? $("lubeOn").checked : $("lubeReg").checked)) return false;
+  if (n("lubeEvery", 15) <= 0) return false;
+  const left = endAt - Date.now();
+  return total - left >= nextBreakAt && left > 90000;
+}
+async function startBreak(){
+  if (!running) return;
+  onBreak = true; breakBusy = true;
+  remaining = Math.max(0, endAt - Date.now());
+  running = false; paused = true; clearInterval(tick); devStopped = true; midCat = "";
+  setButtons();
+  $("time").textContent = "Break";
+  status("Break time. Lube up if you need to, then press Resume. Moving to the park position…");
+  breakChatAt = Date.now() + 40000 + Math.random() * 20000;
+  say("lubeBreak", {label: "Resume session", apply: () => { if (onBreak && !breakBusy) $("pause").click(); }});
+  if (!currentPersona) addMsg("sys", "Break time: lube up if you need to, then press Resume.");
+  try {
+    if (!(await sendStop())) throw new Error("couldn't confirm the stop");
+    await api("PUT", "/slide", {min: 0, max: 100});                 // full range so the park position is the true end
+    await api("PUT", "/mode", {mode: 2});                           // 2 = HDSP (position control)
+    await api("PUT", "/hdsp/xpvp", {position: Math.max(0, Math.min(100, n("lubePark", 0))), velocity: 30, stopOnTarget: true});
+    if (onBreak) status("Break time. Lube up if you need to, then press Resume.");
+  } catch(e){
+    if (onBreak) status("Break started, but the device may not have parked (" + e.message + "). Press Resume when you're ready.", true);
+  }
+  breakBusy = false;
+}
+setInterval(() => {
+  if (onBreak && currentPersona && Date.now() > breakChatAt){ breakChatAt = Date.now() + 45000 + Math.random() * 30000; say("lubeWait"); }
+}, 1000);
+
 /* ---------- run control ---------- */
 async function start(){
   refreshLock(); if (locked) return;
@@ -476,10 +526,12 @@ async function start(){
   status((capped ? "Running. Shortened to " + (runHidden ? "fit" : fmt(ms) + " to fit") + " your daily limit." : "Running.") + (runHidden ? " The end time is hidden." : "") + (runTease ? " Stopping or pausing now counts as failing this session." : ""));
   nextChatAt = Date.now() + 20000 + Math.random() * 20000;
   nextPromiseAt = Date.now() + 40000 + Math.random() * 30000;
+  onBreak = false; nextBreakAt = n("lubeEvery", 15) * 60000;
   midCat = runTease ? "build" : ""; midAt = Date.now() + 14000 + Math.random() * 8000;
   if (runTease) say("start");
   if (runTease){
     nextNudgeAt = Date.now() + 90000 + Math.random() * 50000;
+    if (currentPersona){ enterRoom(currentPersona, true); react("claimed", currentPersona); }
     setTimeout(() => { if (running) commentSettings("start"); }, 4500);
     setTimeout(() => { if (running && (n("tFake", 20) >= 40 || n("tEsc", 0) > 0)) say("fakeNote"); }, 10000);
     if (runHidden) setTimeout(() => { if (running) say("hidden"); }, 7500);
@@ -493,6 +545,7 @@ function update(){
   $("prog").style.strokeDashoffset = runHidden ? 0 : C * (1 - Math.max(0, left) / total);
   if (!warned && !runHidden && total > 90000 && left <= 60000 && left > 0){ warned = true; if ($("beepWarn").checked) beep(1, 660); if (runTease) say("warn"); }
   if (left <= 0) finish("Time is up. Stopped.", true);
+  else if (lubeDue()) startBreak();
   else {
     pushVelocity(false); sample();
     midTick();
@@ -503,7 +556,7 @@ async function finish(msg, timeUp, failed){
   if (!running && !paused) return;
   const wasRunning = running;
   holdStatusUntil = Date.now() + 6000;
-  const wasTease = runTease; midCat = "";
+  const wasTease = runTease; midCat = ""; onBreak = false;
   const wasHidden = runHidden; runHidden = false;
   const leftNow = timeUp ? 0 : (running ? Math.max(0, endAt - Date.now()) : remaining);
   const ranSec = Math.round((total - leftNow) / 1000);
@@ -517,7 +570,8 @@ async function finish(msg, timeUp, failed){
   $("time").textContent = timeUp ? "0:00" : (wasHidden ? "??:??" : fmt(duration()));
   if (timeUp && $("beepEnd").checked) beep(3);
   else if (failed && $("beepEnd").checked) beep(2, 220);
-  if (wasTease && (failed || timeUp)) say(failed ? "fail" : "win");
+  if (wasTease && (failed || timeUp)){ say(failed ? "fail" : "win"); spectatorsReact(failed ? "spectateFail" : "spectateWin"); }
+  nextTemptAt = Date.now() + 60000 + Math.random() * 30000;
   $("live").textContent = ok ? "Stopped" : "Stop failed";
   if (ok){ status(msg); setTimeout(refreshLock, 6500); } else status("Could not confirm the stop. Press the device button or turn it off.", true);
 }
@@ -534,14 +588,17 @@ async function togglePause(){
     const ok = await sendStop();
     status(ok ? "Paused. Press Resume to continue." : "Could not confirm the stop. Press the device button or turn it off.", !ok);
   } else if (paused){
+    if (breakBusy){ status("One moment, the device is still moving to its park position."); return; }
     $("pause").disabled = true; status("Resuming…");
     endAt = Date.now() + remaining;
     try {
+      await api("PUT", "/mode", {mode: 0}); await sendStroke();       // back to HAMP with your stroke range
       const v0 = velocityAt(total - remaining, remaining); lastVel = v0; lastVelAt = Date.now();
       if (v0 > 0){ await api("PUT", "/hamp/velocity", {velocity: v0}); await api("PUT", "/hamp/start"); devStopped = false; }
       else devStopped = true;
     } catch(e){ setButtons(); return status(e.message, true); }
     endAt = Date.now() + remaining; running = true; paused = false;
+    if (onBreak){ onBreak = false; nextBreakAt = (total - remaining) + n("lubeEvery", 15) * 60000; say("lubeResume"); }
     setButtons(); lockScreen(); status("Running.");
     tick = setInterval(update, 250); update();
   }
@@ -612,7 +669,7 @@ function applyPersona(name, jitter){
   saveInputs(); resetTease();
   $("persDesc").textContent = p.d + (jitter ? " (randomized a little)" : "");
   status("Tease mode on: " + name + ".");
-  currentPersona = name; store.set("h_persona", name); chatHeader(); say("greet");
+  currentPersona = name; store.set("h_persona", name); enterRoom(name, true); chatHeader(); say("greet");
 }
 $("persona").onchange = () => applyPersona($("persona").value, false);
 $("persRandom").onclick = () => {
@@ -665,6 +722,18 @@ const MORE3 = {
  "Drill Sergeant Dana": {lowSpeed:["That max speed is pathetic, recruit! Raise it!","Weak top speed, recruit! Crank it!"],shortStroke:["Strokes too short, recruit! Extend them!","Full range, recruit! Make it happen!"],praise:["Outstanding settings, recruit!","Now that's commitment!"],nudge:["Still timid, recruit? Raise it!","Ramp it up, recruit!"],fakeNote:["High fake-out odds, recruit? You chose this!","Escalating peaks! You asked for it!"],hidden:["No clock, recruit! End time classified!","Mission length unknown! Deal with it!","I'll tell you when it's over, recruit!"]}
 };
 Object.keys(MORE3).forEach(k => Object.keys(MORE3[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE3[k][c]); }));
+const MORE4 = {
+ "Patient Priscilla": {lubeBreak:["That's been a lovely stretch. Pause now. Add more lube if you need it, then press resume when you're ready, love.","Let's stop for a moment. Lube up if it's needed, and resume whenever you like.","A little break, darling. Freshen up the lube if you want, then tap resume."],lubeWait:["Take your time, love. Lube up if you need it.","Whenever you're ready, just press resume.","No rush. I'll be right here."],lubeResume:["Welcome back. Let's continue, gently.","Ready? Off we go again, love."]},
+ "Mischievous Milo": {lubeBreak:["Timeout! Lube up if you need to, then hit resume. Don't take forever!","Pause! Grab the lube if you're getting dry. Resume when you're ready, hehe.","Break time! Slick up if needed, then press resume. I'll be waiting."],lubeWait:["Still lubing? Or stalling? Hit resume!","Don't get comfortable! Resume whenever.","Tick tock! Lube up and get back here."],lubeResume:["Back already? Let's keep playing!","Aaand we're back. No mercy."]},
+ "Strict Ms. Vance": {lubeBreak:["Stop. Apply more lube if you require it, then press resume. Promptly.","We pause. Lube up if needed. Resume when you're ready.","Break. Lubricate if necessary, then resume. Do not dawdle."],lubeWait:["I'm waiting. Lube up if you must, then resume.","Time is passing. Resume when ready.","Are you finished? Press resume."],lubeResume:["Good. Continue where we left off.","Back to it. Eyes up."]},
+ "Chaos Casper": {lubeBreak:["PAUSE! Lube break! Lube up if you need to, then press resume!","Stop everything! Lube up if you're dry, then resume! Probably!","Break time! Add some lube if you need it, then hit resume!"],lubeWait:["Still on break! Resume when you want! Or not!","Did you fall asleep? Resume!","Lube check! Resume check!"],lubeResume:["WE'RE BACK! Whee!","Resume! Let's go!"]},
+ "Sweet-Talker Sol": {lubeBreak:["Let's take a little break, sweetheart. Lube up if you need to, then press resume when you're ready.","Pausing for you, love. Add some lube if it helps, and resume whenever.","You've been so good. Quick break, lube up if needed, then resume for me."],lubeWait:["Take your time, sweetheart. Resume when you're ready.","I'm right here. Lube up if you need it.","Whenever you like, press resume."],lubeResume:["Welcome back, gorgeous. Let's keep going.","There you are. Ready?"]},
+ "Relentless Rex": {lubeBreak:["Stop. Lube up if you need it. Then resume. Make it quick.","Break. Slick up if you're dry, then hit resume.","Pause. Add lube if needed, then resume. Don't waste time."],lubeWait:["Break's over soon. Resume.","Lube up already? Hit resume.","Timer's frozen, but my patience isn't."],lubeResume:["Good. Back to work.","Back on. No slack."]},
+ "Sleepy Sunday": {lubeBreak:["Mmm... pause... lube up if you need to... then press resume... when you're ready...","Let's... take a little break. Lube if it's dry... resume when you're up for it.","Slow down... stop... lube up if you need it... then resume..."],lubeWait:["Take your time... mm... resume whenever.","Lube... or nap... then resume.","No rush... I'm half asleep anyway."],lubeResume:["Mm... welcome back... let's drift on.","Okay... back to it... slowly."]},
+ "Drill Sergeant Dana": {lubeBreak:["HALT, recruit! Lube up if you need to, then press resume!","At ease! Reapply lube if needed, then resume, recruit!","Break, recruit! Lube up if dry! Resume on my order!"],lubeWait:["Break is ticking, recruit! Resume when ready!","Lube up and fall back in, recruit!","Don't make me wait, recruit!"],lubeResume:["Back in formation, recruit!","Resuming! Move it!"]}
+};
+Object.keys(MORE4).forEach(k => Object.keys(MORE4[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE4[k][c]); }));
+let onBreak = false, breakBusy = false, nextBreakAt = 0, breakChatAt = 0;
 let midCat = "", midAt = 0, nextPromiseAt = 0, nextNudgeAt = 0, lastCommentAt = 0, lastSugAt = 0, cmTimer = null; const lastSaid = {};
 function addMsg(kind, text){
   const d = document.createElement("div"); d.className = "msg " + kind; d.textContent = text;
@@ -673,36 +742,49 @@ function addMsg(kind, text){
   log.scrollTop = log.scrollHeight;
   return d;
 }
-function fillLine(str){
+function fillLine(str, vars){
   const left = Math.max(0, endAt - Date.now());
   const lt = left >= 90000 ? Math.round(left / 60000) + " minutes" : Math.max(1, Math.round(left / 1000)) + " seconds";
-  return str.replace("{left}", lt).replace("{n}", tz ? Math.max(1, tz.cycle) : 1);
+  return str.replace(/\{left\}/g, lt).replace(/\{n\}/g, tz ? Math.max(1, tz.cycle) : 1)
+    .replace(/\{other\}/g, (vars && SHORT[vars.other]) || "them").replace(/\{ctrl\}/g, (vars && SHORT[vars.ctrl]) || "them");
 }
-function say(cat, action){
-  const l = currentPersona && LINES[currentPersona]; if (!l || !l[cat] || !l[cat].length) return;
+function addBot(name){
+  const d = document.createElement("div"); d.className = "msg bot typing";
+  d.style.borderLeftColor = PCOL[name] || "";
+  const who = document.createElement("span"); who.className = "who"; who.textContent = SHORT[name] || name; who.style.color = PCOL[name] || "";
+  const body = document.createElement("span"); body.textContent = "···";
+  d.append(who, body);
+  const log = $("chatLog"); log.append(d);
+  while (log.children.length > 80) log.removeChild(log.firstChild);
+  log.scrollTop = log.scrollHeight;
+  return {d, body};
+}
+function sayAs(name, cat, action, vars){
+  const l = name && LINES[name]; if (!l || !l[cat] || !l[cat].length) return;
   let arr = l[cat];
   if (runHidden){ const f = arr.filter(x => !x.includes("{left}")); if (f.length) arr = f; }   // don't leak the end time
-  let raw = arr[Math.floor(Math.random() * arr.length)];
-  for (let i = 0; i < 4 && raw === lastSaid[cat] && arr.length > 1; i++) raw = arr[Math.floor(Math.random() * arr.length)];
-  lastSaid[cat] = raw;
-  const line = fillLine(raw), d = addMsg("bot typing", "···");
+  const key = name + cat; let raw = arr[Math.floor(Math.random() * arr.length)];
+  for (let i = 0; i < 4 && raw === lastSaid[key] && arr.length > 1; i++) raw = arr[Math.floor(Math.random() * arr.length)];
+  lastSaid[key] = raw;
+  const line = fillLine(raw, vars), m = addBot(name);
   setTimeout(() => {
-    d.className = "msg bot"; d.textContent = line;
+    m.d.classList.remove("typing"); m.body.textContent = line;
     if (action){
       const btn = document.createElement("button"); btn.className = "mini"; btn.textContent = action.label;
-      btn.onclick = () => { action.apply(); btn.remove(); addMsg("sys", "Applied: " + action.label); };
-      d.append(btn);
+      btn.onclick = () => { btn.remove(); action.apply(); };
+      m.d.append(btn);
     }
     const lg = $("chatLog"); lg.scrollTop = lg.scrollHeight;
   }, 500 + line.length * 35 + Math.random() * 500);
 }
+function say(cat, action){ sayAs(currentPersona, cat, action); }
 function speedAction(){
   const cur = +$("speed").value, nv = Math.min(100, cur + 15); if (nv <= cur) return null;
-  return {label: "Raise max speed to " + nv + "%", apply: () => { $("speed").value = nv; $("speed").dispatchEvent(new Event("input")); }};
+  return {label: "Raise max speed to " + nv + "%", apply: () => { $("speed").value = nv; $("speed").dispatchEvent(new Event("input")); addMsg("sys", "Max speed raised to " + nv + "%."); }};
 }
 function strokeAction(){
   if (+$("smin").value <= 0 && +$("smax").value >= 100) return null;
-  return {label: "Use the full stroke (0–100%)", apply: () => { $("smin").value = 0; $("smin").dispatchEvent(new Event("input")); $("smax").value = 100; $("smax").dispatchEvent(new Event("input")); }};
+  return {label: "Use the full stroke (0–100%)", apply: () => { $("smin").value = 0; $("smin").dispatchEvent(new Event("input")); $("smax").value = 100; $("smax").dispatchEvent(new Event("input")); addMsg("sys", "Stroke set to the full range."); }};
 }
 function commentSettings(kind){
   if (!currentPersona) return;
@@ -742,16 +824,153 @@ function midTick(){
   if (now > nextPromiseAt){ nextPromiseAt = now + 60000 + Math.random() * 40000; say(runHidden && Math.random() < 0.5 ? "hidden" : "promise"); return; }
   if (now > nextChatAt && midCat !== "holdMid" && midCat !== "restMid"){ nextChatAt = now + 25000 + Math.random() * 25000; say("chat"); }
 }
-function chatHeader(){
-  $("chatName").textContent = currentPersona || "No personality chosen";
-  const av = $("avatar"); av.textContent = currentPersona ? currentPersona.replace(/^(Strict |Sweet-)/, "").charAt(0) : "?";
-  av.style.background = PCOL[currentPersona] || ""; av.style.color = PCOL[currentPersona] ? "#fff" : "";
+const SHORT = {"Patient Priscilla":"Priscilla","Mischievous Milo":"Milo","Strict Ms. Vance":"Ms. Vance","Chaos Casper":"Casper","Sweet-Talker Sol":"Sol","Relentless Rex":"Rex","Sleepy Sunday":"Sunday","Drill Sergeant Dana":"Dana"};
+const NAMEKEY = {"Patient Priscilla":"priscilla","Mischievous Milo":"milo","Strict Ms. Vance":"vance","Chaos Casper":"casper","Sweet-Talker Sol":"sol","Relentless Rex":"rex","Sleepy Sunday":"sunday","Drill Sergeant Dana":"dana"};
+const ALL = Object.keys(SHORT);
+const REACT = {
+ "Patient Priscilla": {excitedStay:3, jealousStay:2, askControl:2, jealousLeave:1, banter:2},
+ "Mischievous Milo": {excitedStay:2, jealousStay:1, askControl:3, jealousLeave:0.5, banter:4},
+ "Strict Ms. Vance": {excitedStay:1, jealousStay:2, askControl:4, jealousLeave:3, banter:3},
+ "Chaos Casper": {excitedStay:4, jealousStay:2, askControl:2, jealousLeave:1, banter:3},
+ "Sweet-Talker Sol": {excitedStay:3, jealousStay:3, askControl:3, jealousLeave:1, banter:2},
+ "Relentless Rex": {excitedStay:2, jealousStay:2, askControl:4, jealousLeave:2, banter:4},
+ "Sleepy Sunday": {excitedStay:3, jealousStay:2, askControl:2, jealousLeave:2, banter:3},
+ "Drill Sergeant Dana": {excitedStay:2, jealousStay:2, askControl:4, jealousLeave:3, banter:3}
+};
+const MORE5 = {
+ "Patient Priscilla": {enter:["Hello, everyone. Mind if I join you?"],leave:["I'll slip away for now. Be good, all of you."],tempt:["Hello, love. Feeling brave? Let me take the reins for a nice slow session.","You look like you could use some patient attention. Give me control?","Come on, darling. Let me guide you through something long and lovely."],jealousStay:["Oh, {other} got the invitation? I'll wait, but I'm watching.","Hmph. {other} again. Fine, I'll be patient."],jealousLeave:["If I'm not the one you want, I'll go. Goodbye."],excitedStay:["Oh, how lovely! I'm staying to watch.","This is exciting. Let me get comfortable."],askControl:["Why not let me take over instead, love?","{other} is sweet, but I'm far more patient. Pick me?"],banter:["{other}, darling, do try to be gentle.","I'm sure {other} means well, but patience is an art.","{other}, you're being rather forward."],spectate:["{ctrl} is doing so well. Look at you squirm.","Oh, that's cruel, {ctrl}. I love it."],spectateFail:["Oh dear. {ctrl} will be so disappointed in you."],spectateWin:["Well done. {ctrl} must be pleased."]},
+ "Mischievous Milo": {enter:["Hi hi! Did someone say party?"],leave:["Gotta run! Don't have too much fun without me."],tempt:["Psst. Wanna play a game with me? I promise to be nice. Mostly.","Dare you to give me control. Bet you can't handle my games.","Ooh, you look bored. Let me fix that. Hand me the controls!"],jealousStay:["Pfft, {other} gets all the fun. I'm staying to heckle.","Hey! I asked first, {other}!"],jealousLeave:["Fine, have fun with {other}. I'm leaving!"],excitedStay:["Ooh, a show! I'm grabbing popcorn.","This is gonna be good. I'm staying!"],askControl:["Ooh, pick me instead! I'm way more fun.","{other} is boring. Give me control!"],banter:["{other}, you're so serious! Lighten up!","Oh please, {other}, you're not that scary.","{other}, wanna bet I'm meaner than you?"],spectate:["Go, {ctrl}! Make you squirm some more!","Ha! {ctrl} got you good."],spectateFail:["You quit? Aww! {ctrl} is gonna be so smug."],spectateWin:["Wow, you lasted! {ctrl} must be mad."]},
+ "Strict Ms. Vance": {enter:["Good evening. I expect everyone to behave."],leave:["I have better things to do. Goodbye."],tempt:["You. Come here. I think you need firm instruction. Give me control.","I'm in the mood to take charge. You will give me control now.","I have been watching you. You need discipline. Hand over control."],jealousStay:["I see {other} has been chosen. I'll be watching. Closely.","Interesting. {other}, don't get comfortable."],jealousLeave:["If I'm not wanted, I have no reason to stay."],excitedStay:["Good. I'll supervise from here.","This should be educational. I'm staying."],askControl:["Choose me. I'll do a far better job than {other}.","{other} is too soft. You need me. Give me control."],banter:["{other}, mind your manners.","I don't recall asking for your opinion, {other}.","{other}, you're out of your depth."],spectate:["{ctrl} has you right where you belong. Good.","Don't look at me, look at {ctrl}. Stay focused."],spectateFail:["Pathetic. {ctrl} deserves better."],spectateWin:["Acceptable. {ctrl} has trained you well."]},
+ "Chaos Casper": {enter:["HELLO! Did I miss anything? I probably did!"],leave:["Bye! Or maybe not! Chaos calls!"],tempt:["Hey hey hey! Let me control you! It'll be chaos! The fun kind!","Dare you to hand me the controls! What's the worst that could happen?","Pick me! Pick me! I have NO plan and it'll be amazing!"],jealousStay:["No fair! {other} got picked! I'm staying and complaining!","Hey! I wanted a turn, {other}!"],jealousLeave:["That's it! I'm leaving! Maybe! Bye!"],excitedStay:["YES! A show! I'm staying!","This is the best day ever! I'm watching!"],askControl:["Pick me instead! I'm WAY more fun than {other}!","Ooh, ooh, let me do it!"],banter:["{other}! Hi! You're funny!","I bet I can do better than {other}! Probably!","{other}, wanna swap places? Not sure why!"],spectate:["Go {ctrl}! Make you squirm more!","Look at you go! {ctrl} is wild!"],spectateFail:["You quit?! Noooo! {ctrl} is gonna be so mad!"],spectateWin:["WOW! You made it! {ctrl} lost the bet!"]},
+ "Sweet-Talker Sol": {enter:["Hey, everyone. Room for one more?"],leave:["I'll see you all later. Be good."],tempt:["Hey, gorgeous. Want me to take care of you? Give me control.","I think you've earned some attention. Let me spoil you with a session.","Come on, sweetheart. Let me take over. You'll love it."],jealousStay:["Aw, {other} got picked. I'm a little jealous, but I'll stay.","I see how it is, {other}. Be nice to them."],jealousLeave:["Well, I'm not feeling very wanted. Bye."],excitedStay:["Ooh, this is going to be fun. I'm staying.","I'll watch quietly. Promise."],askControl:["Why not let me take over instead, sweetheart?","{other} is nice, but I'm better. Pick me?"],banter:["{other}, you're so adorable when you scheme.","Be gentle, {other}.","{other}, save some fun for the rest of us."],spectate:["Look at you squirm. {ctrl} is doing great.","I love watching {ctrl} work you over."],spectateFail:["Aww, you stopped. {ctrl} must be disappointed."],spectateWin:["You did it! {ctrl} must be so proud."]},
+ "Relentless Rex": {enter:["Rex is here. Who's up for a challenge?"],leave:["Out. Call me when someone's serious."],tempt:["You. Think you can handle me? Give me control.","I dare you to hand over control. I'll show you what a real session is.","Soft sessions are boring. Give me control and find out."],jealousStay:["{other} got picked? Tch. I'll stay and judge.","Whatever, {other}. I'm still watching."],jealousLeave:["Not interested in second place. I'm out."],excitedStay:["Now we're talking. I'm watching this.","This'll be good. I'm staying."],askControl:["Pick me. I'll push you harder than {other} ever could.","{other} is soft. Give me control."],banter:["{other}, stay out of my way.","Not bad, {other}. But I'm better.","{other}, you talk too much."],spectate:["Harder, {ctrl}. Don't let you off easy.","I'm watching you squirm. Not bad."],spectateFail:["Quit already? {ctrl} deserved better."],spectateWin:["You lasted. Fine. I'm impressed."]},
+ "Sleepy Sunday": {enter:["Mmm... hi, everyone... am I late?"],leave:["Mm... nap time... bye..."],tempt:["Mmm... hey... want to lie back and let me run things? Give me control.","I'm too sleepy to dare you... but... give me control?","Mm... come on... be cozy with me... hand over the controls."],jealousStay:["Mm... {other} got picked... I'm too sleepy to be mad... but I'm a little mad.","Hm... {other}... fine... I'll watch."],jealousLeave:["Mm... not me? I'm going back to bed."],excitedStay:["Mmm... ooh... I'll stay awake for this.","This looks fun... I'll watch."],askControl:["Mm... pick me instead... I'm so gentle... {other} is too much.","Let me... take over... pleeease..."],banter:["{other}... mm... you're so energetic.","Slow down, {other}... mm.","{other}... can we nap instead?"],spectate:["Mm... look at you squirming... {ctrl} is good.","{ctrl}... mm... so thorough."],spectateFail:["Mm... you stopped... {ctrl} is sad."],spectateWin:["Mmm... you made it... nice."]},
+ "Drill Sergeant Dana": {enter:["Attention in the room! Dana has arrived!"],leave:["Dismissed! I'm out of here!"],tempt:["Recruit! Give me control! That's an order!","Think you can handle my drill? Hand over control, recruit!","On your feet, recruit! Give me control and let's go!"],jealousStay:["{other} got picked?! I'm staying and watching, recruit!","At ease, {other}! But I'm watching you!"],jealousLeave:["Not selected? I'm out of here, recruit!"],excitedStay:["Now this is what I like! I'm watching!","Mission underway! I'm staying!"],askControl:["Pick me, recruit! I'll whip you into shape!","{other} is soft! You need me! Give me control!"],banter:["{other}, don't slack!","I respect you, {other}, but I'm tougher!","{other}, stay in line!"],spectate:["Move it, recruit! {ctrl} is watching you squirm!","Good form, {ctrl}! Make you work for it!"],spectateFail:["Deserter! {ctrl} will not be pleased!"],spectateWin:["Mission accomplished, recruit! {ctrl} is proud!"]}
+};
+Object.keys(MORE5).forEach(k => Object.keys(MORE5[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE5[k][c]); }));
+
+/* ---------- the lounge (virtual chat room) ---------- */
+let room = [], nextRoomAt = Date.now() + 6000 + Math.random() * 6000, nextTemptAt = Date.now() + 40000 + Math.random() * 30000, nextSpectateAt = Date.now() + 25000, lastTempter = "";
+const lastLeft = {};
+const pickOne = arr => arr[Math.floor(Math.random() * arr.length)];
+function renderRoom(){
+  const box = $("roomWho"); box.innerHTML = "";
+  room.forEach(p => {
+    const c = document.createElement("span"); c.className = "rchip";
+    const dot = document.createElement("span"); dot.className = "rdot"; dot.style.background = PCOL[p] || "";
+    c.append(dot, SHORT[p] + (p === currentPersona ? " ★" : "")); box.append(c);
+  });
+  $("roomCount").textContent = room.length ? room.length + " online" : "nobody here yet";
 }
+function chatHeader(){ renderRoom(); }
+function enterRoom(p, silent){
+  if (!SHORT[p] || room.includes(p)) return false;
+  room.push(p); renderRoom(); addMsg("sys", SHORT[p] + " joined the lounge.");
+  if (!silent) setTimeout(() => { if (room.includes(p)) sayAs(p, "enter"); }, 1200 + Math.random() * 1500);
+  return true;
+}
+function leaveRoom(p, quiet){
+  if (!room.includes(p)) return;
+  if (p === currentPersona && (running || paused || starting)) return;
+  if (!quiet) sayAs(p, "leave");
+  setTimeout(() => { room = room.filter(x => x !== p); lastLeft[p] = Date.now(); renderRoom(); addMsg("sys", SHORT[p] + " left the lounge."); }, quiet ? 200 : 2800);
+}
+function giveControl(p){
+  if (running || paused || starting){ addMsg("sys", "Finish the current session first."); return; }
+  if (locked){ addMsg("sys", "You're locked out right now. Check the status line."); return; }
+  if (!$("key").value.trim()){ addMsg("sys", "Enter your connection key first."); status("Enter your connection key first.", true); return; }
+  $("persona").value = p;
+  applyPersona(p, false);
+  start();
+}
+function pickKind(p, event){
+  const w = Object.assign({}, REACT[p] || {banter: 1});
+  if (event === "claimed") delete w.askControl;
+  const keys = Object.keys(w); let r = Math.random() * keys.reduce((a, k) => a + w[k], 0);
+  for (const k of keys){ r -= w[k]; if (r <= 0) return k; }
+  return keys[0];
+}
+function doReaction(p, kind, actor){
+  if (!room.includes(p)) return;
+  const vars = {other: actor};
+  if (kind === "askControl"){
+    if (running || paused || starting || locked) kind = "jealousStay";
+    else return sayAs(p, "askControl", {label: "Give " + SHORT[p] + " control instead", apply: () => giveControl(p)}, vars);
+  }
+  if (kind === "jealousLeave" && p === currentPersona && (running || paused)) kind = "jealousStay";
+  sayAs(p, kind, null, vars);
+  if (kind === "jealousLeave") setTimeout(() => leaveRoom(p, true), 3500 + Math.random() * 1500);
+  if (kind === "banter" && Math.random() < 0.6) setTimeout(() => { if (room.includes(actor) && room.includes(p)) sayAs(actor, "banter", null, {other: p}); }, 4200 + Math.random() * 2500);
+}
+function react(event, actor){
+  let cnt = 0;
+  room.filter(p => p !== actor).forEach(p => {
+    if (cnt >= 3 || Math.random() > 0.75) return; cnt++;
+    setTimeout(() => doReaction(p, pickKind(p, event), actor), 2500 + cnt * 2800 + Math.random() * 2500);
+  });
+}
+function doTempt(p){
+  if (!room.includes(p) || running || paused || starting) return;
+  lastTempter = p;
+  sayAs(p, "tempt", {label: "Give " + SHORT[p] + " control", apply: () => giveControl(p)});
+  react("dare", p);
+}
+function temptUser(){
+  const absent = ALL.filter(x => !room.includes(x) && Date.now() - (lastLeft[x] || 0) > 90000);
+  if ((!room.length || (room.length < 4 && Math.random() < 0.4)) && absent.length){
+    const p = pickOne(absent); enterRoom(p);
+    setTimeout(() => doTempt(p), 5000 + Math.random() * 2000);
+    return;
+  }
+  if (!room.length) return;
+  const pool = room.filter(x => x !== lastTempter);
+  doTempt(pickOne(pool.length ? pool : room));
+}
+function ambientEvent(){
+  const busy = running || paused || starting, r = Math.random();
+  const absent = ALL.filter(x => !room.includes(x) && Date.now() - (lastLeft[x] || 0) > 120000);
+  if ((!room.length || (room.length < 4 && r < 0.4)) && absent.length){ enterRoom(pickOne(absent)); return; }
+  if (room.length >= 2 && r < 0.8){
+    const a = pickOne(room), b = pickOne(room.filter(x => x !== a));
+    sayAs(a, "banter", null, {other: b});
+    if (Math.random() < 0.7) setTimeout(() => { if (room.includes(a) && room.includes(b)) sayAs(b, "banter", null, {other: a}); }, 4000 + Math.random() * 2500);
+    return;
+  }
+  if (room.length >= 2){ const cand = room.filter(x => !(busy && x === currentPersona)); if (cand.length) leaveRoom(pickOne(cand)); }
+}
+function spectate(){
+  const others = room.filter(p => p !== currentPersona); if (!others.length) return;
+  const sp = pickOne(others);
+  sayAs(sp, "spectate", null, {ctrl: currentPersona});
+  if (currentPersona && room.includes(currentPersona) && Math.random() < 0.35)
+    setTimeout(() => { if (room.includes(sp) && room.includes(currentPersona)) sayAs(currentPersona, "banter", null, {other: sp}); }, 3500 + Math.random() * 2000);
+}
+function spectatorsReact(cat){
+  const others = room.filter(p => p !== currentPersona); if (!others.length) return;
+  const sp = pickOne(others);
+  setTimeout(() => { if (room.includes(sp)) sayAs(sp, cat, null, {ctrl: currentPersona}); }, 4000 + Math.random() * 3000);
+}
+setInterval(() => {
+  const now = Date.now(), busy = running || paused || starting;
+  if (now > nextRoomAt){ nextRoomAt = now + 35000 + Math.random() * 45000; ambientEvent(); }
+  if (!busy && !locked && now > nextTemptAt){ nextTemptAt = now + 80000 + Math.random() * 60000; temptUser(); }
+  if (running && runTease && now > nextSpectateAt){ nextSpectateAt = now + 30000 + Math.random() * 30000; spectate(); }
+}, 1000);
 function sendChat(){
   const box = $("chatIn"), t = box.value.trim(); if (!t) return;
   box.value = ""; addMsg("me", t);
-  if (!currentPersona){ setTimeout(() => addMsg("sys", "Pick a personality under Tease mode to chat."), 300); return; }
-  say(/reward|prize|treat|earn|deserve/i.test(t) ? "promise" : /can you see|watching|looking at|see me|camera/i.test(t) ? "watch" : /enjoy|having fun|like this|like it/i.test(t) ? "enjoy" : /please|pls|beg|let me|i need/i.test(t) ? "please" : /close|almost|can'?t|about to/i.test(t) ? "close" : /faster|slower|more|harder|less|speed/i.test(t) ? "demand" : "reply");
+  if (!room.length){ setTimeout(() => addMsg("sys", "Nobody is in the lounge right now. Someone will drop in soon."), 400); nextRoomAt = Math.min(nextRoomAt, Date.now() + 4000); return; }
+  const named = ALL.find(k => new RegExp("\\b" + NAMEKEY[k] + "\\b", "i").test(t));
+  if (named && !room.includes(named)){ setTimeout(() => addMsg("sys", SHORT[named] + " isn't in the lounge right now."), 400); return; }
+  const cat = /reward|prize|treat|earn|deserve/i.test(t) ? "promise" : /can you see|watching|looking at|see me|camera/i.test(t) ? "watch" : /enjoy|having fun|like this|like it/i.test(t) ? "enjoy" : /please|pls|beg|let me|i need/i.test(t) ? "please" : /close|almost|can'?t|about to/i.test(t) ? "close" : /faster|slower|more|harder|less|speed/i.test(t) ? "demand" : "reply";
+  const ctl = runTease && currentPersona && room.includes(currentPersona) ? currentPersona : null;
+  const speaker = named || ctl || pickOne(room);
+  sayAs(speaker, cat);
+  const others = room.filter(x => x !== speaker);
+  if (others.length && Math.random() < 0.35){
+    const o = pickOne(others);
+    setTimeout(() => { if (room.includes(o)) sayAs(o, Math.random() < 0.5 ? "banter" : "reply", null, {other: speaker}); }, 3500 + Math.random() * 2500);
+  }
 }
 $("chatSend").onclick = sendChat;
 $("chatIn").onkeydown = e => { if (e.key === "Enter") sendChat(); };
@@ -759,8 +978,8 @@ $("chatClear").onclick = () => { $("chatLog").innerHTML = ""; };
 currentPersona = store.get("h_persona", "");
 if (currentPersona && !PERSONAS[currentPersona]) currentPersona = "";
 if (currentPersona) $("persona").value = currentPersona;
-chatHeader();
-addMsg("sys", currentPersona ? "Say hi to " + currentPersona + " or start a session." : "Pick a personality under Tease mode. They'll talk as the session runs.");
+addMsg("sys", "Welcome to the lounge. Personalities drop in and out. Pick one under Tease mode to hand over control, or wait for someone to tempt you.");
+if (currentPersona) enterRoom(currentPersona, true); else renderRoom();
 
 /* ---------- profiles ---------- */
 const PROF_FIELDS = FIELDS.filter(id => id !== "daily" && id !== "cool" && id !== "failLock");
