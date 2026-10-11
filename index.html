@@ -1092,7 +1092,8 @@ const FANPOOL = {
 const FMAP = {fake:"fake",fakeAfter:"fake",hold:"hold",holdMid:"hold",rest:"rest",restMid:"rest",build:"build",challenge:"challenge",insist:"challenge",defend:"resist",resist:"resist",takeover:"takeover",fail:"fail",win:"win",enter:"enter",tempt:"dare",askControl:"dare",crowd:"crowd"};
 const TIERS = [[0,"Quiet"],[10,"Warming up"],[30,"Buzzing"],[55,"Packed"],[80,"Legendary"]];
 let fans = [], excite = 0, pop = 0, fame = store.get("handyFame", 0), peakFans = store.get("handyPeak", 0), lastTier = 0, nextFanAt = Date.now() + 8000, lastFanMsgAt = 0, lastFanReplyAt = 0, nextCrowdAt = Date.now() + 60000, tickN = 0;
-function level(){ return 1 + Math.floor(Math.sqrt(fame / 40)); }
+const FAME_PER_LEVEL = 60;
+function level(){ return 1 + Math.floor(fame / FAME_PER_LEVEL); }
 function aggr(){ if (privateShow) return 2.2; return $("fansOn").checked ? 1 + Math.min(1.5, fans.length / 30) : 1; }
 function crowdLevel(){ if (privateShow) return 0.9; return ($("crowdBoost").checked && $("fansOn").checked) ? Math.min(1, (aggr() - 1) / 1.5) : 0; }
 function renderCrowd(){
@@ -1100,6 +1101,7 @@ function renderCrowd(){
   $("roomCount").textContent = privateShow ? "🔒 Private show with " + SHORT[privateShow.p] + " · room locked" : room.length + " in the room · " + fans.length + " watching";
   $("hypeBar").style.width = Math.max(2, Math.min(100, pop)) + "%";
   $("hypeLbl").textContent = t + " · Lv " + level();
+  $("hypeLbl").title = "Fame " + Math.round(fame) + " · " + Math.ceil(FAME_PER_LEVEL - (fame % FAME_PER_LEVEL)) + " to the next level. Fame only grows while a session is running.";
 }
 function addFan(fav){
   const free = FANNAMES.filter(n => !fans.includes(n));
@@ -1165,8 +1167,8 @@ function crowdTick(){
   const base = (running ? 28 : 0) + (running && runTease ? 8 : 0) + room.length * 5 + (paused && !onBreak ? 4 : 0);
   const hype = Math.max(0, Math.min(100, base + excite));
   pop += (hype - pop) * (hype > pop ? 0.011 : 0.02);
-  if (running) fame += pop / 100;
-  const baseline = room.length ? Math.min(10, (level() - 1) * 2) : 0;
+  if (running) fame += pop / 100 * 0.6;
+  const baseline = room.length ? Math.min(12, Math.floor((level() - 1) / 25) * 2) : 0;
   const target = privateShow ? 0 : $("fansOn").checked ? Math.round(Math.pow(pop / 100, 1.5) * 70) + baseline : 0;
   let steps = 0;
   while (fans.length < target && steps < (target - fans.length > 15 ? 2 : 1) && Math.random() < 0.4){ addFan(); steps++; }
