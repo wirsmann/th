@@ -109,6 +109,9 @@
   @media (min-width:1200px){body.drawer-open .stage{margin-right:426px}}
   @media (max-width:1000px){.stage{grid-template-columns:1fr}.timer{order:-1;position:static}.lounge{height:auto;min-height:680px}}
 
+  .heatRow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:start;margin:0 0 8px}
+  .heatRow .liveSet{margin:0;padding:0;border:0}
+  @media (max-width:700px){.heatRow{grid-template-columns:1fr}}
   .graphBox{margin:0 0 8px;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:var(--bg);flex:none}
   .gHead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.85rem;margin-bottom:4px}
   #gLegend{display:inline-flex;gap:10px;flex-wrap:wrap}
@@ -146,7 +149,13 @@
   <div class="stage">
     <section class="card lounge" aria-label="The Lounge">
       <div class="chatHead"><strong>The Lounge</strong><span class="hint" id="roomCount" style="margin:0"></span><button class="mini" id="chatClear" style="margin:0 0 0 auto">Clear chat</button></div>
-      <div class="hypeRow"><div class="hype" aria-hidden="true"><div id="hypeBar"></div></div><span id="hypeLbl" class="hint"></span></div>
+      <div class="heatRow"><div class="hypeRow"><div class="hype" aria-hidden="true"><div id="hypeBar"></div></div><span id="hypeLbl" class="hint"></span></div>
+  <div class="liveSet" id="actionBox"><strong class="lsHead">Your actions</strong>
+    <div id="actionRow"><div id="offers" aria-live="polite"></div><p class="hint" id="arHint" style="margin:6px 0 0">Nothing needs an answer right now.</p></div>
+    <button type="button" id="lubeNow" disabled>Lube break</button>
+    <span class="pnote" id="lubeNote" style="display:block;margin-top:4px">Pauses the session and slowly moves the Handy to the park position so you can lube up. Resume when ready.</span>
+  </div>
+      </div>
       <div id="roomWho" class="chips" style="margin:0 0 8px"></div>
       <div class="graphBox"><div class="gHead"><strong>Activity</strong><span id="gLegend"></span><span class="hint" id="gInfo" style="margin:0 0 0 auto"></span></div><canvas id="graph" height="150" aria-label="History of speed and stroke length, colored by who was in control"></canvas><div id="gScrollRow" style="display:none;gap:8px;align-items:center;margin-top:6px"><input type="range" id="gScroll" min="0" max="0" value="0" aria-label="Scroll back through activity history" style="flex:1"><button class="mini" id="gLive" style="margin:0">Back to live</button></div><div class="hint" id="gKey" style="margin:4px 0 0"></div></div>
       <div id="chatLog" aria-live="polite"></div>
@@ -186,11 +195,6 @@
     <div><label for="smax">Stroke end: <span id="smaxVal">100</span>%</label>
   <input id="smax" type="range" min="5" max="100" value="100"></div>
   </div>
-  </div>
-  <div class="liveSet" id="actionBox"><strong class="lsHead">Your actions</strong>
-    <div id="actionRow"><div id="offers" aria-live="polite"></div><p class="hint" id="arHint" style="margin:6px 0 0">Nothing needs an answer right now.</p></div>
-    <button type="button" id="lubeNow" disabled>Lube break</button>
-    <span class="pnote" id="lubeNote" style="display:block;margin-top:4px">Pauses the session and slowly moves the Handy to the park position so you can lube up. Resume when ready.</span>
   </div>
         </aside>
   </div>
@@ -461,7 +465,7 @@ function simFrame(t){
 }
 function simUI(){
   const on = simOn();
-  $("simBox").hidden = !on; $("simPill").hidden = !on;
+  $("simBox").hidden = false; $("simPill").hidden = !on;
   if (!running && !paused && !starting && /^(Enter your key|Ready\.|Simulation mode)/.test($("status").textContent)) status(on ? "Simulation mode: press Start. Nothing is sent to the device." : "Enter your key and press Start.");
 }
 $("simOn").addEventListener("change", () => { if (running || paused || starting){ $("simOn").checked = !$("simOn").checked; store.set("h_simOn", $("simOn").checked); status("Stop the session before switching simulation mode.", true); return; } sim.playing = false; sim.target = null; simUI(); });
