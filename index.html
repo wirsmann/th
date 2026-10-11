@@ -101,7 +101,8 @@
   #gLegend{display:inline-flex;gap:10px;flex-wrap:wrap}
   .gl{display:inline-flex;align-items:center;gap:5px;font-size:.76rem;color:var(--muted)}
   #graph{display:block;width:100%;height:130px}
-  #actionRow{margin:8px 0;flex:none;background:var(--panel)}
+  #actionRow{margin:0;flex:none;background:var(--panel)}
+  #offers:not(:empty){margin:8px 0}
   .ptimer{height:3px;border-radius:2px;margin-top:8px;background:var(--muted);opacity:.5;transform-origin:left;animation:ptime linear forwards}
   @keyframes ptime{from{transform:scaleX(1)}to{transform:scaleX(0)}}
   .arHead{display:flex;gap:10px;align-items:center;font-size:.85rem;margin-bottom:4px}
@@ -121,7 +122,7 @@
 </head>
 <body>
 <main>
-  <header class="top"><h1>Handy timer</h1><nav id="menu" aria-label="Settings menu"><button type="button" data-key="session" aria-pressed="false">Session</button><button type="button" data-key="tease" aria-pressed="false">Tease</button><button type="button" data-key="speed" aria-pressed="false">Speed</button><button type="button" data-key="customize" aria-pressed="false">Customize</button><button type="button" data-key="lube" aria-pressed="false">Lube</button><button type="button" data-key="limits" aria-pressed="false">Limits</button><button type="button" data-key="profiles" aria-pressed="false">Profiles</button><button type="button" data-key="log" aria-pressed="false">Log</button></nav></header>
+  <header class="top"><h1>Handy timer</h1><nav id="menu" aria-label="Settings menu"><button type="button" data-key="session" aria-pressed="false">Session</button><button type="button" data-key="tease" aria-pressed="false">Tease</button><button type="button" data-key="speed" aria-pressed="false">Speed</button><button type="button" data-key="customize" aria-pressed="false">Customize</button><button type="button" data-key="lube" aria-pressed="false">Lube</button><button type="button" data-key="control" aria-pressed="false">Handover</button><button type="button" data-key="limits" aria-pressed="false">Limits</button><button type="button" data-key="profiles" aria-pressed="false">Profiles</button><button type="button" data-key="log" aria-pressed="false">Log</button></nav></header>
   <div class="stage">
     <section class="card lounge" aria-label="The Lounge">
       <div class="chatHead"><strong>The Lounge</strong><span class="hint" id="roomCount" style="margin:0"></span><button class="mini" id="chatClear" style="margin:0 0 0 auto">Clear chat</button></div>
@@ -129,7 +130,7 @@
       <div id="roomWho" class="chips" style="margin:0 0 8px"></div>
       <div class="graphBox"><div class="gHead"><strong>Activity</strong><span id="gLegend"></span><span class="hint" id="gInfo" style="margin:0 0 0 auto"></span></div><canvas id="graph" height="130" aria-label="History of speed and stroke length, colored by who was in control"></canvas></div>
       <div id="chatLog" aria-live="polite"></div>
-      <div id="actionRow"><div class="arHead"><strong>Your move</strong><span class="hint" id="arHint" style="margin:0"></span></div><div id="offers" aria-live="polite"></div><div id="quick" aria-label="Quick replies"></div></div>
+      <div id="actionRow"><div id="offers" aria-live="polite"></div></div>
       <div class="inline"><input id="chatIn" type="text" autocomplete="off" placeholder="Say something to the room…" aria-label="Chat message"><button class="mini" id="chatSend" style="margin:0">Send</button></div>
     </section>
     <aside class="card timer">
@@ -225,6 +226,11 @@
     <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:10px"><input type="checkbox" id="hideClock"> Hide the countdown while running</label>
     <p class="hint">Press Esc at any time to stop immediately. The speed cap limits every mode.</p>
   </section>
+    <section class="panel" data-key="control" hidden>
+    <p class="hint" style="margin-top:0">Personalities can ask you for control, or ask the one in control directly. The one in control may give it up, and may also hand it over on her own after a few minutes. These numbers set how likely each one is to give it up. All default low.</p>
+    <div class="row"><div><label for="aimCtl">Requests aimed at the controller instead of you (%)</label><input id="aimCtl" type="number" min="0" max="100" value="35"></div></div>
+    <div class="row" id="yieldFields" style="flex-wrap:wrap"></div>
+  </section>
     <section class="panel" data-key="lube" hidden>
     <label style="display:flex;gap:8px;align-items:center;color:var(--ink)"><input type="checkbox" id="lubeOn" checked> Lube breaks in tease sessions</label>
     <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:6px"><input type="checkbox" id="lubeReg" checked> Also in regular sessions</label>
@@ -288,7 +294,7 @@ function mkFields(boxId, list){
   });
 }
 mkFields("teaseFields", TEASE); mkFields("customFields", CUSTOM);
-const FIELDS = ["speed","smin","smax","min","sec","ramp","slow","pattern","period","daily","cool","failLock","lubeEvery","lubeGap","lubePark","nickCustom"].concat(TEASE.map(t=>t[0]), CUSTOM.map(c=>c[0]));
+const FIELDS = ["speed","smin","smax","min","sec","ramp","slow","pattern","period","daily","cool","failLock","aimCtl","lubeEvery","lubeGap","lubePark","nickCustom"].concat(TEASE.map(t=>t[0]), CUSTOM.map(c=>c[0]));
 FIELDS.forEach(id => { const v = store.get("h_"+id, null); if (v !== null) $(id).value = v; });
 const BOOLS = {beepEnd:true, beepWarn:true, awake:true, teaseOn:false, tStop:true, hideClock:false, tRandom:false, failCharge:false, lubeOn:true, lubeReg:true, fansOn:true, crowdBoost:true, interactOn:true, stormOn:true, privOn:true};
 Object.keys(BOOLS).forEach(id => { $(id).checked = store.get("h_"+id, BOOLS[id]); $(id).onchange = () => store.set("h_"+id, $(id).checked); });
@@ -1387,13 +1393,13 @@ function startChallenge(){
   if (!others.length){
     const absent = ALL.filter(x => !room.includes(x) && x !== currentPersona); if (!absent.length) return;
     const np = pickOne(absent); enterRoom(np, true);
-    setTimeout(() => { if (running && runTease && room.includes(np)) beginChallenge(np); }, 5000);
+    setTimeout(() => { if (running && runTease && room.includes(np)) beginChallenge(np); }, 5000);   // newcomers always ask you
     return;
   }
   const w = others.map(p => (REACT[p] && REACT[p].askControl) || 1);
   let r = Math.random() * w.reduce((a, b) => a + b, 0), ch = others[0];
   for (let i = 0; i < others.length; i++){ r -= w[i]; if (r <= 0){ ch = others[i]; break; } }
-  beginChallenge(ch);
+  if (Math.random() * 100 < n("aimCtl", 35)) beginDirect(ch); else beginChallenge(ch);
 }
 const NICKS = {"Patient Priscilla":["pet","darling","good boy"],"Mischievous Mia":["toy","plaything","loser"],"Strict Ms. Vance":["subject","sub","slave"],"Chaos Cassie":["pawn","puppet","guinea pig"],"Sweet-Talker Sienna":["sweet thing","baby","sweetheart"],"Relentless Roxy":["rookie","peon","dog"],"Sleepy Sadie":["sleepyhead","puppy","plaything"],"Drill Sergeant Dana":["recruit","private","maggot"],"Mocking Margot":["worm","needy mess","little loser"],"Cuckolding Veronica":["cuck","cuckold","little cuck"]};
 const NICKRATE = {"Patient Priscilla":.35,"Mischievous Mia":.4,"Strict Ms. Vance":.55,"Chaos Cassie":.4,"Sweet-Talker Sienna":.35,"Relentless Roxy":.5,"Sleepy Sadie":.4,"Drill Sergeant Dana":.5,"Mocking Margot":.6,"Cuckolding Veronica":.6};
@@ -2600,10 +2606,7 @@ const MORE12 = {
    "I'm going to take my time with you, {nick}. All of it.",
    "Look at me, {nick}. Only me."
   ],
-  "privBye": [
-   "Thank you for the turn, {other}. Do see yourselves out.",
-   "It's been lovely, {other}. We'll manage from here."
-  ]
+  "privBye": ["Taking him private, {other}? Lovely. Enjoy yourself. We'll see ourselves out.", "Of course, {other}. Have him all to yourself. I'll go."]
  },
  "Mischievous Mia": {
   "privAsk": [
@@ -2623,10 +2626,7 @@ const MORE12 = {
    "Just us now, {nick}! No rules!",
    "Shh, don't tell anybody what I'm about to do, {nick}!"
   ],
-  "privBye": [
-   "Bye, {other}! Door's closing! Hehe!",
-   "Out you go, {other}! He's mine now!"
-  ]
+  "privBye": ["Aww, {other}, you're kicking us out to keep him? Hmph! Fine, have your fun!", "No fair, {other}! You get him all to yourself?! Okay, bye!"]
  },
  "Strict Ms. Vance": {
   "privAsk": [
@@ -2646,10 +2646,7 @@ const MORE12 = {
    "Stay with me, {nick}. No distractions.",
    "I expect much more from you now, {nick}."
   ],
-  "privBye": [
-   "You are dismissed, {other}. Leave us.",
-   "That will be all, {other}. Close the door behind you."
-  ]
+  "privBye": ["You wish to be alone with him, {other}. Very well. I'll leave you to it.", "Take him private, {other}. Be thorough. I'm leaving."]
  },
  "Chaos Cassie": {
   "privAsk": [
@@ -2669,10 +2666,7 @@ const MORE12 = {
    "Just us! Hahaha! Hold on tight, {nick}!",
    "No rules now, {nick}! Not even mine!"
   ],
-  "privBye": [
-   "BYE, {other}! Door's locked!",
-   "OUT, {other}! Shoo! He's MINE!"
-  ]
+  "privBye": ["{other}! You're locking us out?! Rude! Have fun! Maybe!", "Private?! {other}, I wanted to watch! Fine, fine, bye!"]
  },
  "Sweet-Talker Sienna": {
   "privAsk": [
@@ -2692,10 +2686,7 @@ const MORE12 = {
    "Mm, you're all mine, {nick}. Stay with me.",
    "Look at me, {nick}. Only me. Good."
   ],
-  "privBye": [
-   "Sorry, {other}, but he's mine tonight. Goodbye.",
-   "Time for you to go, {other}. Lovely seeing you."
-  ]
+  "privBye": ["Oh, {other}, you want him all to yourself? Be kind to him. Goodbye.", "Have your private time with him, {other}. Take good care of him."]
  },
  "Relentless Roxy": {
   "privAsk": [
@@ -2715,10 +2706,7 @@ const MORE12 = {
    "I'm going harder now, {nick}. No audience, no mercy.",
    "This is where it gets real, {nick}."
   ],
-  "privBye": [
-   "Out, {other}. Now.",
-   "Time's up, {other}. Door's locking."
-  ]
+  "privBye": ["Locking the room, {other}? Fine. Don't go easy on him.", "He's all yours, {other}. Make it count. I'm out."]
  },
  "Sleepy Sadie": {
   "privAsk": [
@@ -2738,10 +2726,7 @@ const MORE12 = {
    "So quiet now... mm... {nick}... stay with me...",
    "Mm... I'm all yours... {nick}... closer..."
   ],
-  "privBye": [
-   "Mm... goodnight, {other}... lock the door...",
-   "Bye, {other}... too noisy... mm..."
-  ]
+  "privBye": ["Mm... {other}... going private...? Okay... have fun... bye...", "Mm... lock the door, {other}... I'll go... goodnight..."]
  },
  "Drill Sergeant Dana": {
   "privAsk": [
@@ -2761,10 +2746,7 @@ const MORE12 = {
    "Eyes on me, {nick}! This is the real drill!",
    "I'm not holding back now, {nick}! Keep up!"
   ],
-  "privBye": [
-   "DISMISSED, {other}! Clear the area!",
-   "OUT, {other}! Move it!"
-  ]
+  "privBye": ["{other}, you're taking him private?! Permission granted! I'm clearing out!", "Private drill, {other}?! Don't let him slack! I'm out!"]
  },
  "Mocking Margot": {
   "privAsk": [
@@ -2784,10 +2766,7 @@ const MORE12 = {
    "Nobody to see you beg now, {nick}. Go on.",
    "I can be so much meaner in private, {nick}."
   ],
-  "privBye": [
-   "Goodbye, {other}. Do run along.",
-   "Out you go, {other}. He's my toy now."
-  ]
+  "privBye": ["Taking him private, {other}? How selfish. Enjoy him. I'll go.", "Keep him to yourself, {other}. I'll just leave. Be nasty."]
  }
 };
 Object.keys(MORE12).forEach(k => Object.keys(MORE12[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE12[k][c]); }));
@@ -3203,10 +3182,7 @@ LINES["Cuckolding Veronica"] = {
   "Nobody to see you now, {nick}. Just me. Tell me how it feels to be the one watching.",
   "I can be so much meaner in private, {nick}. Let me tell you about last night."
  ],
- "privBye": [
-  "Goodbye, {other}. Do run along.",
-  "Out you go, {other}. He's mine now."
- ],
+ "privBye": ["Taking him private, {other}? Fine. Make him watch properly. Bye.", "Have your private time with him, {other}. I'll go find someone better."],
  "dmdWarn": [
   "Keep refusing, {nick}. I'm getting bored of you.",
   "Say no again, {nick}. See what happens."
@@ -3348,6 +3324,112 @@ function handOff(ev, name){
   setTimeout(() => sayAs(name, "life_takeover"), 1500);
   setTimeout(() => { if (room.includes(ev.p)) sayAs(ev.p, "life_wake"); }, 14000);
 }
+const MORE13 = {
+ "Patient Priscilla": {
+  "giveUp": [
+   "I've had a lovely long turn, {other}. Would you like him for a while?",
+   "I think it's your turn, {other}. Take him. Gently."
+  ]
+ },
+ "Mischievous Mia": {
+  "giveUp": [
+   "Okay, {other}, I'm bored of this game! Wanna play with him?",
+   "Hehe, {other}, your turn! Go on, I'll watch!"
+  ]
+ },
+ "Strict Ms. Vance": {
+  "giveUp": [
+   "I have finished with this stretch, {other}. You may take over. Do it properly.",
+   "Your turn, {other}. Don't waste it."
+  ]
+ },
+ "Chaos Cassie": {
+  "giveUp": [
+   "{other}! Take it! I got distracted! Squirrel!",
+   "Ooh, {other}, you have it now! Catch!"
+  ]
+ },
+ "Sweet-Talker Sienna": {
+  "giveUp": [
+   "I'd love to share, {other}. Would you like a turn?",
+   "He's all yours for a while, {other}. Be sweet to him."
+  ]
+ },
+ "Relentless Roxy": {
+  "giveUp": [
+   "I'm done for now, {other}. Take over. Don't go easy.",
+   "Your turn, {other}. Keep him moving."
+  ]
+ },
+ "Sleepy Sadie": {
+  "giveUp": [
+   "Mm... {other}... I'm tired... want a turn...?",
+   "Here, {other}... you take over... I'll watch... mm..."
+  ]
+ },
+ "Drill Sergeant Dana": {
+  "giveUp": [
+   "{other}! You're up! Take command!",
+   "I'm handing over, {other}! Don't let him slack!"
+  ]
+ },
+ "Mocking Margot": {
+  "giveUp": [
+   "I'm done with him for now, {other}. He's yours. Be creative.",
+   "Go on, {other}. Your turn to embarrass him."
+  ]
+ },
+ "Cuckolding Veronica": {
+  "giveUp": [
+   "Take over, {other}. I need to check on someone else.",
+   "Your turn, {other}. I'll be texting. Make him watch you."
+  ]
+ }
+};
+Object.keys(MORE13).forEach(k => LINES[k].giveUp = MORE13[k].giveUp);
+Object.assign(HYPE, {giveUp:3});
+const YIELD_DEF = {"Patient Priscilla": 12, "Mischievous Mia": 8, "Strict Ms. Vance": 3, "Chaos Cassie": 15, "Sweet-Talker Sienna": 10, "Relentless Roxy": 3, "Sleepy Sadie": 15, "Drill Sergeant Dana": 3, "Mocking Margot": 5, "Cuckolding Veronica": 6};
+
+/* ---------- handing over: personas ask the controller directly, or the controller gives control up on her own ---------- */
+const yieldPct = p => { const e = document.getElementById("yld_" + NAMEKEY[p]); const v = e ? parseFloat(e.value) : NaN; return isNaN(v) ? (YIELD_DEF[p] || 5) : Math.max(0, Math.min(100, v)); };
+(function(){
+  const box = $("yieldFields");
+  ALL.forEach(p => {
+    const id = "yld_" + NAMEKEY[p], d = document.createElement("div");
+    d.innerHTML = '<label for="' + id + '">' + SHORT[p] + ' gives up control (%)</label><input id="' + id + '" type="number" min="0" max="100" value="' + YIELD_DEF[p] + '">';
+    box.append(d);
+    const e = d.querySelector("input"), v = store.get("h_" + id, null); if (v !== null) e.value = v;
+    e.onchange = () => store.set("h_" + id, e.value);
+  });
+})();
+function beginDirect(ch){
+  if (!running || !runTease || onBreak || challenge || denyAll || privateShow || lifeEv) return;
+  const ctl = currentPersona; if (!ctl || ch === ctl) return;
+  const c = challenge = {ch, ctl, direct: true};
+  attempts[ch] = (attempts[ch] || 0) + 1;
+  sayAs(ch, "challenge", null, {other: ctl, replyTo: ctl});
+  const later = (ms, fn) => setTimeout(() => { if (challenge === c) fn(); }, ms);
+  later(4500 + Math.random() * 1200, () => sayAs(ctl, "defend", null, {other: ch, replyTo: ch}));
+  later(9000 + Math.random() * 1200, () => sayAs(ch, "insist", null, {other: ctl, replyTo: ctl}));
+  later(14000 + Math.random() * 2000, () => {
+    const cl = (aggr() - 1) / 1.5;
+    const pw = Math.min(0.5, yieldPct(ctl) / 100 * (1 + 0.4 * (attempts[ch] - 1) + 0.6 * cl));
+    resolveChallenge(c, Math.random() < pw);
+  });
+}
+function giveUpTick(now){
+  if (!teaseNow() || !currentPersona || challenge || lifeEv || privateShow || denyAll || demand || ask) return;
+  if (now - ctlAt < 180000 || ctlWho !== currentPersona) return;
+  const others = room.filter(p => p !== currentPersona); if (!others.length) return;
+  if (Math.random() >= yieldPct(currentPersona) / 5 / 6000) return;
+  const ctl = currentPersona, to = pickOne(others), c = challenge = {ch: to, ctl, direct: true, voluntary: true};
+  sayAs(ctl, "giveUp", null, {other: to, replyTo: to});
+  setTimeout(() => {
+    if (challenge !== c) return; challenge = null; nextChallengeAt = Date.now() + 60000;
+    if (!teaseNow() || currentPersona !== ctl || !room.includes(to)) return;
+    attempts[to] = 0; sayAs(to, "takeover", null, {other: ctl, replyTo: ctl}); switchController(to);
+  }, 4500);
+}
 /* ---------- interactions: targets, demands, questions ---------- */
 let suppressUntil = 0;
 const STEP = 5;
@@ -3367,11 +3449,16 @@ const creep = {}, defiance = {}, hit = {}, chaosT = {};
 let demand = null, ask = null, nextAskAt = Date.now() + 60000, nextDemandAt = Date.now() + 80000, nextMoodAt = Date.now() + 90000;
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 function rollChaos(p){ chaosT[p] = {speed: 5 * Math.round(rnd(60, 95) / 5), len: 5 * Math.round(rnd(80, 100) / 5)}; }
+const tmod = {};
+function addMod(p, ds, dl, ms){
+  const now = Date.now(), m = tmod[p] && tmod[p].until > now ? tmod[p] : {s: 0, l: 0, until: 0};
+  m.s = clamp(m.s + ds, -20, 20); m.l = clamp(m.l + dl, -15, 15); m.until = Math.max(m.until, now + ms); tmod[p] = m;
+}
 function targetOf(p){
-  const t = TARGETS[p] || {speed: 60, len: 80};
-  if (t.chaos){ if (!chaosT[p]) rollChaos(p); return chaosT[p]; }
+  const t = TARGETS[p] || {speed: 60, len: 80}, m = tmod[p] && tmod[p].until > Date.now() ? tmod[p] : {s: 0, l: 0};
+  if (t.chaos){ if (!chaosT[p]) rollChaos(p); return {speed: clamp(chaosT[p].speed + m.s, 30, 100), len: clamp(chaosT[p].len + m.l, 50, 100)}; }
   const c = creep[p] || {s: 0, l: 0};
-  return {speed: clamp(t.speed + c.s, 1, 100), len: clamp(t.len + c.l, 5, 100)};
+  return {speed: clamp(t.speed + c.s + m.s, 30, 100), len: clamp(t.len + c.l + m.l, 50, 100)};
 }
 function targetNote(p){ const t = TARGETS[p]; if (!t) return ""; return t.chaos ? " Her target changes every time." : " Her target: speed " + t.speed + "%, stroke length " + t.len + "%."; }
 function setSpeedTo(v){ suppressUntil = Date.now() + 5000; $("speed").value = clamp(Math.round(v), 1, 100); $("speed").dispatchEvent(new Event("input")); }
@@ -3415,6 +3502,7 @@ function makeDemand(){
       choices: [
         {label: "Do it (" + to + "%)", kind: "primary", apply: () => acceptDemand(d, false)},
         {label: "Match her target (speed " + t.speed + "%, stroke " + t.len + "%)", kind: "primary", apply: () => acceptDemand(d, true)},
+        {label: "Do what you want", kind: "primary", apply: () => freeRein(d)},
         {label: "Refuse", kind: "danger", apply: () => refuseDemand(d, false)}]});
   }});
 }
@@ -3529,9 +3617,17 @@ function stormOff(p){
     leaveRoom(p, true);
   }, 3200);
 }
+function freeRein(d){
+  if (demand !== d) return;
+  const p = d.p; addMod(p, 10, 5, 300000);
+  const mineMsg = "Do whatever you want, " + SHORT[p] + ".";
+  acceptDemand(d, true);
+  const now = Date.now(); nextDemandAt = now + 240000; nextAskAt = Math.max(nextAskAt, now + 240000);
+  addMsg("sys", SHORT[p] + " has free rein for a few minutes. She won't ask again for a while.");
+}
 function refuseDemand(d, ignored){
   if (demand !== d) return; demand = null;
-  const p = d.p; defiance[p] = (defiance[p] || 0) + 1;
+  const p = d.p; defiance[p] = (defiance[p] || 0) + 1; addMod(p, -5, -5, 180000);
   const mine = ignored ? null : addMsg("me", "No.");
   sayAs(p, "dmdNo", null, mine ? {replyTo: mine} : {});
   const tol = TOL[p] || 3;
@@ -3549,7 +3645,7 @@ function askQuestion(p, qid){
     if (ask !== a) return; a.el = el;
     addOffer({id: "ask", who: p, text: "asks you", ttl: 40000, valid: () => ask === a && (qid === "mood" || running),
       onGone: () => { if (ask === a) ask = null; },
-      choices: q.opts.map(o => ({label: o.label, kind: o.kind === "no" ? "ghost" : "primary", apply: () => answerQuestion(a, o)}))});
+      choices: q.opts.map(o => ({label: o.label, kind: o.kind === "no" ? "ghost" : "primary", apply: () => answerQuestion(a, o)})).concat(qid === "mood" ? [] : [{label: "You decide", kind: "ghost", apply: () => { if (ask !== a) return; const o = pickOne(q.opts.filter(x => x.kind !== "no")); answerQuestion(a, {label: o.kind === "like" ? o.label : "You decide", kind: o.kind}); const now = Date.now(); nextAskAt = Math.max(nextAskAt, now + 240000); nextDemandAt = Math.max(nextDemandAt, now + 120000); }}])});
   }});
 }
 function handleKind(p, kind, mine, o){
@@ -3559,13 +3655,13 @@ function handleKind(p, kind, mine, o){
     else say("qNoMercy", null, 2000);
   };
   switch (kind){
-    case "more": say("qMore"); nextDemandAt = Date.now() + 7000; defiance[p] = 0; break;
+    case "more": say("qMore"); nextDemandAt = Date.now() + 7000; defiance[p] = 0; addMod(p, 10, 5, 240000); break;
     case "fine": say("qFine"); break;
-    case "lot": say("qLot"); mercy(); break;
-    case "close": say("close"); if (Math.random() < 0.7){ setTimeout(() => forceRest(rnd(8, 14)), 2400); say("rest", null, 2500); } break;
+    case "lot": say("qLot"); mercy(); addMod(p, -10, -5, 240000); break;
+    case "close": addMod(p, -5, 0, 120000); say("close"); if (Math.random() < 0.7){ setTimeout(() => forceRest(rnd(8, 14)), 2400); say("rest", null, 2500); } break;
     case "tease": say("qTease"); setTimeout(forceBuild, 1500); break;
     case "hold": say("qHold"); setTimeout(() => forceHold(rnd(10, 16)), 1500); break;
-    case "rest": mercy(); break;
+    case "rest": mercy(); addMod(p, -5, 0, 120000); break;
     case "surprise": handleKind(p, pickOne(["tease", "hold", "rest", "lot"]), mine, o); break;
     case "like": say("qLike", {answer: (o && o.label ? o.label : "that").toLowerCase()}); break;
     default: break;
@@ -3592,7 +3688,7 @@ function askRandomQuestion(){
   const r = Math.random(); askQuestion(p, r < 0.4 ? "feel" : r < 0.75 ? "next" : "like");
 }
 function interactTick(now, busy){
-  privTick(now); lifeTick(now);
+  privTick(now); lifeTick(now); giveUpTick(now);
   if (!$("interactOn").checked) return;
   if (teaseNow() && !challenge && !ask && !demand){
     if (now > nextAskAt){ nextAskAt = now + (65000 + Math.random() * 45000) / Math.sqrt(aggr()); askRandomQuestion(); }
@@ -3600,13 +3696,6 @@ function interactTick(now, busy){
   }
   if (!busy && !locked && !ask && room.length && now > nextMoodAt){ nextMoodAt = now + 110000 + Math.random() * 60000; askQuestion(pickOne(room), "mood"); }
 }
-(function(){
-  [["Please…", "Please, please…"], ["I'm close", "I'm close"], ["More", "I want more"], ["Can you see me?", "Can you see me?"], ["Reward?", "Do I get a reward?"], ["Enjoying this", "I'm enjoying this"]].forEach(q => {
-    const b = document.createElement("button"); b.type = "button"; b.className = "qchip"; b.textContent = q[0];
-    b.onclick = () => { $("chatIn").value = q[1]; sendChat(); }; $("quick").append(b);
-  });
-  syncRow();
-})();
 function sendChat(){
   const box = $("chatIn"), t = box.value.trim(); if (!t) return;
   box.value = ""; const mine = addMsg("me", t); excite = Math.min(60, excite + 2);
@@ -3667,7 +3756,7 @@ $("exportLog").onclick = () => {
   a.download = "handy-sessions.csv"; a.click(); URL.revokeObjectURL(a.href);
 };
 
-const PANELNAMES = {session:"Session", tease:"Tease mode", speed:"Speed profile", customize:"Customize", lube:"Lube break", limits:"Limits", profiles:"Profiles", log:"Session log"};
+const PANELNAMES = {session:"Session", tease:"Tease mode", speed:"Speed profile", customize:"Customize", lube:"Lube break", control:"Handing over control", limits:"Limits", profiles:"Profiles", log:"Session log"};
 let openPanel = null;
 function showPanel(k){
   openPanel = (openPanel === k) ? null : k;
