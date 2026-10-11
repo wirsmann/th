@@ -148,7 +148,7 @@
       <div class="chatHead"><strong>The Lounge</strong><span class="hint" id="roomCount" style="margin:0"></span><button class="mini" id="chatClear" style="margin:0 0 0 auto">Clear chat</button></div>
       <div class="hypeRow"><div class="hype" aria-hidden="true"><div id="hypeBar"></div></div><span id="hypeLbl" class="hint"></span></div>
       <div id="roomWho" class="chips" style="margin:0 0 8px"></div>
-      <div class="graphBox"><div class="gHead"><strong>Activity</strong><span id="gLegend"></span><span class="hint" id="gInfo" style="margin:0 0 0 auto"></span></div><canvas id="graph" height="150" aria-label="History of speed and stroke length, colored by who was in control"></canvas><div class="hint" id="gKey" style="margin:4px 0 0"></div></div>
+      <div class="graphBox"><div class="gHead"><strong>Activity</strong><span id="gLegend"></span><span class="hint" id="gInfo" style="margin:0 0 0 auto"></span></div><canvas id="graph" height="150" aria-label="History of speed and stroke length, colored by who was in control"></canvas><div id="gScrollRow" style="display:none;gap:8px;align-items:center;margin-top:6px"><input type="range" id="gScroll" min="0" max="0" value="0" aria-label="Scroll back through activity history" style="flex:1"><button class="mini" id="gLive" style="margin:0">Back to live</button></div><div class="hint" id="gKey" style="margin:4px 0 0"></div></div>
       <div id="chatLog" aria-live="polite"></div>
       <div class="inline"><input id="chatIn" type="text" autocomplete="off" placeholder="Say something to the room…" aria-label="Chat message"><button class="mini" id="chatSend" style="margin:0">Send</button></div>
     </section>
@@ -627,62 +627,76 @@ function updateLegend(){
   });
 }
 function drawSpark(){ drawGraph(); }
+/* the graph shows a fixed window (one minute of samples). It follows live by default; the slider scrolls back through history. */
+const WIN = 60;          // samples shown at once (one per second)
+let viewStart = null;    // null = follow live, otherwise the first sample index shown
+function viewBounds(){
+  const N = hist.length, maxS = Math.max(0, N - WIN);
+  const s = viewStart === null ? maxS : Math.max(0, Math.min(viewStart, maxS));
+  return {N, maxS, s, e: Math.min(N, s + WIN)};
+}
+function syncScroll(maxS, s){
+  const row = $("gScrollRow"), sc = $("gScroll");
+  row.style.display = maxS > 0 ? "flex" : "none";
+  sc.max = maxS; sc.value = s;
+  $("gLive").disabled = viewStart === null;
+}
 function drawGraph(){
   const cv = $("graph"); if (!cv) return;
   const W = cv.clientWidth || 600, H = 150, dpr = window.devicePixelRatio || 1;
   if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)){ cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
   const g = cv.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
   const cs = getComputedStyle(document.body), muted = cs.getPropertyValue("--muted").trim() || "#888", line = cs.getPropertyValue("--line").trim() || "#ccc", ink = cs.getPropertyValue("--ink").trim() || "#222";
-  const x0 = 34, y0 = 24, pw = W - x0 - 8, ph = H - y0 - 20;
+  const x0 = 34, y0 = 24, pw = W - x0 - 8, ph = H - y0 - 20, bw = pw / WIN;
   g.font = "11px system-ui,sans-serif"; g.textBaseline = "middle";
   [0, 50, 100].forEach(v => { const y = y0 + ph - ph * v / 100; g.strokeStyle = line; g.lineWidth = 1; g.beginPath(); g.moveTo(x0, y); g.lineTo(x0 + pw, y); g.stroke(); g.fillStyle = muted; g.textAlign = "right"; g.fillText(v + "%", x0 - 6, y); });
-  const N = hist.length;
+  const {N, maxS, s, e} = viewBounds();
+  syncScroll(maxS, s);
   if (N < 2){ g.fillStyle = muted; g.textAlign = "center"; g.fillText("Speed and stroke history appears here once a session starts.", x0 + pw / 2, y0 + ph / 2); updateLegend(); $("gInfo").textContent = ""; return; }
-  const nB = Math.max(1, Math.min(N, Math.floor(pw / 2))), bw = pw / nB, bk = [];
-  for (let b = 0; b < nB; b++){
-    const a = Math.floor(b * N / nB), e = Math.min(N, Math.max(a + 1, Math.floor((b + 1) * N / nB)));
-    let mv = 0, sr = 0, c = 0; for (let i = a; i < e; i++){ mv = Math.max(mv, hist[i].v); sr += hist[i].r; c++; }
-    bk.push({v: mv, r: sr / c, who: hist[e - 1].who});
-  }
+  const seg = hist.slice(s, e);
   let rs = 0;
-  for (let b = 0; b <= nB; b++){
-    if (b === nB || bk[b].who !== bk[rs].who){
-      const w = bk[rs].who, xs = x0 + rs * bw, xe = x0 + b * bw;
+  for (let j = 0; j <= seg.length; j++){
+    if (j === seg.length || seg[j].who !== seg[rs].who){
+      const w = seg[rs].who, xs = x0 + rs * bw, xe = x0 + j * bw;
       g.fillStyle = hexA(whoColor(w), 0.11); g.fillRect(xs, y0, xe - xs, ph);
       if (rs > 0){ g.strokeStyle = hexA(whoColor(w), 0.8); g.lineWidth = 1.5; g.beginPath(); g.moveTo(xs, y0); g.lineTo(xs, y0 + ph); g.stroke(); }
       if (xe - xs > 46){ g.fillStyle = whoColor(w); g.textAlign = "left"; g.fillText(whoName(w), xs + 4, y0 + 8); }
-      rs = b;
+      rs = j;
     }
   }
-  bk.forEach((k, i) => { const h = ph * k.v / 100; if (h > 0){ g.fillStyle = hexA(whoColor(k.who), 0.8); g.fillRect(x0 + i * bw, y0 + ph - h, Math.ceil(bw), h); } });
+  seg.forEach((k, j) => { const h = ph * k.v / 100; if (h > 0){ g.fillStyle = hexA(whoColor(k.who), 0.8); g.fillRect(x0 + j * bw, y0 + ph - h, Math.max(1, bw), h); } });
   g.strokeStyle = ink; g.lineWidth = 1.5; if (g.setLineDash) g.setLineDash([4, 3]); g.beginPath();
-  bk.forEach((k, i) => { const x = x0 + (i + 0.5) * bw, y = y0 + ph - ph * k.r / 100; if (i) g.lineTo(x, y); else g.moveTo(x, y); });
+  seg.forEach((k, j) => { const x = x0 + (j + 0.5) * bw, y = y0 + ph - ph * k.r / 100; if (j) g.lineTo(x, y); else g.moveTo(x, y); });
   g.stroke(); if (g.setLineDash) g.setLineDash([]);
   g.save(); g.textAlign = "center"; g.textBaseline = "middle"; g.font = "bold 10px system-ui,sans-serif";
   marks.forEach(m => {
-    const x = Math.max(x0 + 6, Math.min(x0 + pw - 6, x0 + m.i / N * pw)), col = whoColor(m.who), ic = MKIND[m.kind][0];
+    if (m.i < s || m.i > e) return;
+    const x = x0 + (m.i - s) * bw, col = whoColor(m.who), ic = MKIND[m.kind][0];
     g.strokeStyle = hexA(col, 0.55); g.lineWidth = 1; if (g.setLineDash) g.setLineDash([2, 3]); g.beginPath(); g.moveTo(x, y0 - 6); g.lineTo(x, y0 + ph); g.stroke(); if (g.setLineDash) g.setLineDash([]);
     g.fillStyle = m.kind === "no" ? "#c0392b" : col; g.beginPath(); g.arc(x, y0 - 12, 7, 0, Math.PI * 2); g.fill();
     g.fillStyle = "#fff"; g.fillText(ic, x, y0 - 11.5);
   });
   g.restore();
-  g.fillStyle = muted; g.textBaseline = "alphabetic"; g.textAlign = "left"; g.fillText("0:00", x0, H - 4); g.textAlign = "right"; g.fillText(fmt(N * 1000), x0 + pw, H - 4);
+  g.fillStyle = muted; g.textBaseline = "alphabetic"; g.textAlign = "left"; g.fillText(fmt(s * 1000), x0, H - 4); g.textAlign = "right"; g.fillText(fmt((s + WIN) * 1000), x0 + pw, H - 4);
   updateLegend(); if (!$("gInfo").dataset.hover) $("gInfo").textContent = gSummary();
 }
 function sample(){
   const now = Date.now(); if (now - lastSample < 1000) return;
   lastSample = now; hist.push({v: curSpeed, r: curLen(), who: runTease && currentPersona ? currentPersona : "__you"});
-  if (hist.length > 7200){ hist.shift(); marks.forEach(m => m.i--); marks = marks.filter(m => m.i >= 0); }
+  if (hist.length > 7200){ hist.shift(); marks.forEach(m => m.i--); marks = marks.filter(m => m.i >= 0); if (viewStart !== null) viewStart = Math.max(0, viewStart - 1); }
   drawGraph();
 }
 $("graph").addEventListener("mousemove", e => {
-  const N = hist.length; if (N < 2) return;
-  const r = e.currentTarget.getBoundingClientRect(), pw = r.width - 42;
-  const i = Math.max(0, Math.min(N - 1, Math.floor((e.clientX - r.left - 34) / pw * N))), k = hist[i];
-  const mx = e.clientX - r.left - 34, near = marks.find(m => Math.abs(m.i / N * pw - mx) < 7);
+  const {N, s, e: en} = viewBounds(); if (N < 2) return;
+  const r = e.currentTarget.getBoundingClientRect(), pw = r.width - 42, bw = pw / WIN;
+  const mx = e.clientX - r.left - 34;
+  const i = s + Math.max(0, Math.min(en - s - 1, Math.floor(mx / bw))), k = hist[i];
+  const near = marks.find(m => m.i >= s && m.i <= en && Math.abs((m.i - s) * bw - mx) < 7);
   if (near && e.clientY - r.top < 40){ $("gInfo").dataset.hover = "1"; $("gInfo").textContent = fmt(near.i * 1000) + " · " + MKIND[near.kind][0] + " " + near.label + " · " + whoName(near.who); return; }
   $("gInfo").dataset.hover = "1"; $("gInfo").textContent = fmt((i + 1) * 1000) + " · speed " + k.v + "% · stroke " + Math.round(k.r) + "% · " + whoName(k.who);
 });
+$("gScroll").addEventListener("input", () => { const v = +$("gScroll").value, {maxS} = viewBounds(); viewStart = v >= maxS ? null : v; drawGraph(); });
+$("gLive").onclick = () => { viewStart = null; drawGraph(); };
 $("graph").addEventListener("mouseleave", () => { delete $("gInfo").dataset.hover; $("gInfo").textContent = gSummary(); });
 window.addEventListener("resize", drawGraph);
 
@@ -814,7 +828,7 @@ async function start(){
     if (!c.connected) throw new Error("Handy is not connected. Check the key and that the device is online, or turn on simulation mode under Session to try without it.");
     await api("PUT", "/mode", {mode: 0});                       // 0 = HAMP
     await sendStroke();
-    resetTease(); devStopped = false; hist = []; marks = []; lastSample = 0; vibeOn = false;
+    resetTease(); devStopped = false; hist = []; marks = []; lastSample = 0; vibeOn = false; viewStart = null;
     lastVel = velocityAt(0, ms); lastVelAt = Date.now();
     await api("PUT", "/hamp/velocity", {velocity: lastVel});
     await api("PUT", "/hamp/start");
