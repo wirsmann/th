@@ -1099,16 +1099,33 @@ function renderCrowd(){
   $("hypeBar").style.width = Math.max(2, Math.min(100, pop)) + "%";
   $("hypeLbl").textContent = t + " · Lv " + level();
 }
-function addFan(){
+function addFan(fav){
   const free = FANNAMES.filter(n => !fans.includes(n));
   const name = free.length ? pickOne(free) : pickOne(FANNAMES) + Math.floor(10 + Math.random() * 90);
   fans.push(name);
+  fanFav[name] = fav || (Math.random() < 0.65 && ALL.length ? (room.length && Math.random() < 0.7 ? pickOne(room) : pickOne(ALL)) : "");
   if (fans.length <= 12 ? Math.random() < 0.7 : Math.random() < 0.08) addMsg("sys", name + " joined the lounge.");
   if (Math.random() < 0.15) fanSay("hi", 1200 + Math.random() * 2000, null, null, name);
 }
+var fanFav = {};
+function dropFan(name){ const i = fans.indexOf(name); if (i >= 0) fans.splice(i, 1); delete fanFav[name]; }
+function followersLeave(p){
+  if (privateShow) return;
+  const mine = fans.filter(f => fanFav[f] === p && Math.random() < 0.75);
+  if (!mine.length) return;
+  mine.forEach((f, i) => setTimeout(() => { dropFan(f); renderCrowd(); }, 600 + i * (500 + Math.random() * 900)));
+  excite = Math.max(0, excite - 4 - mine.length);
+  if (mine.length >= 2) addMsg("sys", mine.length + " of " + SHORT[p] + "'s followers left with her.");
+}
+function followersJoin(p){
+  if (privateShow || !$("fansOn").checked || pop < 8) return;
+  const k = Math.min(3, 1 + Math.floor(Math.random() * (1 + pop / 40)));
+  for (let i = 0; i < k; i++) setTimeout(() => { if (privateShow || !room.includes(p)) return; addFan(p); renderCrowd(); }, 2500 + i * (1500 + Math.random() * 2500));
+  addMsg("sys", "Some of " + SHORT[p] + "'s followers are tuning in.");
+}
 function removeFan(){
   if (!fans.length) return;
-  const n = fans.splice(Math.floor(Math.random() * fans.length), 1)[0];
+  const n = fans.splice(Math.floor(Math.random() * fans.length), 1)[0]; delete fanFav[n];
   if (fans.length <= 8 && Math.random() < 0.4) addMsg("sys", n + " left.");
 }
 function fanSay(pool, delay, replyEl, persona, who){
@@ -1145,12 +1162,12 @@ function crowdTick(){
   excite *= 0.97;
   const base = (running ? 28 : 0) + (running && runTease ? 8 : 0) + room.length * 5 + (paused && !onBreak ? 4 : 0);
   const hype = Math.max(0, Math.min(100, base + excite));
-  pop += (hype - pop) * 0.025;
+  pop += (hype - pop) * (hype > pop ? 0.011 : 0.02);
   if (running) fame += pop / 100;
   const baseline = room.length ? Math.min(10, (level() - 1) * 2) : 0;
   const target = privateShow ? 0 : $("fansOn").checked ? Math.round(Math.pow(pop / 100, 1.5) * 70) + baseline : 0;
   let steps = 0;
-  while (fans.length < target && steps < (target - fans.length > 10 ? 3 : 2) && Math.random() < 0.7){ addFan(); steps++; }
+  while (fans.length < target && steps < (target - fans.length > 15 ? 2 : 1) && Math.random() < 0.4){ addFan(); steps++; }
   steps = 0;
   while (fans.length > target + 1 && steps < 2 && Math.random() < 0.6){ removeFan(); steps++; }
   if (fans.length > peakFans) peakFans = fans.length;
@@ -1173,7 +1190,7 @@ function renderRoom(){
 function chatHeader(){ renderRoom(); }
 function enterRoom(p, silent){
   if (!SHORT[p] || room.includes(p) || (privateShow && p !== privateShow.p)) return false;
-  room.push(p); renderRoom(); addMsg("sys", SHORT[p] + " joined the lounge.");
+  room.push(p); renderRoom(); addMsg("sys", SHORT[p] + " joined the lounge."); if (!silent || running) followersJoin(p);
   if (!silent) setTimeout(() => { if (room.includes(p)) sayAs(p, "enter"); }, 1200 + Math.random() * 1500);
   return true;
 }
@@ -1181,7 +1198,7 @@ function leaveRoom(p, quiet){
   if (!room.includes(p)) return;
   if (p === currentPersona && (running || paused || starting)) return;
   if (!quiet) sayAs(p, "leave");
-  setTimeout(() => { room = room.filter(x => x !== p); lastLeft[p] = Date.now(); renderRoom(); addMsg("sys", SHORT[p] + " left the lounge."); }, quiet ? 200 : 2800);
+  setTimeout(() => { room = room.filter(x => x !== p); lastLeft[p] = Date.now(); renderRoom(); addMsg("sys", SHORT[p] + " left the lounge."); followersLeave(p); }, quiet ? 200 : 2800);
 }
 function giveControl(p){
   if (busyNow()){ addMsg("sys", "Finish the current session first."); return; }
@@ -2780,7 +2797,7 @@ function acceptPrivate(p){
     setTimeout(() => sayAs(o, "privBye", null, {other: p, replyTo: p}), 1500 + i * 900);
     setTimeout(() => leaveRoom(o, true), 3200 + i * 900);
   });
-  setTimeout(() => { fans.length = 0; renderRoom(); }, 2500);
+  setTimeout(() => { fans.length = 0; fanFav = {}; renderRoom(); }, 2500);
   excite = Math.min(60, excite + 12); nextPrivMidAt = Date.now() + 14000; nextDemandAt = Date.now() + 9000; nextAskAt = Date.now() + 50000;
   setTimeout(forceBuild, 3500); renderRoom();
 }
