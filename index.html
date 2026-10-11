@@ -65,10 +65,6 @@
   .simPill{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border-radius:999px;background:#e0a43a;color:#2a1a00;font-size:.75rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
   .teaseBtn.simBtn{border-color:#e0a43a;color:#b47c12}
   .teaseBtn.simBtn[aria-pressed="true"]{background:#e0a43a;color:#2a1a00}
-  .vibTbl{width:100%;border-collapse:collapse;margin-top:6px;font-size:.88rem}
-  .vibTbl th{text-align:left;font-weight:500;color:var(--muted);font-size:.78rem;padding:2px 4px}
-  .vibTbl td{padding:2px 4px}
-  .vibTbl input{padding:5px 8px}
   .subHead{display:block;margin:18px 0 0;padding-top:12px;border-top:1px solid var(--line);font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
   .simBox{display:flex;align-items:center;gap:12px;margin:10px auto 0;padding:8px 12px;border:1px dashed var(--line);border-radius:12px;max-width:240px}
   .simRail{position:relative;width:18px;height:110px;border-radius:9px;background:var(--ring-bg);flex:none}
@@ -224,6 +220,11 @@
   <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:8px"><input type="checkbox" id="tRandom"> Random session length with a hidden timer</label>
   <div class="grid" id="sessRandFields"></div>
   <p class="hint">Picks a length between the shortest and longest each time you press Start. The clock and ring are hidden, the one-minute warning is off, and the minutes and seconds boxes are ignored. Your daily limit still caps it.</p>
+
+  <strong class="subHead">Vibration bursts</strong>
+  <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:10px"><input type="checkbox" id="vibOn"> Personalities can switch to a short vibration burst</label>
+  <div class="row"><div><label for="vibWidth">Vibration stroke width (% of full length)</label><input id="vibWidth" type="number" min="2" max="30" value="6"></div></div>
+  <p class="hint">In tease mode, the one in control can now and then narrow the stroke to this width in the middle of your range and run it at your full speed slider, so it buzzes instead of strokes. Then she rests and your range comes back. How often and how long is set per personality under Personas.</p>
     </section>
     <section class="panel" data-key="tease" hidden>
     <p class="hint" style="margin-top:0">Acts like someone else is running it: it builds up over a random time, holds, then backs off, then repeats with new random numbers each cycle. Your speed slider is the maximum, and the low and peak values below are percentages of it. While it's on, it replaces the ramp and pattern. The stroke range, speed cap, end slowdown, and time limits still apply. While a tease session is running, stopping or pausing counts as failing it: the device still stops right away, but you're locked out as if the time had run out.</p>
@@ -237,6 +238,11 @@
       <button class="mini" id="persRandom" style="margin:0">Surprise me</button>
     </div>
     <p class="hint" id="persDesc">Picking one fills in the Tease timing and turns tease mode on. You can still adjust any value afterward.</p>
+
+    <strong class="subHead" id="persCfgHead">Her settings</strong>
+    <p class="hint" id="persCfgNone">Pick a personality above to see and change her settings.</p>
+    <div id="persCfg"></div>
+    <p class="hint" id="persCfgHint" hidden>Gives up control: how likely she is to hand control over when someone asks, or on her own after a few minutes. Vibration: her chance per tease cycle of a short buzz, and how long it lasts. Burst width and the on/off switch are under Session.</p>
     <label for="nickCustom">Nickname override (blank = each personality uses her own)</label>
     <input id="nickCustom" type="text" maxlength="24" autocomplete="off" placeholder="e.g. pet, subject, rookie">
 
@@ -247,15 +253,6 @@
     <div class="grid" id="persFields"></div>
     <p class="hint">Whoever is in control keeps a target speed and stroke length and nudges you toward it 5 points at a time. Each demand has Do it, Match her target and Refuse buttons. Refusing makes her more insistent. Questions come with answer buttons, and a few of the answers change what happens next (a rest, a hold, a fresh build-up).</p>
 
-    <strong class="subHead">Vibration bursts</strong>
-    <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:10px"><input type="checkbox" id="vibOn"> Personalities can switch to a short vibration burst</label>
-    <p class="hint">In tease mode, the one in control can now and then narrow the stroke to a tiny range and run it at your full speed slider, so it buzzes instead of strokes. Then she rests and your stroke range comes back. Chance is per tease cycle. All default low.</p>
-    <div class="row"><div><label for="vibWidth">Vibration stroke width (% of full length)</label><input id="vibWidth" type="number" min="2" max="30" value="6"></div></div>
-    <table class="vibTbl"><thead><tr><th>Personality</th><th>Chance (%)</th><th>Length (s)</th></tr></thead><tbody id="vibRows"></tbody></table>
-
-    <strong class="subHead">Giving up control</strong>
-    <p class="hint">The one in control may give it up when asked, and may also hand it over on her own after a few minutes. These numbers set how likely each one is to give it up. All default low.</p>
-    <div class="grid" id="yieldFields"></div>
   </section>
     <section class="panel" data-key="speed" hidden>
     <div class="row">
@@ -978,7 +975,7 @@ const PERSONAS = {
 Object.keys(PERSONAS).forEach(k => { const o = document.createElement("option"); o.value = o.textContent = k; $("persona").append(o); });
 function applyPersona(name, jitter){
   const p = PERSONAS[name]; if (!p) return;
-  if (running || paused || starting){ status("Stop the session before changing personality.", true); $("persona").value = ""; return; }
+  if (running || paused || starting){ status("Stop the session before changing personality.", true); $("persona").value = currentPersona || ""; renderPersCfg(); return; }
   const j = v => jitter ? Math.round(v * (0.85 + Math.random() * 0.3)) : v;
   const pmin = Math.min(100, j(p.pmin)), bmin = j(p.bmin), hmin = j(p.hmin), rmin = j(p.rmin);
   const vals = {tLow: Math.min(100, j(p.low)), tPeakMin: pmin, tPeakMax: Math.min(100, Math.max(pmin, j(p.pmax))),
@@ -992,10 +989,10 @@ function applyPersona(name, jitter){
   status("Tease mode on: " + name + ".");
   currentPersona = name; store.set("h_persona", name); enterRoom(name, true); chatHeader(); say("greet");
 }
-$("persona").onchange = () => applyPersona($("persona").value, false);
+$("persona").onchange = () => { applyPersona($("persona").value, false); renderPersCfg(); };
 $("persRandom").onclick = () => {
   const keys = Object.keys(PERSONAS), k = keys[Math.floor(Math.random() * keys.length)];
-  $("persona").value = k; applyPersona(k, true);
+  $("persona").value = k; applyPersona(k, true); renderPersCfg();
 };
 
 /* ---------- personality chat ---------- */
@@ -1331,7 +1328,7 @@ function takeOverManual(p){
   setPersonaFields(p, true);
   $("teaseOn").checked = true; store.set("h_teaseOn", true); saveInputs();
   runTease = true; runHidden = false;
-  currentPersona = p; store.set("h_persona", p); $("persona").value = p;
+  currentPersona = p; store.set("h_persona", p); $("persona").value = p; renderPersCfg();
   enterRoom(p, true); resetTease(); lastVelAt = 0; renderRoom();
   $("persDesc").textContent = PERSONAS[p].d + targetNote(p);
   addMsg("sys", SHORT[p] + " took control from you. Stopping or pausing now counts as failing this session.");
@@ -1353,7 +1350,7 @@ function giveControl(p){
   if (locked){ addMsg("sys", "You're locked out right now. Check the status line."); return; }
   if (!simOn() && !$("key").value.trim()){ addMsg("sys", "Enter your connection key first."); status("Enter your connection key first.", true); return; }
   $("persona").value = p;
-  applyPersona(p, false);
+  applyPersona(p, false); renderPersCfg();
   start();
 }
 const giveOffer = (p, label, ttl) => ({id: "give:" + p, who: p, text: "wants control", color: PCOL[p], ttl: ttl || 40000, onGone: why => { if (why === "expired") addMsg("sys", SHORT[p] + " got tired of waiting."); }, valid: () => (!busyNow() || manualRun()) && !locked, choices: [{label: label, kind: "primary", note: manualRun() ? "Switches to tease mode. She takes over right away, and stopping or pausing counts as failing." : undefined, apply: () => giveControl(p)}, {label: "Not now", kind: "ghost", apply: () => addMsg("me", "Not now.")}]});
@@ -1458,7 +1455,7 @@ function setPersonaFields(name, jitter){
 function switchController(name){
   if (!SHORT[name] || name === currentPersona) return;
   setPersonaFields(name, true);
-  currentPersona = name; store.set("h_persona", name); $("persona").value = name;
+  currentPersona = name; store.set("h_persona", name); $("persona").value = name; renderPersCfg();
   enterRoom(name, true); renderRoom(); resetTease(); lastVelAt = 0;
   $("persDesc").textContent = PERSONAS[name].d + targetNote(name);
   addMsg("sys", SHORT[name] + " took control.");
@@ -1681,28 +1678,28 @@ const VIB_DEF = {"Patient Priscilla":[2,6], "Mischievous Mia":[6,6], "Strict Ms.
 const vibNum = (pfx, p, i, lo, hi) => { const e = document.getElementById(pfx + NAMEKEY[p]); const v = e ? parseFloat(e.value) : NaN; return Math.max(lo, Math.min(hi, isNaN(v) ? ((VIB_DEF[p] || [3, 8])[i]) : v)); };
 const vibChance = p => vibNum("vibC_", p, 0, 0, 100);
 const vibSecs = p => vibNum("vibS_", p, 1, 2, 60);
-(function(){
-  const box = $("vibRows");
-  ALL.forEach(p => {
-    const k = NAMEKEY[p], d = VIB_DEF[p] || [3, 8], tr = document.createElement("tr");
-    tr.innerHTML = '<td>' + SHORT[p] + '</td><td><input id="vibC_' + k + '" type="number" min="0" max="100" value="' + d[0] + '" aria-label="' + SHORT[p] + ' vibration chance (%)"></td><td><input id="vibS_' + k + '" type="number" min="2" max="60" value="' + d[1] + '" aria-label="' + SHORT[p] + ' vibration length (s)"></td>';
-    box.append(tr);
-    tr.querySelectorAll("input").forEach(e => { const v = store.get("h_" + e.id, null); if (v !== null) e.value = v; e.onchange = () => store.set("h_" + e.id, e.value); });
-  });
-})();
 
 /* ---------- handing over: personas ask the controller directly, or the controller gives control up on her own ---------- */
 const yieldPct = p => { const e = document.getElementById("yld_" + NAMEKEY[p]); const v = e ? parseFloat(e.value) : NaN; return isNaN(v) ? (YIELD_DEF[p] || 5) : Math.max(0, Math.min(100, v)); };
+/* per-persona settings: one group per personality, only the selected one is shown */
 (function(){
-  const box = $("yieldFields");
+  const box = $("persCfg");
   ALL.forEach(p => {
-    const id = "yld_" + NAMEKEY[p], d = document.createElement("div");
-    d.innerHTML = '<label for="' + id + '">' + SHORT[p] + ' gives up control (%)</label><input id="' + id + '" type="number" min="0" max="100" value="' + YIELD_DEF[p] + '">';
-    box.append(d);
-    const e = d.querySelector("input"), v = store.get("h_" + id, null); if (v !== null) e.value = v;
-    e.onchange = () => store.set("h_" + id, e.value);
+    const k = NAMEKEY[p], v = VIB_DEF[p] || [3, 8], g = document.createElement("div");
+    g.className = "grid"; g.dataset.p = p; g.hidden = true;
+    g.innerHTML = '<div><label for="yld_' + k + '">Gives up control (%)</label><input id="yld_' + k + '" type="number" min="0" max="100" value="' + YIELD_DEF[p] + '"></div>'
+      + '<div><label for="vibC_' + k + '">Vibration chance per cycle (%)</label><input id="vibC_' + k + '" type="number" min="0" max="100" value="' + v[0] + '"></div>'
+      + '<div><label for="vibS_' + k + '">Vibration length (s)</label><input id="vibS_' + k + '" type="number" min="2" max="60" value="' + v[1] + '"></div>';
+    box.append(g);
+    g.querySelectorAll("input").forEach(e => { const sv = store.get("h_" + e.id, null); if (sv !== null) e.value = sv; e.onchange = () => store.set("h_" + e.id, e.value); });
   });
 })();
+function renderPersCfg(){
+  const p = $("persona").value;
+  document.querySelectorAll("#persCfg > [data-p]").forEach(g => g.hidden = g.dataset.p !== p);
+  $("persCfgHead").textContent = p ? SHORT[p] + "'s settings" : "Her settings";
+  $("persCfgNone").hidden = !!p; $("persCfgHint").hidden = !p;
+}
 function beginDirect(ch){
   if (!running || !runTease || onBreak || challenge || denyAll || privateShow || lifeEv) return;
   const ctl = currentPersona; if (!ctl || ch === ctl) return;
@@ -1983,6 +1980,7 @@ const RENAMED = {"Mischievous Milo":"Mischievous Mia","Chaos Casper":"Chaos Cass
 currentPersona = RENAMED[currentPersona] || currentPersona;
 if (currentPersona && !PERSONAS[currentPersona]) currentPersona = "";
 if (currentPersona) $("persona").value = currentPersona;
+renderPersCfg();
 simUI(); syncSimBtn();
 addMsg("sys", "Welcome to the lounge. Personalities drop in and out. Pick one under Personas to hand over control, or wait for someone to tempt you.");
 try { if (!store.get("lubeParkMig", 0)){ if (+$("lubePark").value === 0) $("lubePark").value = 20; store.set("lubeParkMig", 1); saveInputs(); } } catch(e){}

@@ -53,9 +53,9 @@ The fake device roughly follows the real one: speed is a share of the maximum tr
 - **The Lounge** (left) has the chat log, the crowd/hype bar, who's in the room, and an activity graph. The graph shows speed and stroke length colored by who was in control, with markers for events like moves, fake-outs, refusals, lube breaks and private shows.
 - **Timer** (right) has the countdown dial, Start / Pause / Stop, the tease mode toggle, live speed and stroke sliders, and "Your actions". Any choice that needs an answer appears there, never inside chat messages.
 - **Settings drawer** (top menu) has these panels:
-  - **Session:** connection key, length and presets, beeps, and tease session options (fully stop during rests, random hidden length).
+  - **Session:** connection key, length and presets, beeps, tease session options (fully stop during rests, random hidden length), and vibration bursts (on/off and width).
   - **Tease:** tease timing (low and peak speeds, build, hold and rest times, special moves, fake-outs, escalation).
-  - **Personas:** which personality is in control, nickname override, behaviour (questions and demands, storming off, private shows, real-life interruptions), vibration bursts (on/off, width, and each personality's chance and length) and how readily each one gives up control.
+  - **Personas:** which personality is in control, then that personality's own settings (how readily she gives up control, her vibration chance and length), the nickname override, and behaviour switches (questions and demands, storming off, private shows, real-life interruptions). Only the selected personality's settings are shown; pick another in the dropdown to change hers.
   - **Speed:** ramp, pattern and end slowdown for regular sessions.
   - **Customize:** percentages for ramp and slowdown, speed cap, start delay, beep volume, the lounge audience, how control requests are aimed, and hiding the clock.
   - **Lube**, **Limits**, **Profiles** and **Log**.
@@ -69,7 +69,7 @@ Runs at a constant speed from the slider. Optional extras are a ramp-up, an alte
 A cycle engine that builds, holds and rests with randomized timings. It also has:
 - **Fake-outs:** a build that backs off early.
 - **Special moves:** push, stairs, pulse, surge, cliff, wave, flutter and slow burn. Each personality has favorites.
-- **Vibration bursts:** now and then, the personality in control narrows the stroke to a tiny band in the middle of your range (6% wide by default) and runs it at your full speed slider, so it buzzes instead of strokes. It lasts a few seconds, then she rests and your normal range comes back. Each personality has her own chance per tease cycle (2 to 8% by default) and length (5 to 12 seconds), all set under Personas, with a switch to turn bursts off.
+- **Vibration bursts:** now and then, the personality in control narrows the stroke to a tiny band in the middle of your range (6% wide by default) and runs it at your full speed slider, so it buzzes instead of strokes. It lasts a few seconds, then she rests and your normal range comes back. Each personality has her own chance per tease cycle (2 to 8% by default) and length (5 to 12 seconds), set per personality under Personas. The on/off switch and the burst width are under Session.
 - **Escalation:** peaks can rise by a set percentage each cycle.
 - **Random hidden length:** picks a session length between two values and hides the clock.
 - **Failing:** in tease mode, Stop or Pause ends the session as a failure. The device still stops immediately, and a lockout can follow.
@@ -166,6 +166,7 @@ The session log can be exported as CSV.
 
 ## Changelog
 
+- **2026-10-11:** Personas panel shows only the selected personality's settings. Vibration on/off and width moved to Session.
 - **2026-10-11:** Added vibration bursts to tease mode, with per-persona chance and length settings under Personas.
 - **2026-10-11:** New Personas panel (personality picker, nickname, behaviour, giving up control) replaces Handover. Tease session options moved to Session. Simulation is now a dashboard button.
 - **2026-10-11:** Added simulation mode for running without a device.
