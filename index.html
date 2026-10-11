@@ -217,6 +217,7 @@
     <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:6px"><input type="checkbox" id="crowdBoost"> Audience raises intensity in tease mode</label>
     <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:6px"><input type="checkbox" id="interactOn"> Personalities ask questions and make demands</label>
     <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:6px"><input type="checkbox" id="stormOn"> Personalities storm off if you refuse too many demands (each has her own tolerance)</label>
+    <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:6px"><input type="checkbox" id="privOn"> Personalities can ask to go private (locks the room, gets more intense)</label>
     <p class="hint">Whoever is in control keeps a target speed and stroke length and nudges you toward it 5 points at a time. Each demand has Do it, Match her target and Refuse buttons. Refusing makes her more insistent. Questions come with answer buttons, and a few of the answers change what happens next (a rest, a hold, a fresh build-up).</p>
     <p class="hint">A bigger crowd makes personalities challenge each other more and fight harder to keep control. With the second box on, it also nudges tease sessions: peaks up to 20% higher (never above your speed slider), rests up to 30% shorter, and up to 10 points more fake-outs.</p>
     <label for="nickCustom">Nickname override (blank = each personality uses her own)</label>
@@ -278,7 +279,7 @@ const store = {
 };
 $("key").value = store.get("handyKey", "");
 const TEASE = [["tLow","Low speed (% of max)",15],["tPeakMin","Peak speed, lowest (% of max)",60],["tPeakMax","Peak speed, highest (% of max)",90],["tBuildMin","Build time, shortest (s)",20],["tBuildMax","Build time, longest (s)",60],["tHoldMin","Hold, shortest (s)",3],["tHoldMax","Hold, longest (s)",10],["tRestMin","Rest, shortest (s)",5],["tRestMax","Rest, longest (s)",20],["tAct","Special moves: chance per cycle (%)",35],["tFake","Fake-out chance (%)",20],["tEsc","Peak increase per cycle (%)",0],["rMin","Random length, shortest (min)",8],["rMax","Random length, longest (min)",20]];
-const CUSTOM = [["rampStart","Ramp starts at (%)",10],["altSlow","Slow phase speed (%)",40],["endSlow","End slowdown goes to (%)",40],["cap","Max speed cap (%)",100],["delay","Start delay (s)",0],["vol","Beep volume (%)",30]];
+const CUSTOM = [["privMin","Private show offered after (min in control)",6],["rampStart","Ramp starts at (%)",10],["altSlow","Slow phase speed (%)",40],["endSlow","End slowdown goes to (%)",40],["cap","Max speed cap (%)",100],["delay","Start delay (s)",0],["vol","Beep volume (%)",30]];
 function mkFields(boxId, list){
   list.forEach(([id, lab, def]) => {
     const d = document.createElement("div");
@@ -289,7 +290,7 @@ function mkFields(boxId, list){
 mkFields("teaseFields", TEASE); mkFields("customFields", CUSTOM);
 const FIELDS = ["speed","smin","smax","min","sec","ramp","slow","pattern","period","daily","cool","failLock","lubeEvery","lubeGap","lubePark","nickCustom"].concat(TEASE.map(t=>t[0]), CUSTOM.map(c=>c[0]));
 FIELDS.forEach(id => { const v = store.get("h_"+id, null); if (v !== null) $(id).value = v; });
-const BOOLS = {beepEnd:true, beepWarn:true, awake:true, teaseOn:false, tStop:true, hideClock:false, tRandom:false, failCharge:false, lubeOn:true, lubeReg:true, fansOn:true, crowdBoost:true, interactOn:true, stormOn:true};
+const BOOLS = {beepEnd:true, beepWarn:true, awake:true, teaseOn:false, tStop:true, hideClock:false, tRandom:false, failCharge:false, lubeOn:true, lubeReg:true, fansOn:true, crowdBoost:true, interactOn:true, stormOn:true, privOn:true};
 Object.keys(BOOLS).forEach(id => { $(id).checked = store.get("h_"+id, BOOLS[id]); $(id).onchange = () => store.set("h_"+id, $(id).checked); });
 let presets = store.get("handyPresets", [300, 600, 900, 1800]);   // seconds
 
@@ -686,7 +687,7 @@ async function start(){
     if (currentPersona){ enterRoom(currentPersona, true); react("claimed", currentPersona); }
     challenge = null; nextChallengeAt = Date.now() + 30000 + Math.random() * 20000; Object.keys(attempts).forEach(k => attempts[k] = 0);
     demand = null; ask = null; removeOffer("demand"); removeOffer("ask"); nextAskAt = Date.now() + 40000 + Math.random() * 20000; nextDemandAt = Date.now() + 65000 + Math.random() * 20000;
-    Object.keys(defiance).forEach(k => defiance[k] = 0); Object.keys(creep).forEach(k => delete creep[k]); Object.keys(hit).forEach(k => hit[k] = 0);
+    Object.keys(defiance).forEach(k => defiance[k] = 0); privateShow = null; ctlWho = ""; removeOffer("priv"); Object.keys(creep).forEach(k => delete creep[k]); Object.keys(hit).forEach(k => hit[k] = 0);
     setTimeout(() => { if (running) commentSettings("start"); }, 4500);
     setTimeout(() => { if (running && (n("tFake", 20) >= 40 || n("tEsc", 0) > 0)) say("fakeNote"); }, 10000);
     if (runHidden) setTimeout(() => { if (running) say("hidden"); }, 7500);
@@ -712,6 +713,7 @@ async function finish(msg, timeUp, failed){
   const wasRunning = running;
   holdStatusUntil = Date.now() + 6000;
   const wasTease = runTease; midCat = ""; onBreak = false; challenge = null;
+  if (privateShow){ privateShow = null; removeOffer("priv"); addMsg("sys", "The private show is over. The lounge is open again."); renderRoom(); }
   const wasHidden = runHidden; runHidden = false;
   const leftNow = timeUp ? 0 : (running ? Math.max(0, endAt - Date.now()) : remaining);
   const ranSec = Math.round((total - leftNow) / 1000);
@@ -1089,11 +1091,11 @@ const FMAP = {fake:"fake",fakeAfter:"fake",hold:"hold",holdMid:"hold",rest:"rest
 const TIERS = [[0,"Quiet"],[10,"Warming up"],[30,"Buzzing"],[55,"Packed"],[80,"Legendary"]];
 let fans = [], excite = 0, pop = 0, fame = store.get("handyFame", 0), peakFans = store.get("handyPeak", 0), lastTier = 0, nextFanAt = Date.now() + 8000, lastFanMsgAt = 0, lastFanReplyAt = 0, nextCrowdAt = Date.now() + 60000, tickN = 0;
 function level(){ return 1 + Math.floor(Math.sqrt(fame / 40)); }
-function aggr(){ return $("fansOn").checked ? 1 + Math.min(1.5, fans.length / 30) : 1; }
-function crowdLevel(){ return ($("crowdBoost").checked && $("fansOn").checked) ? Math.min(1, (aggr() - 1) / 1.5) : 0; }
+function aggr(){ if (privateShow) return 2.2; return $("fansOn").checked ? 1 + Math.min(1.5, fans.length / 30) : 1; }
+function crowdLevel(){ if (privateShow) return 0.9; return ($("crowdBoost").checked && $("fansOn").checked) ? Math.min(1, (aggr() - 1) / 1.5) : 0; }
 function renderCrowd(){
   const t = TIERS.filter(x => pop >= x[0]).pop()[1];
-  $("roomCount").textContent = room.length + " in the room · " + fans.length + " watching";
+  $("roomCount").textContent = privateShow ? "🔒 Private show with " + SHORT[privateShow.p] + " · room locked" : room.length + " in the room · " + fans.length + " watching";
   $("hypeBar").style.width = Math.max(2, Math.min(100, pop)) + "%";
   $("hypeLbl").textContent = t + " · Lv " + level();
 }
@@ -1146,14 +1148,14 @@ function crowdTick(){
   pop += (hype - pop) * 0.025;
   if (running) fame += pop / 100;
   const baseline = room.length ? Math.min(10, (level() - 1) * 2) : 0;
-  const target = $("fansOn").checked ? Math.round(Math.pow(pop / 100, 1.5) * 70) + baseline : 0;
+  const target = privateShow ? 0 : $("fansOn").checked ? Math.round(Math.pow(pop / 100, 1.5) * 70) + baseline : 0;
   let steps = 0;
   while (fans.length < target && steps < (target - fans.length > 10 ? 3 : 2) && Math.random() < 0.7){ addFan(); steps++; }
   steps = 0;
   while (fans.length > target + 1 && steps < 2 && Math.random() < 0.6){ removeFan(); steps++; }
   if (fans.length > peakFans) peakFans = fans.length;
   const ti = TIERS.filter(x => pop >= x[0]).length - 1;
-  if (ti > lastTier && (running || pop > 12)){ addMsg("sys", "The lounge is now " + TIERS[ti][1] + ". " + fans.length + " watching."); personaCrowdLine(); }
+  if (ti > lastTier && !privateShow && (running || pop > 12)){ addMsg("sys", "The lounge is now " + TIERS[ti][1] + ". " + fans.length + " watching."); personaCrowdLine(); }
   lastTier = ti;
   if (++tickN % 10 === 0){ store.set("handyFame", Math.round(fame)); store.set("handyPeak", peakFans); }
   renderCrowd();
@@ -1170,7 +1172,7 @@ function renderRoom(){
 }
 function chatHeader(){ renderRoom(); }
 function enterRoom(p, silent){
-  if (!SHORT[p] || room.includes(p)) return false;
+  if (!SHORT[p] || room.includes(p) || (privateShow && p !== privateShow.p)) return false;
   room.push(p); renderRoom(); addMsg("sys", SHORT[p] + " joined the lounge.");
   if (!silent) setTimeout(() => { if (room.includes(p)) sayAs(p, "enter"); }, 1200 + Math.random() * 1500);
   return true;
@@ -1344,7 +1346,7 @@ function resolveChallenge(c, win){
   }
 }
 function startChallenge(){
-  if (!running || !runTease || onBreak || challenge) return;
+  if (!running || !runTease || onBreak || challenge || privateShow) return;
   nextChallengeAt = Date.now() + (50000 + Math.random() * 40000) / aggr();
   const others = room.filter(p => p !== currentPersona);
   if (!others.length){
@@ -2544,6 +2546,257 @@ const MORE11 = {
 };
 Object.keys(MORE11).forEach(k => Object.keys(MORE11[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE11[k][c]); }));
 Object.assign(HYPE, {act_push:4,act_stairs:3,act_pulse:3,act_surge:5,act_cliff:5,act_wave:3,act_flutter:3,act_slowburn:2});
+const MORE12 = {
+ "Patient Priscilla": {
+  "privAsk": [
+   "We've been at this a while, {nick}. Shall I send everyone away and keep you to myself?",
+   "I'd like you all to myself now, {nick}. Just us. Shall I lock the door?"
+  ],
+  "privOn": [
+   "Lovely. Door's locked, {nick}. Now it's just you and me.",
+   "Everyone out. Now we can do this properly, {nick}."
+  ],
+  "privDeny": [
+   "Mm. Not yet, then. I'll ask again, {nick}.",
+   "That's all right, {nick}. I'm patient. The offer stands."
+  ],
+  "privMid": [
+   "No audience now, {nick}. Nobody to hide from.",
+   "I'm going to take my time with you, {nick}. All of it.",
+   "Look at me, {nick}. Only me."
+  ],
+  "privBye": [
+   "Thank you for the turn, {other}. Do see yourselves out.",
+   "It's been lovely, {other}. We'll manage from here."
+  ]
+ },
+ "Mischievous Mia": {
+  "privAsk": [
+   "Psst, {nick}! Let's kick everyone out and play just us! Yes?",
+   "Wanna go private, {nick}? Lock the door, just you and me! Hehe!"
+  ],
+  "privOn": [
+   "Yay! Door locked! Shoo, everyone! It's just us, {nick}!",
+   "Private time! No more audience, {nick}. Hehe, now I get to be REALLY naughty."
+  ],
+  "privDeny": [
+   "Aww, boo! Fine, but I'll ask again, {nick}!",
+   "Hmph! Not now? Okay, okay. Later, {nick}!"
+  ],
+  "privMid": [
+   "Nobody's watching, {nick}. Hehe, I can do anything!",
+   "Just us now, {nick}! No rules!",
+   "Shh, don't tell anybody what I'm about to do, {nick}!"
+  ],
+  "privBye": [
+   "Bye, {other}! Door's closing! Hehe!",
+   "Out you go, {other}! He's mine now!"
+  ]
+ },
+ "Strict Ms. Vance": {
+  "privAsk": [
+   "I would like to continue in private, {nick}. No audience. Agreed?",
+   "The room is a distraction, {nick}. I intend to clear it. Do you consent?"
+  ],
+  "privOn": [
+   "Good. The door is locked, {nick}. You have my full attention now.",
+   "Everyone is dismissed. We continue in private, {nick}. Prepare yourself."
+  ],
+  "privDeny": [
+   "Very well, {nick}. I will ask again.",
+   "Declined. For now, {nick}. Do not mistake that for a reprieve."
+  ],
+  "privMid": [
+   "There is no one to witness this now, {nick}. Only discipline.",
+   "Stay with me, {nick}. No distractions.",
+   "I expect much more from you now, {nick}."
+  ],
+  "privBye": [
+   "You are dismissed, {other}. Leave us.",
+   "That will be all, {other}. Close the door behind you."
+  ]
+ },
+ "Chaos Cassie": {
+  "privAsk": [
+   "PRIVATE ROOM! Yes? Yes?! Kick everybody OUT, {nick}!",
+   "Let's lock the door, {nick}! Just us! Nobody can stop me!"
+  ],
+  "privOn": [
+   "DOOR LOCKED! EVERYONE OUT! It's just us, {nick}!",
+   "Private show! Wheee! Chaos time, {nick}!"
+  ],
+  "privDeny": [
+   "Boo! Fine! I'll ask again in like five seconds, {nick}!",
+   "NOT NOW?! Rude! Okay, later, {nick}!"
+  ],
+  "privMid": [
+   "Nobody's watching! I can do ANYTHING, {nick}!",
+   "Just us! Hahaha! Hold on tight, {nick}!",
+   "No rules now, {nick}! Not even mine!"
+  ],
+  "privBye": [
+   "BYE, {other}! Door's locked!",
+   "OUT, {other}! Shoo! He's MINE!"
+  ]
+ },
+ "Sweet-Talker Sienna": {
+  "privAsk": [
+   "Let's go somewhere private, {nick}. Just you and me. Won't that be nice?",
+   "Shall I send everyone away, {nick}? I want you all to myself."
+  ],
+  "privOn": [
+   "Mm, thank you, {nick}. Door's locked. Now it's only us.",
+   "Everyone's gone, {nick}. Now I can really take care of you."
+  ],
+  "privDeny": [
+   "Aw. All right, {nick}. I'll ask again later. I'm not giving up on you.",
+   "Not yet? That's okay, {nick}. I'll wait."
+  ],
+  "privMid": [
+   "No one else is watching, {nick}. It's just me now.",
+   "Mm, you're all mine, {nick}. Stay with me.",
+   "Look at me, {nick}. Only me. Good."
+  ],
+  "privBye": [
+   "Sorry, {other}, but he's mine tonight. Goodbye.",
+   "Time for you to go, {other}. Lovely seeing you."
+  ]
+ },
+ "Relentless Roxy": {
+  "privAsk": [
+   "I'm clearing the room, {nick}. Private session. You in?",
+   "No more audience, {nick}. Just you and me. Say yes."
+  ],
+  "privOn": [
+   "Door's locked, {nick}. No one's coming to save you.",
+   "Everyone out. Now it's just us, {nick}. I'm not holding back."
+  ],
+  "privDeny": [
+   "Your loss, {nick}. I'll ask again.",
+   "Fine. Not yet. But I'm not letting this drop, {nick}."
+  ],
+  "privMid": [
+   "Nobody's here to watch now, {nick}. Just me. Keep up.",
+   "I'm going harder now, {nick}. No audience, no mercy.",
+   "This is where it gets real, {nick}."
+  ],
+  "privBye": [
+   "Out, {other}. Now.",
+   "Time's up, {other}. Door's locking."
+  ]
+ },
+ "Sleepy Sadie": {
+  "privAsk": [
+   "Mm... can we go private, {nick}...? Just us... quieter...",
+   "Everyone's so loud... {nick}... can I lock the door...?"
+  ],
+  "privOn": [
+   "Mm... thank you, {nick}... door's locked... just us now...",
+   "Quiet now... {nick}... it's only me..."
+  ],
+  "privDeny": [
+   "Mm... okay, {nick}... maybe later...",
+   "Aww... fine... I'll ask again... {nick}..."
+  ],
+  "privMid": [
+   "Mm... nobody here... just you... {nick}...",
+   "So quiet now... mm... {nick}... stay with me...",
+   "Mm... I'm all yours... {nick}... closer..."
+  ],
+  "privBye": [
+   "Mm... goodnight, {other}... lock the door...",
+   "Bye, {other}... too noisy... mm..."
+  ]
+ },
+ "Drill Sergeant Dana": {
+  "privAsk": [
+   "I'm requesting a private session, {nick}! Clear the room?!",
+   "Permission to dismiss the audience, {nick}?! Private drill!"
+  ],
+  "privOn": [
+   "ROOM LOCKED! EVERYONE OUT! Just us now, {nick}!",
+   "Private training begins NOW, {nick}!"
+  ],
+  "privDeny": [
+   "Denied?! Hmph! I'll request again, {nick}!",
+   "Not now?! Noted, {nick}! I'll be back!"
+  ],
+  "privMid": [
+   "No audience now, {nick}! Nowhere to hide!",
+   "Eyes on me, {nick}! This is the real drill!",
+   "I'm not holding back now, {nick}! Keep up!"
+  ],
+  "privBye": [
+   "DISMISSED, {other}! Clear the area!",
+   "OUT, {other}! Move it!"
+  ]
+ },
+ "Mocking Margot": {
+  "privAsk": [
+   "Shall I send the audience away, {nick}? So I can enjoy you properly. In private.",
+   "Would you like to be humiliated in private, {nick}? Fewer witnesses. More me."
+  ],
+  "privOn": [
+   "Good choice, {nick}. Door's locked. Nobody can save you now.",
+   "Everyone out. Now it's just us, {nick}. How embarrassing for you."
+  ],
+  "privDeny": [
+   "Shy, {nick}? How sweet. I'll ask again.",
+   "Not yet? Fine, {nick}. I'll enjoy waiting."
+  ],
+  "privMid": [
+   "No audience now, {nick}. Just me. And your poor little face.",
+   "Nobody to see you beg now, {nick}. Go on.",
+   "I can be so much meaner in private, {nick}."
+  ],
+  "privBye": [
+   "Goodbye, {other}. Do run along.",
+   "Out you go, {other}. He's my toy now."
+  ]
+ }
+};
+Object.keys(MORE12).forEach(k => Object.keys(MORE12[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE12[k][c]); }));
+Object.assign(HYPE, {privAsk:3,privOn:8,privDeny:2,privMid:3,privBye:2});
+
+/* ---------- private show: after a long stretch in control, a persona may lock the room and get more intense ---------- */
+var privateShow = null, ctlWho = "", ctlAt = 0, nextPrivAt = 0, nextPrivMidAt = 0;
+function requestPrivate(p){
+  nextPrivAt = Date.now() + 3 * 60000;
+  sayAs(p, "privAsk", null, {onShow: () => {
+    addOffer({id: "priv", who: p, text: "wants you all to herself", ttl: 40000, valid: () => teaseNow() && currentPersona === p && !privateShow,
+      onGone: why => { if (why === "expired" && teaseNow() && currentPersona === p) sayAs(p, "privDeny"); },
+      choices: [{label: "Go private", kind: "primary", apply: () => acceptPrivate(p)},
+                {label: "Not now", kind: "ghost", apply: () => { const m = addMsg("me", "Not now."); nextPrivAt = Date.now() + 4 * 60000; sayAs(p, "privDeny", null, {replyTo: m}); }}]});
+  }});
+}
+function acceptPrivate(p){
+  if (!teaseNow() || currentPersona !== p || privateShow) return;
+  privateShow = {p, since: Date.now()};
+  const m = addMsg("me", "Let's go private.");
+  challenge = null; removeOffer("ch"); removeOffer("demand"); removeOffer("ask"); demand = null; ask = null;
+  sayAs(p, "privOn", null, {replyTo: m});
+  addMsg("sys", "🔒 " + SHORT[p] + " locked the room. Everyone else was kicked out.");
+  room.filter(x => x !== p).forEach((o, i) => {
+    setTimeout(() => sayAs(o, "privBye", null, {other: p, replyTo: p}), 1500 + i * 900);
+    setTimeout(() => leaveRoom(o, true), 3200 + i * 900);
+  });
+  setTimeout(() => { fans.length = 0; renderRoom(); }, 2500);
+  excite = Math.min(60, excite + 12); nextPrivMidAt = Date.now() + 14000; nextDemandAt = Date.now() + 9000; nextAskAt = Date.now() + 50000;
+  setTimeout(forceBuild, 3500); renderRoom();
+}
+function privTick(now){
+  if (privateShow && (!running || currentPersona !== privateShow.p)){ privateShow = null; renderRoom(); }
+  if (!teaseNow() || !currentPersona) return;
+  if (ctlWho !== currentPersona){ ctlWho = currentPersona; ctlAt = now; nextPrivAt = 0; }
+  if (privateShow){
+    if (now > nextPrivMidAt){ nextPrivMidAt = now + 20000 + Math.random() * 15000; say("privMid"); }
+    return;
+  }
+  if (!$("privOn").checked || challenge || demand || ask || offers.some(o => o.id === "priv") || !room.includes(currentPersona)) return;
+  if (now - ctlAt < n("privMin", 6) * 60000 || now < nextPrivAt) return;
+  if (!runHidden && endAt - now < 120000) return;
+  requestPrivate(currentPersona);
+}
 /* ---------- interactions: targets, demands, questions ---------- */
 let suppressUntil = 0;
 const STEP = 5;
@@ -2714,6 +2967,7 @@ Object.keys(MORE10).forEach(k => Object.keys(MORE10[k]).forEach(c => { LINES[k][
 Object.assign(HYPE, {dmdWarn:4,dmdLeave:6}); Object.assign(FMAP, {dmdWarn:"defy",dmdLeave:"defy"});
 function stormOff(p){
   if (currentPersona !== p || !room.includes(p)) return;
+  if (privateShow){ privateShow = null; addMsg("sys", "🔒 The room reopens."); renderRoom(); }
   defiance[p] = 0;
   sayAs(p, "dmdLeave");
   setTimeout(() => {
@@ -2750,7 +3004,7 @@ function askQuestion(p, qid){
 function handleKind(p, kind, mine, o){
   const say = (cat, vars, delay) => setTimeout(() => { if (room.includes(p)) sayAs(p, cat, null, Object.assign({replyTo: mine}, vars || {})); }, delay || 0);
   const mercy = () => {
-    if (Math.random() < (MERCY[p] || 0.4)){ say("qMercy", null, 2000); setTimeout(() => forceRest(rnd(8, 12)), 2200); }
+    if (Math.random() < (MERCY[p] || 0.4) * (privateShow ? 0.4 : 1)){ say("qMercy", null, 2000); setTimeout(() => forceRest(rnd(8, 12)), 2200); }
     else say("qNoMercy", null, 2000);
   };
   switch (kind){
@@ -2787,6 +3041,7 @@ function askRandomQuestion(){
   const r = Math.random(); askQuestion(p, r < 0.4 ? "feel" : r < 0.75 ? "next" : "like");
 }
 function interactTick(now, busy){
+  privTick(now);
   if (!$("interactOn").checked) return;
   if (teaseNow() && !challenge && !ask && !demand){
     if (now > nextAskAt){ nextAskAt = now + (65000 + Math.random() * 45000) / Math.sqrt(aggr()); askRandomQuestion(); }
