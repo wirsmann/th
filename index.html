@@ -1528,17 +1528,15 @@ function startChallenge(){
   if (Math.random() * 100 < n("aimCtl", 35)) beginDirect(ch); else beginChallenge(ch);
 }
 const NICKS = {"Patient Priscilla":["pet","darling","good boy"],"Mischievous Mia":["toy","plaything","loser"],"Strict Ms. Vance":["subject","sub","slave"],"Chaos Cassie":["pawn","puppet","guinea pig"],"Sweet-Talker Sienna":["sweet thing","baby","sweetheart"],"Relentless Roxy":["rookie","peon","dog"],"Sleepy Sadie":["sleepyhead","puppy","plaything"],"Drill Sergeant Dana":["recruit","private","maggot"],"Mocking Margot":["worm","needy mess","little loser"],"Cuckolding Veronica":["cuck","cuckold","little cuck"],"Counting Camille":["test subject", "specimen", "dear"],"Gambling Gigi":["high roller", "sucker", "chip"],"Goddess Isadora":["mortal", "devotee", "worshipper"],"Bratty Bella":["servant", "errand boy", "lackey"],"Hypnotic Helena":["sleepyhead", "dreamer", "good boy"],"Coach Colleen":["champ", "rookie", "trainee"],"Doctor Delphine":["patient", "subject", "case study"],"Jealous Juliet":["my pet", "darling", "sweet thing"],"Queen Valentina":["peasant", "servant", "knight"],"Pouty Penelope":["honey", "sweetie", "silly"],"Flirty Fiona":["handsome", "trouble", "cutie"],"Stage-Manager Simone":["talent", "star", "performer"]};
-const NICKRATE = {"Patient Priscilla":.35,"Mischievous Mia":.4,"Strict Ms. Vance":.55,"Chaos Cassie":.4,"Sweet-Talker Sienna":.35,"Relentless Roxy":.5,"Sleepy Sadie":.4,"Drill Sergeant Dana":.5,"Mocking Margot":.6,"Cuckolding Veronica":.6,"Counting Camille":0.4,"Gambling Gigi":0.4,"Goddess Isadora":0.55,"Bratty Bella":0.5,"Hypnotic Helena":0.4,"Coach Colleen":0.5,"Doctor Delphine":0.45,"Jealous Juliet":0.5,"Queen Valentina":0.55,"Pouty Penelope":0.4,"Flirty Fiona":0.4,"Stage-Manager Simone":0.45};
-[...$("persona").options].forEach(o => { if (NICKS[o.value]) o.textContent = o.value + " (" + NICKS[o.value].join(", ") + ")"; });
-const NICKCATS = ["greet","start","build","hold","holdMid","rest","restMid","fake","fakeAfter","warn","win","fail","chat","reply","please","close","demand","promise","watch","enjoy","lowSpeed","shortStroke","praise","nudge","fakeNote","hidden","lubeBreak","lubeWait","lubeResume","tempt"];
+const NICKRATE = {"Patient Priscilla":.35,"Mischievous Mia":.4,"Strict Ms. Vance":.55,"Chaos Cassie":.4,"Sweet-Talker Sienna":.35,"Relentless Roxy":.5,"Sleepy Sadie":.4,"Drill Sergeant Dana":.5,"Mocking Margot":.6,"Cuckolding Veronica":.6,"Counting Camille":0.4,"Gambling Gigi":0.4,"Goddess Isadora":0.55,"Bratty Bella":0.5,"Hypnotic Helena":0.4,"Coach Colleen":0.5,"Doctor Delphine":0.45,"Jealous Juliet":0.5,"Queen Valentina":0.55,"Pouty Penelope":0.4,"Flirty Fiona":0.4,"Stage-Manager Simone":0.45};const NICKCATS = ["greet","start","build","hold","holdMid","rest","restMid","fake","fakeAfter","warn","win","fail","chat","reply","please","close","demand","promise","watch","enjoy","lowSpeed","shortStroke","praise","nudge","fakeNote","hidden","lubeBreak","lubeWait","lubeResume","tempt"];
 function nickFor(name){
   const custom = ($("nickCustom").value || "").trim(); if (custom) return custom;
-  const arr = NICKS[name] || ["pet"];
+  const arr = personaNicks(name).length ? personaNicks(name) : ["pet"];
   return Math.random() < 0.7 ? arr[0] : arr[Math.floor(Math.random() * arr.length)];
 }
 function withNick(raw, name, cat){
   if (/\{nick\}|\{Nick\}|\{other\}|\{ctrl\}/.test(raw) || !NICKCATS.includes(cat) || raw.length < 6 || Math.random() > (NICKRATE[name] || 0.4)) return raw;
-  const known = (NICKS[name] || []).concat(["toy","pet","plaything","sweetheart","darling","baby","love","honey","recruit","gorgeous"]);
+  const known = personaNicks(name).concat(["toy","pet","plaything","sweetheart","darling","baby","love","honey","recruit","gorgeous"]);
   if (known.some(k => new RegExp("\\b" + k + "\\b", "i").test(raw))) return raw;
   const m = raw.match(/^([\s\S]*?)([.!?]+)$/);
   return m ? m[1] + ", {nick}" + m[2] : raw + ", {nick}";
@@ -1683,6 +1681,10 @@ const vibSecs = p => vibNum("vibS_", p, 1, 2, 60);
 /* ---------- handing over: personas ask the controller directly, or the controller gives control up on her own ---------- */
 const yieldPct = p => { const e = document.getElementById("yld_" + NAMEKEY[p]); const v = e ? parseFloat(e.value) : NaN; return isNaN(v) ? (YIELD_DEF[p] || 5) : Math.max(0, Math.min(100, v)); };
 /* per-persona settings: one group per personality, only the selected one is shown */
+/* per-persona nicknames: three dropdowns, one per nickname she can use for you */
+const NICKPOOL = [...new Set([].concat(...Object.values(NICKS), ["toy","pet","plaything","sweetheart","darling","baby","love","honey","recruit","gorgeous","sweetie","cutie"]))].sort();
+const nkId = (p, i) => "nk_" + NAMEKEY[p] + "_" + i;
+function personaNicks(p){ return [0, 1, 2].map(i => { const e = document.getElementById(nkId(p, i)); return e ? e.value : (NICKS[p] || [])[i]; }).filter(Boolean); }
 /* per-persona tease timing: the values loaded into the Tease panel when she is picked */
 const TP = [["low","Low speed (% of max)"],["pmin","Peak speed, lowest (% of max)"],["pmax","Peak speed, highest (% of max)"],["bmin","Build time, shortest (s)"],["bmax","Build time, longest (s)"],["hmin","Hold, shortest (s)"],["hmax","Hold, longest (s)"],["rmin","Rest, shortest (s)"],["rmax","Rest, longest (s)"],["fake","Fake-out chance (%)"],["esc","Peak increase per cycle (%)"]];
 const tpId = (p, f) => "tp_" + NAMEKEY[p] + "_" + f;
@@ -1702,9 +1704,11 @@ function personaCfg(p){ const o = {d: PERSONAS[p].d, stop: tpStop(p)}; TP.forEac
       + '</div>'
       + '<strong class="subHead">Tease timing</strong>'
       + '<div class="grid">' + tp + '</div>'
-      + '<label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:8px"><input type="checkbox" id="' + tpId(p, "stop") + '"' + (P.stop ? " checked" : "") + '> Fully stop during rests</label>';
+      + '<label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:8px"><input type="checkbox" id="' + tpId(p, "stop") + '"' + (P.stop ? " checked" : "") + '> Fully stop during rests</label>'
+      + '<strong class="subHead">Nicknames she uses for you</strong>'
+      + '<div class="grid">' + [0, 1, 2].map(i => '<div><label for="' + nkId(p, i) + '">Nickname ' + (i + 1) + '</label><select id="' + nkId(p, i) + '">' + NICKPOOL.map(n => '<option' + (n === (NICKS[p] || [])[i] ? ' selected' : '') + '>' + n + '</option>').join('') + '</select></div>').join('') + '</div>';
     box.append(g);
-    g.querySelectorAll("input").forEach(e => {
+    g.querySelectorAll("input, select").forEach(e => {
       const sv = store.get("h_" + e.id, null);
       if (e.type === "checkbox"){ if (sv !== null) e.checked = !!sv; e.onchange = () => store.set("h_" + e.id, e.checked); }
       else { if (sv !== null) e.value = sv; e.onchange = () => store.set("h_" + e.id, e.value); }
