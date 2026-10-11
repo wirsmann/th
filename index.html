@@ -497,7 +497,7 @@ function hexA(h, a){ const m = /^#?([0-9a-f]{6})$/i.exec(h || ""); if (!m) retur
 const whoColor = w => PCOL[w] || "#0f7b8a";
 const whoName = w => w === "__you" ? "Manual" : (SHORT[w] || w);
 var marks = [];
-const MKIND = {move:["◆","Move"], fake:["✕","Fake-out"], yes:["✓","Obeyed"], no:["✗","Refused"], free:["★","Free rein"], ask:["?","Answered"], lube:["L","Lube break"], priv:["🔒","Private show"], life:["!","Real-life event"]};
+const MKIND = {move:["◆","Move"], fake:["✕","Fake-out"], yes:["✓","Obeyed"], no:["✗","Refused"], free:["★","Free rein"], ask:["?","Answered"], lube:["L","Lube break"], priv:["🔒","Private show"], life:["!","Real-life event"], hold:["H","Hold"], rest:["R","Rest"]};
 function mark(kind, label){
   if (!(running || paused) || !MKIND[kind]) return;
   marks.push({i: hist.length, kind, label: label || MKIND[kind][1], who: runTease && currentPersona ? currentPersona : "__you"});
@@ -1101,6 +1101,8 @@ function chatPhase(c){
   if (c.k === "move") mark("move", (MOVE_LABEL[c.type] || c.type)[0].toUpperCase() + (MOVE_LABEL[c.type] || c.type).slice(1));
   else if (c.mv === "push") mark("move", "Pushing through");
   else if (c.fake) mark("fake", "Fake-out");
+  else if (c.k === "hold") mark("hold", "Hold");
+  else if (c.k === "rest") mark("rest", "Rest");
   if (c.k === "move"){ say("act_" + c.type); midCat = "act_" + c.type; midAt = now + 5000 + Math.random() * 3000; }
   else if (c.mv === "push"){ say("act_push"); midCat = "build"; midAt = now + 14000 + Math.random() * 8000; }
   else if (c.k === "build"){ say("build"); midCat = "build"; midAt = now + 14000 + Math.random() * 8000; }
@@ -8515,7 +8517,7 @@ function setLenTo(len){
   if (mx >= cmn + 5){ setMax(); setMin(); } else { setMin(); setMax(); }
 }
 const teaseNow = () => running && runTease && !onBreak;
-function forceCur(c){ if (!tz) resetTease(); tz.q = []; tz.cur = c; tz.start = total - Math.max(0, endAt - Date.now()); }
+function forceCur(c){ if (c.k === "hold") mark("hold", "Hold (on request)"); else if (c.k === "rest") mark("rest", "Rest (on request)"); if (!tz) resetTease(); tz.q = []; tz.cur = c; tz.start = total - Math.max(0, endAt - Date.now()); }
 function forceRest(sec){ if (teaseNow()) forceCur({k: "rest", dur: sec, v: $("tStop").checked ? 0 : n("tLow", 15)}); }
 function forceBuild(){ if (!teaseNow()) return; if (!tz) resetTease(); tz.q = []; tz.cur = null; }
 function forceHold(sec){ if (teaseNow()) { const lo = n("tPeakMin", 60); forceCur({k: "hold", dur: sec, v: Math.min(100, rnd(lo, Math.max(lo, n("tPeakMax", 90))))}); } }
@@ -8731,7 +8733,7 @@ function answerQuestion(a, o){
 }
 function askRandomQuestion(){
   const p = currentPersona; if (!p || !room.includes(p)) return;
-  const r = Math.random(); askQuestion(p, r < 0.4 ? "feel" : r < 0.75 ? "next" : "like");
+  const r = Math.random(); askQuestion(p, r < 0.55 ? "feel" : "next");
 }
 function interactTick(now, busy){
   privTick(now); lifeTick(now); giveUpTick(now); idleTick(now); manualTick(now);
