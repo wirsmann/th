@@ -109,11 +109,14 @@
   @media (min-width:1200px){body.drawer-open .stage{margin-right:426px}}
   @media (max-width:1000px){.stage{grid-template-columns:1fr}.timer{order:-1;position:static}.lounge{height:auto;min-height:680px}}
 
-  .heatRow{margin:0 0 8px}
-  .heatLeft{display:flex;align-items:center;gap:12px;min-width:0}
-  .heatLeft .hypeRow{flex:1;min-width:0;margin:0}
-  .heatLeft .simBox{margin:0;padding:6px 10px;max-width:none;flex:none}
-  .heatLeft .simRail{height:72px}
+  .loungeTop{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:stretch;margin:0 0 8px}
+  .loungeLeft{min-width:0;display:flex;flex-direction:column;justify-content:flex-start;gap:8px}
+  .loungeLeft .chatHead{margin:0}
+  .loungeLeft .hypeRow{margin:0}
+  .loungeLeft #roomWho{margin:0}
+  .loungeTop .simBox{margin:0;padding:8px 12px;max-width:none;align-self:stretch;display:flex;align-items:center}
+  .loungeTop .simRail{height:110px}
+  @media (max-width:700px){.loungeTop{grid-template-columns:1fr}}
   .graphBox{margin:0 0 8px;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:var(--bg);flex:none}
   .gHead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.85rem;margin-bottom:4px}
   #gLegend{display:inline-flex;gap:10px;flex-wrap:wrap}
@@ -150,15 +153,17 @@
   <header class="top"><h1>Handy timer</h1><span id="simPill" class="simPill" hidden title="Simulation mode is on: nothing is sent to the device.">Simulation</span><nav id="menu" aria-label="Settings menu"><button type="button" data-key="session" aria-pressed="false">Session</button><button type="button" data-key="tease" aria-pressed="false">Tease</button><button type="button" data-key="personas" aria-pressed="false">Personas</button><button type="button" data-key="speed" aria-pressed="false">Speed</button><button type="button" data-key="customize" aria-pressed="false">Customize</button><button type="button" data-key="lube" aria-pressed="false">Lube</button><button type="button" data-key="limits" aria-pressed="false">Limits</button><button type="button" data-key="profiles" aria-pressed="false">Profiles</button><button type="button" data-key="log" aria-pressed="false">Log</button></nav></header>
   <div class="stage">
     <section class="card lounge" aria-label="The Lounge">
-      <div class="chatHead"><strong>The Lounge</strong><span class="hint" id="roomCount" style="margin:0"></span><button class="mini" id="chatClear" style="margin:0 0 0 auto">Clear chat</button></div>
-      <div class="heatRow"><div class="heatLeft"><div class="hypeRow"><div class="hype" aria-hidden="true"><div id="hypeBar"></div></div><span id="hypeLbl" class="hint"></span></div>
+      <div class="loungeTop">
+        <div class="loungeLeft">
+          <div class="chatHead"><strong>The Lounge</strong><span class="hint" id="roomCount" style="margin:0"></span><button class="mini" id="chatClear" style="margin:0 0 0 auto">Clear chat</button></div>
+          <div class="hypeRow"><div class="hype" aria-hidden="true"><div id="hypeBar"></div></div><span id="hypeLbl" class="hint"></span></div>
+          <div id="roomWho" class="chips"></div>
+        </div>
         <div class="simBox" id="simBox" hidden aria-label="Simulated device">
     <div class="simRail"><div class="simBand" id="simBand"></div><div class="simPuck" id="simPuck"></div></div>
     <div class="simInfo"><b>Simulated Handy</b><br><span id="simState">Stopped</span><br>Position <b id="simPos">0</b>%<br><span id="simRate"></span></div>
   </div>
       </div>
-      </div>
-      <div id="roomWho" class="chips" style="margin:0 0 8px"></div>
       <div class="graphBox"><div class="gHead"><strong>Activity</strong><span id="gLegend"></span><span class="hint" id="gInfo" style="margin:0 0 0 auto"></span></div><canvas id="graph" height="150" aria-label="History of speed and stroke length, colored by who was in control"></canvas><div id="gScrollRow" style="display:none;gap:8px;align-items:center;margin-top:6px"><input type="range" id="gScroll" min="0" max="0" value="0" aria-label="Scroll back through activity history" style="flex:1"><button class="mini" id="gLive" style="margin:0">Back to live</button></div><div class="hint" id="gKey" style="margin:4px 0 0"></div></div>
       <div id="chatLog" aria-live="polite"></div>
       <div class="inline"><input id="chatIn" type="text" autocomplete="off" placeholder="Say something to the room…" aria-label="Chat message"><button class="mini" id="chatSend" style="margin:0">Send</button></div>
