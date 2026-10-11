@@ -266,7 +266,7 @@
     <div class="inline">
       <select id="persona" aria-label="Personality to configure"><option value="">Pick a personality…</option></select>
     </div>
-    <p class="hint" id="persDesc">Pick a personality to see and change her settings. To put her in the lounge, use Active persona under Tease mode.</p>
+    <p class="hint" id="persDesc" hidden></p>
 
     <div style="display:flex;align-items:center;gap:10px"><span class="av lg" id="persAv" hidden></span><strong class="subHead" id="persCfgHead">Her settings</strong></div>
     <p class="hint" id="persCfgNone">Pick a personality above to see and change her settings.</p>
@@ -2006,6 +2006,7 @@ function renderPersCfg(){
   document.querySelectorAll("#persCfg > [data-p]").forEach(g => g.hidden = g.dataset.p !== p);
   $("persCfgHead").textContent = p ? SHORT[p] + "'s settings" : "Her settings";
   const pav = $("persAv"); pav.hidden = !p; pav.innerHTML = p ? avatarSVG(p) : "";
+  $("persDesc").hidden = !p; $("persDesc").textContent = p && PERSONAS[p] ? PERSONAS[p].d + targetNote(p) : "";
   $("persCfgNone").hidden = !!p; $("persCfgHint").hidden = !p;
 }
 function beginDirect(ch){
