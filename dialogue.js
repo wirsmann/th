@@ -9490,3 +9490,94 @@ PERSONA_LINES["Stage-Manager Simone"] = {
  ]
 };
 
+/* Vibration bursts (act_vibrate) */
+const VIBE_LINES = {
+ "Patient Priscilla": [
+  "Something different for a moment, {nick}. Tiny and quick. Just feel it hum.",
+  "Let's try a little buzz, {nick}. Short, gentle, very fast."
+ ],
+ "Mischievous Mia": [
+  "Bzzzzt! Surprise vibration, {nick}! Hehe!",
+  "Ooh, let's make you buzz, {nick}! Tiny little shakes!"
+ ],
+ "Strict Ms. Vance": [
+  "Short and fast. You will hold still while it buzzes, {nick}.",
+  "Vibration. Do not squirm, {nick}. Take it."
+ ],
+ "Chaos Cassie": [
+  "BUZZ MODE! I found a new button, {nick}!",
+  "Vrrrrrrr! Is this a feature?! It's a feature now, {nick}!"
+ ],
+ "Sweet-Talker Sienna": [
+  "Mm, a little buzz just for you, {nick}. Feel that?",
+  "Let me make you hum for a moment, {nick}. So quick, so sweet."
+ ],
+ "Relentless Roxy": [
+  "Buzz time, {nick}. Fast and tight. Don't flinch.",
+  "Short and fast, {nick}. Hold on through it."
+ ],
+ "Sleepy Sadie": [
+  "Mm... little buzz... like a phone on the pillow... {nick}...",
+  "Bzz... mm... just a tiny hum, {nick}..."
+ ],
+ "Drill Sergeant Dana": [
+  "VIBRATION DRILL, {nick}! Short and fast! Hold steady!",
+  "BUZZ, {nick}! Don't you dare move!"
+ ],
+ "Mocking Margot": [
+  "A little buzz, {nick}. Let's see how quickly you fall apart.",
+  "Look at you twitch from a tiny vibration, {nick}. Pathetic."
+ ],
+ "Cuckolding Veronica": [
+  "Just a buzz for you, {nick}. He gets the real thing.",
+  "A tiny vibration, {nick}. That's about your size."
+ ],
+ "Counting Camille": [
+  "Vibration test, {nick}. Short stroke, high frequency. Counting from now.",
+  "New variable, {nick}: vibration. Ten seconds of data, please."
+ ],
+ "Gambling Gigi": [
+  "Wild card! Buzz round, {nick}. Let's see how you play this one.",
+  "Roll the dice, {nick}. It landed on vibrate!"
+ ],
+ "Goddess Isadora": [
+  "A divine tremor, {nick}. Receive it gratefully.",
+  "Feel your goddess hum through you, {nick}. Be still."
+ ],
+ "Bratty Bella": [
+  "Ugh, strokes are boring. Buzz, {nick}. Now.",
+  "I want you to vibrate. Because I said so, {nick}."
+ ],
+ "Hypnotic Helena": [
+  "Feel the hum, {nick}... let it buzz through you... deeper...",
+  "A soft vibration now, {nick}... let it settle into you..."
+ ],
+ "Coach Colleen": [
+  "Speed drill, {nick}! Short and fast, give me everything!",
+  "Vibration set, {nick}! Hold your form through it!"
+ ],
+ "Doctor Delphine": [
+  "Let's test your response to vibration, {nick}. Hold still.",
+  "High frequency, short range, {nick}. I'm recording the result."
+ ],
+ "Jealous Juliet": [
+  "Only I get to make you buzz like this, {nick}. Remember that.",
+  "Feel that, {nick}? That's mine. Nobody else does this to you."
+ ],
+ "Queen Valentina": [
+  "By royal decree, {nick}, you shall vibrate.",
+  "A brief tremor, {nick}. Your queen wishes to see you shake."
+ ],
+ "Pouty Penelope": [
+  "Hmph. Buzz buzz, {nick}. Is that tough enough?",
+  "Little buzzies, {nick}! Don't laugh, I'm being serious!"
+ ],
+ "Flirty Fiona": [
+  "Ooh, let's try a little buzz, {nick}. Tickles, huh?",
+  "Bzz! Just a flirty little shake, {nick}. Wink."
+ ],
+ "Stage-Manager Simone": [
+  "Cue the vibration, {nick}! Short and fast, hit your mark!",
+  "Special effect coming up, {nick}: vibration in three, two..."
+ ]
+};

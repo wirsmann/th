@@ -65,6 +65,10 @@
   .simPill{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border-radius:999px;background:#e0a43a;color:#2a1a00;font-size:.75rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
   .teaseBtn.simBtn{border-color:#e0a43a;color:#b47c12}
   .teaseBtn.simBtn[aria-pressed="true"]{background:#e0a43a;color:#2a1a00}
+  .vibTbl{width:100%;border-collapse:collapse;margin-top:6px;font-size:.88rem}
+  .vibTbl th{text-align:left;font-weight:500;color:var(--muted);font-size:.78rem;padding:2px 4px}
+  .vibTbl td{padding:2px 4px}
+  .vibTbl input{padding:5px 8px}
   .subHead{display:block;margin:18px 0 0;padding-top:12px;border-top:1px solid var(--line);font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
   .simBox{display:flex;align-items:center;gap:12px;margin:10px auto 0;padding:8px 12px;border:1px dashed var(--line);border-radius:12px;max-width:240px}
   .simRail{position:relative;width:18px;height:110px;border-radius:9px;background:var(--ring-bg);flex:none}
@@ -243,6 +247,12 @@
     <div class="grid" id="persFields"></div>
     <p class="hint">Whoever is in control keeps a target speed and stroke length and nudges you toward it 5 points at a time. Each demand has Do it, Match her target and Refuse buttons. Refusing makes her more insistent. Questions come with answer buttons, and a few of the answers change what happens next (a rest, a hold, a fresh build-up).</p>
 
+    <strong class="subHead">Vibration bursts</strong>
+    <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:10px"><input type="checkbox" id="vibOn"> Personalities can switch to a short vibration burst</label>
+    <p class="hint">In tease mode, the one in control can now and then narrow the stroke to a tiny range and run it at your full speed slider, so it buzzes instead of strokes. Then she rests and your stroke range comes back. Chance is per tease cycle. All default low.</p>
+    <div class="row"><div><label for="vibWidth">Vibration stroke width (% of full length)</label><input id="vibWidth" type="number" min="2" max="30" value="6"></div></div>
+    <table class="vibTbl"><thead><tr><th>Personality</th><th>Chance (%)</th><th>Length (s)</th></tr></thead><tbody id="vibRows"></tbody></table>
+
     <strong class="subHead">Giving up control</strong>
     <p class="hint">The one in control may give it up when asked, and may also hand it over on her own after a few minutes. These numbers set how likely each one is to give it up. All default low.</p>
     <div class="grid" id="yieldFields"></div>
@@ -339,9 +349,9 @@ mkFields("teaseFields", TEASE); mkFields("customFields", CUSTOM);
 // these live in other panels: random length under Session, persona behaviour under Personas
 ["rMin","rMax"].forEach(id => $("sessRandFields").append($(id).parentElement));
 ["privMin","lifeRate"].forEach(id => $("persFields").append($(id).parentElement));
-const FIELDS = ["speed","smin","smax","min","sec","ramp","slow","pattern","period","daily","cool","failLock","aimCtl","lubeEvery","lubeGap","lubePark","nickCustom"].concat(TEASE.map(t=>t[0]), CUSTOM.map(c=>c[0]));
+const FIELDS = ["vibWidth","speed","smin","smax","min","sec","ramp","slow","pattern","period","daily","cool","failLock","aimCtl","lubeEvery","lubeGap","lubePark","nickCustom"].concat(TEASE.map(t=>t[0]), CUSTOM.map(c=>c[0]));
 FIELDS.forEach(id => { const v = store.get("h_"+id, null); if (v !== null) $(id).value = v; });
-const BOOLS = {beepEnd:true, beepWarn:true, awake:true, teaseOn:false, tStop:true, hideClock:false, tRandom:false, failCharge:false, lubeOn:true, lubeReg:true, fansOn:true, crowdBoost:true, interactOn:true, stormOn:true, privOn:true, simOn:false};
+const BOOLS = {beepEnd:true, beepWarn:true, awake:true, teaseOn:false, tStop:true, hideClock:false, tRandom:false, failCharge:false, lubeOn:true, lubeReg:true, fansOn:true, crowdBoost:true, interactOn:true, stormOn:true, privOn:true, simOn:false, vibOn:true};
 Object.keys(BOOLS).forEach(id => { $(id).checked = store.get("h_"+id, BOOLS[id]); $(id).onchange = () => store.set("h_"+id, $(id).checked); });
 let presets = store.get("handyPresets", [300, 600, 900, 1800]);   // seconds
 
@@ -444,7 +454,7 @@ function simFrame(t){
     $("simPuck").style.bottom = sim.pos + "%";
     $("simPos").textContent = Math.round(sim.pos);
     const moving = sim.mode === 0 && sim.playing;
-    $("simState").textContent = moving ? "Stroking at " + sim.vel + "%" : sim.mode === 2 ? (sim.target !== null ? "Moving to park" : "Parked") : "Stopped";
+    $("simState").textContent = moving ? (hi - lo <= 12 ? "Vibrating at " : "Stroking at ") + sim.vel + "%" : sim.mode === 2 ? (sim.target !== null ? "Moving to park" : "Parked") : "Stopped";
     $("simRate").textContent = moving ? (simTravel(sim.vel) / (2 * Math.max(1, hi - lo))).toFixed(1) + " strokes/s" : "";
   }
   requestAnimationFrame(simFrame);
@@ -465,9 +475,20 @@ async function sendStop(){
   }
   return false;
 }
-function sendStroke(){
+/* the range actually sent to the device: your sliders, or a narrow band in the middle of them while vibrating */
+let vibeOn = false;
+function strokeRange(){
   const mn = +$("smin").value, mx = +$("smax").value;
-  return api("PUT", "/slide", {min: mn, max: mx});
+  if (!vibeOn) return {min: mn, max: mx};
+  const w = Math.max(2, Math.min(30, n("vibWidth", 6))), mid = (mn + mx) / 2;
+  const lo = Math.round(Math.max(0, Math.min(100 - w, mid - w / 2)));
+  return {min: lo, max: lo + Math.round(w)};
+}
+function sendStroke(){ return api("PUT", "/slide", strokeRange()); }
+function syncVibe(){
+  const want = running && runTease && !onBreak && !!tz && !!tz.cur && tz.cur.type === "vibrate";
+  if (want === vibeOn) return;
+  vibeOn = want; lastVelAt = 0; sendStroke().catch(e => status(e.message, true));
 }
 
 /* ---------- speed engine ---------- */
@@ -477,7 +498,7 @@ function resetTease(){ lastMove = ""; tz = {q: [], cur: null, start: 0, cycle: 0
 
 /* ---------- special moves: extra speed shapes beyond build / hold / rest ---------- */
 const MOVES = ["push","stairs","pulse","surge","cliff","wave","flutter","slowburn"];
-const MOVE_LABEL = {push:"pushing through", stairs:"stepping up", pulse:"pulsing", surge:"surging", cliff:"sudden stop", wave:"waves", flutter:"fluttering", slowburn:"slow burn"};
+const MOVE_LABEL = {vibrate:"vibrating", push:"pushing through", stairs:"stepping up", pulse:"pulsing", surge:"surging", cliff:"sudden stop", wave:"waves", flutter:"fluttering", slowburn:"slow burn"};
 const MOVE_FAV = {"Patient Priscilla": ["slowburn", "stairs", "wave"], "Mischievous Mia": ["pulse", "flutter", "cliff"], "Strict Ms. Vance": ["stairs", "cliff", "slowburn"], "Chaos Cassie": ["flutter", "pulse", "surge"], "Sweet-Talker Sienna": ["slowburn", "wave", "pulse"], "Relentless Roxy": ["surge", "push", "wave"], "Sleepy Sadie": ["slowburn", "wave", "pulse"], "Drill Sergeant Dana": ["stairs", "push", "surge"], "Mocking Margot": ["cliff", "surge", "push"], "Cuckolding Veronica": ["cliff", "pulse", "slowburn"], "Counting Camille": ["stairs", "slowburn", "pulse"], "Gambling Gigi": ["cliff", "surge", "flutter"], "Goddess Isadora": ["slowburn", "wave", "stairs"], "Bratty Bella": ["pulse", "flutter", "cliff"], "Hypnotic Helena": ["wave", "slowburn", "pulse"], "Coach Colleen": ["stairs", "push", "surge"], "Doctor Delphine": ["pulse", "slowburn", "stairs"], "Jealous Juliet": ["cliff", "pulse", "slowburn"], "Queen Valentina": ["stairs", "cliff", "slowburn"], "Pouty Penelope": ["wave", "flutter", "pulse"], "Flirty Fiona": ["flutter", "wave", "pulse"], "Stage-Manager Simone": ["stairs", "surge", "wave"]};
 var lastMove = "";
 function pickMove(){
@@ -513,6 +534,7 @@ function newCycle(){
   const bMin = n("tBuildMin", 20), bd = rnd(bMin, Math.max(bMin, n("tBuildMax", 60)));
   const rMin = n("tRestMin", 5), hMin = n("tHoldMin", 3);
   const rest = {k: "rest", dur: Math.max(1, rnd(rMin, Math.max(rMin, n("tRestMax", 20))) * (1 - 0.3 * cl)), v: $("tStop").checked ? 0 : low};
+  if (tz.cycle > 1 && $("vibOn").checked && Math.random() * 100 < vibChance(currentPersona)){ tz.q.push(mv("vibrate", vibSecs(currentPersona), () => 100), rest); return; }
   if (tz.cycle > 1 && Math.random() * 100 < n("tAct", 35)){ queueMove(pickMove(), low, pk, bd); return; }
   if (Math.random() * 100 < n("tFake", 20) + 10 * cl){
     const f = rnd(0.4, 0.7);                       // fake-out: climbs part way, then backs off early
@@ -572,7 +594,7 @@ async function pushVelocity(force){
   lastVel = v; lastVelAt = now;
   api("PUT", "/hamp/velocity", {velocity: v}).catch(e => status(e.message, true));
 }
-const curLen = () => +$("smax").value - +$("smin").value;
+const curLen = () => { const r = strokeRange(); return r.max - r.min; };
 function hexA(h, a){ const m = /^#?([0-9a-f]{6})$/i.exec(h || ""); if (!m) return "rgba(15,123,138," + a + ")"; const v = parseInt(m[1], 16); return "rgba(" + ((v >> 16) & 255) + "," + ((v >> 8) & 255) + "," + (v & 255) + "," + a + ")"; }
 const whoColor = w => PCOL[w] || "#0f7b8a";
 const whoName = w => w === "__you" ? "Manual" : (SHORT[w] || w);
@@ -727,7 +749,7 @@ function lubeDue(){
 }
 async function startBreak(){
   if (!running) return;
-  onBreak = true; breakBusy = true; mark("lube", "Lube break started");
+  onBreak = true; breakBusy = true; vibeOn = false; mark("lube", "Lube break started");
   remaining = Math.max(0, endAt - Date.now());
   running = false; paused = true; clearInterval(tick); devStopped = true; midCat = "";
   setButtons();
@@ -792,7 +814,7 @@ async function start(){
     if (!c.connected) throw new Error("Handy is not connected. Check the key and that the device is online, or turn on simulation mode under Session to try without it.");
     await api("PUT", "/mode", {mode: 0});                       // 0 = HAMP
     await sendStroke();
-    resetTease(); devStopped = false; hist = []; marks = []; lastSample = 0;
+    resetTease(); devStopped = false; hist = []; marks = []; lastSample = 0; vibeOn = false;
     lastVel = velocityAt(0, ms); lastVelAt = Date.now();
     await api("PUT", "/hamp/velocity", {velocity: lastVel});
     await api("PUT", "/hamp/start");
@@ -826,7 +848,7 @@ function update(){
   if (left <= 0) finish("Time is up. Stopped.", true);
   else if (lubeDue()) startBreak();
   else {
-    pushVelocity(false); sample();
+    syncVibe(); pushVelocity(false); sample();
     midTick();
   }
 }
@@ -840,7 +862,7 @@ async function finish(msg, timeUp, failed){
   const wasHidden = runHidden; runHidden = false;
   const leftNow = timeUp ? 0 : (running ? Math.max(0, endAt - Date.now()) : remaining);
   const ranSec = Math.round((total - leftNow) / 1000);
-  running = false; paused = false; clearInterval(tick); unlockScreen();
+  running = false; paused = false; vibeOn = false; clearInterval(tick); unlockScreen();
   recordSession(ranSec, failed ? "failed" : timeUp ? "timeup" : "manual", failed ? Math.round(total / 1000) : undefined); runTease = false; refreshLock();
   setButtons(); $("stop").disabled = true;
   status("Stopping…");
@@ -1540,7 +1562,7 @@ LINES["Mocking Margot"] = PERSONA_LINES["Mocking Margot"];
 Object.keys(MORE8).forEach(k => Object.keys(MORE8[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE8[k][c]); }));
 Object.keys(MORE9).forEach(k => Object.keys(MORE9[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE9[k][c]); }));
 Object.keys(MORE11).forEach(k => Object.keys(MORE11[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE11[k][c]); }));
-Object.assign(HYPE, {act_push:4,act_stairs:3,act_pulse:3,act_surge:5,act_cliff:5,act_wave:3,act_flutter:3,act_slowburn:2});
+Object.assign(HYPE, {act_vibrate:4,act_push:4,act_stairs:3,act_pulse:3,act_surge:5,act_cliff:5,act_wave:3,act_flutter:3,act_slowburn:2});
 Object.keys(MORE12).forEach(k => Object.keys(MORE12[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE12[k][c]); }));
 Object.assign(HYPE, {privAsk:3,privOn:8,privDeny:2,privMid:3,privBye:2});
 
@@ -1654,6 +1676,21 @@ Object.keys(MORE13).forEach(k => LINES[k].giveUp = MORE13[k].giveUp);
 Object.assign(HYPE, {giveUp:3});
 const YIELD_DEF = {"Patient Priscilla": 12, "Mischievous Mia": 8, "Strict Ms. Vance": 3, "Chaos Cassie": 15, "Sweet-Talker Sienna": 10, "Relentless Roxy": 3, "Sleepy Sadie": 15, "Drill Sergeant Dana": 3, "Mocking Margot": 5, "Cuckolding Veronica": 6, "Counting Camille": 8, "Gambling Gigi": 8, "Goddess Isadora": 3, "Bratty Bella": 5, "Hypnotic Helena": 12, "Coach Colleen": 5, "Doctor Delphine": 6, "Jealous Juliet": 2, "Queen Valentina": 3, "Pouty Penelope": 14, "Flirty Fiona": 10, "Stage-Manager Simone": 6};
 
+/* ---------- vibration bursts: per-persona chance (% per tease cycle) and length (s) ---------- */
+const VIB_DEF = {"Patient Priscilla":[2,6], "Mischievous Mia":[6,6], "Strict Ms. Vance":[3,8], "Chaos Cassie":[8,5], "Sweet-Talker Sienna":[3,8], "Relentless Roxy":[6,10], "Sleepy Sadie":[2,5], "Drill Sergeant Dana":[5,8], "Mocking Margot":[5,8], "Cuckolding Veronica":[4,8], "Counting Camille":[3,10], "Gambling Gigi":[6,6], "Goddess Isadora":[2,10], "Bratty Bella":[6,6], "Hypnotic Helena":[3,12], "Coach Colleen":[5,10], "Doctor Delphine":[5,8], "Jealous Juliet":[4,8], "Queen Valentina":[3,8], "Pouty Penelope":[3,5], "Flirty Fiona":[5,6], "Stage-Manager Simone":[4,8]};
+const vibNum = (pfx, p, i, lo, hi) => { const e = document.getElementById(pfx + NAMEKEY[p]); const v = e ? parseFloat(e.value) : NaN; return Math.max(lo, Math.min(hi, isNaN(v) ? ((VIB_DEF[p] || [3, 8])[i]) : v)); };
+const vibChance = p => vibNum("vibC_", p, 0, 0, 100);
+const vibSecs = p => vibNum("vibS_", p, 1, 2, 60);
+(function(){
+  const box = $("vibRows");
+  ALL.forEach(p => {
+    const k = NAMEKEY[p], d = VIB_DEF[p] || [3, 8], tr = document.createElement("tr");
+    tr.innerHTML = '<td>' + SHORT[p] + '</td><td><input id="vibC_' + k + '" type="number" min="0" max="100" value="' + d[0] + '" aria-label="' + SHORT[p] + ' vibration chance (%)"></td><td><input id="vibS_' + k + '" type="number" min="2" max="60" value="' + d[1] + '" aria-label="' + SHORT[p] + ' vibration length (s)"></td>';
+    box.append(tr);
+    tr.querySelectorAll("input").forEach(e => { const v = store.get("h_" + e.id, null); if (v !== null) e.value = v; e.onchange = () => store.set("h_" + e.id, e.value); });
+  });
+})();
+
 /* ---------- handing over: personas ask the controller directly, or the controller gives control up on her own ---------- */
 const yieldPct = p => { const e = document.getElementById("yld_" + NAMEKEY[p]); const v = e ? parseFloat(e.value) : NaN; return isNaN(v) ? (YIELD_DEF[p] || 5) : Math.max(0, Math.min(100, v)); };
 (function(){
@@ -1736,6 +1773,7 @@ LINES["Flirty Fiona"] = PERSONA_LINES["Flirty Fiona"];
 LINES["Stage-Manager Simone"] = PERSONA_LINES["Stage-Manager Simone"];
 
 Object.keys(__M).forEach(k => { LINES[k].manual = __M[k]; });
+Object.keys(VIBE_LINES).forEach(k => { LINES[k].act_vibrate = VIBE_LINES[k]; });
 Object.keys(__QC).forEach(k => { LINES[k].quitCtl = __QC[k]; LINES[k].quitSpec = __QS[k]; });
 Object.assign(HYPE, {quitCtl:3,quitSpec:3});
 /* ---------- interactions: targets, demands, questions ---------- */
