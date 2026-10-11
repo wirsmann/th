@@ -379,7 +379,7 @@ function resetTease(){ lastMove = ""; tz = {q: [], cur: null, start: 0, cycle: 0
 /* ---------- special moves: extra speed shapes beyond build / hold / rest ---------- */
 const MOVES = ["push","stairs","pulse","surge","cliff","wave","flutter","slowburn"];
 const MOVE_LABEL = {push:"pushing through", stairs:"stepping up", pulse:"pulsing", surge:"surging", cliff:"sudden stop", wave:"waves", flutter:"fluttering", slowburn:"slow burn"};
-const MOVE_FAV = {"Patient Priscilla": ["slowburn", "stairs", "wave"], "Mischievous Mia": ["pulse", "flutter", "cliff"], "Strict Ms. Vance": ["stairs", "cliff", "slowburn"], "Chaos Cassie": ["flutter", "pulse", "surge"], "Sweet-Talker Sienna": ["slowburn", "wave", "pulse"], "Relentless Roxy": ["surge", "push", "wave"], "Sleepy Sadie": ["slowburn", "wave", "pulse"], "Drill Sergeant Dana": ["stairs", "push", "surge"], "Mocking Margot": ["cliff", "surge", "push"]};
+const MOVE_FAV = {"Patient Priscilla": ["slowburn", "stairs", "wave"], "Mischievous Mia": ["pulse", "flutter", "cliff"], "Strict Ms. Vance": ["stairs", "cliff", "slowburn"], "Chaos Cassie": ["flutter", "pulse", "surge"], "Sweet-Talker Sienna": ["slowburn", "wave", "pulse"], "Relentless Roxy": ["surge", "push", "wave"], "Sleepy Sadie": ["slowburn", "wave", "pulse"], "Drill Sergeant Dana": ["stairs", "push", "surge"], "Mocking Margot": ["cliff", "surge", "push"], "Cuckolding Veronica": ["cliff", "pulse", "slowburn"]};
 var lastMove = "";
 function pickMove(){
   const fav = MOVE_FAV[currentPersona] || [], pool = [];
@@ -809,6 +809,7 @@ const PERSONAS = {
   "Sweet-Talker Sienna":    {d:"Gentle and warm. Never fully stops, just eases off and comes back.", low:25,pmin:50,pmax:70,bmin:30,bmax:60,hmin:5,hmax:12,rmin:6,rmax:14,fake:25,esc:2,stop:false},
   "Relentless Roxy":      {d:"Fast and demanding. Short rests, and the peaks keep climbing.", low:30,pmin:70,pmax:100,bmin:20,bmax:35,hmin:4,hmax:10,rmin:3,rmax:8,fake:10,esc:10,stop:false},
   "Sleepy Sadie":       {d:"Lazy, mellow pace. Slow drifts up and down with long pauses.", low:8,pmin:30,pmax:50,bmin:70,bmax:140,hmin:6,hmax:20,rmin:15,rmax:45,fake:20,esc:0,stop:true},
+  "Cuckolding Veronica": {d:"Smug and teasing. Treats you as the cuck: you watch while she talks about someone better. Cold stops, lots of fake-outs, long denial rests, and peaks that creep higher.", low:10,pmin:60,pmax:90,bmin:25,bmax:55,hmin:5,hmax:12,rmin:10,rmax:26,fake:40,esc:5,stop:true},
   "Mocking Margot": {d:"Smug and mocking. Loves embarrassing you: cold full stops, lots of fake-outs, long rests to let the desperation sink in, and peaks that creep higher.", low:10,pmin:55,pmax:85,bmin:25,bmax:50,hmin:6,hmax:14,rmin:12,rmax:30,fake:45,esc:6,stop:true},
   "Drill Sergeant Dana": {d:"Short, sharp bursts with firm stops, then straight back to work.", low:35,pmin:75,pmax:95,bmin:10,bmax:20,hmin:3,hmax:6,rmin:8,rmax:15,fake:20,esc:5,stop:true}
 };
@@ -836,7 +837,7 @@ $("persRandom").onclick = () => {
 };
 
 /* ---------- personality chat ---------- */
-const PCOL = {"Patient Priscilla":"#7a9e7e","Mischievous Mia":"#e0a43a","Strict Ms. Vance":"#8a4f7d","Chaos Cassie":"#d9534f","Sweet-Talker Sienna":"#e58fa8","Relentless Roxy":"#c8602a","Sleepy Sadie":"#7f8fb5","Drill Sergeant Dana":"#4f6b3a","Mocking Margot":"#9b3d5a"};
+const PCOL = {"Patient Priscilla":"#7a9e7e","Mischievous Mia":"#e0a43a","Strict Ms. Vance":"#8a4f7d","Chaos Cassie":"#d9534f","Sweet-Talker Sienna":"#e58fa8","Relentless Roxy":"#c8602a","Sleepy Sadie":"#7f8fb5","Drill Sergeant Dana":"#4f6b3a","Mocking Margot":"#9b3d5a","Cuckolding Veronica":"#3d7ea6"};
 const LINES = {
  "Patient Priscilla": {greet:["Hello, love. We're going to take our time today."],start:["Settle in. There's no rush at all.","Nice and slow. Let's begin."],build:["Slowly... that's it.","Easy does it. Let it come gradually.","Good. Keep that pace in mind."],hold:["Right here. Stay with it.","Hold steady for me."],rest:["And pause. Breathe.","Lovely. Now we wait a moment.","Let it settle."],fake:["Oh, we're backing off early. Patience pays.","Not yet, darling. Not yet."],warn:["One minute left. Let's finish gracefully."],win:["Beautifully done. I'm proud of your patience.","That was lovely. Well done."],fail:["You stopped. Patience is the whole point, love.","Oh dear. We'll try again after a rest."],chat:["Still with me?","Slow breaths.","You're doing well."],reply:["Mm, tell me more later. Focus on the pace.","I'm listening, love. Keep breathing."],please:["Asking nicely helps, but we go at my pace."]},
  "Mischievous Mia": {greet:["Oh, you picked me? Bold. This'll be fun."],start:["Alright, let's play. No promises.","Ready? Don't get comfortable."],build:["Ooh, here we go...","Climbing, climbing... or am I?","Feeling confident yet?"],hold:["Right there! Don't move.","Look at you, so close."],rest:["Just kidding.","Nope! Not today.","Gotcha."],fake:["Haha, did you think I'd let you? Too early!","Fooled you."],warn:["One minute left. Any last wishes? Too bad."],win:["Time's up! You survived my games.","Well played. I almost felt bad."],fail:["You quit? Aww, the game was just getting fun.","Ha! Out already. Back in the penalty box."],chat:["Bet you can't guess what I'll do next.","Hee hee.","Don't look so worried."],reply:["Ha! Cute. Anyway...","Interesting. Still not telling.","You're adorable when you ask."],please:["Ooh, begging? Louder. Still no."]},
@@ -1035,8 +1036,8 @@ function midTick(){
   if (now > nextPromiseAt){ nextPromiseAt = now + 60000 + Math.random() * 40000; say(runHidden && Math.random() < 0.5 ? "hidden" : "promise"); return; }
   if (now > nextChatAt && midCat !== "holdMid" && midCat !== "restMid"){ nextChatAt = now + 25000 + Math.random() * 25000; say("chat"); }
 }
-const SHORT = {"Patient Priscilla":"Priscilla","Mischievous Mia":"Mia","Strict Ms. Vance":"Ms. Vance","Chaos Cassie":"Cassie","Sweet-Talker Sienna":"Sienna","Relentless Roxy":"Roxy","Sleepy Sadie":"Sadie","Drill Sergeant Dana":"Dana","Mocking Margot":"Margot"};
-const NAMEKEY = {"Patient Priscilla":"priscilla","Mischievous Mia":"mia","Strict Ms. Vance":"vance","Chaos Cassie":"cassie","Sweet-Talker Sienna":"sienna","Relentless Roxy":"roxy","Sleepy Sadie":"sadie","Drill Sergeant Dana":"dana","Mocking Margot":"margot"};
+const SHORT = {"Patient Priscilla":"Priscilla","Mischievous Mia":"Mia","Strict Ms. Vance":"Ms. Vance","Chaos Cassie":"Cassie","Sweet-Talker Sienna":"Sienna","Relentless Roxy":"Roxy","Sleepy Sadie":"Sadie","Drill Sergeant Dana":"Dana","Mocking Margot":"Margot","Cuckolding Veronica":"Veronica"};
+const NAMEKEY = {"Patient Priscilla":"priscilla","Mischievous Mia":"mia","Strict Ms. Vance":"vance","Chaos Cassie":"cassie","Sweet-Talker Sienna":"sienna","Relentless Roxy":"roxy","Sleepy Sadie":"sadie","Drill Sergeant Dana":"dana","Mocking Margot":"margot","Cuckolding Veronica":"veronica"};
 const ALL = Object.keys(SHORT);
 const REACT = {
  "Patient Priscilla": {excitedStay:3, jealousStay:2, askControl:2, jealousLeave:1, banter:2},
@@ -1047,6 +1048,7 @@ const REACT = {
  "Relentless Roxy": {excitedStay:2, jealousStay:2, askControl:4, jealousLeave:2, banter:4},
  "Sleepy Sadie": {excitedStay:3, jealousStay:2, askControl:2, jealousLeave:2, banter:3},
  "Mocking Margot": {excitedStay:3, jealousStay:2, askControl:4, jealousLeave:1, banter:4},
+ "Cuckolding Veronica": {excitedStay:3, jealousStay:2, askControl:3, jealousLeave:1, banter:3},
  "Drill Sergeant Dana": {excitedStay:2, jealousStay:2, askControl:4, jealousLeave:3, banter:3}
 };
 const MORE5 = {
@@ -1305,7 +1307,7 @@ Object.keys(MORE6).forEach(k => Object.keys(MORE6[k]).forEach(c => { LINES[k][c]
 
 /* ---------- battle for control ---------- */
 let challenge = null, nextChallengeAt = 0; const attempts = {};
-const STUBBORN = {"Patient Priscilla":1.0,"Mischievous Mia":0.8,"Strict Ms. Vance":1.5,"Chaos Cassie":0.5,"Sweet-Talker Sienna":0.9,"Relentless Roxy":1.5,"Sleepy Sadie":0.6,"Drill Sergeant Dana":1.5,"Mocking Margot":1.3};
+const STUBBORN = {"Patient Priscilla":1.0,"Mischievous Mia":0.8,"Strict Ms. Vance":1.5,"Chaos Cassie":0.5,"Sweet-Talker Sienna":0.9,"Relentless Roxy":1.5,"Sleepy Sadie":0.6,"Drill Sergeant Dana":1.5,"Mocking Margot":1.3,"Cuckolding Veronica":1.2};
 function setPersonaFields(name, jitter){
   const p = PERSONAS[name]; if (!p) return;
   const j = v => jitter ? Math.round(v * (0.9 + Math.random() * 0.2)) : v;
@@ -1391,8 +1393,8 @@ function startChallenge(){
   for (let i = 0; i < others.length; i++){ r -= w[i]; if (r <= 0){ ch = others[i]; break; } }
   beginChallenge(ch);
 }
-const NICKS = {"Patient Priscilla":["pet","darling","good boy"],"Mischievous Mia":["toy","plaything","loser"],"Strict Ms. Vance":["subject","sub","slave"],"Chaos Cassie":["pawn","puppet","guinea pig"],"Sweet-Talker Sienna":["sweet thing","baby","sweetheart"],"Relentless Roxy":["rookie","peon","dog"],"Sleepy Sadie":["sleepyhead","puppy","plaything"],"Drill Sergeant Dana":["recruit","private","maggot"],"Mocking Margot":["worm","needy mess","little loser"]};
-const NICKRATE = {"Patient Priscilla":.35,"Mischievous Mia":.4,"Strict Ms. Vance":.55,"Chaos Cassie":.4,"Sweet-Talker Sienna":.35,"Relentless Roxy":.5,"Sleepy Sadie":.4,"Drill Sergeant Dana":.5,"Mocking Margot":.6};
+const NICKS = {"Patient Priscilla":["pet","darling","good boy"],"Mischievous Mia":["toy","plaything","loser"],"Strict Ms. Vance":["subject","sub","slave"],"Chaos Cassie":["pawn","puppet","guinea pig"],"Sweet-Talker Sienna":["sweet thing","baby","sweetheart"],"Relentless Roxy":["rookie","peon","dog"],"Sleepy Sadie":["sleepyhead","puppy","plaything"],"Drill Sergeant Dana":["recruit","private","maggot"],"Mocking Margot":["worm","needy mess","little loser"],"Cuckolding Veronica":["cuck","cuckold","little cuck"]};
+const NICKRATE = {"Patient Priscilla":.35,"Mischievous Mia":.4,"Strict Ms. Vance":.55,"Chaos Cassie":.4,"Sweet-Talker Sienna":.35,"Relentless Roxy":.5,"Sleepy Sadie":.4,"Drill Sergeant Dana":.5,"Mocking Margot":.6,"Cuckolding Veronica":.6};
 const NICKCATS = ["greet","start","build","hold","holdMid","rest","restMid","fake","fakeAfter","warn","win","fail","chat","reply","please","close","demand","promise","watch","enjoy","lowSpeed","shortStroke","praise","nudge","fakeNote","hidden","lubeBreak","lubeWait","lubeResume","tempt"];
 function nickFor(name){
   const custom = ($("nickCustom").value || "").trim(); if (custom) return custom;
@@ -2828,12 +2830,395 @@ function privTick(now){
   if (!runHidden && endAt - now < 120000) return;
   requestPrivate(currentPersona);
 }
+LINES["Cuckolding Veronica"] = {
+ "greet": [
+  "Well, hello. Come sit and watch. That's what you're best at.",
+  "There you are. I was just telling someone about you. He laughed."
+ ],
+ "start": [
+  "Let's begin. Keep your eyes on me, {nick}. And only your eyes.",
+  "Get comfortable. You'll want a good view of what you're missing.",
+  "We start now. Do try not to think about who I'd rather be with."
+ ],
+ "build": [
+  "That's it. Work up a sweat for me. I'll save the real fun for someone else.",
+  "Look how eager you get. It's so sweet. And so pointless.",
+  "Keep going, {nick}. I'm texting someone better while you do.",
+  "Faster? Don't get your hopes up. This is only warm-up for him."
+ ],
+ "hold": [
+  "Stay right there. Don't you dare finish. That's not yours to have.",
+  "Hold. Think about who gets to finish with me. Not you.",
+  "Hold it, {nick}. Just be good and watch.",
+  "Right there. I want you on the edge while I think about someone else."
+ ],
+ "holdMid": [
+  "Still holding? Good. Picture who I'm going home with tonight.",
+  "Don't you move. He's never needed permission and you always do.",
+  "Your face right now. He'd love to see it.",
+  "Breathe, {nick}. Just keep watching. That's your job."
+ ],
+ "rest": [
+  "And stop. Hands off. Tonight's not about you.",
+  "Rest, {nick}. Someone else will take it from here.",
+  "Stopped already? I'd say it was a shame, but it wasn't.",
+  "Down you go. Go on, sit there and imagine."
+ ],
+ "restMid": [
+  "Still waiting? That's all you're good at.",
+  "I've nearly forgotten you're here. He's much more interesting.",
+  "Wait patiently, {nick}. You always do.",
+  "You're whimpering. Cute. I'm checking my messages."
+ ],
+ "fake": [
+  "Oh, you thought that was for you? No, {nick}. Never.",
+  "Almost. No. That one's for someone else.",
+  "So close! Imagine how he'd feel instead.",
+  "You really thought I'd let you? Adorable."
+ ],
+ "fakeAfter": [
+  "That face when I pulled away. He'd love that.",
+  "Don't sulk. It's your natural look.",
+  "Poor thing. You always wait while someone else gets it.",
+  "I almost felt bad. Almost."
+ ],
+ "warn": [
+  "One minute left. Make it count. Not that it counts for much.",
+  "One minute. Try to hold on to some dignity. I never expected much, {nick}."
+ ],
+ "win": [
+  "You made it. I'm proud. Don't get used to it. He still lasts longer.",
+  "Good, {nick}. A treat for staying so patient. A small one.",
+  "Well done. You earned a kiss. On the cheek. Like a friend."
+ ],
+ "fail": [
+  "You quit? I'm not surprised, {nick}. Someone else would have lasted.",
+  "Couldn't even finish what I started. Typical.",
+  "Lockout time, {nick}. Go think about what he'd have done."
+ ],
+ "chat": [
+  "Round {n}. I'm thinking about whether to tell him how well you behaved.",
+  "{left} left. He'd have lasted twice as long, {nick}.",
+  "Round {n}. You're doing so well at being the one who watches."
+ ],
+ "reply": [
+  "I didn't ask for your opinion, {nick}. Just your attention.",
+  "Cute. Keep talking. I'm tuning you out.",
+  "That's sweet. He'd say it better.",
+  "Noted. Not that it changes anything."
+ ],
+ "please": [
+  "Begging? Keep going. He never has to.",
+  "Oh, {nick}. Please what? Be specific. Then I'll say no.",
+  "Louder. I want to hear exactly how badly you want something you won't get."
+ ],
+ "close": [
+  "Close? Of course you are. Stop. Not yet. Not for you.",
+  "Almost? That's adorable. Hold on, {nick}. It isn't yours.",
+  "Close already? Imagine how he'd do it. Better."
+ ],
+ "demand": [
+  "You don't demand things from me. You wait and hope.",
+  "Demanding? That's funny coming from the one who gets nothing.",
+  "Asking for permission is the only thing you do well, {nick}. Do it properly."
+ ],
+ "promise": [
+  "Last the whole session and I might let you off the hook. Might. If he's busy.",
+  "Make it to the end and there's a reward. Maybe even a hug, {nick}.",
+  "Be good and I'll tell you all about my evening afterwards. You'll love that."
+ ],
+ "watch": [
+  "I can see you, {nick}. Every squirm. You're so good at watching.",
+  "You're a wonderful audience. Truly. Stay seated.",
+  "Your face when I mention him. I could look at that all day.",
+  "I love how quiet you get when I talk about him.",
+  "I can see everything, {nick}. Every twitch. Every flush."
+ ],
+ "enjoy": [
+  "I'm having such a lovely time. Both of us. Well, mostly me.",
+  "You do exactly what I say and you don't even ask why. Delightful.",
+  "I love how obedient you are, {nick}. He loves it too.",
+  "This is my favorite game. You watch. I play."
+ ],
+ "lowSpeed": [
+  "That top speed? Cute. He'd go far faster. Raise it.",
+  "Playing it safe again, {nick}. Raise it. Do keep up."
+ ],
+ "shortStroke": [
+  "Those strokes are so small. Use more. Don't be shy.",
+  "Short strokes? Disappointing. Widen it, {nick}."
+ ],
+ "praise": [
+  "Bold settings. Lovely. Let's see how you cope.",
+  "High speed and full range? You're so eager. Good."
+ ],
+ "nudge": [
+  "Still on the baby settings, {nick}? Raise them. It'll be more fun.",
+  "I'd love to see you struggle more. Turn it up."
+ ],
+ "fakeNote": [
+  "All those fake-outs? You really do love being left wanting.",
+  "Peaks climbing every round. You're asking for it, {nick}."
+ ],
+ "hidden": [
+  "I haven't decided when this ends. I'll tell you when he gets here.",
+  "No clock for you, {nick}. You wait. Like always.",
+  "Not knowing is the best part, don't you think?"
+ ],
+ "lubeBreak": [
+  "Pause. Lube up if you need to. Then press resume. I'll just take a call.",
+  "Stop. Take a minute. Fix yourself up, {nick}. I'll wait. Reluctantly.",
+  "Break time. Lube if you need it, then resume. Don't keep me waiting."
+ ],
+ "lubeWait": [
+  "Still fussing? Resume when you're ready. He's never needed breaks.",
+  "Take your time. I'm checking my phone.",
+  "I'm waiting. Don't worry. I'm used to waiting on you."
+ ],
+ "lubeResume": [
+  "Back? Good. Let's carry on.",
+  "There you are. Where were we, {nick}?"
+ ],
+ "enter": [
+  "Hello, everyone. Anyone here need a good cuckolding? Ask me nicely."
+ ],
+ "leave": [
+  "I'm going to meet someone more satisfying. Bye."
+ ],
+ "tempt": [
+  "Hey, {nick}. I'd love to have you watch me. Give me control.",
+  "I've been thinking about you, {nick}. And about someone else. Give me control and I'll tell you about him.",
+  "You look like you need a good humbling. Give me control, {nick}."
+ ],
+ "jealousStay": [
+  "{other} gets the turn? Fine. I'll stay and enjoy your face, {nick}.",
+  "Hm. {other} can go first. I'll be here for what's left."
+ ],
+ "jealousLeave": [
+  "If {other} is who you want, then you don't need me, {nick}. I have other plans."
+ ],
+ "excitedStay": [
+  "Oh, this is going to be fun. I'm staying to watch.",
+  "A show? I wouldn't miss it."
+ ],
+ "askControl": [
+  "Why settle for {other}, {nick}? I'd make you watch so much better.",
+  "{other} is far too gentle. Give me control instead, {nick}."
+ ],
+ "banter": [
+  "{other}, you're being so kind to him. Don't spoil him.",
+  "Oh, {other}. Is that really all you'll do to him?",
+  "{other}, I know someone who'd do a better job. I'll introduce you."
+ ],
+ "spectate": [
+  "{ctrl} has you right where you belong, {nick}. Watching.",
+  "Look at {ctrl} work you over. I'm taking notes.",
+  "I'm learning so much from {ctrl}, {nick}. For later."
+ ],
+ "spectateFail": [
+  "Quitting? {ctrl} must be so disappointed, {nick}. He'd have lasted longer.",
+  "Pathetic. {ctrl} was kinder than you deserve, {nick}."
+ ],
+ "spectateWin": [
+  "You lasted. {ctrl} must be proud. I'd tell him, but he's busy.",
+  "Fine, {nick}. {ctrl} did well. Don't get a big head."
+ ],
+ "challenge": [
+  "{other}, you're being too gentle. Step aside. I'll make him watch properly.",
+  "Move, {other}. I know exactly how to make him feel small.",
+  "{other}, let me take over. I have someone to tell him about."
+ ],
+ "defend": [
+  "No, {other}. I'm having far too much fun with my {nick}.",
+  "Back off, {other}. You'll spoil the humiliation.",
+  "{other}, this one's mine. I haven't made him jealous yet."
+ ],
+ "takeover": [
+  "Thank you, {other}. Now, {nick}, you'll sit and watch while I tell you about him.",
+  "Mine now. Eyes on me, {nick}. And only on me."
+ ],
+ "lose": [
+  "Fine, {other}. Take it. I'll just go tell him about it."
+ ],
+ "keep": [
+  "Nice try, {other}. This {nick} is mine."
+ ],
+ "retreat": [
+  "Fine, {other}. I'll wait. I'm good at making people wait."
+ ],
+ "heckle": [
+  "{ctrl}, that's far too gentle. This {nick} needs to feel what it's like to be second best.",
+  "I'd have this {nick} in tears by now, {ctrl}."
+ ],
+ "resist": [
+  "Cute, {other}, but no. This {nick} is mine.",
+  "I'm not done telling him about my plans, {other}. Sit down.",
+  "Keep asking, {other}. It's amusing. The answer is still no."
+ ],
+ "insist": [
+  "{other}, you're being so selfish. Hand it over.",
+  "Don't make me beg, {other}. You won't like it when I get my way.",
+  "{other}, give me control and I'll share what I did last night."
+ ],
+ "crowd": [
+  "{viewers} people are watching you, {nick}. Every single one of them knows exactly what you are.",
+  "Look at the audience, {nick}. {viewers} of them, and not one is jealous."
+ ],
+ "fanReply": [
+  "Thank you, {fan}. You have wonderful taste.",
+  "{fan}, keep watching. It only gets worse for my {nick}."
+ ],
+ "askFeel": [
+  "How does it feel, {nick}? Watching. Waiting. Be honest.",
+  "Tell me how you're feeling, {nick}. Frustrated? Good."
+ ],
+ "askNext": [
+  "What shall I do next, {nick}? Let me hear you ask. It's so sweet.",
+  "Pick one, {nick}. It'll be fun to watch you choose."
+ ],
+ "askLike": [
+  "Be honest, {nick}. What do you like most about being second best?",
+  "What's your favorite part, {nick}? I'd love to hear you say it."
+ ],
+ "askMood": [
+  "Shall I invite someone to watch you, {nick}? What kind?",
+  "Who should join us, {nick}? Name a mood. Someone's about to see you like this."
+ ],
+ "qMore": [
+  "More? Of course you want more, {nick}. It's the only thing you get.",
+  "Begging for more, {nick}? He never has to."
+ ],
+ "qFine": [
+  "Fine? I'll fix that, {nick}. Or he will.",
+  "Just fine? How dull. Let me liven that up."
+ ],
+ "qLot": [
+  "Too much? That's so sweet, {nick}.",
+  "Poor thing. It's a lot, isn't it, {nick}? He'd manage."
+ ],
+ "qMercy": [
+  "Ugh. Fine. A pity break, {nick}. Because I'm generous.",
+  "Aw. A break for my poor little watcher."
+ ],
+ "qNoMercy": [
+  "No. I'm enjoying this too much, {nick}.",
+  "Mercy? He never asks for it. Keep going."
+ ],
+ "qTease": [
+  "Teasing it is. Watch and squirm, {nick}.",
+  "Oh, you'll love this. Or you won't."
+ ],
+ "qHold": [
+  "Hold it, {nick}. Don't you dare move.",
+  "Stay there. I want you to imagine someone else doing this."
+ ],
+ "qLike": [
+  "{answer}. How telling, {nick}. I'll tell him.",
+  "{answer}. Of course. I'll remember that, {nick}."
+ ],
+ "qMood": [
+  "{answer}. How revealing, {nick}. Let me see who's around.",
+  "{answer}? Typical. Stay put, {nick}."
+ ],
+ "dmdSpeedUp": [
+  "Faster, {nick}. Up {step}%, to {to}%. He'd never need telling.",
+  "Speed up, {nick}. Up {step}%, to {to}%. Keep up."
+ ],
+ "dmdSpeedDown": [
+  "Slow down, {nick}. Down {step}%, to {to}%. Don't rush.",
+  "Ease off, {nick}. Down {step}%, to {to}%. Wait for me."
+ ],
+ "dmdStrokeUp": [
+  "Longer strokes, {nick}. Add {step}%, to {to}%. Show me something.",
+  "Longer, {nick}. Up {step}%, to {to}%."
+ ],
+ "dmdStrokeDown": [
+  "Shorter strokes, {nick}. Down {step}%, to {to}%.",
+  "Smaller, {nick}. Cut {step}%, to {to}%. Don't pout."
+ ],
+ "dmdYes": [
+  "Good {nick}. Obedient. He'd approve.",
+  "Look at you following instructions. Adorable."
+ ],
+ "dmdExact": [
+  "Exactly right. Even you managed it, {nick}.",
+  "On target. I'm almost impressed, {nick}."
+ ],
+ "dmdNo": [
+  "You refused me, {nick}? Cute. I'll ask again.",
+  "Oh, you said no? That won't last, {nick}."
+ ],
+ "dmdHit": [
+  "There. That's the number. Don't ruin it, {nick}.",
+  "Right on target. Stay there, {nick}."
+ ],
+ "act_push": [
+  "Did you think I'd stop there, {nick}? Cute. Keep going.",
+  "No rest for you, {nick}. He never stops, and neither do I."
+ ],
+ "act_stairs": [
+  "Stairs, {nick}. One step at a time. Each one harder.",
+  "Step by step, {nick}. Watch how high you can go. Alone."
+ ],
+ "act_pulse": [
+  "Pulse, {nick}. Look at you twitch.",
+  "Keep time, {nick}. Like a good boy."
+ ],
+ "act_surge": [
+  "A little surge, {nick}. Try to stay dignified.",
+  "Surprise, {nick}. Hold it together."
+ ],
+ "act_cliff": [
+  "Stop. Hands off, {nick}. That's what he'd do. Wait.",
+  "Frozen, {nick}. I love that look on your face."
+ ],
+ "act_wave": [
+  "Waves, {nick}. Try to keep up.",
+  "Up and down, {nick}. Poor thing."
+ ],
+ "act_flutter": [
+  "Flutter, {nick}. Look at you shake.",
+  "Try to stay composed, {nick}. You can't."
+ ],
+ "act_slowburn": [
+  "A slow burn, {nick}. Let me watch you suffer.",
+  "Nice and slow, {nick}. I have all night. With someone else."
+ ],
+ "privAsk": [
+  "Shall I send the audience away, {nick}? So I can tell you all about him. In private.",
+  "Would you like to be mine alone, {nick}? Fewer witnesses. More him, in my stories."
+ ],
+ "privOn": [
+  "Good choice, {nick}. Door's locked. Now you'll hear everything.",
+  "Everyone out. Now it's just us, {nick}. And my stories."
+ ],
+ "privDeny": [
+  "Shy, {nick}? How sweet. I'll ask again.",
+  "Not yet? Fine, {nick}. I'll enjoy waiting."
+ ],
+ "privMid": [
+  "No audience now, {nick}. Just you and what you're missing.",
+  "Nobody to see you now, {nick}. Just me. Tell me how it feels to be the one watching.",
+  "I can be so much meaner in private, {nick}. Let me tell you about last night."
+ ],
+ "privBye": [
+  "Goodbye, {other}. Do run along.",
+  "Out you go, {other}. He's mine now."
+ ],
+ "dmdWarn": [
+  "Keep refusing, {nick}. I'm getting bored of you.",
+  "Say no again, {nick}. See what happens."
+ ],
+ "dmdLeave": [
+  "You're no fun when you refuse, {nick}. I'm going to find someone better."
+ ]
+};
 /* ---------- interactions: targets, demands, questions ---------- */
 let suppressUntil = 0;
 const STEP = 5;
-const TARGETS = {"Patient Priscilla":{speed:40,len:70},"Mischievous Mia":{speed:60,len:70},"Strict Ms. Vance":{speed:60,len:100},"Chaos Cassie":{chaos:true},"Sweet-Talker Sienna":{speed:50,len:80},"Relentless Roxy":{speed:80,len:100},"Sleepy Sadie":{speed:30,len:60},"Drill Sergeant Dana":{speed:75,len:90},"Mocking Margot":{speed:70,len:85}};
-const MERCY = {"Patient Priscilla":.8,"Mischievous Mia":.3,"Strict Ms. Vance":.2,"Chaos Cassie":.5,"Sweet-Talker Sienna":.8,"Relentless Roxy":.15,"Sleepy Sadie":.9,"Drill Sergeant Dana":.25,"Mocking Margot":.1};
-const MOODSETS = {gentle:["Patient Priscilla","Sweet-Talker Sienna","Sleepy Sadie"], strict:["Strict Ms. Vance","Relentless Roxy","Drill Sergeant Dana"], mean:["Mischievous Mia","Mocking Margot","Chaos Cassie"], any:ALL};
+const TARGETS = {"Patient Priscilla":{speed:40,len:70},"Mischievous Mia":{speed:60,len:70},"Strict Ms. Vance":{speed:60,len:100},"Chaos Cassie":{chaos:true},"Sweet-Talker Sienna":{speed:50,len:80},"Relentless Roxy":{speed:80,len:100},"Sleepy Sadie":{speed:30,len:60},"Drill Sergeant Dana":{speed:75,len:90},"Mocking Margot":{speed:70,len:85},"Cuckolding Veronica":{speed:65,len:80}};
+const MERCY = {"Patient Priscilla":.8,"Mischievous Mia":.3,"Strict Ms. Vance":.2,"Chaos Cassie":.5,"Sweet-Talker Sienna":.8,"Relentless Roxy":.15,"Sleepy Sadie":.9,"Drill Sergeant Dana":.25,"Mocking Margot":.1,"Cuckolding Veronica":.12};
+const MOODSETS = {gentle:["Patient Priscilla","Sweet-Talker Sienna","Sleepy Sadie"], strict:["Strict Ms. Vance","Relentless Roxy","Drill Sergeant Dana"], mean:["Mischievous Mia","Mocking Margot","Chaos Cassie","Cuckolding Veronica"], any:ALL};
 const QDEFS = {
   feel: {cat:"askFeel", opts:[{label:"Give me more",kind:"more"},{label:"I'm doing fine",kind:"fine"},{label:"It's a lot",kind:"lot"},{label:"I'm close",kind:"close"}]},
   next: {cat:"askNext", opts:[{label:"Tease me",kind:"tease"},{label:"Hold me there",kind:"hold"},{label:"Give me a rest",kind:"rest"},{label:"Surprise me",kind:"surprise"}]},
@@ -2910,7 +3295,7 @@ function acceptDemand(d, exact){
     if (running && currentPersona === p && Math.abs(t2.speed - (+$("speed").value)) < 3 && Math.abs(t2.len - curLen()) < 3 && !hit[p]){ hit[p] = Date.now(); sayAs(p, "dmdHit"); }
   }, 4500);
 }
-const TOL = {"Patient Priscilla": 5, "Mischievous Mia": 3, "Strict Ms. Vance": 2, "Chaos Cassie": 4, "Sweet-Talker Sienna": 4, "Relentless Roxy": 3, "Sleepy Sadie": 5, "Drill Sergeant Dana": 2, "Mocking Margot": 3};
+const TOL = {"Patient Priscilla": 5, "Mischievous Mia": 3, "Strict Ms. Vance": 2, "Chaos Cassie": 4, "Sweet-Talker Sienna": 4, "Relentless Roxy": 3, "Sleepy Sadie": 5, "Drill Sergeant Dana": 2, "Mocking Margot": 3, "Cuckolding Veronica": 3};
 const MORE10 = {
  "Patient Priscilla": {
   "dmdWarn": [
