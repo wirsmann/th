@@ -502,10 +502,21 @@ const MOVE_NAME = {push:"Pushing through", stairs:"Stepping up", pulse:"Pulsing"
 const MOVE_LABEL = {vibrate:"vibrating", push:"pushing through", stairs:"stepping up", pulse:"pulsing", surge:"surging", cliff:"sudden stop", wave:"waves", flutter:"fluttering", slowburn:"slow burn"};
 const MOVE_FAV = {"Patient Priscilla": ["slowburn", "stairs", "wave"], "Mischievous Mia": ["pulse", "flutter", "cliff"], "Strict Ms. Vance": ["stairs", "cliff", "slowburn"], "Chaos Cassie": ["flutter", "pulse", "surge"], "Sweet-Talker Sienna": ["slowburn", "wave", "pulse"], "Relentless Roxy": ["surge", "push", "wave"], "Sleepy Sadie": ["slowburn", "wave", "pulse"], "Drill Sergeant Dana": ["stairs", "push", "surge"], "Mocking Margot": ["cliff", "surge", "push"], "Cuckolding Veronica": ["cliff", "pulse", "slowburn"], "Counting Camille": ["stairs", "slowburn", "pulse"], "Gambling Gigi": ["cliff", "surge", "flutter"], "Goddess Isadora": ["slowburn", "wave", "stairs"], "Bratty Bella": ["pulse", "flutter", "cliff"], "Hypnotic Helena": ["wave", "slowburn", "pulse"], "Coach Colleen": ["stairs", "push", "surge"], "Doctor Delphine": ["pulse", "slowburn", "stairs"], "Jealous Juliet": ["cliff", "pulse", "slowburn"], "Queen Valentina": ["stairs", "cliff", "slowburn"], "Pouty Penelope": ["wave", "flutter", "pulse"], "Flirty Fiona": ["flutter", "wave", "pulse"], "Stage-Manager Simone": ["stairs", "surge", "wave"]};
 var lastMove = "";
-/* each move has its own chance per cycle, set per persona under Personas. Defaults: favourites 8%, others 2%. */
+/* each move has its own chance per cycle, set per persona under Personas. Defaults: favourites 8%, others 2%, and 0 for the moves MOVE_OFF lists. */
+const MOVE_OFF = {
+  "Patient Priscilla": ["cliff", "surge"],
+  "Sweet-Talker Sienna": ["cliff", "surge"],
+  "Sleepy Sadie": ["cliff", "surge", "flutter"],
+  "Drill Sergeant Dana": ["flutter", "wave"],
+  "Hypnotic Helena": ["cliff", "surge"],
+  "Goddess Isadora": ["cliff", "flutter"],
+  "Counting Camille": ["flutter", "wave"],
+  "Coach Colleen": ["wave", "slowburn"]
+};
+const moveDef = (p, m) => (MOVE_OFF[p] || []).includes(m) ? 0 : (MOVE_FAV[p] || []).includes(m) ? 8 : 2;
 function moveChance(p, m){
   const e = document.getElementById("mvC_" + NAMEKEY[p] + "_" + m); const v = e ? parseFloat(e.value) : NaN;
-  return isNaN(v) ? ((MOVE_FAV[p] || []).includes(m) ? 8 : 2) : Math.max(0, Math.min(100, v));
+  return isNaN(v) ? moveDef(p, m) : Math.max(0, Math.min(100, v));
 }
 /* rolls every move (in random order, never the same move twice in a row) and returns the first that comes up, or null */
 function pickMove(){
@@ -1736,7 +1747,7 @@ function personaCfg(p){ const o = {d: PERSONAS[p].d, stop: tpStop(p)}; TP.forEac
       + '<div class="grid">' + tp + '</div>'
       + '<label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:8px"><input type="checkbox" id="' + tpId(p, "stop") + '"' + (P.stop ? " checked" : "") + '> Fully stop during rests</label>'
       + '<strong class="subHead">Moves: chance per cycle (%)</strong><div class="grid">'
-      + MOVES.map(m => '<div><label for="mvC_' + k + '_' + m + '">' + MOVE_NAME[m] + '</label><input id="mvC_' + k + '_' + m + '" type="number" min="0" max="100" value="' + ((MOVE_FAV[p] || []).includes(m) ? 8 : 2) + '"></div>').join('')
+      + MOVES.map(m => '<div><label for="mvC_' + k + '_' + m + '">' + MOVE_NAME[m] + '</label><input id="mvC_' + k + '_' + m + '" type="number" min="0" max="100" value="' + moveDef(p, m) + '"></div>').join('')
       + '<div><label for="vibC_' + k + '">Vibration burst</label><input id="vibC_' + k + '" type="number" min="0" max="100" value="' + v[0] + '"></div>'
       + '</div>'
       + '<strong class="subHead">Nicknames she uses for you</strong>'
