@@ -655,6 +655,7 @@ const PERSONAS = {
   "Sweet-Talker Sienna":    {d:"Gentle and warm. Never fully stops, just eases off and comes back.", low:25,pmin:50,pmax:70,bmin:30,bmax:60,hmin:5,hmax:12,rmin:6,rmax:14,fake:25,esc:2,stop:false},
   "Relentless Roxy":      {d:"Fast and demanding. Short rests, and the peaks keep climbing.", low:30,pmin:70,pmax:100,bmin:20,bmax:35,hmin:4,hmax:10,rmin:3,rmax:8,fake:10,esc:10,stop:false},
   "Sleepy Sadie":       {d:"Lazy, mellow pace. Slow drifts up and down with long pauses.", low:8,pmin:30,pmax:50,bmin:70,bmax:140,hmin:6,hmax:20,rmin:15,rmax:45,fake:20,esc:0,stop:true},
+  "Mocking Margot": {d:"Smug and mocking. Loves embarrassing you: cold full stops, lots of fake-outs, long rests to let the desperation sink in, and peaks that creep higher.", low:10,pmin:55,pmax:85,bmin:25,bmax:50,hmin:6,hmax:14,rmin:12,rmax:30,fake:45,esc:6,stop:true},
   "Drill Sergeant Dana": {d:"Short, sharp bursts with firm stops, then straight back to work.", low:35,pmin:75,pmax:95,bmin:10,bmax:20,hmin:3,hmax:6,rmin:8,rmax:15,fake:20,esc:5,stop:true}
 };
 Object.keys(PERSONAS).forEach(k => { const o = document.createElement("option"); o.value = o.textContent = k; $("persona").append(o); });
@@ -681,7 +682,7 @@ $("persRandom").onclick = () => {
 };
 
 /* ---------- personality chat ---------- */
-const PCOL = {"Patient Priscilla":"#7a9e7e","Mischievous Mia":"#e0a43a","Strict Ms. Vance":"#8a4f7d","Chaos Cassie":"#d9534f","Sweet-Talker Sienna":"#e58fa8","Relentless Roxy":"#c8602a","Sleepy Sadie":"#7f8fb5","Drill Sergeant Dana":"#4f6b3a"};
+const PCOL = {"Patient Priscilla":"#7a9e7e","Mischievous Mia":"#e0a43a","Strict Ms. Vance":"#8a4f7d","Chaos Cassie":"#d9534f","Sweet-Talker Sienna":"#e58fa8","Relentless Roxy":"#c8602a","Sleepy Sadie":"#7f8fb5","Drill Sergeant Dana":"#4f6b3a","Mocking Margot":"#9b3d5a"};
 const LINES = {
  "Patient Priscilla": {greet:["Hello, love. We're going to take our time today."],start:["Settle in. There's no rush at all.","Nice and slow. Let's begin."],build:["Slowly... that's it.","Easy does it. Let it come gradually.","Good. Keep that pace in mind."],hold:["Right here. Stay with it.","Hold steady for me."],rest:["And pause. Breathe.","Lovely. Now we wait a moment.","Let it settle."],fake:["Oh, we're backing off early. Patience pays.","Not yet, darling. Not yet."],warn:["One minute left. Let's finish gracefully."],win:["Beautifully done. I'm proud of your patience.","That was lovely. Well done."],fail:["You stopped. Patience is the whole point, love.","Oh dear. We'll try again after a rest."],chat:["Still with me?","Slow breaths.","You're doing well."],reply:["Mm, tell me more later. Focus on the pace.","I'm listening, love. Keep breathing."],please:["Asking nicely helps, but we go at my pace."]},
  "Mischievous Mia": {greet:["Oh, you picked me? Bold. This'll be fun."],start:["Alright, let's play. No promises.","Ready? Don't get comfortable."],build:["Ooh, here we go...","Climbing, climbing... or am I?","Feeling confident yet?"],hold:["Right there! Don't move.","Look at you, so close."],rest:["Just kidding.","Nope! Not today.","Gotcha."],fake:["Haha, did you think I'd let you? Too early!","Fooled you."],warn:["One minute left. Any last wishes? Too bad."],win:["Time's up! You survived my games.","Well played. I almost felt bad."],fail:["You quit? Aww, the game was just getting fun.","Ha! Out already. Back in the penalty box."],chat:["Bet you can't guess what I'll do next.","Hee hee.","Don't look so worried."],reply:["Ha! Cute. Anyway...","Interesting. Still not telling.","You're adorable when you ask."],please:["Ooh, begging? Louder. Still no."]},
@@ -820,7 +821,8 @@ function midTick(){
   const now = Date.now();
   if (midCat && now > midAt){
     const r = Math.random();
-    say(midCat === "build" ? (r < 0.25 ? "watch" : r < 0.4 ? "enjoy" : "build") : r < 0.3 ? "watch" : r < 0.5 ? "enjoy" : midCat);
+    const wb = currentPersona === "Mocking Margot" ? 0.15 : 0;
+    say(midCat === "build" ? (r < 0.25 + wb ? "watch" : r < 0.4 + wb ? "enjoy" : "build") : r < 0.3 + wb ? "watch" : r < 0.5 + wb ? "enjoy" : midCat);
     midAt = now + (midCat === "holdMid" ? 3500 + Math.random() * 3000 : midCat === "restMid" ? 8000 + Math.random() * 5000 : 14000 + Math.random() * 8000);
     return;
   }
@@ -828,8 +830,8 @@ function midTick(){
   if (now > nextPromiseAt){ nextPromiseAt = now + 60000 + Math.random() * 40000; say(runHidden && Math.random() < 0.5 ? "hidden" : "promise"); return; }
   if (now > nextChatAt && midCat !== "holdMid" && midCat !== "restMid"){ nextChatAt = now + 25000 + Math.random() * 25000; say("chat"); }
 }
-const SHORT = {"Patient Priscilla":"Priscilla","Mischievous Mia":"Mia","Strict Ms. Vance":"Ms. Vance","Chaos Cassie":"Cassie","Sweet-Talker Sienna":"Sienna","Relentless Roxy":"Roxy","Sleepy Sadie":"Sadie","Drill Sergeant Dana":"Dana"};
-const NAMEKEY = {"Patient Priscilla":"priscilla","Mischievous Mia":"mia","Strict Ms. Vance":"vance","Chaos Cassie":"cassie","Sweet-Talker Sienna":"sienna","Relentless Roxy":"roxy","Sleepy Sadie":"sadie","Drill Sergeant Dana":"dana"};
+const SHORT = {"Patient Priscilla":"Priscilla","Mischievous Mia":"Mia","Strict Ms. Vance":"Ms. Vance","Chaos Cassie":"Cassie","Sweet-Talker Sienna":"Sienna","Relentless Roxy":"Roxy","Sleepy Sadie":"Sadie","Drill Sergeant Dana":"Dana","Mocking Margot":"Margot"};
+const NAMEKEY = {"Patient Priscilla":"priscilla","Mischievous Mia":"mia","Strict Ms. Vance":"vance","Chaos Cassie":"cassie","Sweet-Talker Sienna":"sienna","Relentless Roxy":"roxy","Sleepy Sadie":"sadie","Drill Sergeant Dana":"dana","Mocking Margot":"margot"};
 const ALL = Object.keys(SHORT);
 const REACT = {
  "Patient Priscilla": {excitedStay:3, jealousStay:2, askControl:2, jealousLeave:1, banter:2},
@@ -839,6 +841,7 @@ const REACT = {
  "Sweet-Talker Sienna": {excitedStay:3, jealousStay:3, askControl:3, jealousLeave:1, banter:2},
  "Relentless Roxy": {excitedStay:2, jealousStay:2, askControl:4, jealousLeave:2, banter:4},
  "Sleepy Sadie": {excitedStay:3, jealousStay:2, askControl:2, jealousLeave:2, banter:3},
+ "Mocking Margot": {excitedStay:3, jealousStay:2, askControl:4, jealousLeave:1, banter:4},
  "Drill Sergeant Dana": {excitedStay:2, jealousStay:2, askControl:4, jealousLeave:3, banter:3}
 };
 const MORE5 = {
@@ -1035,8 +1038,8 @@ function startChallenge(){
   for (let i = 0; i < others.length; i++){ r -= w[i]; if (r <= 0){ ch = others[i]; break; } }
   beginChallenge(ch);
 }
-const NICKS = {"Patient Priscilla":["pet","darling","good boy"],"Mischievous Mia":["toy","plaything","loser"],"Strict Ms. Vance":["subject","sub","slave"],"Chaos Cassie":["pawn","puppet","guinea pig"],"Sweet-Talker Sienna":["sweet thing","baby","sweetheart"],"Relentless Roxy":["rookie","peon","dog"],"Sleepy Sadie":["sleepyhead","puppy","plaything"],"Drill Sergeant Dana":["recruit","private","maggot"]};
-const NICKRATE = {"Patient Priscilla":.35,"Mischievous Mia":.4,"Strict Ms. Vance":.55,"Chaos Cassie":.4,"Sweet-Talker Sienna":.35,"Relentless Roxy":.5,"Sleepy Sadie":.4,"Drill Sergeant Dana":.5};
+const NICKS = {"Patient Priscilla":["pet","darling","good boy"],"Mischievous Mia":["toy","plaything","loser"],"Strict Ms. Vance":["subject","sub","slave"],"Chaos Cassie":["pawn","puppet","guinea pig"],"Sweet-Talker Sienna":["sweet thing","baby","sweetheart"],"Relentless Roxy":["rookie","peon","dog"],"Sleepy Sadie":["sleepyhead","puppy","plaything"],"Drill Sergeant Dana":["recruit","private","maggot"],"Mocking Margot":["worm","needy mess","little loser"]};
+const NICKRATE = {"Patient Priscilla":.35,"Mischievous Mia":.4,"Strict Ms. Vance":.55,"Chaos Cassie":.4,"Sweet-Talker Sienna":.35,"Relentless Roxy":.5,"Sleepy Sadie":.4,"Drill Sergeant Dana":.5,"Mocking Margot":.6};
 const NICKCATS = ["greet","start","build","hold","holdMid","rest","restMid","fake","fakeAfter","warn","win","fail","chat","reply","please","close","demand","promise","watch","enjoy","lowSpeed","shortStroke","praise","nudge","fakeNote","hidden","lubeBreak","lubeWait","lubeResume","tempt"];
 function nickFor(name){
   const custom = ($("nickCustom").value || "").trim(); if (custom) return custom;
@@ -1072,6 +1075,56 @@ Object.keys(MORE7).forEach(k => Object.keys(MORE7[k]).forEach(c => { LINES[k][c]
     });
   }));
 })();
+
+LINES["Mocking Margot"] = {
+ greet:["Well, look who showed up. Let's see how long you stay dignified.","Oh good, you're here. I was hoping for some entertainment."],
+ start:["Let's begin. Try not to embarrass yourself too quickly, {nick}.","Get comfortable. This is going to be so much fun for me and so humbling for you.","Ready, {nick}? Of course you are. You're always so eager."],
+ build:["Look how quickly you get worked up. Adorable.","Already squirming? We've barely started.","Aw, you're trying to look composed. It isn't working.","Listen to your breathing, {nick}. So easy to read."],
+ hold:["Right there. Don't you dare move. I want to enjoy this.","Hold it. Look at yourself, {nick}. So desperate.","Is that all it takes? Sad.","Stay exactly there. I want to watch you shake."],
+ holdMid:["Still holding? Cute. Your face is a mess.","Don't look away. I want to see every pathetic expression.","Oh, the noises you're making. I'm keeping all of them.","I could stop. I could keep going. You don't get a say."],
+ rest:["And stop. Hands where I can see them, {nick}.","Aw, did that stop? Poor thing. Sit there and think about how badly you want it.","Pause. Let that desperation really sink in.","I'm taking it away. Now sit there and be needy."],
+ restMid:["You're whimpering already. It's been seconds.","Look at you, waiting like a good little worm.","Aw, still wanting it back? Of course you are.","Beg with your eyes. Words would be too embarrassing."],
+ fake:["Oh, you thought that was going somewhere? Hilarious.","Almost! No. Not for you.","Did you really think I'd let you? That's adorable.","So close, {nick}. And so wrong."],
+ fakeAfter:["That look on your face when I pulled back. Priceless.","Don't pout. It only makes this funnier.","You actually thought you'd earned it. Sweet.","I'm going to remember that whimper, {nick}."],
+ warn:["One minute left. Try to hold onto what's left of your pride.","One minute. Don't ruin your record now, {nick}."],
+ win:["You made it. I'm almost impressed. Don't let it go to your head.","Fine, you earned a little dignity back. Enjoy it, it won't last.","Well done. For someone so needy, that was respectable."],
+ fail:["You quit. How predictable. Enjoy the lockout, {nick}.","Couldn't even finish. I'm not surprised. Embarrassing.","Giving up already? That's exactly what I expected from you."],
+ chat:["Round {n}. You've been so entertaining.","{left} left. I'm enjoying watching you suffer.","Do keep making those faces, {nick}. I love them."],
+ reply:["Did I ask for your input? Cute that you think I care.","Adorable. Keep typing, it's funny.","Interesting. Still not impressed.","Mm-hm. Back to squirming, {nick}."],
+ please:["Oh, begging? Keep going. It's the best part.","Louder. Make me believe it. No, I'm kidding, still no.","Look at you, begging already. How embarrassing for you."],
+ close:["Close? Of course you are. You're so easy to read.","Almost? Not on my watch. Hold on, {nick}.","You're so close and so helpless. Delicious."],
+ demand:["You don't make requests. You take what I give you.","Demanding? That's hilarious coming from you.","No. You don't get a say, {nick}."],
+ promise:["Last the whole session and I might let you off the hook. Might.","Make it to the end and I'll consider a reward. Don't count on it, {nick}.","Finish this without quitting and maybe I won't laugh at you afterward."],
+ watch:["I can see everything, you know. Every flush, every twitch.","I'm watching you, {nick}. Your face is so red.","I can see how hard you're trying not to cave. It's hilarious.","Don't hide. I can see exactly how pathetic this is.","I love that I can see you fall apart in real time."],
+ enjoy:["I'm having so much fun with you.","Making you squirm is my favorite hobby.","I could do this all day. You'd just keep falling apart.","Having you at my mercy is delicious."],
+ lowSpeed:["That top speed? Pathetic. Even for you. Raise it.","Playing it safe, {nick}? Too scared to find out what you can't handle?"],
+ shortStroke:["Those strokes are so short. Afraid of a little more? Open it up.","Using a fraction of the length. Typical. Widen it."],
+ praise:["Oh, brave settings. Let's see you regret them.","High speed and full range? You're really asking to be humbled."],
+ nudge:["Still on the baby settings, {nick}? Raise them. It'll be funnier.","I'd love to see you struggle with more. Turn it up."],
+ fakeNote:["All those fake-outs? You really do want to be teased.","Peaks climbing every round. You're setting yourself up to fall apart."],
+ hidden:["I haven't decided when this ends. Neither have you, apparently.","No clock for you, {nick}. Not knowing is part of the fun.","It ends when I'm bored. Could be a while."],
+ lubeBreak:["Stop. If you're dry, lube up. Resume when you're ready, {nick}. I'll wait and watch.","Pause. Lube up if you need it. Then press resume. Try not to look too relieved.","Break. Freshen up and resume whenever you like. I'm not going anywhere."],
+ lubeWait:["Still fussing? Resume when you're done.","Take your time. I'm enjoying the view.","Lube up and press resume. Don't keep me waiting."],
+ lubeResume:["Back so soon? Good. Let's continue.","There you are. Where were we, {nick}?"],
+ enter:["Hello, everyone. Anyone need humbling?"],
+ leave:["I'll go find someone more entertaining. Bye."],
+ tempt:["Hey, {nick}. I think you'd look so good humbled. Give me control.","I've been watching. You look like you need to be put in your place. Give me control.","Feeling confident? Let me take that away. Hand me control, {nick}."],
+ jealousStay:["{other} got picked? Fine. I'll stay and laugh at both of you, {nick}.","Hm. {other} can have a turn. I'll be here to mock."],
+ jealousLeave:["If {other} is who's wanted, I'm done. Enjoy the disappointment, {nick}."],
+ excitedStay:["Oh, this will be fun. I'm staying to watch.","A show? I wouldn't miss it."],
+ askControl:["Why settle for {other}, {nick}? I'd humiliate you so much better.","{other} is far too kind. Give me control instead, {nick}."],
+ banter:["{other}, you're being so gentle. It's embarrassing.","Oh, {other}. Is that all you've got?","{other}, do try to keep up."],
+ spectate:["{ctrl} has you right where you belong, {nick}.","Look at {ctrl} humble you. I'm taking notes.","Squirm for {ctrl}, {nick}. It's the best entertainment."],
+ spectateFail:["Pathetic. {ctrl} is better than you deserve, {nick}.","Quitting? {ctrl} must be so embarrassed for you, {nick}."],
+ spectateWin:["You lasted. {ctrl} must be proud. Don't get smug, {nick}.","Fine, {nick}. {ctrl} did well."],
+ challenge:["{other}, you're being far too kind. Step aside. I'll humble this {nick} properly.","Move, {other}. I can make this {nick} feel so small.","{other}, hand it over. Let me show how a real humiliation is done."],
+ defend:["No, {other}. I'm having too much fun with my {nick}.","Back off, {other}. You'll just ruin it.","Wait your turn, {other}. This {nick} isn't done being humbled."],
+ takeover:["Thank you, {other}. Now, {nick}, let's see how long you keep your composure.","Mine now. Eyes on me, {nick}. This will be embarrassing."],
+ lose:["Fine, {other}. Take it. Make this {nick} squirm."],
+ keep:["Nice try, {other}. This {nick} is mine."],
+ retreat:["Fine, {other}. I'll wait. I'll enjoy watching."],
+ heckle:["{ctrl}, that's far too gentle. This {nick} needs mockery, not mercy.","I'd have this {nick} red-faced by now, {ctrl}."]
+};
 function sendChat(){
   const box = $("chatIn"), t = box.value.trim(); if (!t) return;
   box.value = ""; addMsg("me", t);
