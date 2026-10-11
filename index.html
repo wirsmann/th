@@ -78,8 +78,8 @@
   .timer .dial{width:min(190px,100%)}
   .timer .time{font-size:2.3rem}
   .hypeRow{display:flex;align-items:center;gap:10px;margin:0 0 8px}
-  .hype{flex:1;height:8px;border-radius:999px;background:var(--ring-bg);overflow:hidden}
-  #hypeBar{height:100%;width:2%;background:linear-gradient(90deg,var(--accent),#e0a43a,#d9534f);transition:width .8s}
+  .hype{flex:1;height:8px;border-radius:999px;overflow:hidden;position:relative;background:linear-gradient(90deg,#3fae6a 0%,#7cc47a 18%,#e0c23a 38%,#e8923b 55%,#d9534f 78%)}
+  #hypeBar{position:absolute;right:0;top:0;height:100%;width:98%;background:var(--ring-bg);transition:width .8s}
   #hypeLbl{margin:0;white-space:nowrap}
   .quote{font-size:.76rem;color:var(--muted);border-left:3px solid var(--line);padding:1px 8px;margin:2px 0 4px;cursor:pointer;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
   #lubeNow{width:100%;margin-top:10px;padding:10px;border:0;border-radius:10px;font:inherit;font-weight:600;cursor:pointer;background:var(--ring-bg);color:var(--ink)}
@@ -1191,16 +1191,18 @@ const FANPOOL = {
  userReply:["haha","same","lol","you got this","respect","brave","keep going!"]
 };
 const FMAP = {fake:"fake",fakeAfter:"fake",hold:"hold",holdMid:"hold",rest:"rest",restMid:"rest",build:"build",challenge:"challenge",insist:"challenge",defend:"resist",resist:"resist",takeover:"takeover",fail:"fail",win:"win",enter:"enter",tempt:"dare",askControl:"dare",crowd:"crowd"};
-const TIERS = [[0,"Quiet"],[10,"Warming up"],[30,"Buzzing"],[55,"Packed"],[80,"Legendary"]];
+/* the crowd is measured in people, 0 to 1000: green is cool, around 500 is hot */
+const TIERS = [[0,"Quiet"],[30,"Warming up"],[100,"Buzzing"],[200,"Busy"],[350,"Packed"],[500,"Hot"],[750,"Legendary"]], CROWD_MAX = 1000;
+const tierOf = n => TIERS.filter(x => n >= x[0]).length - 1;
 let fans = [], excite = 0, pop = 0, fame = store.get("handyFame", 0), peakFans = store.get("handyPeak", 0), lastTier = 0, nextFanAt = Date.now() + 8000, lastFanMsgAt = 0, lastFanReplyAt = 0, nextCrowdAt = Date.now() + 60000, tickN = 0;
 const FAME_PER_LEVEL = 60;
 function level(){ return 1 + Math.floor(fame / FAME_PER_LEVEL); }
-function aggr(){ if (privateShow) return 2.2; return $("fansOn").checked ? 1 + Math.min(1.5, fans.length / 30) : 1; }
+function aggr(){ if (privateShow) return 2.2; return $("fansOn").checked ? 1 + Math.min(1.5, fans.length / 300) : 1; }
 function crowdLevel(){ if (privateShow) return 0.9; return ($("crowdBoost").checked && $("fansOn").checked) ? Math.min(1, (aggr() - 1) / 1.5) : 0; }
 function renderCrowd(){
-  const t = TIERS.filter(x => pop >= x[0]).pop()[1];
+  const t = TIERS[tierOf(fans.length)][1];
   $("roomCount").textContent = privateShow ? "🔒 Private show with " + SHORT[privateShow.p] + " · room locked" : room.length + " in the room · " + fans.length + " watching";
-  $("hypeBar").style.width = Math.max(2, Math.min(100, pop)) + "%";
+  $("hypeBar").style.width = (100 - Math.max(2, Math.min(100, fans.length / CROWD_MAX * 100))) + "%";
   $("hypeLbl").textContent = t + " · Lv " + level();
   $("hypeLbl").title = "Fame " + Math.round(fame) + " · " + Math.ceil(FAME_PER_LEVEL - (fame % FAME_PER_LEVEL)) + " to the next level. Fame only grows while a session is running.";
 }
@@ -1209,7 +1211,7 @@ function addFan(fav){
   const name = free.length ? pickOne(free) : pickOne(FANNAMES) + Math.floor(10 + Math.random() * 90);
   fans.push(name);
   fanFav[name] = fav || (Math.random() < 0.65 && ALL.length ? (room.length && Math.random() < 0.7 ? pickOne(room) : pickOne(ALL)) : "");
-  if (fans.length <= 12 ? Math.random() < 0.7 : Math.random() < 0.08) addMsg("sys", name + " joined the lounge.");
+  if (fans.length <= 12 ? Math.random() < 0.7 : fans.length <= 60 ? Math.random() < 0.08 : Math.random() < 0.012) addMsg("sys", name + " joined the lounge.");
   if (Math.random() < 0.15) fanSay("hi", 1200 + Math.random() * 2000, null, null, name);
 }
 var fanFav = {};
@@ -1270,14 +1272,15 @@ function crowdTick(){
   pop += (hype - pop) * (hype > pop ? 0.011 : 0.02);
   if (running) fame += pop / 100 * 0.6;
   const baseline = room.length ? Math.min(12, Math.floor((level() - 1) / 25) * 2) : 0;
-  const target = privateShow ? 0 : $("fansOn").checked ? Math.round(Math.pow(pop / 100, 1.5) * 70) + baseline : 0;
+  const target = privateShow ? 0 : $("fansOn").checked ? Math.round(Math.pow(pop / 100, 3) * CROWD_MAX) + baseline : 0;
   let steps = 0;
-  while (fans.length < target && steps < (target - fans.length > 15 ? 2 : 1) && Math.random() < 0.4){ addFan(); steps++; }
+  const gap = target - fans.length, maxUp = gap > 150 ? 4 : gap > 40 ? 3 : gap > 15 ? 2 : 1;
+  while (fans.length < target && steps < maxUp && Math.random() < 0.4){ addFan(); steps++; }
   steps = 0;
-  while (fans.length > target + 1 && steps < 2 && Math.random() < 0.6){ removeFan(); steps++; }
+  while (fans.length > target + 1 && steps < (fans.length - target > 60 ? 4 : 2) && Math.random() < 0.6){ removeFan(); steps++; }
   if (fans.length > peakFans) peakFans = fans.length;
-  const ti = TIERS.filter(x => pop >= x[0]).length - 1;
-  if (ti > lastTier && !privateShow && (running || pop > 12)){ addMsg("sys", "The lounge is now " + TIERS[ti][1] + ". " + fans.length + " watching."); personaCrowdLine(); }
+  const ti = tierOf(fans.length);
+  if (ti > lastTier && !privateShow && (running || fans.length > 10)){ addMsg("sys", "The lounge is now " + TIERS[ti][1] + ". " + fans.length + " watching."); personaCrowdLine(); }
   lastTier = ti;
   if (++tickN % 10 === 0){ store.set("handyFame", Math.round(fame)); store.set("handyPeak", peakFans); }
   renderCrowd();
