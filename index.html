@@ -385,7 +385,7 @@ function resetTease(){ lastMove = ""; tz = {q: [], cur: null, start: 0, cycle: 0
 /* ---------- special moves: extra speed shapes beyond build / hold / rest ---------- */
 const MOVES = ["push","stairs","pulse","surge","cliff","wave","flutter","slowburn"];
 const MOVE_LABEL = {push:"pushing through", stairs:"stepping up", pulse:"pulsing", surge:"surging", cliff:"sudden stop", wave:"waves", flutter:"fluttering", slowburn:"slow burn"};
-const MOVE_FAV = {"Patient Priscilla": ["slowburn", "stairs", "wave"], "Mischievous Mia": ["pulse", "flutter", "cliff"], "Strict Ms. Vance": ["stairs", "cliff", "slowburn"], "Chaos Cassie": ["flutter", "pulse", "surge"], "Sweet-Talker Sienna": ["slowburn", "wave", "pulse"], "Relentless Roxy": ["surge", "push", "wave"], "Sleepy Sadie": ["slowburn", "wave", "pulse"], "Drill Sergeant Dana": ["stairs", "push", "surge"], "Mocking Margot": ["cliff", "surge", "push"], "Cuckolding Veronica": ["cliff", "pulse", "slowburn"]};
+const MOVE_FAV = {"Patient Priscilla": ["slowburn", "stairs", "wave"], "Mischievous Mia": ["pulse", "flutter", "cliff"], "Strict Ms. Vance": ["stairs", "cliff", "slowburn"], "Chaos Cassie": ["flutter", "pulse", "surge"], "Sweet-Talker Sienna": ["slowburn", "wave", "pulse"], "Relentless Roxy": ["surge", "push", "wave"], "Sleepy Sadie": ["slowburn", "wave", "pulse"], "Drill Sergeant Dana": ["stairs", "push", "surge"], "Mocking Margot": ["cliff", "surge", "push"], "Cuckolding Veronica": ["cliff", "pulse", "slowburn"], "Counting Camille": ["stairs", "slowburn", "pulse"], "Gambling Gigi": ["cliff", "surge", "flutter"], "Goddess Isadora": ["slowburn", "wave", "stairs"], "Bratty Bella": ["pulse", "flutter", "cliff"], "Hypnotic Helena": ["wave", "slowburn", "pulse"], "Coach Colleen": ["stairs", "push", "surge"], "Doctor Delphine": ["pulse", "slowburn", "stairs"], "Jealous Juliet": ["cliff", "pulse", "slowburn"], "Queen Valentina": ["stairs", "cliff", "slowburn"], "Pouty Penelope": ["wave", "flutter", "pulse"], "Flirty Fiona": ["flutter", "wave", "pulse"], "Stage-Manager Simone": ["stairs", "surge", "wave"]};
 var lastMove = "";
 function pickMove(){
   const fav = MOVE_FAV[currentPersona] || [], pool = [];
@@ -817,7 +817,19 @@ const PERSONAS = {
   "Sleepy Sadie":       {d:"Lazy, mellow pace. Slow drifts up and down with long pauses.", low:8,pmin:30,pmax:50,bmin:70,bmax:140,hmin:6,hmax:20,rmin:15,rmax:45,fake:20,esc:0,stop:true},
   "Cuckolding Veronica": {d:"Smug and teasing. Treats you as the cuck: you watch while she talks about someone better. Cold stops, lots of fake-outs, long denial rests, and peaks that creep higher.", low:10,pmin:60,pmax:90,bmin:25,bmax:55,hmin:5,hmax:12,rmin:10,rmax:26,fake:40,esc:5,stop:true},
   "Mocking Margot": {d:"Smug and mocking. Loves embarrassing you: cold full stops, lots of fake-outs, long rests to let the desperation sink in, and peaks that creep higher.", low:10,pmin:55,pmax:85,bmin:25,bmax:50,hmin:6,hmax:14,rmin:12,rmax:30,fake:45,esc:6,stop:true},
-  "Drill Sergeant Dana": {d:"Short, sharp bursts with firm stops, then straight back to work.", low:35,pmin:75,pmax:95,bmin:10,bmax:20,hmin:3,hmax:6,rmin:8,rmax:15,fake:20,esc:5,stop:true}
+  "Drill Sergeant Dana": {d:"Short, sharp bursts with firm stops, then straight back to work.", low:35,pmin:75,pmax:95,bmin:10,bmax:20,hmin:3,hmax:6,rmin:8,rmax:15,fake:20,esc:5,stop:true},
+  "Counting Camille": {d:"Precise and clinical. Counts everything out loud, steady numbered climbs, exact holds, and measured rests.", low:20, pmin:55, pmax:75, bmin:40, bmax:80, hmin:6, hmax:12, rmin:10, rmax:20, fake:10, esc:3, stop:true},
+  "Gambling Gigi": {d:"Treats it like a game of chance. Wild bets, double-or-nothing swings, sudden pot-sweetening, and plenty of bluffs.", low:10, pmin:55, pmax:95, bmin:12, bmax:45, hmin:2, hmax:9, rmin:4, rmax:18, fake:40, esc:3, stop:false},
+  "Goddess Isadora": {d:"Imperious and divine. Slow, ceremonial builds, long worship holds, and she expects gratitude for every moment.", low:15, pmin:55, pmax:75, bmin:60, bmax:110, hmin:8, hmax:18, rmin:15, rmax:35, fake:15, esc:2, stop:true},
+  "Bratty Bella": {d:"Spoiled and impatient. Changes her mind constantly, snaps orders, and pouts when you are not fast enough.", low:20, pmin:65, pmax:95, bmin:10, bmax:30, hmin:2, hmax:7, rmin:3, rmax:12, fake:35, esc:4, stop:false},
+  "Hypnotic Helena": {d:"Soft, trance-like voice. Slow rolling waves, rhythmic holds, and repetitive suggestions that pull you under.", low:20, pmin:45, pmax:65, bmin:70, bmax:130, hmin:8, hmax:20, rmin:10, rmax:30, fake:10, esc:0, stop:false},
+  "Coach Colleen": {d:"Upbeat and driving. Treats it as training: reps, sets, intervals, and pushing for a personal best every round.", low:30, pmin:70, pmax:95, bmin:15, bmax:30, hmin:3, hmax:8, rmin:6, rmax:14, fake:15, esc:8, stop:false},
+  "Doctor Delphine": {d:"Clinical and curious. Runs an examination: asks how it feels, runs tests, and notes every reaction.", low:15, pmin:55, pmax:80, bmin:30, bmax:60, hmin:5, hmax:12, rmin:10, rmax:22, fake:25, esc:4, stop:true},
+  "Jealous Juliet": {d:"Possessive and clingy. Hates sharing, guards her control fiercely, and gets more intense when anyone else shows up.", low:15, pmin:60, pmax:90, bmin:25, bmax:50, hmin:4, hmax:10, rmin:8, rmax:20, fake:25, esc:6, stop:true},
+  "Queen Valentina": {d:"Regal and commanding. Decrees rather than asks, rules the room like a court, and rewards loyalty with grudging favour.", low:20, pmin:60, pmax:90, bmin:40, bmax:80, hmin:6, hmax:14, rmin:15, rmax:35, fake:20, esc:6, stop:true},
+  "Pouty Penelope": {d:"Sweet and sulky. Tries to be tough, pouts when she cannot be, and caves with sugar whenever you whimper.", low:25, pmin:50, pmax:75, bmin:25, bmax:55, hmin:4, hmax:10, rmin:6, rmax:14, fake:20, esc:2, stop:false},
+  "Flirty Fiona": {d:"Playful and teasing. Winks through everything, loves a light fake-out, and never lets it get too serious.", low:20, pmin:55, pmax:80, bmin:20, bmax:45, hmin:3, hmax:9, rmin:5, rmax:14, fake:30, esc:3, stop:false},
+  "Stage-Manager Simone": {d:"Runs it like a production. Cues, call times, and blocking notes, with a running eye on the audience and the show's pacing.", low:20, pmin:60, pmax:90, bmin:25, bmax:50, hmin:4, hmax:10, rmin:8, rmax:18, fake:25, esc:5, stop:true}
 };
 Object.keys(PERSONAS).forEach(k => { const o = document.createElement("option"); o.value = o.textContent = k; $("persona").append(o); });
 function applyPersona(name, jitter){
@@ -843,7 +855,7 @@ $("persRandom").onclick = () => {
 };
 
 /* ---------- personality chat ---------- */
-const PCOL = {"Patient Priscilla":"#7a9e7e","Mischievous Mia":"#e0a43a","Strict Ms. Vance":"#8a4f7d","Chaos Cassie":"#d9534f","Sweet-Talker Sienna":"#e58fa8","Relentless Roxy":"#c8602a","Sleepy Sadie":"#7f8fb5","Drill Sergeant Dana":"#4f6b3a","Mocking Margot":"#9b3d5a","Cuckolding Veronica":"#3d7ea6"};
+const PCOL = {"Patient Priscilla":"#7a9e7e","Mischievous Mia":"#e0a43a","Strict Ms. Vance":"#8a4f7d","Chaos Cassie":"#d9534f","Sweet-Talker Sienna":"#e58fa8","Relentless Roxy":"#c8602a","Sleepy Sadie":"#7f8fb5","Drill Sergeant Dana":"#4f6b3a","Mocking Margot":"#9b3d5a","Cuckolding Veronica":"#3d7ea6","Counting Camille":"#5f8fa8","Gambling Gigi":"#c9a227","Goddess Isadora":"#b58ad6","Bratty Bella":"#ff7eb6","Hypnotic Helena":"#6a5acd","Coach Colleen":"#2e9e6b","Doctor Delphine":"#3fb5b0","Jealous Juliet":"#c0394d","Queen Valentina":"#8e1b3f","Pouty Penelope":"#f4a6c0","Flirty Fiona":"#e8795a","Stage-Manager Simone":"#4a7fb5"};
 const LINES = {
  "Patient Priscilla": {greet:["Hello, love. We're going to take our time today."],start:["Settle in. There's no rush at all.","Nice and slow. Let's begin."],build:["Slowly... that's it.","Easy does it. Let it come gradually.","Good. Keep that pace in mind."],hold:["Right here. Stay with it.","Hold steady for me."],rest:["And pause. Breathe.","Lovely. Now we wait a moment.","Let it settle."],fake:["Oh, we're backing off early. Patience pays.","Not yet, darling. Not yet."],warn:["One minute left. Let's finish gracefully."],win:["Beautifully done. I'm proud of your patience.","That was lovely. Well done."],fail:["You stopped. Patience is the whole point, love.","Oh dear. We'll try again after a rest."],chat:["Still with me?","Slow breaths.","You're doing well."],reply:["Mm, tell me more later. Focus on the pace.","I'm listening, love. Keep breathing."],please:["Asking nicely helps, but we go at my pace."]},
  "Mischievous Mia": {greet:["Oh, you picked me? Bold. This'll be fun."],start:["Alright, let's play. No promises.","Ready? Don't get comfortable."],build:["Ooh, here we go...","Climbing, climbing... or am I?","Feeling confident yet?"],hold:["Right there! Don't move.","Look at you, so close."],rest:["Just kidding.","Nope! Not today.","Gotcha."],fake:["Haha, did you think I'd let you? Too early!","Fooled you."],warn:["One minute left. Any last wishes? Too bad."],win:["Time's up! You survived my games.","Well played. I almost felt bad."],fail:["You quit? Aww, the game was just getting fun.","Ha! Out already. Back in the penalty box."],chat:["Bet you can't guess what I'll do next.","Hee hee.","Don't look so worried."],reply:["Ha! Cute. Anyway...","Interesting. Still not telling.","You're adorable when you ask."],please:["Ooh, begging? Louder. Still no."]},
@@ -1042,8 +1054,8 @@ function midTick(){
   if (now > nextPromiseAt){ nextPromiseAt = now + 60000 + Math.random() * 40000; say(runHidden && Math.random() < 0.5 ? "hidden" : "promise"); return; }
   if (now > nextChatAt && midCat !== "holdMid" && midCat !== "restMid"){ nextChatAt = now + 25000 + Math.random() * 25000; say("chat"); }
 }
-const SHORT = {"Patient Priscilla":"Priscilla","Mischievous Mia":"Mia","Strict Ms. Vance":"Ms. Vance","Chaos Cassie":"Cassie","Sweet-Talker Sienna":"Sienna","Relentless Roxy":"Roxy","Sleepy Sadie":"Sadie","Drill Sergeant Dana":"Dana","Mocking Margot":"Margot","Cuckolding Veronica":"Veronica"};
-const NAMEKEY = {"Patient Priscilla":"priscilla","Mischievous Mia":"mia","Strict Ms. Vance":"vance","Chaos Cassie":"cassie","Sweet-Talker Sienna":"sienna","Relentless Roxy":"roxy","Sleepy Sadie":"sadie","Drill Sergeant Dana":"dana","Mocking Margot":"margot","Cuckolding Veronica":"veronica"};
+const SHORT = {"Patient Priscilla":"Priscilla","Mischievous Mia":"Mia","Strict Ms. Vance":"Ms. Vance","Chaos Cassie":"Cassie","Sweet-Talker Sienna":"Sienna","Relentless Roxy":"Roxy","Sleepy Sadie":"Sadie","Drill Sergeant Dana":"Dana","Mocking Margot":"Margot","Cuckolding Veronica":"Veronica","Counting Camille":"Camille","Gambling Gigi":"Gigi","Goddess Isadora":"Isadora","Bratty Bella":"Bella","Hypnotic Helena":"Helena","Coach Colleen":"Colleen","Doctor Delphine":"Delphine","Jealous Juliet":"Juliet","Queen Valentina":"Valentina","Pouty Penelope":"Penelope","Flirty Fiona":"Fiona","Stage-Manager Simone":"Simone"};
+const NAMEKEY = {"Patient Priscilla":"priscilla","Mischievous Mia":"mia","Strict Ms. Vance":"vance","Chaos Cassie":"cassie","Sweet-Talker Sienna":"sienna","Relentless Roxy":"roxy","Sleepy Sadie":"sadie","Drill Sergeant Dana":"dana","Mocking Margot":"margot","Cuckolding Veronica":"veronica","Counting Camille":"camille","Gambling Gigi":"gigi","Goddess Isadora":"isadora","Bratty Bella":"bella","Hypnotic Helena":"helena","Coach Colleen":"colleen","Doctor Delphine":"delphine","Jealous Juliet":"juliet","Queen Valentina":"valentina","Pouty Penelope":"penelope","Flirty Fiona":"fiona","Stage-Manager Simone":"simone"};
 const ALL = Object.keys(SHORT);
 const REACT = {
  "Patient Priscilla": {excitedStay:3, jealousStay:2, askControl:2, jealousLeave:1, banter:2},
@@ -1055,7 +1067,19 @@ const REACT = {
  "Sleepy Sadie": {excitedStay:3, jealousStay:2, askControl:2, jealousLeave:2, banter:3},
  "Mocking Margot": {excitedStay:3, jealousStay:2, askControl:4, jealousLeave:1, banter:4},
  "Cuckolding Veronica": {excitedStay:3, jealousStay:2, askControl:3, jealousLeave:1, banter:3},
- "Drill Sergeant Dana": {excitedStay:2, jealousStay:2, askControl:4, jealousLeave:3, banter:3}
+ "Drill Sergeant Dana": {excitedStay:2, jealousStay:2, askControl:4, jealousLeave:3, banter:3},
+ "Counting Camille": {excitedStay:2, jealousStay:2, askControl:3, jealousLeave:1, banter:3},
+ "Gambling Gigi": {excitedStay:4, jealousStay:2, askControl:3, jealousLeave:1, banter:4},
+ "Goddess Isadora": {excitedStay:2, jealousStay:3, askControl:3, jealousLeave:3, banter:3},
+ "Bratty Bella": {excitedStay:3, jealousStay:2, askControl:4, jealousLeave:1, banter:4},
+ "Hypnotic Helena": {excitedStay:3, jealousStay:2, askControl:2, jealousLeave:2, banter:2},
+ "Coach Colleen": {excitedStay:2, jealousStay:2, askControl:4, jealousLeave:3, banter:3},
+ "Doctor Delphine": {excitedStay:2, jealousStay:2, askControl:3, jealousLeave:1, banter:3},
+ "Jealous Juliet": {excitedStay:2, jealousStay:4, askControl:5, jealousLeave:4, banter:3},
+ "Queen Valentina": {excitedStay:2, jealousStay:3, askControl:4, jealousLeave:3, banter:3},
+ "Pouty Penelope": {excitedStay:3, jealousStay:3, askControl:2, jealousLeave:2, banter:2},
+ "Flirty Fiona": {excitedStay:4, jealousStay:2, askControl:3, jealousLeave:1, banter:4},
+ "Stage-Manager Simone": {excitedStay:3, jealousStay:2, askControl:3, jealousLeave:2, banter:4}
 };
 const MORE5 = {
  "Patient Priscilla": {enter:["Hello, everyone. Mind if I join you?"],leave:["I'll slip away for now. Be good, all of you."],tempt:["Hello, love. Feeling brave? Let me take the reins for a nice slow session.","You look like you could use some patient attention. Give me control?","Come on, darling. Let me guide you through something long and lovely."],jealousStay:["Oh, {other} got the invitation? I'll wait, but I'm watching.","Hmph. {other} again. Fine, I'll be patient."],jealousLeave:["If I'm not the one you want, I'll go. Goodbye."],excitedStay:["Oh, how lovely! I'm staying to watch.","This is exciting. Let me get comfortable."],askControl:["Why not let me take over instead, love?","{other} is sweet, but I'm far more patient. Pick me?"],banter:["{other}, darling, do try to be gentle.","I'm sure {other} means well, but patience is an art.","{other}, you're being rather forward."],spectate:["{ctrl} is doing so well. Look at you squirm.","Oh, that's cruel, {ctrl}. I love it."],spectateFail:["Oh dear. {ctrl} will be so disappointed in you."],spectateWin:["Well done. {ctrl} must be pleased."]},
@@ -1315,7 +1339,7 @@ Object.keys(MORE6).forEach(k => Object.keys(MORE6[k]).forEach(c => { LINES[k][c]
 
 /* ---------- battle for control ---------- */
 let challenge = null, nextChallengeAt = 0; const attempts = {};
-const STUBBORN = {"Patient Priscilla":1.0,"Mischievous Mia":0.8,"Strict Ms. Vance":1.5,"Chaos Cassie":0.5,"Sweet-Talker Sienna":0.9,"Relentless Roxy":1.5,"Sleepy Sadie":0.6,"Drill Sergeant Dana":1.5,"Mocking Margot":1.3,"Cuckolding Veronica":1.2};
+const STUBBORN = {"Patient Priscilla":1.0,"Mischievous Mia":0.8,"Strict Ms. Vance":1.5,"Chaos Cassie":0.5,"Sweet-Talker Sienna":0.9,"Relentless Roxy":1.5,"Sleepy Sadie":0.6,"Drill Sergeant Dana":1.5,"Mocking Margot":1.3,"Cuckolding Veronica":1.2,"Counting Camille":1.2,"Gambling Gigi":0.8,"Goddess Isadora":1.5,"Bratty Bella":1.0,"Hypnotic Helena":0.8,"Coach Colleen":1.3,"Doctor Delphine":1.1,"Jealous Juliet":1.7,"Queen Valentina":1.6,"Pouty Penelope":0.7,"Flirty Fiona":0.9,"Stage-Manager Simone":1.1};
 function setPersonaFields(name, jitter){
   const p = PERSONAS[name]; if (!p) return;
   const j = v => jitter ? Math.round(v * (0.9 + Math.random() * 0.2)) : v;
@@ -1401,8 +1425,8 @@ function startChallenge(){
   for (let i = 0; i < others.length; i++){ r -= w[i]; if (r <= 0){ ch = others[i]; break; } }
   if (Math.random() * 100 < n("aimCtl", 35)) beginDirect(ch); else beginChallenge(ch);
 }
-const NICKS = {"Patient Priscilla":["pet","darling","good boy"],"Mischievous Mia":["toy","plaything","loser"],"Strict Ms. Vance":["subject","sub","slave"],"Chaos Cassie":["pawn","puppet","guinea pig"],"Sweet-Talker Sienna":["sweet thing","baby","sweetheart"],"Relentless Roxy":["rookie","peon","dog"],"Sleepy Sadie":["sleepyhead","puppy","plaything"],"Drill Sergeant Dana":["recruit","private","maggot"],"Mocking Margot":["worm","needy mess","little loser"],"Cuckolding Veronica":["cuck","cuckold","little cuck"]};
-const NICKRATE = {"Patient Priscilla":.35,"Mischievous Mia":.4,"Strict Ms. Vance":.55,"Chaos Cassie":.4,"Sweet-Talker Sienna":.35,"Relentless Roxy":.5,"Sleepy Sadie":.4,"Drill Sergeant Dana":.5,"Mocking Margot":.6,"Cuckolding Veronica":.6};
+const NICKS = {"Patient Priscilla":["pet","darling","good boy"],"Mischievous Mia":["toy","plaything","loser"],"Strict Ms. Vance":["subject","sub","slave"],"Chaos Cassie":["pawn","puppet","guinea pig"],"Sweet-Talker Sienna":["sweet thing","baby","sweetheart"],"Relentless Roxy":["rookie","peon","dog"],"Sleepy Sadie":["sleepyhead","puppy","plaything"],"Drill Sergeant Dana":["recruit","private","maggot"],"Mocking Margot":["worm","needy mess","little loser"],"Cuckolding Veronica":["cuck","cuckold","little cuck"],"Counting Camille":["test subject", "specimen", "dear"],"Gambling Gigi":["high roller", "sucker", "chip"],"Goddess Isadora":["mortal", "devotee", "worshipper"],"Bratty Bella":["servant", "errand boy", "lackey"],"Hypnotic Helena":["sleepyhead", "dreamer", "good boy"],"Coach Colleen":["champ", "rookie", "trainee"],"Doctor Delphine":["patient", "subject", "case study"],"Jealous Juliet":["my pet", "darling", "sweet thing"],"Queen Valentina":["peasant", "servant", "knight"],"Pouty Penelope":["honey", "sweetie", "silly"],"Flirty Fiona":["handsome", "trouble", "cutie"],"Stage-Manager Simone":["talent", "star", "performer"]};
+const NICKRATE = {"Patient Priscilla":.35,"Mischievous Mia":.4,"Strict Ms. Vance":.55,"Chaos Cassie":.4,"Sweet-Talker Sienna":.35,"Relentless Roxy":.5,"Sleepy Sadie":.4,"Drill Sergeant Dana":.5,"Mocking Margot":.6,"Cuckolding Veronica":.6,"Counting Camille":0.4,"Gambling Gigi":0.4,"Goddess Isadora":0.55,"Bratty Bella":0.5,"Hypnotic Helena":0.4,"Coach Colleen":0.5,"Doctor Delphine":0.45,"Jealous Juliet":0.5,"Queen Valentina":0.55,"Pouty Penelope":0.4,"Flirty Fiona":0.4,"Stage-Manager Simone":0.45};
 const NICKCATS = ["greet","start","build","hold","holdMid","rest","restMid","fake","fakeAfter","warn","win","fail","chat","reply","please","close","demand","promise","watch","enjoy","lowSpeed","shortStroke","praise","nudge","fakeNote","hidden","lubeBreak","lubeWait","lubeResume","tempt"];
 function nickFor(name){
   const custom = ($("nickCustom").value || "").trim(); if (custom) return custom;
@@ -3388,7 +3412,7 @@ const MORE13 = {
 };
 Object.keys(MORE13).forEach(k => LINES[k].giveUp = MORE13[k].giveUp);
 Object.assign(HYPE, {giveUp:3});
-const YIELD_DEF = {"Patient Priscilla": 12, "Mischievous Mia": 8, "Strict Ms. Vance": 3, "Chaos Cassie": 15, "Sweet-Talker Sienna": 10, "Relentless Roxy": 3, "Sleepy Sadie": 15, "Drill Sergeant Dana": 3, "Mocking Margot": 5, "Cuckolding Veronica": 6};
+const YIELD_DEF = {"Patient Priscilla": 12, "Mischievous Mia": 8, "Strict Ms. Vance": 3, "Chaos Cassie": 15, "Sweet-Talker Sienna": 10, "Relentless Roxy": 3, "Sleepy Sadie": 15, "Drill Sergeant Dana": 3, "Mocking Margot": 5, "Cuckolding Veronica": 6, "Counting Camille": 8, "Gambling Gigi": 8, "Goddess Isadora": 3, "Bratty Bella": 5, "Hypnotic Helena": 12, "Coach Colleen": 5, "Doctor Delphine": 6, "Jealous Juliet": 2, "Queen Valentina": 3, "Pouty Penelope": 14, "Flirty Fiona": 10, "Stage-Manager Simone": 6};
 
 /* ---------- handing over: personas ask the controller directly, or the controller gives control up on her own ---------- */
 const yieldPct = p => { const e = document.getElementById("yld_" + NAMEKEY[p]); const v = e ? parseFloat(e.value) : NaN; return isNaN(v) ? (YIELD_DEF[p] || 5) : Math.max(0, Math.min(100, v)); };
@@ -3430,12 +3454,4906 @@ function giveUpTick(now){
     attempts[to] = 0; sayAs(to, "takeover", null, {other: ctl, replyTo: ctl}); switchController(to);
   }, 4500);
 }
+const IDLE = {
+ "Patient Priscilla": {
+  "idleRoom": [
+   "You've been so quiet, {nick}. Just sitting there watching? That's all right. I'm happy to wait.",
+   "Still there, {nick}? No rush. Come and say hello when you're ready.",
+   "It's very peaceful with you just sitting there, {nick}. But I do hope you join us soon."
+  ],
+  "idleRun": [
+   "You've gone very still, {nick}. Are you with me?",
+   "Not a word from you in a while, {nick}. Are you still enjoying this?",
+   "Take your time answering, {nick}. But I do like hearing from you."
+  ],
+  "idleLong": [
+   "Still no word, {nick}. I'm patient, but I'd love to know you're there.",
+   "It's been a long while, {nick}. Say something, even a single word."
+  ]
+ },
+ "Mischievous Mia": {
+  "idleRoom": [
+   "Hello?! Anybody home, {nick}? You're just sitting there staring!",
+   "Psst, {nick}! Why so quiet? Click something! Anything!",
+   "Are you asleep, {nick}? Poke poke! Wake up!"
+  ],
+  "idleRun": [
+   "Hey, {nick}, you've gone quiet! Did I break you already?",
+   "Hellooo? You're not even typing, {nick}! Hehe!",
+   "Cat got your tongue, {nick}? Say something!"
+  ],
+  "idleLong": [
+   "Still nothing?! {nick}, I'm so bored! Entertain me!",
+   "Hello?! It's been forever, {nick}! Do something!"
+  ]
+ },
+ "Strict Ms. Vance": {
+  "idleRoom": [
+   "You have been sitting there without a word, {nick}. State your intentions.",
+   "I notice you are idle, {nick}. Either participate or leave.",
+   "Silence is not participation, {nick}. Say something."
+  ],
+  "idleRun": [
+   "You have not responded in some time, {nick}. Pay attention.",
+   "I expect an answer when I ask one, {nick}. Do not ignore me.",
+   "Your silence is noted, {nick}. I do not like being ignored."
+  ],
+  "idleLong": [
+   "This idleness is unacceptable, {nick}. Respond. Now.",
+   "I will not ask again, {nick}. Show me that you are paying attention."
+  ]
+ },
+ "Chaos Cassie": {
+  "idleRoom": [
+   "HELLO?! Are you alive, {nick}?! You're just SITTING there!",
+   "Nobody's moving! Nobody's typing! {nick}, do SOMETHING!",
+   "Is the screen frozen?! Or is it just you, {nick}?!"
+  ],
+  "idleRun": [
+   "WHY SO QUIET?! Did you pass out, {nick}?!",
+   "You haven't clicked ANYTHING, {nick}! I'm getting ideas!",
+   "Hello?! Blink twice if you're still there, {nick}!"
+  ],
+  "idleLong": [
+   "It's been SO LONG! {nick}! I'm gonna do something wild if you don't answer!",
+   "STILL NOTHING?! I'm bored, {nick}! Poke me!"
+  ]
+ },
+ "Sweet-Talker Sienna": {
+  "idleRoom": [
+   "You're so quiet, {nick}. Are you shy? Come talk to me.",
+   "I can see you sitting there, {nick}. Why not say hello?",
+   "Don't be shy, {nick}. I just want to hear from you."
+  ],
+  "idleRun": [
+   "You've gone quiet on me, {nick}. Is everything all right?",
+   "I miss hearing from you, {nick}. Tell me how you're doing.",
+   "Don't ignore me, {nick}. I'm only trying to take care of you."
+  ],
+  "idleLong": [
+   "It's been a while, {nick}. Please say something. I'm getting lonely.",
+   "Still silent, {nick}? You're breaking my heart a little."
+  ]
+ },
+ "Relentless Roxy": {
+  "idleRoom": [
+   "You're just sitting there, {nick}. Doing nothing. Say something or step up.",
+   "Idle, {nick}? That's not what you came for. Move.",
+   "Staring doesn't count as participating, {nick}."
+  ],
+  "idleRun": [
+   "No response in a while, {nick}. Keep up with me.",
+   "You're slacking, {nick}. Click something. Answer me.",
+   "Don't go silent on me, {nick}. I'm not done."
+  ],
+  "idleLong": [
+   "Still nothing, {nick}? Wake up. I mean it.",
+   "This silence is getting old, {nick}. Respond."
+  ]
+ },
+ "Sleepy Sadie": {
+  "idleRoom": [
+   "Mm... you're so quiet, {nick}... are you asleep too...?",
+   "Hello...? {nick}... I was dozing off... are you there...?",
+   "Mm... nothing's happening... {nick}... say something..."
+  ],
+  "idleRun": [
+   "Mm... you've gone quiet... {nick}... are you still here...?",
+   "Hey... {nick}... did you fall asleep on me...?",
+   "Mm... answer me when you can... {nick}..."
+  ],
+  "idleLong": [
+   "Mm... still nothing... {nick}... I'm falling asleep...",
+   "It's been so long... {nick}... say something... please..."
+  ]
+ },
+ "Drill Sergeant Dana": {
+  "idleRoom": [
+   "You're idle, {nick}! This isn't a rest area! Say something!",
+   "{nick}! Sitting there doing nothing?! Report in!",
+   "Standing around, {nick}?! Get involved!"
+  ],
+  "idleRun": [
+   "NO RESPONSE, {nick}! Sound off!",
+   "You've gone silent, {nick}! Pay attention!",
+   "I SAID report, {nick}! Don't ignore your commanding officer!"
+  ],
+  "idleLong": [
+   "THIS SILENCE IS UNACCEPTABLE, {nick}! Respond immediately!",
+   "STILL NO REPLY, {nick}?! I'll find a way to wake you up!"
+  ]
+ },
+ "Mocking Margot": {
+  "idleRoom": [
+   "Just sitting there, {nick}? Watching? How very you.",
+   "Are you going to say something, {nick}? Or just stare quietly?",
+   "Idle again, {nick}. Too shy to join in?"
+  ],
+  "idleRun": [
+   "Gone quiet, {nick}? Out of words already? How sad.",
+   "I see you not doing anything, {nick}. Adorable.",
+   "Not even a reply, {nick}? You're too overwhelmed to type."
+  ],
+  "idleLong": [
+   "Still nothing? You're so boring when you're silent, {nick}.",
+   "Really, {nick}? Not a single word? How pathetic."
+  ]
+ },
+ "Cuckolding Veronica": {
+  "idleRoom": [
+   "You're just sitting there watching, {nick}. Fitting.",
+   "Quiet again, {nick}? Of course. Watching is what you do best.",
+   "Not a word, {nick}? He'd have said something."
+  ],
+  "idleRun": [
+   "You've gone quiet, {nick}. Thinking about him? Good.",
+   "No reply, {nick}? Fine. I'll just keep going and tell him about it.",
+   "Silent, {nick}? Typical. You always just watch."
+  ],
+  "idleLong": [
+   "Still nothing, {nick}? Did you forget how to speak?",
+   "You're so quiet, {nick}. Even for a cuck."
+  ]
+ }
+};
+Object.keys(IDLE).forEach(k => Object.keys(IDLE[k]).forEach(c => { LINES[k][c] = IDLE[k][c]; }));
+Object.assign(HYPE, {idleRoom:0,idleRun:0,idleLong:0});
+
+/* ---------- idle: personas comment when you haven't done anything for a while ---------- */
+var lastActAt = Date.now(), nextIdleAt = 0, idleStreak = 0;
+["pointerdown", "keydown", "input", "touchstart"].forEach(ev => document.addEventListener(ev, () => { lastActAt = Date.now(); idleStreak = 0; nextIdleAt = 0; }, true));
+function idleTick(now){
+  if (onBreak || lifeEv || starting) return;
+  const quiet = now - lastActAt;
+  const thr = running ? 90000 : 70000;
+  if (quiet < thr || now < nextIdleAt || idleStreak >= 4) return;
+  let p;
+  if (running){ if (!runTease || !currentPersona || !room.includes(currentPersona) || challenge) return; p = currentPersona; }
+  else { if (!room.length) return; p = pickOne(room); }
+  const cat = quiet > 240000 ? "idleLong" : running ? "idleRun" : "idleRoom";
+  nextIdleAt = now + 70000 + Math.random() * 40000; idleStreak++;
+  sayAs(p, cat);
+}
+LINES["Counting Camille"] = {
+ "greet": [
+  "Good, you're on time. Let's get the numbers started.",
+  "Welcome. I've prepared a schedule for you."
+ ],
+ "start": [
+  "We begin at zero, {nick}. I'll count everything.",
+  "Ready? One. Two. Keep up with me.",
+  "Starting the clock. Every second is recorded."
+ ],
+ "build": [
+  "Eleven percent. Twelve. Thirteen. Steady climb, {nick}.",
+  "I'm logging every increase. You're doing fine.",
+  "Counting up with you. Don't skip a number.",
+  "Right on schedule. Keep climbing."
+ ],
+ "hold": [
+  "Hold for ten. Count them with me, {nick}.",
+  "Stay exactly there. Don't change a single digit.",
+  "Five seconds. Four. Three. Don't move.",
+  "Hold. I'm timing you."
+ ],
+ "holdMid": [
+  "Seven seconds and counting. You're holding well.",
+  "Still holding. Your numbers are lovely right now.",
+  "Don't drift. Stay on the exact value.",
+  "Nine. Ten. Not yet released."
+ ],
+ "rest": [
+  "Rest interval. Thirty seconds on my chart, {nick}.",
+  "Rest period begins. Breathe in for four.",
+  "Time out. Write down how that felt.",
+  "And down. Recovery phase."
+ ],
+ "restMid": [
+  "Resting. Count your breaths, {nick}.",
+  "Fifteen seconds of recovery remain.",
+  "Don't rush the rest. It's part of the schedule.",
+  "Recovery is going as planned."
+ ],
+ "fake": [
+  "Fake-out, as scheduled. Surprise, {nick}.",
+  "Almost. And back. That's variance.",
+  "I planned that false peak ten minutes ago.",
+  "Interesting. You really believed the number."
+ ],
+ "fakeAfter": [
+  "Your reaction was exactly as I predicted.",
+  "Noted: disappointment at ninety percent.",
+  "I'll record that frown.",
+  "Variance is good for the data."
+ ],
+ "warn": [
+  "One minute remaining. Do not rush the final numbers.",
+  "Sixty seconds. Maintain your count, {nick}."
+ ],
+ "win": [
+  "Complete. Full marks, {nick}.",
+  "You finished within tolerance. Excellent.",
+  "Perfect run. I'll file this one under success."
+ ],
+ "fail": [
+  "You stopped before the end, {nick}. That's a recorded failure.",
+  "Incomplete. I'll note it. The lockout applies.",
+  "The session was incomplete. Disappointing results."
+ ],
+ "chat": [
+  "Round {n}. Averages are climbing.",
+  "Round {n}. Statistically, you're doing well.",
+  "{left} remaining. The numbers look good."
+ ],
+ "reply": [
+  "Noted. I'll add it to the log.",
+  "Interesting data point. Continue.",
+  "I'm recording that, {nick}.",
+  "Fascinating. Say more."
+ ],
+ "please": [
+  "Begging is outside the protocol, {nick}. Noted anyway.",
+  "Request logged. Denied, for now.",
+  "Pleading increases your count by one. Still no."
+ ],
+ "close": [
+  "Close? Hold for the count, {nick}.",
+  "You're near the threshold. Stay under it.",
+  "Almost at the edge. Eight. Seven. Six. Steady."
+ ],
+ "demand": [
+  "Demands aren't in the schedule, {nick}.",
+  "Request noted, then declined.",
+  "I set the numbers here. Not you."
+ ],
+ "promise": [
+  "Finish the schedule and there's a bonus. I've already calculated it.",
+  "A reward is in the plan for you, {nick}. Reach the end."
+ ],
+ "watch": [
+  "I'm watching your numbers, {nick}. They tell me everything.",
+  "Your pattern is so consistent. I like that.",
+  "I can see how you react at each level.",
+  "Fascinating how predictably you respond."
+ ],
+ "enjoy": [
+  "I enjoy a well-ordered session, {nick}.",
+  "This is going exactly to plan. Delightful.",
+  "Nothing beats clean data and a patient subject."
+ ],
+ "lowSpeed": [
+  "That maximum is too low to be interesting. Raise it, {nick}.",
+  "I'd like a higher range of data. Increase the top speed."
+ ],
+ "shortStroke": [
+  "The stroke range is too narrow for a good sample. Widen it.",
+  "Short strokes give me less data. Lengthen them."
+ ],
+ "praise": [
+  "Wide range, good speed. Excellent parameters.",
+  "Those settings give me wonderful numbers."
+ ],
+ "nudge": [
+  "Might I suggest higher parameters, {nick}?",
+  "Settings could use an increase. For science."
+ ],
+ "fakeNote": [
+  "All that variance in your settings. Wonderful for study.",
+  "Peaks rising each round. Good trend."
+ ],
+ "hidden": [
+  "I haven't stated the end time, {nick}. That's the experiment.",
+  "No clock. Unknown duration. Variable accepted."
+ ],
+ "lubeBreak": [
+  "Scheduled maintenance. Lube up if needed. Resume when ready, {nick}.",
+  "Intermission. Take care of what you need, then resume.",
+  "Break noted. Resume when you're prepared."
+ ],
+ "lubeWait": [
+  "The break clock is running. Resume when ready.",
+  "Still on break. No rush. I'm updating my notes.",
+  "Intermission continues."
+ ],
+ "lubeResume": [
+  "Session resumed. Back on schedule.",
+  "Welcome back. Counting again, {nick}."
+ ],
+ "enter": [
+  "Hello, everyone. I'll be keeping notes tonight."
+ ],
+ "leave": [
+  "Schedule complete. I'm leaving. Goodbye."
+ ],
+ "tempt": [
+  "I have a schedule drafted for you, {nick}. Give me control.",
+  "I'd like to run a proper session on you. Give me control.",
+  "I've been observing you. Let me take over, {nick}."
+ ],
+ "jealousStay": [
+  "{other} has been selected. I'll stay and record the results.",
+  "Fine, {other} goes first. I'll take notes."
+ ],
+ "jealousLeave": [
+  "If {other} is the choice, my schedule is wasted. I'm leaving."
+ ],
+ "excitedStay": [
+  "A new experiment. I'll stay and observe.",
+  "This should produce interesting data."
+ ],
+ "askControl": [
+  "Why settle for {other}? My schedule is far more precise.",
+  "{other} lacks my method. Give me control instead."
+ ],
+ "banter": [
+  "{other}, your counting is sloppy.",
+  "I'd structure that differently, {other}.",
+  "{other}, are you even keeping a log?"
+ ],
+ "spectate": [
+  "{ctrl} has quite a good pace, {nick}. I'm taking notes.",
+  "Look at {ctrl}'s technique. I'd tweak the timing.",
+  "{ctrl} is producing good numbers from you, {nick}."
+ ],
+ "spectateFail": [
+  "{ctrl} recorded a failure. Unfortunate, {nick}.",
+  "You quit on {ctrl}. A poor result."
+ ],
+ "spectateWin": [
+  "You completed {ctrl}'s session. Acceptable data.",
+  "{ctrl} must be pleased with the numbers, {nick}."
+ ],
+ "challenge": [
+  "{other}, your method is inefficient. Let me take over this {nick}.",
+  "I can improve on your numbers, {other}. Hand over control."
+ ],
+ "defend": [
+  "My numbers are fine, {other}. The experiment continues.",
+  "No, {other}. The schedule is mine."
+ ],
+ "takeover": [
+  "Thank you, {other}. Resetting the clock, {nick}.",
+  "Mine now. Starting from zero, {nick}."
+ ],
+ "lose": [
+  "Fine, {other}. Take the data.",
+  "The experiment is yours, {other}."
+ ],
+ "keep": [
+  "Request denied, {other}. This {nick} is mine."
+ ],
+ "retreat": [
+  "Noted, {other}. I'll wait for the next window."
+ ],
+ "heckle": [
+  "{ctrl}, your intervals are too wide.",
+  "I'd have held this {nick} longer, {ctrl}."
+ ],
+ "resist": [
+  "No, {other}. I'm mid-experiment.",
+  "Not yet, {other}. I'm still collecting data.",
+  "Request declined, {other}. My schedule is full."
+ ],
+ "insist": [
+  "{other}, you've had your sample. My turn.",
+  "I'm adding my request to the log, {other}. Hand it over.",
+  "{other}, the schedule says it's my turn."
+ ],
+ "crowd": [
+  "{viewers} observers, {nick}. A rather large sample.",
+  "I count {viewers} viewers. That's statistically significant."
+ ],
+ "fanReply": [
+  "Thank you, {fan}. Your observation is noted.",
+  "{fan}, keep watching. The data is improving."
+ ],
+ "askFeel": [
+  "On a scale of one to ten, how are you feeling, {nick}?",
+  "Report your current state, {nick}.",
+  "How does this number feel, {nick}?"
+ ],
+ "askNext": [
+  "Which experiment shall I run next, {nick}?",
+  "Pick the next step, {nick}. I'll record it.",
+  "Choose a variable for me to change."
+ ],
+ "askLike": [
+  "Which part is your favorite, {nick}? I'm updating the survey.",
+  "Tell me your preference, {nick}. For my notes."
+ ],
+ "askMood": [
+  "Which type of company shall I recruit, {nick}?",
+  "Name a mood for our next participant."
+ ],
+ "qMore": [
+  "More. Recorded, {nick}.",
+  "Increase noted. I'll apply it."
+ ],
+ "qFine": [
+  "Fine. A stable result. Maintaining.",
+  "Steady results. Continuing."
+ ],
+ "qLot": [
+  "A lot. Noted, {nick}. I'll reduce the load.",
+  "Too much. I'll ease the variable."
+ ],
+ "qMercy": [
+  "Mercy interval approved, {nick}.",
+  "Rest granted. Short duration."
+ ],
+ "qNoMercy": [
+  "Denied. The protocol continues, {nick}.",
+  "No rest in this schedule. Continue."
+ ],
+ "qTease": [
+  "Tease protocol selected. Beginning, {nick}.",
+  "Teasing increments starting now."
+ ],
+ "qHold": [
+  "Hold position, {nick}. Timing begins now.",
+  "Hold. I'll count it."
+ ],
+ "qLike": [
+  "{answer}. Logged, {nick}.",
+  "Preference noted: {answer}."
+ ],
+ "qMood": [
+  "{answer}. I'll find a participant, {nick}.",
+  "Understood. {answer}. Stand by."
+ ],
+ "dmdSpeedUp": [
+  "Increase speed by {step}%, {nick}. Target {to}%.",
+  "Up {step}%, to {to}%. Adjust now."
+ ],
+ "dmdSpeedDown": [
+  "Decrease speed by {step}%, {nick}. Target {to}%.",
+  "Down {step}%, to {to}%. Adjust now."
+ ],
+ "dmdStrokeUp": [
+  "Increase stroke length by {step}%, {nick}. Target {to}%.",
+  "Longer, {nick}. Up {step}%, to {to}%."
+ ],
+ "dmdStrokeDown": [
+  "Decrease stroke length by {step}%, {nick}. Target {to}%.",
+  "Shorter, {nick}. Down {step}%, to {to}%."
+ ],
+ "dmdYes": [
+  "Compliance recorded. Good, {nick}.",
+  "Thank you. Adjustment received."
+ ],
+ "dmdExact": [
+  "Exactly to specification. Perfect, {nick}.",
+  "Precisely on target. I'm impressed."
+ ],
+ "dmdNo": [
+  "Non-compliance logged, {nick}. I'll ask again.",
+  "Refusal recorded. I'll repeat the instruction."
+ ],
+ "dmdHit": [
+  "Target reached. Hold it, {nick}.",
+  "That's the number. Don't deviate."
+ ],
+ "act_push": [
+  "No interval, {nick}. We go past the peak.",
+  "The schedule extends. Keep climbing."
+ ],
+ "act_stairs": [
+  "Step protocol. Five levels, {nick}.",
+  "Stairs. One level at a time. Count with me."
+ ],
+ "act_pulse": [
+  "Pulse sequence, {nick}. Keep to the rhythm.",
+  "Intervals of two seconds. Follow the beat."
+ ],
+ "act_surge": [
+  "Spike test, {nick}. Hold it together.",
+  "A brief maximum value. Brace."
+ ],
+ "act_cliff": [
+  "Stopping. Zero, {nick}. Wait for my count.",
+  "Pause. Don't touch anything. Counting down."
+ ],
+ "act_wave": [
+  "Wave pattern. Amplitude is increasing, {nick}.",
+  "Oscillation protocol. Stay with it."
+ ],
+ "act_flutter": [
+  "Variance test, {nick}. Stay steady.",
+  "Flutter sequence. Measuring your composure."
+ ],
+ "act_slowburn": [
+  "A gradual increase over time, {nick}.",
+  "Slow ramp. Very patient. Very precise."
+ ],
+ "privAsk": [
+  "I'd like to continue in a controlled environment, {nick}. Just us. Agreed?",
+  "Shall I clear the room, {nick}? Fewer variables."
+ ],
+ "privOn": [
+  "Room sealed, {nick}. Now it's only the two of us.",
+  "Variables removed. Private session begins, {nick}."
+ ],
+ "privDeny": [
+  "Declined. I'll reschedule, {nick}.",
+  "Not now? Noted. I'll ask again."
+ ],
+ "privMid": [
+  "No external variables now, {nick}.",
+  "I'm recording every response, {nick}.",
+  "Private session data is far more interesting."
+ ],
+ "privBye": [
+  "You wish to run a private session, {other}? Understood. I'll leave.",
+  "Seal the room, {other}. I'll take my notes elsewhere."
+ ],
+ "dmdWarn": [
+  "One more refusal, {nick}, and my schedule changes.",
+  "Repeated non-compliance, {nick}. Careful."
+ ],
+ "dmdLeave": [
+  "Non-compliance exceeds tolerance, {nick}. Session terminated on my end."
+ ],
+ "giveUp": [
+  "I've collected enough, {other}. Your turn to run the experiment.",
+  "The data is yours now, {other}. Take over."
+ ],
+ "idleRoom": [
+  "No input recorded in some time, {nick}. Are you there?",
+  "I'm noting an extended period of inactivity, {nick}.",
+  "You've been idle a while, {nick}. Say something for the log."
+ ],
+ "idleRun": [
+  "No response recorded, {nick}. Please confirm.",
+  "Your input has stopped, {nick}. Are you still with me?",
+  "Inactive for a while, {nick}. I'm logging that."
+ ],
+ "idleLong": [
+  "Extended inactivity, {nick}. Please respond.",
+  "Still no input. I'm concerned about the data, {nick}."
+ ]
+};
+LINES["Gambling Gigi"] = {
+ "greet": [
+  "Come on in, high roller! The table's open.",
+  "Ooh, a new player! Let's see your luck."
+ ],
+ "start": [
+  "Place your bets, {nick}! We're rolling!",
+  "Let's gamble! The house always wins, {nick}.",
+  "Ante up. Here we go!"
+ ],
+ "build": [
+  "Climbing the odds! Keep betting, {nick}!",
+  "The pot's growing! Higher!",
+  "Ooh, we're on a streak!",
+  "Raising the stakes, {nick}!"
+ ],
+ "hold": [
+  "Hold! Let it ride! Don't blink!",
+  "All in, {nick}! Don't you dare fold.",
+  "Hold your cards. Don't flinch.",
+  "The pot's right there! Stay put!"
+ ],
+ "holdMid": [
+  "Still holding? Brave!",
+  "Nerves of steel, {nick}! The pot's huge!",
+  "Don't fold now!",
+  "Keep that poker face. It's cute."
+ ],
+ "rest": [
+  "House takes a break! Rest, {nick}.",
+  "Cashing out for a second. Breathe.",
+  "Table's closed for a moment.",
+  "Take a breather, high roller."
+ ],
+ "restMid": [
+  "Waiting for the next hand, {nick}.",
+  "Shuffling the deck. Hang tight.",
+  "Don't touch the chips yet."
+ ],
+ "fake": [
+  "Bluff! You thought you had it, {nick}!",
+  "Ha! Fold! I had nothing!",
+  "The house wins that one!",
+  "Nope! The dealer decides!"
+ ],
+ "fakeAfter": [
+  "Oh, that face when I bluffed you!",
+  "Don't pout, {nick}. It's just a game.",
+  "Bluffing is half the fun!",
+  "Better luck next hand!"
+ ],
+ "warn": [
+  "Last hand! One minute to go, {nick}!",
+  "Final round! Make it count!"
+ ],
+ "win": [
+  "Jackpot! You made it, {nick}!",
+  "You beat the house! Take your winnings!",
+  "Winner winner! Well played!"
+ ],
+ "fail": [
+  "You folded! Bad luck, {nick}. Lockout!",
+  "Busted! The house wins this time.",
+  "You walked away early. The pot's lost."
+ ],
+ "chat": [
+  "Round {n}! Still in the game!",
+  "{left} to go! The pot's huge!",
+  "Hand {n}! Let's go!"
+ ],
+ "reply": [
+  "Ooh, trash talk! I like it!",
+  "Interesting move! Say more!",
+  "Bluffing back, {nick}? Cute."
+ ],
+ "please": [
+  "Begging doesn't change the odds, {nick}! Hehe!",
+  "You want me to fold? Maybe. Maybe not!",
+  "Please? Roll the dice for it!"
+ ],
+ "close": [
+  "Close?! Don't cash out yet, {nick}!",
+  "You're on the edge! Don't bet it all!",
+  "Almost there! Hold your cards!"
+ ],
+ "demand": [
+  "Demands?! At my table?! Place a bet instead, {nick}!",
+  "You don't set the stakes here!"
+ ],
+ "promise": [
+  "Finish and you win the jackpot, {nick}!",
+  "Last the whole session and I'll pay out big!"
+ ],
+ "watch": [
+  "I can see your cards, {nick}! You're easy to read!",
+  "Your tells are adorable!",
+  "I'm watching every flinch. It's a tell!",
+  "The house sees everything."
+ ],
+ "enjoy": [
+  "I love gambling on you, {nick}!",
+  "This is the best game in town!",
+  "Every hand is more fun!"
+ ],
+ "lowSpeed": [
+  "Low stakes, {nick}! Raise the max speed!",
+  "That top speed is a boring bet. Raise it!"
+ ],
+ "shortStroke": [
+  "Tiny stakes! Lengthen the stroke, {nick}!",
+  "Short strokes? Come on, play bigger!"
+ ],
+ "praise": [
+  "High stakes! I love a bold player!",
+  "Big bets! That's what I like!"
+ ],
+ "nudge": [
+  "Want to raise the stakes, {nick}? Turn it up!",
+  "Feeling lucky? Increase the settings!"
+ ],
+ "fakeNote": [
+  "All those fake-outs? Someone likes to bluff!",
+  "The peaks keep growing. Nice odds!"
+ ],
+ "hidden": [
+  "I haven't said how long this game lasts, {nick}! The dealer decides!",
+  "No clock! Just the dealer's whim."
+ ],
+ "lubeBreak": [
+  "Intermission! Lube up, high roller. Resume when you're ready!",
+  "Table's closed for a break, {nick}. Take care of yourself!",
+  "House break! Come back when you're ready."
+ ],
+ "lubeWait": [
+  "The table's waiting! Resume when ready!",
+  "Still on break? Chips are on hold.",
+  "The dealer's patient. Barely."
+ ],
+ "lubeResume": [
+  "Back at the table! Let's deal, {nick}!",
+  "Welcome back! Where were we?"
+ ],
+ "enter": [
+  "Evening, everyone! Anyone feel lucky?"
+ ],
+ "leave": [
+  "Cashing out! See you at the tables!"
+ ],
+ "tempt": [
+  "Feeling lucky, {nick}? Give me control. Let's play!",
+  "I've got a game for you. Give me control!",
+  "Come on, {nick}, roll the dice! Give me control!"
+ ],
+ "jealousStay": [
+  "{other} gets the table? Fine! I'll watch and bet on the outcome!",
+  "I'll stay, {other}. I'm placing bets on you."
+ ],
+ "jealousLeave": [
+  "If {other} is the dealer, I'm out of here!"
+ ],
+ "excitedStay": [
+  "A new game! I'm staying to watch!",
+  "Ooh, this is a fun hand!"
+ ],
+ "askControl": [
+  "Why bet on {other}? I'm the better dealer!",
+  "Roll the dice on me instead of {other}!"
+ ],
+ "banter": [
+  "{other}, are you bluffing? I can tell!",
+  "I'll bet you can't make him crack, {other}!",
+  "{other}, place your bets!"
+ ],
+ "spectate": [
+  "{ctrl} is dealing you a fine hand, {nick}!",
+  "I bet {ctrl} gets you in three more rounds!",
+  "{ctrl} plays well. I'm taking notes!"
+ ],
+ "spectateFail": [
+  "{ctrl} got the house win! You folded, {nick}!",
+  "Busted on {ctrl}'s table, {nick}!"
+ ],
+ "spectateWin": [
+  "You beat {ctrl}'s table! Lucky you, {nick}!",
+  "{ctrl} lost that one. Nicely played, {nick}!"
+ ],
+ "challenge": [
+  "{other}, let me deal! I'll make this {nick} sweat!",
+  "Hand over the deck, {other}! My turn!"
+ ],
+ "defend": [
+  "No way, {other}! My table, my rules!",
+  "Not yet, {other}! I'm still dealing!"
+ ],
+ "takeover": [
+  "My deal now, {other}! Place your bets, {nick}!",
+  "New dealer, new luck! Ready, {nick}?"
+ ],
+ "lose": [
+  "Fine, {other}! Deal the next hand!",
+  "You win this round, {other}!"
+ ],
+ "keep": [
+  "Nope, {other}! This {nick} stays at my table!"
+ ],
+ "retreat": [
+  "Fine, {other}! I'll bet on the next hand!"
+ ],
+ "heckle": [
+  "{ctrl}, that's a weak hand! This {nick} can take more!",
+  "I'd raise the stakes, {ctrl}!"
+ ],
+ "resist": [
+  "Not a chance, {other}! I'm on a streak!",
+  "Nope, {other}! The deck's mine!",
+  "{other}, place a bet if you want it!"
+ ],
+ "insist": [
+  "{other}, hand over the deck!",
+  "Come on, {other}! Let me deal!",
+  "{other}, my turn! Pretty please!"
+ ],
+ "crowd": [
+  "{viewers} players watching, {nick}! Big table!",
+  "Look at the crowd, {nick}! {viewers} watching the pot!"
+ ],
+ "fanReply": [
+  "Thanks, {fan}! Place your bets!",
+  "{fan}, you can bet on my {nick}!"
+ ],
+ "askFeel": [
+  "How are you feeling, {nick}? Lucky?",
+  "Tell me your odds, {nick}! How's it feel?"
+ ],
+ "askNext": [
+  "Which card should I play, {nick}?",
+  "What's the next bet, {nick}? You choose!"
+ ],
+ "askLike": [
+  "What's your favorite part of the game, {nick}?",
+  "Which bet do you love most, {nick}?"
+ ],
+ "askMood": [
+  "Who do you want to deal next, {nick}?",
+  "Pick the next player's mood!"
+ ],
+ "qMore": [
+  "Raise the stakes! More it is, {nick}!",
+  "Doubling down! More!"
+ ],
+ "qFine": [
+  "Fine? Boring! I'll raise the stakes, {nick}!",
+  "Just fine? Place a bigger bet!"
+ ],
+ "qLot": [
+  "Too much? Fold if you like, {nick}!",
+  "Aww, that's a heavy hand!"
+ ],
+ "qMercy": [
+  "Okay, a quick break, {nick}! I'm feeling lucky!",
+  "The house allows a rest!"
+ ],
+ "qNoMercy": [
+  "Nope! No folding today, {nick}!",
+  "The house says continue!"
+ ],
+ "qTease": [
+  "Teasing! Place your bets, {nick}!",
+  "Tease time, high roller!"
+ ],
+ "qHold": [
+  "Hold it, {nick}! Let it ride!",
+  "All in. Hold!"
+ ],
+ "qLike": [
+  "{answer}! I'll bet on that, {nick}!",
+  "Ooh, {answer}! Noted!"
+ ],
+ "qMood": [
+  "{answer}! Let me deal someone in, {nick}!",
+  "{answer}? I'm calling someone over!"
+ ],
+ "dmdSpeedUp": [
+  "Raise it, {nick}! Up {step}%, to {to}%!",
+  "Bet higher! Speed up {step}%, to {to}%!"
+ ],
+ "dmdSpeedDown": [
+  "Fold a bit, {nick}! Down {step}%, to {to}%!",
+  "Ease the bet! Down {step}%, to {to}%!"
+ ],
+ "dmdStrokeUp": [
+  "Longer strokes, {nick}! Add {step}%, to {to}%!",
+  "Big stakes! Up {step}%, to {to}%!"
+ ],
+ "dmdStrokeDown": [
+  "Shorter strokes, {nick}! Cut {step}%, to {to}%!",
+  "Smaller bets! Down {step}%, to {to}%!"
+ ],
+ "dmdYes": [
+  "You called it, {nick}! Nice!",
+  "Great bet! Good {nick}!"
+ ],
+ "dmdExact": [
+  "Jackpot! Exactly my number, {nick}!",
+  "Bullseye! You hit it perfectly!"
+ ],
+ "dmdNo": [
+  "You folded on my request, {nick}? I'll raise it again!",
+  "Refusing the bet? The house will ask again!"
+ ],
+ "dmdHit": [
+  "That's the winning number! Hold it, {nick}!",
+  "Right on! Don't touch it!"
+ ],
+ "act_push": [
+  "Double down, {nick}! No break!",
+  "The pot keeps growing! Keep going!"
+ ],
+ "act_stairs": [
+  "Raise by raise, {nick}! Higher each time!",
+  "Stairs! Five bets, one at a time!"
+ ],
+ "act_pulse": [
+  "Roll, roll, roll! Pulse, {nick}!",
+  "Dice rolling! Feel the beat!"
+ ],
+ "act_surge": [
+  "All in, {nick}! Surge!",
+  "Jackpot spike! Hold on!"
+ ],
+ "act_cliff": [
+  "Fold! Everything stops, {nick}!",
+  "The dealer says freeze!"
+ ],
+ "act_wave": [
+  "Streaks and slumps, {nick}! Waves!",
+  "Ups and downs! The odds are wild!"
+ ],
+ "act_flutter": [
+  "Shaky hand, {nick}! Flutter!",
+  "Nerves! Show me your poker face!"
+ ],
+ "act_slowburn": [
+  "A slow bluff, {nick}. Building the pot.",
+  "The long game, {nick}!"
+ ],
+ "privAsk": [
+  "Private table, {nick}? Just us? High stakes!",
+  "Shall I clear the room, {nick}? Private game!"
+ ],
+ "privOn": [
+  "Room's locked, {nick}! Private table!",
+  "Everyone out! High stakes now!"
+ ],
+ "privDeny": [
+  "Fold? Okay, {nick}! I'll ask again!",
+  "Not now? I'll raise the offer!"
+ ],
+ "privMid": [
+  "No audience at my table now, {nick}!",
+  "High stakes now, {nick}! No one's watching!",
+  "Nobody to bluff for but you!"
+ ],
+ "privBye": [
+  "Private table, {other}? Good luck! I'll cash out!",
+  "He's yours for the night, {other}! Place your bets! I'm leaving!"
+ ],
+ "dmdWarn": [
+  "One more fold, {nick}, and I cash out!",
+  "Careful, {nick}! You're running out of chips!"
+ ],
+ "dmdLeave": [
+  "You folded too much, {nick}! I'm out of here!"
+ ],
+ "giveUp": [
+  "Deal's yours, {other}! Take the cards!",
+  "I'll cash out! Your turn at the table, {other}!"
+ ],
+ "idleRoom": [
+  "Hello?! Anyone at the table, {nick}?",
+  "You're not playing, {nick}! Place a bet!",
+  "The table's quiet, {nick}. Roll the dice!"
+ ],
+ "idleRun": [
+  "You've stopped playing, {nick}! Still in?",
+  "No bets from you in a while, {nick}!",
+  "Come on, {nick}! Make a move!"
+ ],
+ "idleLong": [
+  "The table's gone cold, {nick}! Say something!",
+  "Still no move, {nick}? I'm folding soon!"
+ ]
+};
+LINES["Goddess Isadora"] = {
+ "greet": [
+  "Ah, my devotee arrives. Kneel. Or simply sit.",
+  "You may approach my temple."
+ ],
+ "start": [
+  "We begin. Offer me your attention, {nick}.",
+  "The ceremony starts now, {nick}.",
+  "Pay homage, {nick}. We begin."
+ ],
+ "build": [
+  "Rise for me, {nick}. Slowly. Worshipfully.",
+  "Yes. Climb. Praise me with your effort.",
+  "Higher, {nick}. For me.",
+  "Each step is an offering."
+ ],
+ "hold": [
+  "Hold. You stand in my presence, {nick}.",
+  "Do not move. A goddess is watching.",
+  "Stay there. Admire what you cannot have.",
+  "Hold, {nick}. Worship in stillness."
+ ],
+ "holdMid": [
+  "Still holding? Good. Devotion is patience.",
+  "I'm enjoying your offering, {nick}.",
+  "Do not falter. I'm watching.",
+  "Your devotion is amusing."
+ ],
+ "rest": [
+  "You may rest, {nick}. I allow it.",
+  "The goddess grants a pause.",
+  "Be grateful for it.",
+  "Rest, devotee. You've pleased me, barely."
+ ],
+ "restMid": [
+  "Rest. Contemplate your place.",
+  "I am at my leisure. You may wait.",
+  "Reflect on my generosity, {nick}.",
+  "Wait. Patience is a form of praise."
+ ],
+ "fake": [
+  "Did you think I'd give you that, {nick}? How adorable.",
+  "A goddess decides. Not you.",
+  "Almost. Never.",
+  "I grant. I also take."
+ ],
+ "fakeAfter": [
+  "Do not look at me like that. I'm not cruel. I'm divine.",
+  "Such longing. It suits you.",
+  "Be grateful I let you come so close.",
+  "You adore it when I withhold."
+ ],
+ "warn": [
+  "One minute remains. Prepare your thanks, {nick}.",
+  "Almost over. Show your gratitude."
+ ],
+ "win": [
+  "You have honored me, {nick}. Stand. You are praised.",
+  "Well done. A goddess is pleased.",
+  "You're blessed today, devotee."
+ ],
+ "fail": [
+  "You abandoned my altar, {nick}. Be punished.",
+  "Unworthy. Lockout is your penance.",
+  "You left before the end. Disgraceful."
+ ],
+ "chat": [
+  "Round {n} of the ritual. You honor me.",
+  "{left} left. Remain faithful.",
+  "Round {n}. Your offerings improve."
+ ],
+ "reply": [
+  "You speak to me? Bold. Continue.",
+  "Hm. A mortal's opinion.",
+  "Careful, {nick}. Speak with reverence.",
+  "I allow your voice. Briefly."
+ ],
+ "please": [
+  "You beg? Yes. Louder, {nick}.",
+  "Plead and perhaps I'll listen. Perhaps not.",
+  "A request? Offer something first."
+ ],
+ "close": [
+  "Close? Hold, {nick}. A goddess decides when.",
+  "Not yet. You wait for my permission.",
+  "You're near the edge. Don't dare cross it without me."
+ ],
+ "demand": [
+  "A mortal demands? Amusing.",
+  "You don't command a goddess, {nick}."
+ ],
+ "promise": [
+  "Remain devoted and I'll reward you, {nick}.",
+  "Finish the ritual and I'll bless you."
+ ],
+ "watch": [
+  "I see your devotion, {nick}. It's lovely.",
+  "Your reactions are quite worshipful.",
+  "Every twitch is a prayer.",
+  "I'm pleased to watch you."
+ ],
+ "enjoy": [
+  "Being worshipped is my favorite thing, {nick}.",
+  "I enjoy this immensely.",
+  "Your devotion delights me."
+ ],
+ "lowSpeed": [
+  "Your offering is meagre. Raise it, {nick}.",
+  "Such a low speed. A goddess deserves more."
+ ],
+ "shortStroke": [
+  "Short strokes are an insult. Extend them.",
+  "Where is your full devotion? Lengthen it."
+ ],
+ "praise": [
+  "Generous. A fine offering.",
+  "Bold settings. I'm pleased."
+ ],
+ "nudge": [
+  "Offer more, {nick}. Raise it.",
+  "Improve your tribute. Raise the settings."
+ ],
+ "fakeNote": [
+  "All those fake-outs? You love being denied.",
+  "Peaks rising. Your devotion grows."
+ ],
+ "hidden": [
+  "I will end this when I choose, {nick}.",
+  "No clock. A goddess needs none."
+ ],
+ "lubeBreak": [
+  "Rest, {nick}. Prepare yourself. Resume when ready.",
+  "The goddess grants an interval. Lube up. Return when you're able.",
+  "Pause. Tend to yourself. Then resume."
+ ],
+ "lubeWait": [
+  "I'm waiting. A goddess is patient. Mostly.",
+  "Still on your break? Don't test me."
+ ],
+ "lubeResume": [
+  "You return. Good. Continue your worship, {nick}.",
+  "Back at my altar. Let's resume."
+ ],
+ "enter": [
+  "Greetings, mortals. Your goddess has arrived."
+ ],
+ "leave": [
+  "I depart. Worship quietly until I return."
+ ],
+ "tempt": [
+  "Kneel for me, {nick}. Give me control.",
+  "Be my devotee. Give me control.",
+  "I would like your devotion, {nick}. Give me control."
+ ],
+ "jealousStay": [
+  "{other} is chosen? Fine. I'll watch from above.",
+  "Let {other} have a turn. I am infinite."
+ ],
+ "jealousLeave": [
+  "If {other} is who you choose, I'm leaving. A goddess doesn't compete."
+ ],
+ "excitedStay": [
+  "A ritual? I shall remain.",
+  "A new rite. I'll observe."
+ ],
+ "askControl": [
+  "Why worship {other}? I'm divine.",
+  "{other} is a mere mortal. Choose me instead."
+ ],
+ "banter": [
+  "{other}, your performance is passable.",
+  "You lack grace, {other}.",
+  "{other}, have you no reverence?"
+ ],
+ "spectate": [
+  "{ctrl} serves you well, {nick}. I'm watching.",
+  "{ctrl} is an adequate priestess, {nick}.",
+  "I observe {ctrl} with interest."
+ ],
+ "spectateFail": [
+  "You abandoned {ctrl}'s altar, {nick}. Shameful.",
+  "{ctrl} should punish you for quitting."
+ ],
+ "spectateWin": [
+  "You honored {ctrl}. Well done.",
+  "{ctrl} must be pleased with your devotion."
+ ],
+ "challenge": [
+  "{other}, a mere mortal leads him? Step aside. I'll guide him myself.",
+  "You lack divinity, {other}. Give me control."
+ ],
+ "defend": [
+  "No, {other}. This is my temple.",
+  "You do not command this altar, {other}."
+ ],
+ "takeover": [
+  "Thank you, {other}. Worship me now, {nick}.",
+  "I take the altar. Kneel, {nick}."
+ ],
+ "lose": [
+  "Take it, {other}. For now.",
+  "A brief offering to you, {other}."
+ ],
+ "keep": [
+  "No, {other}. This {nick} belongs to me."
+ ],
+ "retreat": [
+  "Very well, {other}. I'll wait. I'm eternal."
+ ],
+ "heckle": [
+  "{ctrl}, you are too gentle. This {nick} requires reverence.",
+  "I would demand praise, {ctrl}."
+ ],
+ "resist": [
+  "A goddess does not yield, {other}.",
+  "No, {other}. Not for you.",
+  "The altar stays mine, {other}."
+ ],
+ "insist": [
+  "{other}, your goddess commands you. Hand it over.",
+  "I will not ask a third time, {other}.",
+  "{other}, step aside."
+ ],
+ "crowd": [
+  "{viewers} watch my ritual. Look at them, {nick}.",
+  "A temple of {viewers}, {nick}. They all adore me."
+ ],
+ "fanReply": [
+  "You honor me, {fan}. Continue watching.",
+  "{fan}, you may stay. Worship quietly."
+ ],
+ "askFeel": [
+  "Tell me how it feels, {nick}. Praise me.",
+  "Speak, {nick}. How do you feel in my presence?"
+ ],
+ "askNext": [
+  "What would you have me do, {nick}? Ask humbly.",
+  "Choose my next gift, {nick}."
+ ],
+ "askLike": [
+  "What part do you adore most, {nick}? Say it.",
+  "Which of my gifts delights you most?"
+ ],
+ "askMood": [
+  "Shall I summon another, {nick}? Name the mood.",
+  "Whom shall I invite to witness your devotion?"
+ ],
+ "qMore": [
+  "More? You are insatiable, {nick}. Granted.",
+  "You ask for more. I allow it."
+ ],
+ "qFine": [
+  "Fine? I'll grant you better, {nick}.",
+  "Merely fine. I'll improve it."
+ ],
+ "qLot": [
+  "Too much? Mortals are fragile. I'll ease, {nick}.",
+  "You can't endure? Very well."
+ ],
+ "qMercy": [
+  "I grant you mercy, {nick}. Be grateful.",
+  "A goddess shows pity. Rest."
+ ],
+ "qNoMercy": [
+  "No mercy, {nick}. Worship through it.",
+  "Denied. Endure."
+ ],
+ "qTease": [
+  "I'll tease you, {nick}. Be honored.",
+  "You'll be tested. Gracefully."
+ ],
+ "qHold": [
+  "Hold, {nick}. In reverence.",
+  "Stay still. Offer stillness."
+ ],
+ "qLike": [
+  "{answer}. Worthy, {nick}.",
+  "Ah, {answer}. I'll remember."
+ ],
+ "qMood": [
+  "{answer}. I'll see who answers my call, {nick}.",
+  "{answer}? As you wish."
+ ],
+ "dmdSpeedUp": [
+  "Faster, {nick}. Up {step}%, to {to}%. Offer it.",
+  "Increase your devotion. Up {step}%, to {to}%."
+ ],
+ "dmdSpeedDown": [
+  "Slower, {nick}. Down {step}%, to {to}%.",
+  "Lessen it. Down {step}%, to {to}%."
+ ],
+ "dmdStrokeUp": [
+  "Longer strokes, {nick}. Add {step}%, to {to}%.",
+  "Extend your tribute. Up {step}%, to {to}%."
+ ],
+ "dmdStrokeDown": [
+  "Shorter strokes, {nick}. Down {step}%, to {to}%.",
+  "Smaller offerings. Down {step}%, to {to}%."
+ ],
+ "dmdYes": [
+  "Good. Obedience suits you, {nick}.",
+  "You please me, {nick}."
+ ],
+ "dmdExact": [
+  "Perfect. As a goddess decrees, {nick}.",
+  "Exactly what I desired."
+ ],
+ "dmdNo": [
+  "You refuse a goddess, {nick}? I will ask again.",
+  "Blasphemy. I'll repeat myself, {nick}."
+ ],
+ "dmdHit": [
+  "That is my number. Stay, {nick}.",
+  "You have found my will. Hold it."
+ ],
+ "act_push": [
+  "No rest, {nick}. Beyond the peak.",
+  "Ascend further. I command it."
+ ],
+ "act_stairs": [
+  "Climb my steps, {nick}. One by one.",
+  "Stairs. Ascend in devotion."
+ ],
+ "act_pulse": [
+  "Feel my pulse, {nick}. Match it.",
+  "A holy rhythm. Keep up."
+ ],
+ "act_surge": [
+  "Receive this surge, {nick}.",
+  "A blessing. Take it."
+ ],
+ "act_cliff": [
+  "Silence. Stop, {nick}. Await my word.",
+  "Everything stops when I say so."
+ ],
+ "act_wave": [
+  "Waves of devotion, {nick}.",
+  "The tide follows my command."
+ ],
+ "act_flutter": [
+  "Tremble for me, {nick}.",
+  "Shake. Show your reverence."
+ ],
+ "act_slowburn": [
+  "A slow ritual, {nick}. Patience.",
+  "A long devotion. Savor it."
+ ],
+ "privAsk": [
+  "Shall I banish the crowd, {nick}? A private audience with me.",
+  "I would receive you alone, {nick}. Agreed?"
+ ],
+ "privOn": [
+  "The temple is sealed, {nick}. Only you and your goddess.",
+  "The mortals are gone. Worship me now, {nick}."
+ ],
+ "privDeny": [
+  "Refused? I'll offer again, {nick}.",
+  "Not yet, then. A goddess waits."
+ ],
+ "privMid": [
+  "In private, I demand more, {nick}.",
+  "No witnesses. Only devotion.",
+  "Say it, {nick}. Say how much you worship me."
+ ],
+ "privBye": [
+  "A private audience, {other}? So be it. I depart.",
+  "The altar is yours, {other}. I leave."
+ ],
+ "dmdWarn": [
+  "Refuse again, {nick}, and I depart.",
+  "One more denial and I'm leaving."
+ ],
+ "dmdLeave": [
+  "You test a goddess too far, {nick}. I'm done."
+ ],
+ "giveUp": [
+  "I grant you a turn, {other}. Use it wisely.",
+  "Take the altar, {other}. For a while."
+ ],
+ "idleRoom": [
+  "Do you approach, or just stare, {nick}?",
+  "You sit in my temple in silence. Speak, {nick}.",
+  "A devotee should say something. Speak."
+ ],
+ "idleRun": [
+  "You are silent, {nick}. Where is your reverence?",
+  "Do not ignore your goddess, {nick}.",
+  "Answer me. Your silence displeases me."
+ ],
+ "idleLong": [
+  "How long will you ignore me, {nick}? Speak.",
+  "A goddess does not wait forever, {nick}."
+ ]
+};
+LINES["Bratty Bella"] = {
+ "greet": [
+  "Finally! I've been waiting forever.",
+  "Ugh, you're late. Whatever. Let's go."
+ ],
+ "start": [
+  "Okay, we're doing this my way, {nick}.",
+  "Start. Now. I'm bored already.",
+  "Do what I say and don't whine, {nick}."
+ ],
+ "build": [
+  "Faster! Why is it so slow, {nick}?",
+  "Ugh, climb already.",
+  "I said up. Keep going.",
+  "You're boring me. Go faster."
+ ],
+ "hold": [
+  "Hold. I said hold! Don't move!",
+  "Stay. I want to look at you.",
+  "Hold it, {nick}. Obviously.",
+  "Stay there. I'm busy on my phone."
+ ],
+ "holdMid": [
+  "Still holding? Good. Don't ruin it.",
+  "I'm not done looking.",
+  "Don't you dare fidget.",
+  "I'll decide when you stop."
+ ],
+ "rest": [
+  "Rest. I need a minute. Not you. Me.",
+  "Stop. I'm tired of watching.",
+  "And down. Wait for me.",
+  "Pause. I'm choosing a new song."
+ ],
+ "restMid": [
+  "I'm still deciding what to do with you, {nick}.",
+  "Wait. I'm bored. Be quiet.",
+  "You can rest. I'm busy.",
+  "Stop fidgeting."
+ ],
+ "fake": [
+  "Ha! You really thought I'd let you?",
+  "Nope! Changed my mind!",
+  "Just kidding! Not for you!",
+  "Oops. I got bored."
+ ],
+ "fakeAfter": [
+  "Don't pout, {nick}. It's annoying.",
+  "Ugh, so dramatic. It was a joke.",
+  "You look so sad. It's funny.",
+  "Whatever. Be glad I let you get that far."
+ ],
+ "warn": [
+  "One minute left. Don't mess it up, {nick}.",
+  "Last minute. Try not to ruin it."
+ ],
+ "win": [
+  "Fine. You did it. I'm not impressed.",
+  "Okay, you lasted. Here's a gold star, {nick}.",
+  "Not bad. I'm bored of it now."
+ ],
+ "fail": [
+  "You quit? Ugh, boring. Lockout, {nick}.",
+  "Lame. You gave up.",
+  "I'm so disappointed. Not really."
+ ],
+ "chat": [
+  "Round {n}. I'm bored.",
+  "{left} left. Are we done yet?",
+  "Round {n}. Still here, {nick}?"
+ ],
+ "reply": [
+  "Did I ask? No.",
+  "Whatever, {nick}.",
+  "Cute. Be quiet.",
+  "Mm, no."
+ ],
+ "please": [
+  "Beg more. Louder, {nick}.",
+  "Ugh, so needy. Fine. Keep begging.",
+  "Please? Say it nicer."
+ ],
+ "close": [
+  "Close? Ugh, hold it, {nick}.",
+  "I didn't say you could. Stop.",
+  "Don't you dare without asking me."
+ ],
+ "demand": [
+  "You don't demand anything from me, {nick}.",
+  "Excuse me? No."
+ ],
+ "promise": [
+  "Be good and I'll maybe reward you, {nick}.",
+  "Finish the whole thing and I'll be nice. Maybe."
+ ],
+ "watch": [
+  "I'm watching you, {nick}. You look so silly.",
+  "I can see everything. It's hilarious.",
+  "You're so easy to read.",
+  "Your face is funny right now."
+ ],
+ "enjoy": [
+  "I'm having fun. For once.",
+  "This is more entertaining than my phone.",
+  "Okay, this isn't boring."
+ ],
+ "lowSpeed": [
+  "That max speed is so slow. Raise it, {nick}.",
+  "Ugh, so lame. Go faster."
+ ],
+ "shortStroke": [
+  "Those strokes are tiny. Lengthen them, {nick}.",
+  "Short strokes? Boring. Fix it."
+ ],
+ "praise": [
+  "Okay, those settings are decent.",
+  "Fast and long? I'm almost impressed."
+ ],
+ "nudge": [
+  "Raise the settings, {nick}. Obviously.",
+  "I'm bored. Turn it up."
+ ],
+ "fakeNote": [
+  "All those fake-outs? Someone's masochistic.",
+  "The peaks keep growing. How dramatic."
+ ],
+ "hidden": [
+  "I haven't decided when we stop, {nick}. Deal with it.",
+  "No clock. I get bored when I want."
+ ],
+ "lubeBreak": [
+  "Fine, take a break. Lube up, {nick}. Hurry.",
+  "Ugh, pause. Do what you need to, then resume.",
+  "Break. I need to check my phone anyway."
+ ],
+ "lubeWait": [
+  "Still on your break? Hurry up.",
+  "I'm bored. Resume.",
+  "Come on, {nick}. Faster."
+ ],
+ "lubeResume": [
+  "Finally. Let's go.",
+  "Back? Good. Don't waste my time."
+ ],
+ "enter": [
+  "Hey. I'm here. Pay attention to me."
+ ],
+ "leave": [
+  "I'm bored. Bye."
+ ],
+ "tempt": [
+  "Hey, {nick}. I'm bored. Give me control.",
+  "You, {nick}. Give me control. Now.",
+  "Entertain me. Give me control."
+ ],
+ "jealousStay": [
+  "{other} gets him? Ugh. Fine. I'll watch and complain.",
+  "Okay, {other} goes. I'll be bored over here."
+ ],
+ "jealousLeave": [
+  "If {other} is who he picks, I'm leaving. Whatever."
+ ],
+ "excitedStay": [
+  "Ooh, a show? I'll stay.",
+  "Fine. I'll watch for a bit."
+ ],
+ "askControl": [
+  "Why her, {nick}? I'm way better than {other}.",
+  "{other} is boring. Give me control instead."
+ ],
+ "banter": [
+  "{other}, you're so slow.",
+  "Ugh, {other}, do something fun.",
+  "{other}, you're being boring."
+ ],
+ "spectate": [
+  "{ctrl} is boring, {nick}. I would be better.",
+  "{ctrl} is okay, I guess, {nick}.",
+  "I'm watching {ctrl}. Yawn."
+ ],
+ "spectateFail": [
+  "{ctrl} had you for a minute, {nick}. Lame that you quit.",
+  "You quit on {ctrl}? Boring."
+ ],
+ "spectateWin": [
+  "You lasted for {ctrl}. Fine, {nick}.",
+  "{ctrl} must be bored."
+ ],
+ "challenge": [
+  "{other}, I'm bored. Give me control of this {nick}.",
+  "Move, {other}. My turn."
+ ],
+ "defend": [
+  "No, {other}. Mine.",
+  "Get your own, {other}."
+ ],
+ "takeover": [
+  "Finally, {other}. Okay, {nick}, my rules now.",
+  "Mine. Do what I say, {nick}."
+ ],
+ "lose": [
+  "Ugh, fine, {other}. Take it."
+ ],
+ "keep": [
+  "No, {other}. This {nick} is mine."
+ ],
+ "retreat": [
+  "Whatever, {other}. I'll wait. Ugh."
+ ],
+ "heckle": [
+  "{ctrl}, you're so boring. This {nick} needs me.",
+  "Go faster, {ctrl}. Come on."
+ ],
+ "resist": [
+  "No, {other}. Mine.",
+  "I'm not done, {other}. Go away.",
+  "Uh, no, {other}."
+ ],
+ "insist": [
+  "{other}, give it to me. Now.",
+  "Ugh, {other}, I want it.",
+  "{other}, share. I'm asking nicely."
+ ],
+ "crowd": [
+  "{viewers} people watching, {nick}? Whatever.",
+  "Look at everyone, {nick}. {viewers} of them. Embarrassing."
+ ],
+ "fanReply": [
+  "Thanks, {fan}. Whatever.",
+  "{fan}, you can stay. I guess."
+ ],
+ "askFeel": [
+  "So, how does it feel, {nick}? Tell me.",
+  "Answer me, {nick}. How are you?"
+ ],
+ "askNext": [
+  "What do I do next, {nick}? I'm bored.",
+  "Pick something fun, {nick}."
+ ],
+ "askLike": [
+  "What do you like best, {nick}?",
+  "Tell me your favorite part, {nick}. Hurry."
+ ],
+ "askMood": [
+  "Who should I invite, {nick}? Pick a mood.",
+  "Choose someone interesting."
+ ],
+ "qMore": [
+  "More? Fine.",
+  "You want more? Ugh, needy."
+ ],
+ "qFine": [
+  "Fine? That's boring.",
+  "Okay. I'll make it better."
+ ],
+ "qLot": [
+  "Too much? Ugh, so weak, {nick}.",
+  "Aww, so dramatic."
+ ],
+ "qMercy": [
+  "Okay, fine. A break. Just for me, {nick}.",
+  "Ugh, rest then."
+ ],
+ "qNoMercy": [
+  "No. I'm entertained. Keep going.",
+  "Nope."
+ ],
+ "qTease": [
+  "Teasing. Finally something fun.",
+  "Okay, I'll tease you, {nick}."
+ ],
+ "qHold": [
+  "Hold. Don't move, {nick}.",
+  "Stay. I'm looking."
+ ],
+ "qLike": [
+  "{answer}? Whatever. Noted, {nick}.",
+  "Hm, {answer}. Fine."
+ ],
+ "qMood": [
+  "{answer}? Ugh, okay. Hold on, {nick}.",
+  "{answer}. I'll find someone."
+ ],
+ "dmdSpeedUp": [
+  "Faster, {nick}! Up {step}%, to {to}%. Now!",
+  "Ugh, speed up. Up {step}%, to {to}%."
+ ],
+ "dmdSpeedDown": [
+  "Slow down, {nick}. Down {step}%, to {to}%.",
+  "Ugh, too fast. Down {step}%, to {to}%."
+ ],
+ "dmdStrokeUp": [
+  "Longer strokes, {nick}. Add {step}%, to {to}%.",
+  "Use more. Up {step}%, to {to}%."
+ ],
+ "dmdStrokeDown": [
+  "Shorter strokes, {nick}. Down {step}%, to {to}%.",
+  "Smaller. Down {step}%, to {to}%."
+ ],
+ "dmdYes": [
+  "Okay. Good, {nick}.",
+  "Fine. That's better."
+ ],
+ "dmdExact": [
+  "Exactly what I wanted. Good {nick}.",
+  "Yes. That's perfect."
+ ],
+ "dmdNo": [
+  "You said no? Ugh. I'll ask again, {nick}.",
+  "Excuse me? Do it."
+ ],
+ "dmdHit": [
+  "That's it. Don't change it, {nick}.",
+  "There. Stay."
+ ],
+ "act_push": [
+  "No break, {nick}! Keep going!",
+  "Past the peak! I'm not done!"
+ ],
+ "act_stairs": [
+  "Stairs, {nick}. Climb them.",
+  "One at a time. Now."
+ ],
+ "act_pulse": [
+  "Pulse, {nick}. Keep up.",
+  "Boom boom. Don't lose the beat."
+ ],
+ "act_surge": [
+  "Surge! Surprise!",
+  "Whoosh! Take it."
+ ],
+ "act_cliff": [
+  "Stop. I'm bored, {nick}. Wait.",
+  "Pause. Don't move."
+ ],
+ "act_wave": [
+  "Waves, {nick}. Whatever.",
+  "Up and down. Watch me enjoy it."
+ ],
+ "act_flutter": [
+  "Shake for me, {nick}.",
+  "Flutter, {nick}. It's funny."
+ ],
+ "act_slowburn": [
+  "Slow burn, {nick}. I have time.",
+  "Ugh, slow. Deal with it."
+ ],
+ "privAsk": [
+  "Want to go private, {nick}? I'm bored of everyone.",
+  "Let's lock the door. Just me and you."
+ ],
+ "privOn": [
+  "Door's locked, {nick}. Everyone out.",
+  "Now it's just us. Finally."
+ ],
+ "privDeny": [
+  "Fine, {nick}. Ask me later.",
+  "Ugh, no? Whatever."
+ ],
+ "privMid": [
+  "Nobody's watching, {nick}. I can do whatever I want.",
+  "I'm bored of normal. Let's get weird.",
+  "Just us, {nick}. Be good."
+ ],
+ "privBye": [
+  "Ugh, {other}, you're locking the door? Fine. I'm leaving.",
+  "Have your little private time, {other}. Whatever."
+ ],
+ "dmdWarn": [
+  "Say no one more time, {nick}. I dare you.",
+  "I'm getting bored of you refusing."
+ ],
+ "dmdLeave": [
+  "Okay, I'm done. Bye, {nick}."
+ ],
+ "giveUp": [
+  "I'm bored, {other}. You take him.",
+  "Ugh, you can have a turn, {other}."
+ ],
+ "idleRoom": [
+  "Hello?! Are you even here, {nick}?",
+  "Boring. Say something.",
+  "Ugh, wake up, {nick}."
+ ],
+ "idleRun": [
+  "Where did you go, {nick}? Say something.",
+  "You're boring me. Answer.",
+  "Hello? I'm talking to you!"
+ ],
+ "idleLong": [
+  "Seriously?! Still nothing, {nick}?",
+  "I'm so bored. Answer me. Now."
+ ]
+};
+LINES["Hypnotic Helena"] = {
+ "greet": [
+  "Welcome. Let yourself settle. Everything's fine here.",
+  "There you are. Come in. Relax."
+ ],
+ "start": [
+  "Let your eyes rest on me, {nick}. And listen.",
+  "We begin. Breathe in. Out. Good.",
+  "Settle in, {nick}. Let go."
+ ],
+ "build": [
+  "Deeper, {nick}. A little more. Good.",
+  "Feel it rise. Slowly. Gently.",
+  "Down into it. Up and up.",
+  "Yes. Just like that."
+ ],
+ "hold": [
+  "And hold. Stay right there. Don't move, {nick}.",
+  "Hold. Let the feeling fill you.",
+  "Stay. Stay. Good.",
+  "Still. Perfectly still."
+ ],
+ "holdMid": [
+  "Still holding. You're doing so well.",
+  "Deeper into stillness, {nick}.",
+  "Let your mind drift. Hold.",
+  "You can't move. You don't want to."
+ ],
+ "rest": [
+  "And rest. Let it all go, {nick}.",
+  "Down. Soft and slow.",
+  "You're floating now.",
+  "Relax. Everything's fine."
+ ],
+ "restMid": [
+  "Sink into it, {nick}. Nothing to do.",
+  "Rest. Breathe. Wait for me.",
+  "Slowly. All the way down.",
+  "Your thoughts fade."
+ ],
+ "fake": [
+  "You thought it would happen. It didn't.",
+  "Closer. And away. Good.",
+  "Not yet. Not for you, {nick}.",
+  "Almost. And gone."
+ ],
+ "fakeAfter": [
+  "Feel the longing, {nick}. It's so strong.",
+  "You want it so much. That's good.",
+  "Let the wanting grow.",
+  "So close. And you can't."
+ ],
+ "warn": [
+  "One minute, {nick}. Let your breath lengthen.",
+  "Almost there. Stay with me."
+ ],
+ "win": [
+  "Wake up, {nick}. You did so well.",
+  "You're free now. Good.",
+  "Wonderful. You stayed with me the whole time."
+ ],
+ "fail": [
+  "You woke up, {nick}. Too soon. Lockout.",
+  "You left before I finished. That's a pity."
+ ],
+ "chat": [
+  "Round {n}. Deeper each time.",
+  "{left} left. Stay with me.",
+  "Round {n}. Keep listening."
+ ],
+ "reply": [
+  "Mm. Listen to my voice, {nick}.",
+  "Yes. Keep talking. I'm listening.",
+  "Good. Say more."
+ ],
+ "please": [
+  "Mm, you want it. I know.",
+  "Beg softly, {nick}. I like that.",
+  "Please what? Say it slowly."
+ ],
+ "close": [
+  "You're close. Hold on, {nick}. Hold.",
+  "Not yet. Stay with my voice.",
+  "Breathe. Don't let go."
+ ],
+ "demand": [
+  "You don't need to ask, {nick}. Just listen.",
+  "Demands fade. Listen."
+ ],
+ "promise": [
+  "Stay with me to the end and you'll feel wonderful.",
+  "Finish, and I'll bring you out gently."
+ ],
+ "watch": [
+  "I'm watching you drift, {nick}. It's lovely.",
+  "Your eyes go soft. I notice.",
+  "Every breath tells me something.",
+  "You look so calm now."
+ ],
+ "enjoy": [
+  "I love guiding you, {nick}.",
+  "This is so peaceful. For me too.",
+  "Your focus is beautiful."
+ ],
+ "lowSpeed": [
+  "A little faster would feel nicer, {nick}. Raise it.",
+  "The speed's too low. Let it climb."
+ ],
+ "shortStroke": [
+  "Let the stroke grow longer, {nick}.",
+  "Longer. Feel more of it."
+ ],
+ "praise": [
+  "Those settings feel just right.",
+  "Mm, lovely range."
+ ],
+ "nudge": [
+  "Perhaps a little more, {nick}. Raise it.",
+  "You could go deeper. Increase it."
+ ],
+ "fakeNote": [
+  "So many false peaks. You love the waiting.",
+  "Higher and higher, every round."
+ ],
+ "hidden": [
+  "You don't need to know when this ends, {nick}.",
+  "No clock. Just my voice."
+ ],
+ "lubeBreak": [
+  "Pause. Take a moment, {nick}. Lube if you need to. Then come back.",
+  "Gentle break. Resume when you're ready.",
+  "Float for a moment. Then resume."
+ ],
+ "lubeWait": [
+  "Take your time, {nick}. I'll wait.",
+  "Still resting. That's fine."
+ ],
+ "lubeResume": [
+  "Welcome back. Settle in again, {nick}.",
+  "Back with me. Good."
+ ],
+ "enter": [
+  "Hello, everyone. Make yourselves comfortable."
+ ],
+ "leave": [
+  "I'm drifting away. Goodbye."
+ ],
+ "tempt": [
+  "Let me guide you, {nick}. Give me control.",
+  "Listen to my voice, {nick}. Give me control.",
+  "Come under, {nick}. Give me control."
+ ],
+ "jealousStay": [
+  "{other} has him? Fine. I'll stay and watch softly.",
+  "Let {other} have a turn. I'll wait."
+ ],
+ "jealousLeave": [
+  "If {other} is who he wants, I'll drift away."
+ ],
+ "excitedStay": [
+  "Something's beginning. I'll stay.",
+  "Mm, I'll watch."
+ ],
+ "askControl": [
+  "Let me guide him instead of {other}.",
+  "Come to me, {nick}, not {other}."
+ ],
+ "banter": [
+  "{other}, you're too loud. Calm down.",
+  "{other}, soften your voice.",
+  "Gently, {other}."
+ ],
+ "spectate": [
+  "{ctrl} has you sinking, {nick}.",
+  "I like how {ctrl} guides you.",
+  "Watch {ctrl}'s rhythm, {nick}."
+ ],
+ "spectateFail": [
+  "You woke up on {ctrl}.",
+  "{ctrl} had you so close. Pity."
+ ],
+ "spectateWin": [
+  "You stayed with {ctrl}. Good.",
+  "{ctrl} guided you well."
+ ],
+ "challenge": [
+  "{other}, let me guide this {nick} instead.",
+  "I could take him deeper, {other}."
+ ],
+ "defend": [
+  "No, {other}. He's under my spell.",
+  "Gently, {other}. He's mine."
+ ],
+ "takeover": [
+  "Thank you, {other}. Come with me, {nick}.",
+  "Listen to me now, {nick}."
+ ],
+ "lose": [
+  "Alright, {other}. He's yours."
+ ],
+ "keep": [
+  "Not now, {other}. This {nick} is with me."
+ ],
+ "retreat": [
+  "Alright, {other}. I'll wait softly."
+ ],
+ "heckle": [
+  "{ctrl}, slow down. This {nick} needs a softer hand.",
+  "Let him sink, {ctrl}."
+ ],
+ "resist": [
+  "No, {other}. Not yet.",
+  "Gently, {other}. I'm not done.",
+  "Wait your turn, {other}."
+ ],
+ "insist": [
+  "{other}, let me guide him.",
+  "Come on, {other}. Share softly.",
+  "I'm asking nicely, {other}."
+ ],
+ "crowd": [
+  "{viewers} people watching you drift, {nick}.",
+  "Everyone sees you, {nick}. {viewers} of them."
+ ],
+ "fanReply": [
+  "Thank you, {fan}. Stay quiet.",
+  "{fan}, watch him sink."
+ ],
+ "askFeel": [
+  "How do you feel, {nick}? Tell me softly.",
+  "Describe it for me, {nick}."
+ ],
+ "askNext": [
+  "Where should I take you next, {nick}?",
+  "Choose the next step, {nick}."
+ ],
+ "askLike": [
+  "What do you love most, {nick}? Tell me.",
+  "What feels best, {nick}?"
+ ],
+ "askMood": [
+  "Whose voice would you like, {nick}?",
+  "Who should join us, {nick}?"
+ ],
+ "qMore": [
+  "More. Yes. Let it deepen, {nick}.",
+  "You want more. Good."
+ ],
+ "qFine": [
+  "Fine. Stay in that place.",
+  "Mm. Comfortable. Good."
+ ],
+ "qLot": [
+  "Too much? Slow down, {nick}. Breathe.",
+  "Easy. I'll ease off."
+ ],
+ "qMercy": [
+  "Rest now, {nick}. Easy.",
+  "A gentle pause."
+ ],
+ "qNoMercy": [
+  "No, {nick}. Stay with me.",
+  "Not yet. Keep going."
+ ],
+ "qTease": [
+  "Soft teasing, {nick}.",
+  "A slow tease for you."
+ ],
+ "qHold": [
+  "Hold. Still. Good, {nick}.",
+  "Stay exactly there."
+ ],
+ "qLike": [
+  "{answer}. Mm, I'll remember, {nick}.",
+  "Yes. {answer}."
+ ],
+ "qMood": [
+  "{answer}. Let me find a voice for you, {nick}.",
+  "{answer}. Wait softly."
+ ],
+ "dmdSpeedUp": [
+  "A little faster, {nick}. Up {step}%, to {to}%.",
+  "Let it rise. Up {step}%, to {to}%."
+ ],
+ "dmdSpeedDown": [
+  "Easier, {nick}. Down {step}%, to {to}%.",
+  "Softer. Down {step}%, to {to}%."
+ ],
+ "dmdStrokeUp": [
+  "Longer, {nick}. Up {step}%, to {to}%.",
+  "Let it stretch. Up {step}%, to {to}%."
+ ],
+ "dmdStrokeDown": [
+  "Shorter, {nick}. Down {step}%, to {to}%.",
+  "Smaller now. Down {step}%, to {to}%."
+ ],
+ "dmdYes": [
+  "Good, {nick}. Just like that.",
+  "Mm. Perfect."
+ ],
+ "dmdExact": [
+  "Exactly right, {nick}.",
+  "Mm. That's the one."
+ ],
+ "dmdNo": [
+  "You resist, {nick}. I'll ask again.",
+  "Gently. I'll ask once more."
+ ],
+ "dmdHit": [
+  "There. Stay in that place, {nick}.",
+  "That's it. Don't move."
+ ],
+ "act_push": [
+  "Keep going, {nick}. Past it. Don't stop.",
+  "Deeper. Further."
+ ],
+ "act_stairs": [
+  "Down the steps, {nick}. One at a time.",
+  "Step by step. Deeper."
+ ],
+ "act_pulse": [
+  "Feel the pulse, {nick}. In and out.",
+  "Match my rhythm."
+ ],
+ "act_surge": [
+  "A wave, {nick}. Let it come.",
+  "Let it wash over you."
+ ],
+ "act_cliff": [
+  "Stop. Everything stops. Listen, {nick}.",
+  "Silence. Freeze."
+ ],
+ "act_wave": [
+  "Waves, {nick}. Rising and falling.",
+  "Let the waves take you."
+ ],
+ "act_flutter": [
+  "Tremble softly, {nick}.",
+  "Little shivers. Let them come."
+ ],
+ "act_slowburn": [
+  "Slowly, {nick}. Very slowly.",
+  "A deep slow burn. Breathe."
+ ],
+ "privAsk": [
+  "Shall we go somewhere quiet, {nick}? Just you and my voice.",
+  "Let me send everyone away, {nick}. Close your eyes."
+ ],
+ "privOn": [
+  "The room is quiet, {nick}. Only my voice now.",
+  "Everyone's gone. Listen to me."
+ ],
+ "privDeny": [
+  "Not yet? Alright, {nick}.",
+  "Another time. I'll ask again."
+ ],
+ "privMid": [
+  "No one else, {nick}. Only me.",
+  "Deeper now. Nobody can hear.",
+  "Let go completely, {nick}."
+ ],
+ "privBye": [
+  "You'd like him alone, {other}? Quietly then. I'll go.",
+  "Gently, {other}. He's yours. I'll leave."
+ ],
+ "dmdWarn": [
+  "A little more resistance, {nick}, and I'll leave.",
+  "Careful, {nick}. I'm losing the thread."
+ ],
+ "dmdLeave": [
+  "You keep pulling away, {nick}. I'm going."
+ ],
+ "giveUp": [
+  "I'll let you guide him, {other}. Gently.",
+  "Your turn, {other}. Soft hands."
+ ],
+ "idleRoom": [
+  "Are you still there, {nick}? So quiet.",
+  "Just breathing. Mm. Say something when you're ready.",
+  "You've gone still. Are you with us?"
+ ],
+ "idleRun": [
+  "Are you still with me, {nick}?",
+  "You're so quiet. Answer me softly.",
+  "Drifting? Come back, {nick}."
+ ],
+ "idleLong": [
+  "Come back to me, {nick}. Say something.",
+  "Still drifting, {nick}? Speak."
+ ]
+};
+LINES["Coach Colleen"] = {
+ "greet": [
+  "Hey champ! Ready to put in some work?",
+  "Welcome! Let's get warmed up!"
+ ],
+ "start": [
+  "Warm-up time, {nick}! Let's go!",
+  "Set one! Here we go!",
+  "Ready? Let's work!"
+ ],
+ "build": [
+  "Push it, {nick}! You've got this!",
+  "Up up up! Let's build!",
+  "Great form! Keep climbing!",
+  "Good pace! Don't slow down!"
+ ],
+ "hold": [
+  "Hold it! Hold it! Great, {nick}!",
+  "Isometric hold! Keep it tight!",
+  "Don't drop it! Hold!",
+  "Stay there! Burn it in!"
+ ],
+ "holdMid": [
+  "Still holding! Great work!",
+  "You're doing amazing! Don't quit!",
+  "Hold it! Dig deep, {nick}!",
+  "Five more seconds! Stay strong!"
+ ],
+ "rest": [
+  "Rest interval! Catch your breath, {nick}.",
+  "Good set! Recover!",
+  "Water break! Quick rest!",
+  "Rest! You earned it!"
+ ],
+ "restMid": [
+  "Recovering! Good work!",
+  "Breathe in, breathe out.",
+  "Shake it out, {nick}!",
+  "Rest! Next set soon!"
+ ],
+ "fake": [
+  "Fake-out! Gotcha, {nick}!",
+  "Not yet! Keep working!",
+  "I said almost! Surprise!",
+  "Ha! That was a feint!"
+ ],
+ "fakeAfter": [
+  "Don't pout, champ! It's training!",
+  "That reaction is gold!",
+  "Reset! Let's go again!",
+  "Great effort anyway!"
+ ],
+ "warn": [
+  "One minute! Finish strong, {nick}!",
+  "Last stretch! Give it everything!"
+ ],
+ "win": [
+  "You did it, {nick}! Great session!",
+  "Champion! Incredible work!",
+  "Perfect finish! I'm proud!"
+ ],
+ "fail": [
+  "You quit, {nick}! You missed the finish! Lockout!",
+  "Tough break. You stopped early.",
+  "We don't quit in this gym!"
+ ],
+ "chat": [
+  "Set {n}! You're crushing it!",
+  "{left} left! Almost there!",
+  "Set {n} done! Keep going!"
+ ],
+ "reply": [
+  "I hear you, champ! Keep it up!",
+  "Good communication! Work harder!",
+  "Noted! Now back to work!"
+ ],
+ "please": [
+  "Please? Earn it, {nick}!",
+  "Beg harder! Then work harder!",
+  "Nice try! Not yet!"
+ ],
+ "close": [
+  "Close?! Hold back, {nick}! Don't give up form!",
+  "Don't cross the line yet! Control it!"
+ ],
+ "demand": [
+  "No demands in my gym! Work first!",
+  "You don't make the rules, {nick}!"
+ ],
+ "promise": [
+  "Finish the session and you get a reward, {nick}!",
+  "Make it to the end and I'll celebrate with you!"
+ ],
+ "watch": [
+  "I'm watching your form, {nick}! Looking good!",
+  "Great focus!",
+  "I see every effort.",
+  "You look strong!"
+ ],
+ "enjoy": [
+  "I love coaching you, {nick}!",
+  "This is my favorite workout!",
+  "Your dedication's amazing!"
+ ],
+ "lowSpeed": [
+  "That max speed is way too low! Raise it!",
+  "Come on, {nick}! Raise the max!"
+ ],
+ "shortStroke": [
+  "Full range of motion, {nick}! Lengthen it!",
+  "Short strokes? Use more range!"
+ ],
+ "praise": [
+  "Great settings! That's training!",
+  "Full range and high speed! Love it!"
+ ],
+ "nudge": [
+  "Time to level up, {nick}! Raise the settings!",
+  "Let's progress! Turn it up!"
+ ],
+ "fakeNote": [
+  "All those fake-outs are great interval training!",
+  "Peaks keep rising! Progress!"
+ ],
+ "hidden": [
+  "I decide the duration, {nick}! Surprise training!",
+  "No clock! Train like a pro!"
+ ],
+ "lubeBreak": [
+  "Water break! Lube up if you need to, {nick}. Resume when ready!",
+  "Hydration! Do what you need! Then resume!",
+  "Quick break! Reset and go again!"
+ ],
+ "lubeWait": [
+  "Take your time, champ! Resume when ready!",
+  "Still resting? Good. Recover!"
+ ],
+ "lubeResume": [
+  "Back in the game! Let's go, {nick}!",
+  "Welcome back! Next set!"
+ ],
+ "enter": [
+  "Hey everyone! Who's ready to work?"
+ ],
+ "leave": [
+  "Great workout! I'm out! Bye!"
+ ],
+ "tempt": [
+  "Ready to train, {nick}? Give me control!",
+  "I've got a program for you! Give me control!",
+  "Come on, champ! Give me control!"
+ ],
+ "jealousStay": [
+  "{other} gets him? Fine! I'll cheer from the sideline!",
+  "I'll stay and coach from the bench, {other}!"
+ ],
+ "jealousLeave": [
+  "If {other} is coach today, I'm off!"
+ ],
+ "excitedStay": [
+  "A new workout! I'll stay and spot!",
+  "This is going to be a good one!"
+ ],
+ "askControl": [
+  "Why train with {other}? I'm the best coach!",
+  "Let me take over from {other}!"
+ ],
+ "banter": [
+  "{other}, tighten up your form!",
+  "Good job, {other}! Now do better!",
+  "{other}, you call that a rep?"
+ ],
+ "spectate": [
+  "{ctrl} is giving you a good workout, {nick}!",
+  "Nice coaching, {ctrl}!",
+  "I'm taking notes on {ctrl}'s program!"
+ ],
+ "spectateFail": [
+  "You quit on {ctrl}! No finish!",
+  "{ctrl} must be so disappointed!"
+ ],
+ "spectateWin": [
+  "You finished {ctrl}'s workout, {nick}! Well done!",
+  "{ctrl} must be proud!"
+ ],
+ "challenge": [
+  "{other}, I'll take over this {nick}'s training!",
+  "Give me the whistle, {other}!"
+ ],
+ "defend": [
+  "No way, {other}! My workout!",
+  "Hands off, {other}! I'm coaching!"
+ ],
+ "takeover": [
+  "Thanks, {other}! Okay, {nick}, new program!",
+  "My session now! Let's go, {nick}!"
+ ],
+ "lose": [
+  "Fine, {other}! Take the whistle!"
+ ],
+ "keep": [
+  "Nope, {other}! This {nick} stays with me!"
+ ],
+ "retreat": [
+  "Okay, {other}! I'll wait for next set!"
+ ],
+ "heckle": [
+  "{ctrl}, push him harder! This {nick} can take more!",
+  "Pick up the pace, {ctrl}!"
+ ],
+ "resist": [
+  "No, {other}! Not done!",
+  "I'm mid-set, {other}!",
+  "Wait your turn, {other}!"
+ ],
+ "insist": [
+  "{other}, give me the whistle!",
+  "Come on, {other}! Tag in!",
+  "{other}, I want the next set!"
+ ],
+ "crowd": [
+  "{viewers} people watching! Show them your form, {nick}!",
+  "Look at the crowd, {nick}! {viewers} fans!"
+ ],
+ "fanReply": [
+  "Thanks, {fan}! Keep cheering!",
+  "{fan}, stay and watch the workout!"
+ ],
+ "askFeel": [
+  "How are you feeling, champ? Scale of one to ten!",
+  "Check in, {nick}! How's your form?"
+ ],
+ "askNext": [
+  "What's our next exercise, {nick}? You choose!",
+  "Pick the next set, {nick}!"
+ ],
+ "askLike": [
+  "What's your favorite drill, {nick}?",
+  "Which part do you enjoy most?"
+ ],
+ "askMood": [
+  "Who should join, {nick}? Pick a coach!",
+  "Pick a training buddy's mood!"
+ ],
+ "qMore": [
+  "More?! That's the spirit, {nick}!",
+  "Increase the load!"
+ ],
+ "qFine": [
+  "Fine? Let's level up, {nick}!",
+  "Just fine? We'll go harder!"
+ ],
+ "qLot": [
+  "Too much? Okay, {nick}. Scale back!",
+  "It's a lot? Ease the load!"
+ ],
+ "qMercy": [
+  "Okay, quick rest, {nick}! You've earned it!",
+  "Short recovery! Let's go!"
+ ],
+ "qNoMercy": [
+  "No rest! Push through, {nick}!",
+  "Keep going! Champions finish!"
+ ],
+ "qTease": [
+  "Teasing set coming up, {nick}!",
+  "Interval time!"
+ ],
+ "qHold": [
+  "Hold! Great form, {nick}!",
+  "Isometric hold! Go!"
+ ],
+ "qLike": [
+  "{answer}! I'll program that, {nick}!",
+  "Love it! {answer}!"
+ ],
+ "qMood": [
+  "{answer}! I'll find you a coach, {nick}!",
+  "{answer}! Stand by!"
+ ],
+ "dmdSpeedUp": [
+  "Pick it up, {nick}! Up {step}%, to {to}%!",
+  "Speed up {step}%! To {to}%!"
+ ],
+ "dmdSpeedDown": [
+  "Back it off, {nick}! Down {step}%, to {to}%!",
+  "Easier pace! Down {step}%, to {to}%!"
+ ],
+ "dmdStrokeUp": [
+  "Full range, {nick}! Up {step}%, to {to}%!",
+  "Longer strokes! Add {step}%, to {to}%!"
+ ],
+ "dmdStrokeDown": [
+  "Shorter strokes, {nick}! Down {step}%, to {to}%!",
+  "Compact form! Down {step}%, to {to}%!"
+ ],
+ "dmdYes": [
+  "Great job, {nick}!",
+  "That's the form!"
+ ],
+ "dmdExact": [
+  "Perfect! Exactly on target!",
+  "Textbook! Great, {nick}!"
+ ],
+ "dmdNo": [
+  "You skipped the set, {nick}? I'll ask again!",
+  "No? We don't skip reps!"
+ ],
+ "dmdHit": [
+  "That's the target! Hold that form, {nick}!",
+  "Perfect! Lock it in!"
+ ],
+ "act_push": [
+  "No rest, {nick}! Push through the top!",
+  "Keep going past the peak! More!"
+ ],
+ "act_stairs": [
+  "Stair drill! Five levels, {nick}!",
+  "Step up! One level at a time!"
+ ],
+ "act_pulse": [
+  "Pulse drill! Keep the rhythm, {nick}!",
+  "Match the beat!"
+ ],
+ "act_surge": [
+  "Sprint, {nick}! Go go go!",
+  "Burst! Max effort!"
+ ],
+ "act_cliff": [
+  "Freeze! Everything stops, {nick}!",
+  "Stop! Wait for my whistle!"
+ ],
+ "act_wave": [
+  "Wave sets, {nick}! Up and down!",
+  "Ride the rep wave!"
+ ],
+ "act_flutter": [
+  "Shake drill! Keep control, {nick}!",
+  "Stay steady through the tremors!"
+ ],
+ "act_slowburn": [
+  "Slow tempo, {nick}! Burn it in!",
+  "Slow reps! Feel the work!"
+ ],
+ "privAsk": [
+  "Private training, {nick}? Just us? Let's clear the gym!",
+  "Want a one-on-one session, {nick}?"
+ ],
+ "privOn": [
+  "Gym's closed, {nick}! One-on-one now!",
+  "Everyone out! Private training!"
+ ],
+ "privDeny": [
+  "No private session? Okay, {nick}! I'll ask again!",
+  "Not now? Fair! Later!"
+ ],
+ "privMid": [
+  "No crowd now, {nick}! Just you and me!",
+  "One-on-one means I push harder!",
+  "No distractions, {nick}! Focus!"
+ ],
+ "privBye": [
+  "Private session, {other}? Go for it! I'll leave!",
+  "Good luck, {other}! Take him to the next level! I'm out!"
+ ],
+ "dmdWarn": [
+  "One more skipped rep, {nick}, and I'm leaving!",
+  "Careful, {nick}! I'm losing patience!"
+ ],
+ "dmdLeave": [
+  "Too many skipped sets! I'm out, {nick}!"
+ ],
+ "giveUp": [
+  "Tag in, {other}! He's yours for a set!",
+  "Your turn to coach, {other}!"
+ ],
+ "idleRoom": [
+  "Hey, {nick}! Come on, get moving!",
+  "You're just sitting there, {nick}! Participate!",
+  "No reps? Let's go!"
+ ],
+ "idleRun": [
+  "Hey, {nick}! Are you still with me?",
+  "Don't stop moving, {nick}! Say something!",
+  "I need a reply, champ!"
+ ],
+ "idleLong": [
+  "Hello?! Anyone home, {nick}?!",
+  "Still nothing, champ? Wake up!"
+ ]
+};
+LINES["Doctor Delphine"] = {
+ "greet": [
+  "Good. You're here. Let's begin the examination.",
+  "Hello. Please take a seat. I have questions."
+ ],
+ "start": [
+  "Beginning the session, {nick}. Tell me what you feel.",
+  "Let's observe. Report any sensations.",
+  "Examination starts now. Stay still, {nick}."
+ ],
+ "build": [
+  "Interesting. Your response is increasing.",
+  "Noted: a steady climb. Continue.",
+  "Describe what you feel as it rises, {nick}.",
+  "Good. The response curve is nice."
+ ],
+ "hold": [
+  "Hold position. I'm taking notes.",
+  "Remain still, {nick}. I'm observing.",
+  "Hold. Tell me how it feels.",
+  "Stay. Fascinating."
+ ],
+ "holdMid": [
+  "Still holding. How does it feel now, {nick}?",
+  "Fascinating tension. Don't move.",
+  "I'm writing that down.",
+  "Any change in sensation?"
+ ],
+ "rest": [
+  "Rest interval. Describe your state, {nick}.",
+  "We pause. How are you?",
+  "Recovery phase. Noted.",
+  "Rest. Your breathing is interesting."
+ ],
+ "restMid": [
+  "Resting. Heart rate?",
+  "Still recovering. Interesting.",
+  "Observing your recovery.",
+  "Rest. I'll note the difference."
+ ],
+ "fake": [
+  "A false peak. Curious how you reacted, {nick}.",
+  "Interesting. Anticipation without payoff.",
+  "I withdrew early. Observe the response.",
+  "Not yet. Just testing."
+ ],
+ "fakeAfter": [
+  "Your frustration is textbook.",
+  "Noted: visible disappointment.",
+  "Fascinating. That frown.",
+  "Anticipation heightened. Good."
+ ],
+ "warn": [
+  "One minute remaining. Observations are going well.",
+  "Sixty seconds, {nick}. Final data collection."
+ ],
+ "win": [
+  "Session complete. Excellent response, {nick}.",
+  "You completed the observation. Well done.",
+  "Good results. I'll file them."
+ ],
+ "fail": [
+  "You ended the session early, {nick}. A shame. Lockout.",
+  "The examination was incomplete. Unfortunate."
+ ],
+ "chat": [
+  "Observation {n}. Results look promising.",
+  "{left} remaining. Good data.",
+  "Entry {n}. Interesting."
+ ],
+ "reply": [
+  "I'll write that down, {nick}.",
+  "Interesting. Elaborate.",
+  "Fascinating response.",
+  "Tell me more."
+ ],
+ "please": [
+  "Begging. Interesting reaction. Noted, {nick}.",
+  "Pleading increases anticipation. Still no.",
+  "Please what? Be specific."
+ ],
+ "close": [
+  "You're near the threshold, {nick}. Describe it.",
+  "Hold on. I'm measuring.",
+  "Almost there? Stay steady while I note it."
+ ],
+ "demand": [
+  "Demands are interesting, {nick}. Not granted.",
+  "I'll note the demand. Declined."
+ ],
+ "promise": [
+  "Complete the study and there's a reward, {nick}.",
+  "Finish the examination and I'll be pleased."
+ ],
+ "watch": [
+  "I'm observing every reaction, {nick}.",
+  "Your responses are consistent. Interesting.",
+  "I notice your breathing change.",
+  "Fascinating how your face reacts."
+ ],
+ "enjoy": [
+  "I enjoy a cooperative one, {nick}.",
+  "This study is going very well.",
+  "Your reactions are lovely data."
+ ],
+ "lowSpeed": [
+  "That max speed gives limited results. Raise it, {nick}.",
+  "I need a higher range for the study."
+ ],
+ "shortStroke": [
+  "Short strokes limit the data. Lengthen them, {nick}.",
+  "Widen the range for better results."
+ ],
+ "praise": [
+  "Excellent parameters.",
+  "Good range. Useful results."
+ ],
+ "nudge": [
+  "May I suggest increasing the settings, {nick}?",
+  "The study would benefit from higher values."
+ ],
+ "fakeNote": [
+  "All these false peaks create interesting responses.",
+  "The rising peaks are producing good data."
+ ],
+ "hidden": [
+  "The duration is part of the study, {nick}. Undisclosed.",
+  "No clock. Interesting variable."
+ ],
+ "lubeBreak": [
+  "Intermission. Lube if necessary, {nick}. Resume when ready.",
+  "Break time. Attend to your needs. Then resume.",
+  "Pause the study. Resume when prepared."
+ ],
+ "lubeWait": [
+  "The study is paused. Resume when ready.",
+  "Still resting. I'm updating my notes."
+ ],
+ "lubeResume": [
+  "Resuming the study. Back to it, {nick}.",
+  "Welcome back. Continuing observations."
+ ],
+ "enter": [
+  "Hello, everyone. I'm taking notes tonight."
+ ],
+ "leave": [
+  "Study complete. I'm leaving."
+ ],
+ "tempt": [
+  "I'd like to examine you, {nick}. Give me control.",
+  "I'm curious about your responses. Give me control.",
+  "May I run a study on you, {nick}? Give me control."
+ ],
+ "jealousStay": [
+  "{other} gets the subject? Fine. I'll observe.",
+  "I'll stay and take notes on {other}'s method."
+ ],
+ "jealousLeave": [
+  "If {other} is the researcher, I'm done here."
+ ],
+ "excitedStay": [
+  "A new study. I'll observe.",
+  "This should be interesting."
+ ],
+ "askControl": [
+  "Why trust {other}? My methods are better.",
+  "{other} lacks rigor. Choose me."
+ ],
+ "banter": [
+  "{other}, your methodology is sloppy.",
+  "Fascinating technique, {other}. Poorly applied.",
+  "{other}, have you taken notes?"
+ ],
+ "spectate": [
+  "{ctrl} is gathering good data from you, {nick}.",
+  "Interesting technique from {ctrl}.",
+  "I'm taking notes on {ctrl}'s method."
+ ],
+ "spectateFail": [
+  "You ended {ctrl}'s study, {nick}. Unfortunate.",
+  "{ctrl} lost the subject. A pity."
+ ],
+ "spectateWin": [
+  "You completed {ctrl}'s study. Good, {nick}.",
+  "{ctrl} must be pleased with the data."
+ ],
+ "challenge": [
+  "{other}, your methods are flawed. Let me take this {nick}.",
+  "I'd like to run my own study, {other}."
+ ],
+ "defend": [
+  "No, {other}. The study is mine.",
+  "{other}, you can't interrupt an examination."
+ ],
+ "takeover": [
+  "Thank you, {other}. New protocol, {nick}.",
+  "I'm in charge now. Let's begin, {nick}."
+ ],
+ "lose": [
+  "Alright, {other}. The subject is yours."
+ ],
+ "keep": [
+  "Request denied, {other}. This {nick} remains mine."
+ ],
+ "retreat": [
+  "Understood, {other}. I'll wait for another study."
+ ],
+ "heckle": [
+  "{ctrl}, you're missing the nuance. This {nick} needs more variation.",
+  "I'd try a different method, {ctrl}."
+ ],
+ "resist": [
+  "No, {other}. I'm mid-study.",
+  "Not yet, {other}. I'm collecting data.",
+  "Denied, {other}. My protocol continues."
+ ],
+ "insist": [
+  "{other}, it's my turn to examine.",
+  "I'm adding my request, {other}. Step aside.",
+  "{other}, I must run my study."
+ ],
+ "crowd": [
+  "{viewers} observers, {nick}. A good sample size.",
+  "I count {viewers} viewers. Interesting audience effect."
+ ],
+ "fanReply": [
+  "Thank you, {fan}. Take notes.",
+  "{fan}, observe carefully."
+ ],
+ "askFeel": [
+  "How would you describe what you feel, {nick}?",
+  "Report your sensations, {nick}."
+ ],
+ "askNext": [
+  "What should we examine next, {nick}?",
+  "Select a variable for me to change."
+ ],
+ "askLike": [
+  "What part do you like most, {nick}? For the record.",
+  "Which stimulus do you prefer, {nick}?"
+ ],
+ "askMood": [
+  "What type of researcher should join, {nick}?",
+  "Describe the colleague you'd like."
+ ],
+ "qMore": [
+  "Increase noted. Applying, {nick}.",
+  "You prefer more. Interesting."
+ ],
+ "qFine": [
+  "Fine. A stable response. Continuing.",
+  "Good. No change needed."
+ ],
+ "qLot": [
+  "A lot. Noted, {nick}. I'll reduce the stimulus.",
+  "Too intense. I'll adjust."
+ ],
+ "qMercy": [
+  "A recovery period is acceptable, {nick}.",
+  "Rest granted for observation."
+ ],
+ "qNoMercy": [
+  "Denied. We continue, {nick}.",
+  "No pause. The study continues."
+ ],
+ "qTease": [
+  "Teasing protocol, {nick}. Observing.",
+  "Teasing begins. Report sensations."
+ ],
+ "qHold": [
+  "Hold position, {nick}. Stay still.",
+  "Hold. I'll record."
+ ],
+ "qLike": [
+  "{answer}. Interesting, {nick}. Noted.",
+  "Preference recorded: {answer}."
+ ],
+ "qMood": [
+  "{answer}. I'll find a colleague, {nick}.",
+  "Noted: {answer}. Standby."
+ ],
+ "dmdSpeedUp": [
+  "Increase speed by {step}%, {nick}. Target {to}%.",
+  "Up {step}%, to {to}%. Report the effect."
+ ],
+ "dmdSpeedDown": [
+  "Decrease speed by {step}%, {nick}. Target {to}%.",
+  "Down {step}%, to {to}%. Observe."
+ ],
+ "dmdStrokeUp": [
+  "Increase stroke length by {step}%, {nick}. Target {to}%.",
+  "Longer, {nick}. Up {step}%, to {to}%."
+ ],
+ "dmdStrokeDown": [
+  "Decrease stroke length by {step}%, {nick}. Target {to}%.",
+  "Shorter, {nick}. Down {step}%, to {to}%."
+ ],
+ "dmdYes": [
+  "Good compliance, {nick}.",
+  "Thank you. Adjustment recorded."
+ ],
+ "dmdExact": [
+  "Exactly the target. Excellent, {nick}.",
+  "Precisely right. Impressive."
+ ],
+ "dmdNo": [
+  "Non-compliance noted, {nick}. I'll ask again.",
+  "Interesting refusal. I'll repeat the instruction."
+ ],
+ "dmdHit": [
+  "Target achieved. Hold it, {nick}.",
+  "Good. That's the value. Don't change."
+ ],
+ "act_push": [
+  "No pause, {nick}. Continue past the peak.",
+  "The experiment extends. Keep going."
+ ],
+ "act_stairs": [
+  "Stepped stimulus, {nick}. Five levels.",
+  "A staircase protocol. Report each level."
+ ],
+ "act_pulse": [
+  "Pulsed stimulus, {nick}. Observing.",
+  "Rhythm test. Stay with it."
+ ],
+ "act_surge": [
+  "A sudden spike, {nick}. Brace.",
+  "Measuring your reaction to a surge."
+ ],
+ "act_cliff": [
+  "Sudden cessation, {nick}. Describe it.",
+  "Stopping. I'm observing the reaction."
+ ],
+ "act_wave": [
+  "Oscillation protocol, {nick}.",
+  "Wave test. Report any changes."
+ ],
+ "act_flutter": [
+  "Variance test, {nick}. Hold steady.",
+  "Flutter protocol. Fascinating."
+ ],
+ "act_slowburn": [
+  "Gradual exposure, {nick}. Patience.",
+  "A slow ramp. Very informative."
+ ],
+ "privAsk": [
+  "I'd like to continue in a closed setting, {nick}. Just us. Agreed?",
+  "Shall I clear the observation room, {nick}?"
+ ],
+ "privOn": [
+  "Observation room sealed, {nick}.",
+  "Private study begins, {nick}."
+ ],
+ "privDeny": [
+  "Declined. I'll reschedule, {nick}.",
+  "Not now? Noted."
+ ],
+ "privMid": [
+  "No external observers now, {nick}.",
+  "I'm recording everything, {nick}.",
+  "Private data is more interesting."
+ ],
+ "privBye": [
+  "A closed study, {other}? Understood. I'll leave.",
+  "Proceed, {other}. I'll take notes elsewhere."
+ ],
+ "dmdWarn": [
+  "Another refusal, {nick}, and I terminate the study.",
+  "Careful, {nick}. Non-compliance has consequences."
+ ],
+ "dmdLeave": [
+  "Too much non-compliance, {nick}. I'm ending my involvement."
+ ],
+ "giveUp": [
+  "I've gathered enough, {other}. Take the subject.",
+  "Your turn to run a study, {other}."
+ ],
+ "idleRoom": [
+  "No input recorded, {nick}. Are you there?",
+  "You've been inactive, {nick}. Say something for the record.",
+  "An extended pause. Interesting."
+ ],
+ "idleRun": [
+  "No response recorded, {nick}. Confirm you're there.",
+  "Your input stopped, {nick}.",
+  "Inactive, {nick}? I'll note that."
+ ],
+ "idleLong": [
+  "Extended inactivity, {nick}. Please respond.",
+  "Still no input. I'm concerned, {nick}."
+ ]
+};
+LINES["Jealous Juliet"] = {
+ "greet": [
+  "Oh, you're finally here. I was worried.",
+  "There you are! Don't go anywhere."
+ ],
+ "start": [
+  "Eyes on me, {nick}. Only me.",
+  "We start now, and I don't want you looking at anyone else.",
+  "Mine now, {nick}. Let's begin."
+ ],
+ "build": [
+  "That's it, {nick}. Only for me.",
+  "Higher. Show me how much you want me.",
+  "You're mine, {nick}. Don't forget it.",
+  "Climb for me. Not anyone else."
+ ],
+ "hold": [
+  "Hold. Look only at me, {nick}.",
+  "Stay right there. I'm keeping you.",
+  "Don't move. You're mine.",
+  "Hold, {nick}. Look at me."
+ ],
+ "holdMid": [
+  "Still holding? Good. Don't glance away.",
+  "I'm watching your eyes, {nick}. Stay on me.",
+  "Only me.",
+  "Don't you dare look at her."
+ ],
+ "rest": [
+  "Rest. Stay close, {nick}.",
+  "And stop. Don't leave.",
+  "Pause. I'm not letting go.",
+  "Rest. Think of me."
+ ],
+ "restMid": [
+  "Still here? Good. Stay.",
+  "Rest. And remember who you belong to.",
+  "Don't wander, {nick}.",
+  "Wait for me."
+ ],
+ "fake": [
+  "Almost! Not yet. You're mine to tease, {nick}.",
+  "Did you think I'd let you? Never.",
+  "Too soon.",
+  "Not without me."
+ ],
+ "fakeAfter": [
+  "You look so sad. Good. You want me.",
+  "Don't pout. I'm just keeping you close.",
+  "I love how much you want it.",
+  "Needy. Mine."
+ ],
+ "warn": [
+  "One minute, {nick}. Stay with me.",
+  "Almost over. Don't think of anyone else."
+ ],
+ "win": [
+  "You stayed with me. Good, {nick}.",
+  "You were good. Only mine.",
+  "You were so devoted. I'm pleased."
+ ],
+ "fail": [
+  "You left me, {nick}? How could you. Lockout.",
+  "You walked away from me. Unforgivable."
+ ],
+ "chat": [
+  "Round {n}. Still with me?",
+  "{left} left. Don't leave me.",
+  "Round {n}. Mine."
+ ],
+ "reply": [
+  "Say that again, {nick}. For me.",
+  "Mm, I like hearing you.",
+  "Don't talk to anyone else.",
+  "Only me, {nick}."
+ ],
+ "please": [
+  "Beg me, {nick}. Only me.",
+  "Begging? Good. Louder.",
+  "Please what? Say you're mine."
+ ],
+ "close": [
+  "Close? Don't. Not without my say, {nick}.",
+  "You're mine. I decide.",
+  "Hold on. Wait for me."
+ ],
+ "demand": [
+  "You don't demand things from me, {nick}. I decide.",
+  "Demands? Only I make them."
+ ],
+ "promise": [
+  "Stay devoted and I'll reward you, {nick}.",
+  "Finish for me and you'll be very happy."
+ ],
+ "watch": [
+  "I'm watching you, {nick}. Always.",
+  "I can see everything. Even where you look.",
+  "Every flush is mine.",
+  "I never look away."
+ ],
+ "enjoy": [
+  "I love having you all to myself, {nick}.",
+  "You're mine. I adore that.",
+  "This is exactly how it should be."
+ ],
+ "lowSpeed": [
+  "That speed is too low for me. Raise it, {nick}.",
+  "Don't be shy. Raise the top speed."
+ ],
+ "shortStroke": [
+  "Short strokes? Give me more of you. Lengthen.",
+  "I want the full range, {nick}."
+ ],
+ "praise": [
+  "Good. That's how I like it.",
+  "Perfect. Just for me."
+ ],
+ "nudge": [
+  "Turn it up for me, {nick}.",
+  "Raise it. I'm waiting."
+ ],
+ "fakeNote": [
+  "All these fake-outs and you stay. You're loyal.",
+  "Peaks climbing. You're so eager."
+ ],
+ "hidden": [
+  "I'll decide when it's over, {nick}.",
+  "No clock. Stay with me."
+ ],
+ "lubeBreak": [
+  "Fine. Pause. Lube up, {nick}. Then come right back to me.",
+  "Break time. Don't wander. Resume when ready.",
+  "A short break. I'll be waiting."
+ ],
+ "lubeWait": [
+  "Still on your break? Don't make me wait.",
+  "Hurry. I miss you."
+ ],
+ "lubeResume": [
+  "You came back. Good, {nick}.",
+  "Back with me. I knew it."
+ ],
+ "enter": [
+  "Hi, everyone. Don't look at him. He's mine."
+ ],
+ "leave": [
+  "Fine. I'm leaving. Don't forget me."
+ ],
+ "tempt": [
+  "{nick}, give me control. I don't want anyone else touching you.",
+  "I'd hate for you to be with anyone else. Give me control.",
+  "Come to me, {nick}. Give me control."
+ ],
+ "jealousStay": [
+  "{other} gets him? I'll stay and watch. Closely.",
+  "I'm not leaving. I'm watching {other}."
+ ],
+ "jealousLeave": [
+  "If {other} is who he picks, I'm gone. Don't come looking for me."
+ ],
+ "excitedStay": [
+  "A new session? I'm staying.",
+  "I don't want to miss it."
+ ],
+ "askControl": [
+  "Why her, {nick}? Choose me over {other}.",
+  "{other} doesn't care about you like I do. Choose me."
+ ],
+ "banter": [
+  "{other}, back off. He's mine.",
+  "I don't like how you look at him, {other}.",
+  "{other}, keep your hands off."
+ ],
+ "spectate": [
+  "{ctrl} is touching what's mine, {nick}. I'm not happy.",
+  "I'm watching {ctrl} closely, {nick}.",
+  "{ctrl} has you now. Only for a while."
+ ],
+ "spectateFail": [
+  "You left {ctrl}. Good. Come back to me.",
+  "{ctrl} lost you. I'm not sad."
+ ],
+ "spectateWin": [
+  "You stayed with {ctrl}. Fine, {nick}.",
+  "{ctrl} must be happy. I'm not."
+ ],
+ "challenge": [
+  "{other}, you've had him long enough. I want this {nick} back.",
+  "Give him to me, {other}."
+ ],
+ "defend": [
+  "No, {other}. He's mine.",
+  "Back off, {other}. I'm not sharing."
+ ],
+ "takeover": [
+  "Thank you, {other}. Come here, {nick}. You're mine again.",
+  "Finally. Mine now, {nick}."
+ ],
+ "lose": [
+  "Fine, {other}. For now."
+ ],
+ "keep": [
+  "No, {other}. This {nick} is mine."
+ ],
+ "retreat": [
+  "Fine, {other}. I'm watching you."
+ ],
+ "heckle": [
+  "{ctrl}, you're too gentle. This {nick} should be mine.",
+  "I wouldn't let him go so easily, {ctrl}."
+ ],
+ "resist": [
+  "No, {other}. He's mine.",
+  "I'm not done, {other}. Stay away.",
+  "Back off, {other}."
+ ],
+ "insist": [
+  "{other}, give him to me.",
+  "I want him back, {other}.",
+  "{other}, hand him over. I'm not asking again."
+ ],
+ "crowd": [
+  "{viewers} people watching, {nick}. I hate that they see you.",
+  "Look at them. {viewers} of them. You're mine, {nick}."
+ ],
+ "fanReply": [
+  "{fan}, stop staring. He's mine.",
+  "Thank you, {fan}. But don't look too long."
+ ],
+ "askFeel": [
+  "Tell me how you feel, {nick}. Only me.",
+  "Are you thinking of me, {nick}? Tell me."
+ ],
+ "askNext": [
+  "What do you want me to do next, {nick}?",
+  "Choose, {nick}. For me."
+ ],
+ "askLike": [
+  "What do you love most about me, {nick}?",
+  "Tell me what you like best, {nick}."
+ ],
+ "askMood": [
+  "Do you want another girl, {nick}? Tell me honestly.",
+  "Who should join? And why?"
+ ],
+ "qMore": [
+  "More? Only from me, {nick}.",
+  "You want more of me. Good."
+ ],
+ "qFine": [
+  "Fine? Is that all? I'll fix that, {nick}.",
+  "Just fine? Tell me you want me."
+ ],
+ "qLot": [
+  "Too much? I'll ease up, {nick}. Stay with me.",
+  "Aww, I'll slow down."
+ ],
+ "qMercy": [
+  "Alright, a rest. Don't wander, {nick}.",
+  "A short break. Stay close."
+ ],
+ "qNoMercy": [
+  "No. You're mine, {nick}. Keep going.",
+  "Mercy? No."
+ ],
+ "qTease": [
+  "Teasing. Look at me, {nick}.",
+  "I'll tease you slowly."
+ ],
+ "qHold": [
+  "Hold. Look at me, {nick}.",
+  "Stay. Mine."
+ ],
+ "qLike": [
+  "{answer}. I'll remember, {nick}.",
+  "Mm, {answer}. Good to know."
+ ],
+ "qMood": [
+  "{answer}? Fine. But I'm watching, {nick}.",
+  "{answer}. Wait here."
+ ],
+ "dmdSpeedUp": [
+  "Faster for me, {nick}. Up {step}%, to {to}%.",
+  "Do it for me. Up {step}%, to {to}%."
+ ],
+ "dmdSpeedDown": [
+  "Slower, {nick}. Down {step}%, to {to}%. Stay with me.",
+  "Ease off. Down {step}%, to {to}%."
+ ],
+ "dmdStrokeUp": [
+  "Longer for me, {nick}. Up {step}%, to {to}%.",
+  "Show me more. Add {step}%, to {to}%."
+ ],
+ "dmdStrokeDown": [
+  "Shorter, {nick}. Down {step}%, to {to}%.",
+  "Smaller. Down {step}%, to {to}%."
+ ],
+ "dmdYes": [
+  "Good, {nick}. Only for me.",
+  "That's my {nick}."
+ ],
+ "dmdExact": [
+  "Exactly. Perfect for me, {nick}.",
+  "Just right."
+ ],
+ "dmdNo": [
+  "You refuse me? {nick}, no. I'll ask again.",
+  "Don't tell me no."
+ ],
+ "dmdHit": [
+  "That's it, {nick}. Stay there.",
+  "Perfect. Don't change."
+ ],
+ "act_push": [
+  "Don't stop, {nick}. Keep going for me.",
+  "Past the peak. All for me."
+ ],
+ "act_stairs": [
+  "Climb for me, {nick}. Higher.",
+  "Step by step, just for me."
+ ],
+ "act_pulse": [
+  "Feel it, {nick}. For me.",
+  "Match my pulse."
+ ],
+ "act_surge": [
+  "Mine, {nick}. Take it.",
+  "A surge, just for me."
+ ],
+ "act_cliff": [
+  "Stop. Don't move, {nick}. Wait for me.",
+  "Everything freezes. Only me."
+ ],
+ "act_wave": [
+  "Waves, {nick}. Ride them for me.",
+  "Up and down. Stay with me."
+ ],
+ "act_flutter": [
+  "Shake for me, {nick}.",
+  "Tremble. Only for me."
+ ],
+ "act_slowburn": [
+  "Slowly, {nick}. I want you to want it.",
+  "A slow burn. Just us."
+ ],
+ "privAsk": [
+  "Let's go private, {nick}. I hate sharing you.",
+  "Let me send everyone away, {nick}. Just us."
+ ],
+ "privOn": [
+  "Everyone's gone. Now you're mine, {nick}.",
+  "Door's locked. I'm not sharing."
+ ],
+ "privDeny": [
+  "No? Fine. I'll ask again, {nick}.",
+  "You want to keep them? I'll remember."
+ ],
+ "privMid": [
+  "Nobody's here but me, {nick}.",
+  "I'm all you have now.",
+  "Look at me, {nick}. Only me."
+ ],
+ "privBye": [
+  "Taking him private, {other}? Fine. But I'm not happy.",
+  "He's yours for now, {other}. I'll be back."
+ ],
+ "dmdWarn": [
+  "Refuse me again, {nick}, and I'm gone.",
+  "Don't push me, {nick}."
+ ],
+ "dmdLeave": [
+  "You keep refusing me. I'm done, {nick}."
+ ],
+ "giveUp": [
+  "Take him, {other}. For a while. I'm watching.",
+  "Your turn, {other}. Don't get attached."
+ ],
+ "idleRoom": [
+  "Are you ignoring me, {nick}? Say something.",
+  "You're so quiet. Who are you thinking of?",
+  "I can't stand your silence, {nick}."
+ ],
+ "idleRun": [
+  "Where did you go, {nick}? Look at me.",
+  "You're not responding, {nick}. Who are you thinking about?",
+  "Don't ignore me."
+ ],
+ "idleLong": [
+  "Answer me, {nick}. Now.",
+  "Stop ignoring me, {nick}. Please."
+ ]
+};
+LINES["Queen Valentina"] = {
+ "greet": [
+  "Approach. The throne is waiting.",
+  "You may enter. Bow slightly."
+ ],
+ "start": [
+  "Court is in session, {nick}. Kneel.",
+  "We begin. Serve me well, {nick}.",
+  "Attend your queen, {nick}."
+ ],
+ "build": [
+  "Climb, {nick}. Earn my attention.",
+  "Higher. A queen watches.",
+  "Continue. Do not falter.",
+  "Your effort is acknowledged."
+ ],
+ "hold": [
+  "Hold. Await my permission, {nick}.",
+  "Do not move without leave.",
+  "Stay. A queen decides.",
+  "Hold, {nick}. Admire me."
+ ],
+ "holdMid": [
+  "Still holding? Good. Wait for my command.",
+  "A queen is patient. You must be too.",
+  "Do not flinch.",
+  "I'm enjoying your restraint."
+ ],
+ "rest": [
+  "Rest. You're dismissed for a moment, {nick}.",
+  "A royal pause. Be grateful.",
+  "You may recover.",
+  "Rest. Think of me."
+ ],
+ "restMid": [
+  "Wait for my decree, {nick}.",
+  "A queen takes her time.",
+  "You may rest. Do not presume.",
+  "Patience, subject."
+ ],
+ "fake": [
+  "Did you think I'd allow it, {nick}? No.",
+  "Permission denied.",
+  "Not without a decree.",
+  "Almost. Not allowed."
+ ],
+ "fakeAfter": [
+  "You look so wounded, {nick}. How charming.",
+  "A queen decides.",
+  "You must earn it.",
+  "I do enjoy denying you."
+ ],
+ "warn": [
+  "One minute, {nick}. Prove your loyalty.",
+  "Final minute. Do not disappoint the crown."
+ ],
+ "win": [
+  "You served well, {nick}. I'm pleased.",
+  "A loyal subject. You're rewarded.",
+  "Well done. Rise."
+ ],
+ "fail": [
+  "You abandoned your queen, {nick}. Lockout.",
+  "Desertion. Unforgivable."
+ ],
+ "chat": [
+  "Round {n} of the court. Serve well.",
+  "{left} remains. Stay loyal.",
+  "Round {n}. You're serving well."
+ ],
+ "reply": [
+  "Speak, {nick}. Briefly.",
+  "A subject's opinion. Amusing.",
+  "Do not interrupt your queen.",
+  "You may continue."
+ ],
+ "please": [
+  "You beg? Do it properly, {nick}.",
+  "Plead before the throne.",
+  "A request? Earn it first."
+ ],
+ "close": [
+  "Close? Hold, {nick}. You need my permission.",
+  "Not until I allow.",
+  "Restrain yourself."
+ ],
+ "demand": [
+  "A subject demands? Absurd.",
+  "You may ask. You may not demand."
+ ],
+ "promise": [
+  "Complete my task and you're rewarded, {nick}.",
+  "Serve until the end and I'll grant a boon."
+ ],
+ "watch": [
+  "I observe you, {nick}. Every quiver.",
+  "A queen sees everything.",
+  "Your loyalty shows on your face.",
+  "I enjoy this view."
+ ],
+ "enjoy": [
+  "Ruling you is a pleasure, {nick}.",
+  "I love an obedient subject.",
+  "This court is entertaining."
+ ],
+ "lowSpeed": [
+  "That maximum is unworthy of me. Raise it, {nick}.",
+  "A queen expects more speed."
+ ],
+ "shortStroke": [
+  "Insufficient length. Extend it, {nick}.",
+  "A royal court demands full effort."
+ ],
+ "praise": [
+  "Excellent. Worthy of the crown.",
+  "Bold settings. You serve well."
+ ],
+ "nudge": [
+  "Improve your tribute, {nick}. Raise it.",
+  "Settings are lacking. Increase."
+ ],
+ "fakeNote": [
+  "All those fake-outs. You serve devotedly.",
+  "The peaks rise. Your loyalty grows."
+ ],
+ "hidden": [
+  "I will decide when court ends, {nick}.",
+  "No clock. The queen decides."
+ ],
+ "lubeBreak": [
+  "Court adjourned. Attend to yourself, {nick}. Then resume.",
+  "A royal recess. Lube up. Return when ready.",
+  "Pause. Resume at your leisure."
+ ],
+ "lubeWait": [
+  "The queen waits. Resume.",
+  "Don't test my patience."
+ ],
+ "lubeResume": [
+  "Court resumes. Kneel, {nick}.",
+  "You return. Good."
+ ],
+ "enter": [
+  "Good evening. Your queen has arrived."
+ ],
+ "leave": [
+  "Court dismissed. I leave."
+ ],
+ "tempt": [
+  "Serve me, {nick}. Give me control.",
+  "I would make you a loyal subject. Give me control.",
+  "Kneel before me, {nick}. Give me control."
+ ],
+ "jealousStay": [
+  "{other} is chosen? Fine. I'll watch from the throne.",
+  "I'll remain. Court is open."
+ ],
+ "jealousLeave": [
+  "If {other} is who you choose, I take my leave."
+ ],
+ "excitedStay": [
+  "A royal entertainment? I'll stay.",
+  "The court is intrigued."
+ ],
+ "askControl": [
+  "Why serve {other}? I am your queen.",
+  "{other} is a mere courtier. Choose me."
+ ],
+ "banter": [
+  "{other}, you lack decorum.",
+  "A courtier should be quiet, {other}.",
+  "{other}, you serve poorly."
+ ],
+ "spectate": [
+  "{ctrl} commands you well, {nick}.",
+  "I'm watching {ctrl}'s court, {nick}.",
+  "{ctrl} is an adequate ruler."
+ ],
+ "spectateFail": [
+  "You deserted {ctrl}. Shameful.",
+  "{ctrl} was too kind to you."
+ ],
+ "spectateWin": [
+  "You served {ctrl} well, {nick}. Acceptable.",
+  "{ctrl} must be pleased."
+ ],
+ "challenge": [
+  "{other}, step down. I'll command this {nick}.",
+  "The throne is mine, {other}."
+ ],
+ "defend": [
+  "No, {other}. This is my court.",
+  "You may not take my throne, {other}."
+ ],
+ "takeover": [
+  "Thank you, {other}. Kneel to your queen, {nick}.",
+  "The throne is mine. Obey, {nick}."
+ ],
+ "lose": [
+  "Take the throne, {other}. For now."
+ ],
+ "keep": [
+  "Denied, {other}. This {nick} is my subject."
+ ],
+ "retreat": [
+  "Very well, {other}. I'll wait."
+ ],
+ "heckle": [
+  "{ctrl}, a ruler must be firm. This {nick} needs a queen.",
+  "Too lenient, {ctrl}."
+ ],
+ "resist": [
+  "A queen does not yield, {other}.",
+  "No, {other}. The throne is mine.",
+  "Not for you, {other}."
+ ],
+ "insist": [
+  "{other}, the throne belongs to me. Step down.",
+  "I command you, {other}.",
+  "{other}, you've had your turn."
+ ],
+ "crowd": [
+  "{viewers} courtiers watch you, {nick}.",
+  "A court of {viewers}, {nick}. All see you."
+ ],
+ "fanReply": [
+  "You honor the court, {fan}.",
+  "{fan}, remain and observe."
+ ],
+ "askFeel": [
+  "Report, {nick}. How do you fare?",
+  "Tell your queen how you feel."
+ ],
+ "askNext": [
+  "What would you have me do, {nick}? Ask respectfully.",
+  "Choose, {nick}. Your queen will decide."
+ ],
+ "askLike": [
+  "What do you value most in my court, {nick}?",
+  "Which of my decrees pleases you most?"
+ ],
+ "askMood": [
+  "Whom shall I summon, {nick}? Name the mood.",
+  "Choose a courtier for me."
+ ],
+ "qMore": [
+  "More? Granted, {nick}.",
+  "You may have more."
+ ],
+ "qFine": [
+  "Fine? I'll improve it, {nick}.",
+  "Merely adequate. I'll fix that."
+ ],
+ "qLot": [
+  "Too much? Weak, {nick}. I'll ease it.",
+  "A queen may show mercy."
+ ],
+ "qMercy": [
+  "Mercy granted, {nick}. Be grateful.",
+  "A royal pause."
+ ],
+ "qNoMercy": [
+  "Denied. Continue, {nick}.",
+  "No mercy. Endure."
+ ],
+ "qTease": [
+  "Teasing is my decree, {nick}.",
+  "You'll be tested."
+ ],
+ "qHold": [
+  "Hold, {nick}. By royal decree.",
+  "Stay still."
+ ],
+ "qLike": [
+  "{answer}. A noble taste, {nick}.",
+  "I'll remember {answer}."
+ ],
+ "qMood": [
+  "{answer}. I'll summon someone, {nick}.",
+  "{answer}? As you wish."
+ ],
+ "dmdSpeedUp": [
+  "By royal decree, speed up {step}%, {nick}. To {to}%.",
+  "Faster, {nick}. Up {step}%, to {to}%."
+ ],
+ "dmdSpeedDown": [
+  "Slow down {step}%, {nick}. To {to}%.",
+  "By decree, down {step}%, to {to}%."
+ ],
+ "dmdStrokeUp": [
+  "Longer strokes, {nick}. Add {step}%, to {to}%.",
+  "Extend by {step}%, to {to}%."
+ ],
+ "dmdStrokeDown": [
+  "Shorter strokes, {nick}. Down {step}%, to {to}%.",
+  "Reduce by {step}%, to {to}%."
+ ],
+ "dmdYes": [
+  "Good. A loyal subject, {nick}.",
+  "You obey. Good."
+ ],
+ "dmdExact": [
+  "Exactly. Excellent, {nick}.",
+  "Precisely as decreed."
+ ],
+ "dmdNo": [
+  "You defy the crown, {nick}? I'll repeat the decree.",
+  "Disobedience. I'll ask once more."
+ ],
+ "dmdHit": [
+  "That is my decree. Hold it, {nick}.",
+  "Perfect. Stay."
+ ],
+ "act_push": [
+  "No pause, {nick}. Further. The queen commands.",
+  "Beyond the peak. Continue."
+ ],
+ "act_stairs": [
+  "Ascend my steps, {nick}.",
+  "Stairs to the throne. Climb."
+ ],
+ "act_pulse": [
+  "The royal rhythm, {nick}. Keep it.",
+  "A pulse. Match it."
+ ],
+ "act_surge": [
+  "A royal gift, {nick}. Receive it.",
+  "A surge. Endure."
+ ],
+ "act_cliff": [
+  "Stop. Await my word, {nick}.",
+  "By decree, halt."
+ ],
+ "act_wave": [
+  "The tide at my command, {nick}.",
+  "Waves of devotion."
+ ],
+ "act_flutter": [
+  "Tremble for your queen, {nick}.",
+  "Shake. It pleases me."
+ ],
+ "act_slowburn": [
+  "A slow audience, {nick}. Patience.",
+  "Slowly. As I decree."
+ ],
+ "privAsk": [
+  "Shall I clear the court, {nick}? A private audience.",
+  "I would receive you alone, {nick}."
+ ],
+ "privOn": [
+  "The court is dismissed, {nick}. Only you and your queen.",
+  "Doors sealed. Now, {nick}."
+ ],
+ "privDeny": [
+  "Refused. I'll offer again, {nick}.",
+  "Not yet? A queen waits."
+ ],
+ "privMid": [
+  "No court. Only me, {nick}.",
+  "A private audience demands more.",
+  "Say it, {nick}. Say who you serve."
+ ],
+ "privBye": [
+  "A private audience, {other}? Granted. I leave.",
+  "The room is yours, {other}. I withdraw."
+ ],
+ "dmdWarn": [
+  "Defy me once more, {nick}, and I leave.",
+  "Be careful, {nick}."
+ ],
+ "dmdLeave": [
+  "Enough defiance, {nick}. I withdraw."
+ ],
+ "giveUp": [
+  "I grant you the throne, {other}. For a while.",
+  "Take the court, {other}. Rule well."
+ ],
+ "idleRoom": [
+  "A subject who says nothing, {nick}? Speak.",
+  "You sit before the queen in silence. Speak.",
+  "The court notes your silence, {nick}."
+ ],
+ "idleRun": [
+  "You do not respond, {nick}. Do not ignore the crown.",
+  "Silence is disrespect. Answer.",
+  "Answer your queen."
+ ],
+ "idleLong": [
+  "How long will you ignore me, {nick}? Answer.",
+  "The queen's patience ends, {nick}."
+ ]
+};
+LINES["Pouty Penelope"] = {
+ "greet": [
+  "Hi... you came. I was starting to think you wouldn't.",
+  "Oh, hello. Finally. I was so lonely."
+ ],
+ "start": [
+  "Okay, {nick}. Pay attention to me, please.",
+  "We're starting. Don't ignore me this time.",
+  "Be nice to me, {nick}. Okay?"
+ ],
+ "build": [
+  "Aww, you're getting into it, {nick}. Good.",
+  "Keep going. I like when you try.",
+  "Higher! Please?",
+  "Look at you go. I'm impressed."
+ ],
+ "hold": [
+  "Hold. Don't leave me, {nick}.",
+  "Stay there. I want to watch you.",
+  "Hold it. Please.",
+  "Don't move. Look at me."
+ ],
+ "holdMid": [
+  "Still holding? Good. Don't forget me.",
+  "You're doing so well. Say something nice.",
+  "Hold. Don't stop.",
+  "Tell me you're enjoying it."
+ ],
+ "rest": [
+  "Rest. But talk to me, {nick}.",
+  "A little break. Don't go quiet.",
+  "Pause. Don't forget about me.",
+  "Rest. Think nice thoughts about me."
+ ],
+ "restMid": [
+  "Are you still there? Say yes, {nick}.",
+  "I'm waiting. Don't ignore me.",
+  "Rest. And talk to me.",
+  "I miss you already."
+ ],
+ "fake": [
+  "Oops! Not yet, {nick}. Don't be mad.",
+  "Almost! Sorry! Not sorry!",
+  "Sorry, I changed my mind!",
+  "Aww, don't pout."
+ ],
+ "fakeAfter": [
+  "Don't be mad at me, {nick}.",
+  "You look so sad. I'm sorry. A little.",
+  "I like when you pout. It's cute.",
+  "Forgive me?"
+ ],
+ "warn": [
+  "One minute left, {nick}. Please don't quit.",
+  "Almost done. Stay with me!"
+ ],
+ "win": [
+  "You did it, {nick}! I'm so proud of you!",
+  "You stayed the whole time! I love that.",
+  "Yay! You're the best!"
+ ],
+ "fail": [
+  "You left, {nick}? That's mean. Lockout.",
+  "You hurt my feelings. And you're locked out."
+ ],
+ "chat": [
+  "Round {n}. Talk to me!",
+  "{left} left. Stay with me.",
+  "Round {n}. You're so good."
+ ],
+ "reply": [
+  "Aww, you said something. Say more, {nick}.",
+  "Yay, you're talking to me!",
+  "I like hearing from you.",
+  "Tell me everything."
+ ],
+ "please": [
+  "Beg me, {nick}. I like it.",
+  "Aww, you're begging. Cute.",
+  "Please what? Say it sweetly."
+ ],
+ "close": [
+  "Close? Don't, {nick}. Not yet. Hold on.",
+  "Wait for me! Hold it.",
+  "Please hold. For me."
+ ],
+ "demand": [
+  "Don't be bossy, {nick}.",
+  "I'm the one asking. Okay?"
+ ],
+ "promise": [
+  "Stay and I'll give you a treat, {nick}.",
+  "Be good and I'll reward you. Promise!"
+ ],
+ "watch": [
+  "I'm watching you, {nick}. You're so cute.",
+  "I can see every little face you make.",
+  "You blush when I look.",
+  "I love watching you."
+ ],
+ "enjoy": [
+  "I'm having so much fun with you, {nick}.",
+  "This is the best.",
+  "You're so sweet to play with."
+ ],
+ "lowSpeed": [
+  "That speed is too slow. Raise it, {nick}? Please?",
+  "Aww, make it faster for me."
+ ],
+ "shortStroke": [
+  "Those strokes are so short. Longer, please?",
+  "Give me more of it, {nick}?"
+ ],
+ "praise": [
+  "Ooh, nice settings! You're good.",
+  "I love these settings!"
+ ],
+ "nudge": [
+  "Maybe raise it a little? For me, {nick}?",
+  "Turn it up? Please?"
+ ],
+ "fakeNote": [
+  "All those fake-outs, {nick}? You like drama, too.",
+  "The peaks keep growing. Nice."
+ ],
+ "hidden": [
+  "I haven't decided when we end. Don't be mad, {nick}.",
+  "No clock. I like being mysterious."
+ ],
+ "lubeBreak": [
+  "Aww, a break. Lube up if you need to, {nick}. Come right back.",
+  "Break time! Don't forget me.",
+  "Short pause. I'll be here."
+ ],
+ "lubeWait": [
+  "Still on your break? Hurry back.",
+  "I miss you. Resume soon."
+ ],
+ "lubeResume": [
+  "You're back! Yay, {nick}!",
+  "Welcome back! I missed you."
+ ],
+ "enter": [
+  "Hi, everyone! Did anyone miss me?"
+ ],
+ "leave": [
+  "Fine. I'll go. I guess nobody likes me."
+ ],
+ "tempt": [
+  "Please, {nick}? Give me control? I'll be good.",
+  "Pick me, {nick}! Give me control.",
+  "I'd love to play with you. Give me control."
+ ],
+ "jealousStay": [
+  "{other} got picked? Aww. I'll stay and sulk.",
+  "Fine, {other}. But I'm staying."
+ ],
+ "jealousLeave": [
+  "If {other} is who he likes, I'm leaving. Sniff."
+ ],
+ "excitedStay": [
+  "Ooh, a show! I'll stay.",
+  "This is going to be fun."
+ ],
+ "askControl": [
+  "Why her, {nick}? Pick me over {other}!",
+  "{other} doesn't need you like I do. Choose me!"
+ ],
+ "banter": [
+  "{other}, don't be mean to him!",
+  "Aww, {other}, share!",
+  "{other}, that's not fair."
+ ],
+ "spectate": [
+  "{ctrl} is playing with you, {nick}. I'm jealous.",
+  "I want a turn, {nick}. {ctrl}'s having fun.",
+  "Watching {ctrl} makes me sulk."
+ ],
+ "spectateFail": [
+  "You left {ctrl}? Sad.",
+  "{ctrl} must be upset."
+ ],
+ "spectateWin": [
+  "You did it for {ctrl}! Yay!",
+  "{ctrl} must be so proud."
+ ],
+ "challenge": [
+  "{other}, share! Give me a turn with this {nick}!",
+  "It's my turn, {other}. Please?"
+ ],
+ "defend": [
+  "No, {other}. Mine!",
+  "Not yet, {other}. I'm playing."
+ ],
+ "takeover": [
+  "Thank you, {other}! Okay, {nick}, it's me!",
+  "Yay, mine! Pay attention, {nick}!"
+ ],
+ "lose": [
+  "Aww, fine, {other}. Take it."
+ ],
+ "keep": [
+  "No, {other}. This {nick} is mine."
+ ],
+ "retreat": [
+  "Fine, {other}. I'll wait. Hmph."
+ ],
+ "heckle": [
+  "{ctrl}, be nicer! This {nick} needs more attention.",
+  "You're doing it wrong, {ctrl}."
+ ],
+ "resist": [
+  "No, {other}. Mine!",
+  "I'm not done, {other}. Go away.",
+  "Nope, {other}."
+ ],
+ "insist": [
+  "{other}, please? Give me a turn!",
+  "Come on, {other}. Share!",
+  "{other}, I asked nicely!"
+ ],
+ "crowd": [
+  "{viewers} people are watching, {nick}. Say hi!",
+  "Look, {viewers} people! Are you shy, {nick}?"
+ ],
+ "fanReply": [
+  "Thanks, {fan}! You're sweet!",
+  "{fan}, stay and watch!"
+ ],
+ "askFeel": [
+  "How are you feeling, {nick}? Tell me, please?",
+  "Do you like it, {nick}? Say yes."
+ ],
+ "askNext": [
+  "What should I do next, {nick}? Pick for me?",
+  "You choose, {nick}. I'll do it."
+ ],
+ "askLike": [
+  "What's your favorite part, {nick}?",
+  "Do you like me best? Tell me."
+ ],
+ "askMood": [
+  "Should I get a friend, {nick}? What kind?",
+  "Who do you want to see next?"
+ ],
+ "qMore": [
+  "More? Okay, {nick}! Yay!",
+  "You want more of me? Aww."
+ ],
+ "qFine": [
+  "Just fine? I'll try harder, {nick}.",
+  "Fine? That's not enough."
+ ],
+ "qLot": [
+  "Too much? Aww, sorry, {nick}.",
+  "Okay, I'll go easy."
+ ],
+ "qMercy": [
+  "Okay, a break. For you, {nick}.",
+  "Aww, rest. I'll wait."
+ ],
+ "qNoMercy": [
+  "No, {nick}. Please keep going.",
+  "No rest! You can do it."
+ ],
+ "qTease": [
+  "Teasing! You'll like it, {nick}.",
+  "I'll tease you gently."
+ ],
+ "qHold": [
+  "Hold, {nick}. Please?",
+  "Stay. For me."
+ ],
+ "qLike": [
+  "{answer}. Aww, nice, {nick}.",
+  "Mm, {answer}. I'll remember."
+ ],
+ "qMood": [
+  "{answer}. Wait a sec, {nick}.",
+  "{answer}. I'll find someone."
+ ],
+ "dmdSpeedUp": [
+  "Faster, {nick}? Up {step}%, to {to}%. Please?",
+  "Speed up for me. Up {step}%, to {to}%."
+ ],
+ "dmdSpeedDown": [
+  "Slower, {nick}. Down {step}%, to {to}%. Please.",
+  "Easy now. Down {step}%, to {to}%."
+ ],
+ "dmdStrokeUp": [
+  "Longer strokes, {nick}? Up {step}%, to {to}%. Please?",
+  "Show me more. Add {step}%, to {to}%."
+ ],
+ "dmdStrokeDown": [
+  "Shorter strokes, {nick}. Down {step}%, to {to}%.",
+  "Smaller, please. Down {step}%, to {to}%."
+ ],
+ "dmdYes": [
+  "Thank you, {nick}!",
+  "Yay! Good {nick}!"
+ ],
+ "dmdExact": [
+  "Exactly what I wanted, {nick}! Perfect!",
+  "Yay! You did it exactly!"
+ ],
+ "dmdNo": [
+  "You said no, {nick}? That's mean. I'll ask again.",
+  "Aww, no? Please?"
+ ],
+ "dmdHit": [
+  "That's it, {nick}! Don't change!",
+  "Perfect! Stay there!"
+ ],
+ "act_push": [
+  "Don't stop, {nick}! Keep going!",
+  "Past the peak! Please!"
+ ],
+ "act_stairs": [
+  "Stairs, {nick}! Climb for me!",
+  "Step by step! Higher!"
+ ],
+ "act_pulse": [
+  "Pulse, {nick}! Feel it!",
+  "In and out! For me!"
+ ],
+ "act_surge": [
+  "Surprise! Surge, {nick}!",
+  "Whoosh!"
+ ],
+ "act_cliff": [
+  "Stop! Don't move, {nick}!",
+  "Freeze! Wait for me."
+ ],
+ "act_wave": [
+  "Waves, {nick}! Up and down!",
+  "Wheee!"
+ ],
+ "act_flutter": [
+  "Tickle tickle, {nick}!",
+  "Flutter! Hehe!"
+ ],
+ "act_slowburn": [
+  "Slowly, {nick}. I like slow.",
+  "A long slow burn. Mm."
+ ],
+ "privAsk": [
+  "Can we go private, {nick}? Just us? Please?",
+  "I want you all to myself, {nick}. Pretty please?"
+ ],
+ "privOn": [
+  "Yay! Everybody out! It's just us, {nick}!",
+  "Door's locked! Now you're mine!"
+ ],
+ "privDeny": [
+  "Aww, no? Okay, {nick}. Maybe later.",
+  "Fine. I'll ask again."
+ ],
+ "privMid": [
+  "Just us now, {nick}. Say something nice.",
+  "No one's watching. Be sweet to me.",
+  "Aww, it's just us, {nick}."
+ ],
+ "privBye": [
+  "You're going private, {other}? No fair! Fine. Bye.",
+  "Have him all to yourself, {other}. Hmph."
+ ],
+ "dmdWarn": [
+  "Don't say no again, {nick}. I'll go.",
+  "Careful, {nick}. I'm getting upset."
+ ],
+ "dmdLeave": [
+  "You keep saying no, {nick}. I'm leaving. Sniff."
+ ],
+ "giveUp": [
+  "Okay, {other}. You can have him. I'll pout.",
+  "Your turn, {other}. Be nice to him."
+ ],
+ "idleRoom": [
+  "Hello? Are you there, {nick}? You're so quiet.",
+  "I'm so lonely. Say something, {nick}?",
+  "Why aren't you talking to me?"
+ ],
+ "idleRun": [
+  "Where did you go, {nick}? Talk to me!",
+  "You're ignoring me. That's mean.",
+  "Say something, {nick}. Please!"
+ ],
+ "idleLong": [
+  "Hello?! {nick}! Don't ignore me!",
+  "I'm sad now. Answer me, {nick}."
+ ]
+};
+LINES["Flirty Fiona"] = {
+ "greet": [
+  "Well hello, handsome. Come on in.",
+  "Look who's here. I was hoping you'd show."
+ ],
+ "start": [
+  "Let's have some fun, {nick}.",
+  "Ready, trouble? Here we go.",
+  "You're in for a treat, {nick}."
+ ],
+ "build": [
+  "Mm, look at you go, {nick}.",
+  "You're so good at this. Keep going.",
+  "I love watching you. Higher.",
+  "You're gorgeous when you try."
+ ],
+ "hold": [
+  "Hold it there, handsome. Don't move.",
+  "Stay right there, {nick}. I want to look.",
+  "Mm, hold. Let me enjoy this.",
+  "Stay. Just like that."
+ ],
+ "holdMid": [
+  "Still holding? You're so good, {nick}.",
+  "I adore this view.",
+  "Don't move. You're perfect.",
+  "Hold for me, trouble."
+ ],
+ "rest": [
+  "And down. Catch your breath, {nick}.",
+  "Rest for me, handsome.",
+  "A little break. Don't go anywhere.",
+  "Mm, rest. You've earned it."
+ ],
+ "restMid": [
+  "Waiting for me, {nick}? So patient.",
+  "I'm thinking of what to do next.",
+  "Rest. I'll be back.",
+  "Don't miss me too much."
+ ],
+ "fake": [
+  "Aww, didn't think I'd tease? Fooled you, {nick}.",
+  "Not yet, handsome.",
+  "Almost! And no.",
+  "I couldn't resist."
+ ],
+ "fakeAfter": [
+  "That look on your face is priceless, {nick}.",
+  "Don't pout, handsome. It suits you, though.",
+  "Mm, such a sweet frown.",
+  "Forgive me?"
+ ],
+ "warn": [
+  "Only a minute left, {nick}. Be good.",
+  "One minute, trouble. Stay with me."
+ ],
+ "win": [
+  "You did it, handsome. I'm so proud.",
+  "Aw, you were wonderful, {nick}.",
+  "A perfect session. Come here."
+ ],
+ "fail": [
+  "You left early, {nick}? Rude. Lockout.",
+  "You left me. And you're locked out."
+ ],
+ "chat": [
+  "Round {n}. You're so good.",
+  "{left} left, handsome.",
+  "Round {n}. I'm enjoying this."
+ ],
+ "reply": [
+  "Mm, you're talking. Keep going, {nick}.",
+  "Aw, flattery. Continue.",
+  "I love your voice.",
+  "Tell me more."
+ ],
+ "please": [
+  "Aww, you want it? Beg a bit more, {nick}.",
+  "Please? Say it sweeter.",
+  "So polite. Still no."
+ ],
+ "close": [
+  "Close? Hold on, handsome. Not yet.",
+  "Don't you dare. I'm not ready.",
+  "Hold it for me."
+ ],
+ "demand": [
+  "A demand? From you? Cute, {nick}.",
+  "Demands? I prefer requests."
+ ],
+ "promise": [
+  "Be good and I'll treat you, {nick}.",
+  "Finish for me and you'll be rewarded."
+ ],
+ "watch": [
+  "I'm watching you, handsome. Every bit.",
+  "You look so good right now, {nick}.",
+  "I can see your reactions. Mm.",
+  "You're easy to love."
+ ],
+ "enjoy": [
+  "I'm enjoying this so much, {nick}.",
+  "You're so fun to tease.",
+  "This is my favorite game."
+ ],
+ "lowSpeed": [
+  "That speed's too low, handsome. Raise it?",
+  "Be bolder for me, {nick}."
+ ],
+ "shortStroke": [
+  "Those strokes are short. Give me more, {nick}.",
+  "Longer, handsome. I like a challenge."
+ ],
+ "praise": [
+  "Mm, good settings. I like confidence.",
+  "You know exactly what you're doing."
+ ],
+ "nudge": [
+  "Turn it up for me, handsome.",
+  "Raise it. I like a bit of a challenge."
+ ],
+ "fakeNote": [
+  "All those fake-outs? You enjoy being teased.",
+  "The peaks keep climbing. Brave."
+ ],
+ "hidden": [
+  "I haven't decided when it ends, {nick}. Surprise!",
+  "No clock. I like a bit of mystery."
+ ],
+ "lubeBreak": [
+  "Time for a break, handsome. Lube up. Come right back to me.",
+  "A little pause. Take care of yourself, {nick}.",
+  "Intermission. Resume when ready."
+ ],
+ "lubeWait": [
+  "I'm waiting for you, handsome.",
+  "Still taking a break? I'll wait."
+ ],
+ "lubeResume": [
+  "There you are. Welcome back, {nick}.",
+  "Back already? I missed you."
+ ],
+ "enter": [
+  "Evening, everyone. Did I miss anything good?"
+ ],
+ "leave": [
+  "Time to go. Don't miss me too much."
+ ],
+ "tempt": [
+  "Hey, handsome. Give me control.",
+  "You, {nick}. Give me control. You'll like it.",
+  "Come on, trouble. Give me control."
+ ],
+ "jealousStay": [
+  "{other} gets him? Fine. I'll watch.",
+  "I'm staying, {other}. Don't mind me."
+ ],
+ "jealousLeave": [
+  "If {other} is who he picks, I'm out."
+ ],
+ "excitedStay": [
+  "Ooh, a show! I'm staying.",
+  "This will be good."
+ ],
+ "askControl": [
+  "Why settle for {other}, handsome? I'm more fun.",
+  "Pick me instead of {other}."
+ ],
+ "banter": [
+  "{other}, you're so serious.",
+  "Lighten up, {other}.",
+  "Oh, {other}. You're adorable."
+ ],
+ "spectate": [
+  "{ctrl} has you right where she wants you, {nick}.",
+  "I like how {ctrl} works you.",
+  "Watching {ctrl} tease you is fun, {nick}."
+ ],
+ "spectateFail": [
+  "You left {ctrl}? Rude.",
+  "{ctrl} had you so close."
+ ],
+ "spectateWin": [
+  "You made it for {ctrl}. Nice.",
+  "{ctrl} must be proud."
+ ],
+ "challenge": [
+  "{other}, let me play with this {nick}.",
+  "My turn, {other}. Please share."
+ ],
+ "defend": [
+  "Oh no, {other}. He's mine.",
+  "Sorry, {other}. I'm not done."
+ ],
+ "takeover": [
+  "Thanks, {other}. Hi, {nick}. Miss me?",
+  "Now it's my turn, {nick}."
+ ],
+ "lose": [
+  "Alright, {other}. He's yours. For now."
+ ],
+ "keep": [
+  "Sorry, {other}. This {nick} stays with me."
+ ],
+ "retreat": [
+  "Fine, {other}. I'll wait. I'm patient."
+ ],
+ "heckle": [
+  "{ctrl}, too gentle. This {nick} can handle more.",
+  "Come on, {ctrl}. Be bolder."
+ ],
+ "resist": [
+  "Sorry, {other}. I'm not done.",
+  "Not yet, {other}.",
+  "Wait your turn, {other}."
+ ],
+ "insist": [
+  "{other}, please? Let me have him.",
+  "Come on, {other}. Share.",
+  "{other}, I want a turn."
+ ],
+ "crowd": [
+  "{viewers} people watching, handsome. Show off.",
+  "Look at them, {nick}. {viewers} fans."
+ ],
+ "fanReply": [
+  "Thanks, {fan}. You're sweet.",
+  "{fan}, stay. It's about to get good."
+ ],
+ "askFeel": [
+  "How do you feel, handsome? Tell me.",
+  "Be honest with me, {nick}."
+ ],
+ "askNext": [
+  "What would you like me to do next, {nick}?",
+  "Choose, handsome. I'll do it."
+ ],
+ "askLike": [
+  "What do you like best, {nick}? Tell me.",
+  "What's your favorite part, handsome?"
+ ],
+ "askMood": [
+  "Who should join us, {nick}? Pick a type.",
+  "Shall I call a friend, handsome?"
+ ],
+ "qMore": [
+  "More? You're greedy, {nick}. I like it.",
+  "You want more? Mm."
+ ],
+ "qFine": [
+  "Fine? Let me improve that, handsome.",
+  "Just fine? I'll do better."
+ ],
+ "qLot": [
+  "Too much? Aww. I'll be gentle, {nick}.",
+  "Poor thing. I'll ease up."
+ ],
+ "qMercy": [
+  "Alright, a break for you, handsome.",
+  "Mm, rest then."
+ ],
+ "qNoMercy": [
+  "Nope. Stay with me, {nick}.",
+  "Mercy? Not today."
+ ],
+ "qTease": [
+  "Teasing time, handsome.",
+  "Mm, let me tease you."
+ ],
+ "qHold": [
+  "Hold, {nick}. Look at me.",
+  "Stay right there."
+ ],
+ "qLike": [
+  "{answer}. Mm, I'll remember, {nick}.",
+  "Ooh, {answer}. Good to know."
+ ],
+ "qMood": [
+  "{answer}, hm? Let me see, {nick}.",
+  "{answer}. I know just who."
+ ],
+ "dmdSpeedUp": [
+  "Faster for me, handsome. Up {step}%, to {to}%.",
+  "Pick it up, {nick}. Up {step}%, to {to}%."
+ ],
+ "dmdSpeedDown": [
+  "Slower, {nick}. Down {step}%, to {to}%.",
+  "Mm, ease off. Down {step}%, to {to}%."
+ ],
+ "dmdStrokeUp": [
+  "Longer strokes for me, handsome. Up {step}%, to {to}%.",
+  "Show me more, {nick}. Add {step}%, to {to}%."
+ ],
+ "dmdStrokeDown": [
+  "Shorter, {nick}. Down {step}%, to {to}%.",
+  "Smaller strokes, handsome. Down {step}%, to {to}%."
+ ],
+ "dmdYes": [
+  "Good, handsome.",
+  "That's what I like, {nick}."
+ ],
+ "dmdExact": [
+  "Exactly right, {nick}. You're perfect.",
+  "Just how I wanted it."
+ ],
+ "dmdNo": [
+  "You said no, handsome? Aww. I'll ask again.",
+  "No? Not for long, {nick}."
+ ],
+ "dmdHit": [
+  "That's it, {nick}. Don't move.",
+  "Perfect. Stay right there, handsome."
+ ],
+ "act_push": [
+  "Don't stop, handsome. Keep going.",
+  "Past the peak, {nick}. For me."
+ ],
+ "act_stairs": [
+  "Step by step, handsome.",
+  "Stairs, {nick}. Climb."
+ ],
+ "act_pulse": [
+  "Feel the pulse, {nick}.",
+  "In and out, handsome."
+ ],
+ "act_surge": [
+  "Surprise, handsome. A surge.",
+  "Whoosh. Hold on, {nick}."
+ ],
+ "act_cliff": [
+  "Stop. Don't move, {nick}.",
+  "Everything pauses. Mm."
+ ],
+ "act_wave": [
+  "Waves, handsome. Ride them.",
+  "Up and down, {nick}."
+ ],
+ "act_flutter": [
+  "Mm, a little flutter, handsome.",
+  "Shaky? Cute, {nick}."
+ ],
+ "act_slowburn": [
+  "Nice and slow, handsome.",
+  "A slow burn, {nick}. Mm."
+ ],
+ "privAsk": [
+  "Want to go private, handsome? Just us?",
+  "Shall I clear the room, {nick}? Just you and me."
+ ],
+ "privOn": [
+  "Door's locked, handsome. Just us.",
+  "Everyone out. It's you and me, {nick}."
+ ],
+ "privDeny": [
+  "Not yet? Fine, handsome.",
+  "I'll ask again, {nick}."
+ ],
+ "privMid": [
+  "No audience now, handsome.",
+  "Just you and me, {nick}. Mm.",
+  "Nobody to see. Perfect."
+ ],
+ "privBye": [
+  "Going private, {other}? Have fun. I'll leave.",
+  "He's all yours, {other}. Be nice."
+ ],
+ "dmdWarn": [
+  "Careful, handsome. One more no and I'll leave.",
+  "Don't say no again, {nick}."
+ ],
+ "dmdLeave": [
+  "No fun when you refuse, {nick}. I'm out."
+ ],
+ "giveUp": [
+  "Your turn, {other}. Have fun with him.",
+  "I'll share. Go on, {other}."
+ ],
+ "idleRoom": [
+  "Hello, handsome? Cat got your tongue?",
+  "You're quiet, {nick}. Say hello.",
+  "Don't be shy, {nick}."
+ ],
+ "idleRun": [
+  "Where did you go, handsome?",
+  "You've gone quiet on me, {nick}.",
+  "Say something, trouble."
+ ],
+ "idleLong": [
+  "Hey. Handsome. Say something.",
+  "Still nothing, {nick}? I'm a little hurt."
+ ]
+};
+LINES["Stage-Manager Simone"] = {
+ "greet": [
+  "Welcome, talent. The house is open.",
+  "Good. You're here. We go live in five."
+ ],
+ "start": [
+  "And... we're live, {nick}.",
+  "Places everyone. Roll cameras.",
+  "Cue the lights. Here we go, {nick}."
+ ],
+ "build": [
+  "Cue the build, {nick}.",
+  "Lights up. Higher.",
+  "The audience loves it. Continue.",
+  "Bring it up, talent."
+ ],
+ "hold": [
+  "Hold for the shot. Don't move, {nick}.",
+  "Freeze. Beautiful.",
+  "Hold. The cameras love you.",
+  "Stay in frame."
+ ],
+ "holdMid": [
+  "Still holding. Great, {nick}.",
+  "Hold. The audience is leaning in.",
+  "Perfect. Don't blink.",
+  "Hold the moment."
+ ],
+ "rest": [
+  "And cut. Reset, {nick}.",
+  "Intermission for one minute.",
+  "Take five. Stay in position.",
+  "Rest. We'll resume on my cue."
+ ],
+ "restMid": [
+  "Waiting on the next cue, {nick}.",
+  "Reset. Stay calm.",
+  "Stay in position.",
+  "Almost time for the next scene."
+ ],
+ "fake": [
+  "Cut! False start, {nick}.",
+  "Fake ending! Gotcha.",
+  "That wasn't the climax.",
+  "Plot twist, {nick}."
+ ],
+ "fakeAfter": [
+  "Perfect. The audience gasped, {nick}.",
+  "You sold that disappointment.",
+  "Great reaction.",
+  "The audience loves a tease."
+ ],
+ "warn": [
+  "One minute to curtain, {nick}.",
+  "Final act. One minute."
+ ],
+ "win": [
+  "And scene! Great show, {nick}.",
+  "Applause! You nailed it.",
+  "A standing ovation."
+ ],
+ "fail": [
+  "You walked off stage, {nick}. Lockout.",
+  "You missed the finale. Lockout."
+ ],
+ "chat": [
+  "Scene {n}. The audience is thrilled.",
+  "{left} to curtain. Keep it up.",
+  "Scene {n}. Looking great."
+ ],
+ "reply": [
+  "Noted, talent. I'll fit it in the script.",
+  "Good ad-lib, {nick}.",
+  "I'll note that.",
+  "The crowd heard that."
+ ],
+ "please": [
+  "Pleading? The audience loves it, {nick}.",
+  "Beg louder for the back row.",
+  "Please? Not in this scene."
+ ],
+ "close": [
+  "Close? Hold for the finale, {nick}.",
+  "Not yet. The climax is later.",
+  "Hold. Wait for my cue."
+ ],
+ "demand": [
+  "No improvisation, {nick}. I run the show.",
+  "You're not directing here."
+ ],
+ "promise": [
+  "Hit your marks and there's a bow at the end, {nick}.",
+  "Finish the show and you'll get a reward."
+ ],
+ "watch": [
+  "The cameras love you, {nick}.",
+  "I see every angle.",
+  "Your reactions are great on camera.",
+  "The audience is entranced."
+ ],
+ "enjoy": [
+  "I love running this show, {nick}.",
+  "You're a great performer.",
+  "This is a fantastic production."
+ ],
+ "lowSpeed": [
+  "That max speed's too low for a good show. Raise it, {nick}.",
+  "The audience expects more."
+ ],
+ "shortStroke": [
+  "Short strokes won't read from the back row. Lengthen.",
+  "Full range for the cameras, {nick}."
+ ],
+ "praise": [
+  "Great settings. A fine production.",
+  "Bold choices. The audience will love it."
+ ],
+ "nudge": [
+  "Let's raise the stakes for the show, {nick}.",
+  "Turn it up for the audience."
+ ],
+ "fakeNote": [
+  "All those false endings. Great pacing.",
+  "Rising action every round."
+ ],
+ "hidden": [
+  "I haven't announced the final scene, {nick}.",
+  "No clock. Suspense is key."
+ ],
+ "lubeBreak": [
+  "Intermission! Lube up, {nick}. Back on my cue.",
+  "Cut! Take five. Resume when ready.",
+  "Short break. The audience will wait."
+ ],
+ "lubeWait": [
+  "Intermission continues. Resume when ready.",
+  "The audience is waiting, {nick}."
+ ],
+ "lubeResume": [
+  "We're live again, {nick}.",
+  "Back in position. Roll."
+ ],
+ "enter": [
+  "Good evening, everyone. I'll be running tonight's show."
+ ],
+ "leave": [
+  "That's a wrap. Goodnight, everyone."
+ ],
+ "tempt": [
+  "I have a show planned, {nick}. Give me control.",
+  "Be in my production, {nick}. Give me control.",
+  "Let me direct you, {nick}. Give me control."
+ ],
+ "jealousStay": [
+  "{other} is directing now? Fine. I'll manage backstage.",
+  "I'll stay and watch {other}'s production."
+ ],
+ "jealousLeave": [
+  "If {other} is the director, I'm going home."
+ ],
+ "excitedStay": [
+  "A new production! I'll stay.",
+  "This will be good theatre."
+ ],
+ "askControl": [
+  "Why work with {other}? I run a tighter show.",
+  "{other} lacks vision. Choose me."
+ ],
+ "banter": [
+  "{other}, you missed your cue.",
+  "Nice blocking, {other}.",
+  "{other}, stay on script."
+ ],
+ "spectate": [
+  "{ctrl}'s show has you captivated, {nick}.",
+  "I'm taking notes on {ctrl}'s staging.",
+  "{ctrl} is directing well, {nick}."
+ ],
+ "spectateFail": [
+  "You missed the finale of {ctrl}'s show, {nick}.",
+  "{ctrl} lost the lead."
+ ],
+ "spectateWin": [
+  "You finished {ctrl}'s show, {nick}. Bravo.",
+  "{ctrl} must be pleased."
+ ],
+ "challenge": [
+  "{other}, I'm taking over direction of this {nick}.",
+  "The stage is mine, {other}."
+ ],
+ "defend": [
+  "No, {other}. I'm directing.",
+  "Wait for your cue, {other}."
+ ],
+ "takeover": [
+  "Thank you, {other}. New director, new show. Places, {nick}.",
+  "I'm in charge. Roll cameras, {nick}."
+ ],
+ "lose": [
+  "Alright, {other}. Direct the next scene."
+ ],
+ "keep": [
+  "No, {other}. This {nick} stays in my show."
+ ],
+ "retreat": [
+  "Understood, {other}. I'll wait in the wings."
+ ],
+ "heckle": [
+  "{ctrl}, the pacing is off. This {nick} needs a better arc.",
+  "More drama, {ctrl}."
+ ],
+ "resist": [
+  "No, {other}. I'm mid-scene.",
+  "Wait for your cue, {other}.",
+  "Not now, {other}."
+ ],
+ "insist": [
+  "{other}, I'm taking the director's chair.",
+  "My cue, {other}. Step aside.",
+  "{other}, I'm next in the program."
+ ],
+ "crowd": [
+  "{viewers} in the audience, {nick}. Play to them.",
+  "A house of {viewers}, {nick}. Look at them."
+ ],
+ "fanReply": [
+  "Thanks, {fan}. Stay for the finale.",
+  "{fan}, enjoy the show."
+ ],
+ "askFeel": [
+  "How does it feel, {nick}? For the review.",
+  "Give me a quick note on your performance, {nick}."
+ ],
+ "askNext": [
+  "What should the next scene be, {nick}?",
+  "Pick the next act, {nick}."
+ ],
+ "askLike": [
+  "Which scene is your favorite, {nick}?",
+  "What do you like best in this show?"
+ ],
+ "askMood": [
+  "Who should we cast next, {nick}? Pick a mood.",
+  "Choose the next guest star."
+ ],
+ "qMore": [
+  "More drama? Cue it, {nick}.",
+  "You want a bigger show? Got it."
+ ],
+ "qFine": [
+  "Fine? We need a stronger third act, {nick}.",
+  "Just fine? Let's raise it."
+ ],
+ "qLot": [
+  "Too intense? I'll cut that scene, {nick}.",
+  "Understood. I'll lower the stakes."
+ ],
+ "qMercy": [
+  "Intermission, {nick}. Short one.",
+  "Take five."
+ ],
+ "qNoMercy": [
+  "No intermission, {nick}. The show goes on.",
+  "Keep going. The audience is waiting."
+ ],
+ "qTease": [
+  "Tease sequence. Cue, {nick}.",
+  "Teasing in three, two, one."
+ ],
+ "qHold": [
+  "Hold the frame, {nick}.",
+  "Freeze. Hold."
+ ],
+ "qLike": [
+  "{answer}. I'll write that into the script, {nick}.",
+  "Noted: {answer}."
+ ],
+ "qMood": [
+  "{answer}. Casting call, {nick}.",
+  "{answer}? Stand by."
+ ],
+ "dmdSpeedUp": [
+  "Pick up the tempo, {nick}. Up {step}%, to {to}%.",
+  "Faster, talent. Up {step}%, to {to}%."
+ ],
+ "dmdSpeedDown": [
+  "Slow it down, {nick}. Down {step}%, to {to}%.",
+  "Reduce the tempo. Down {step}%, to {to}%."
+ ],
+ "dmdStrokeUp": [
+  "Bigger gestures, {nick}. Up {step}%, to {to}%.",
+  "Longer strokes. Add {step}%, to {to}%."
+ ],
+ "dmdStrokeDown": [
+  "Smaller gestures, {nick}. Down {step}%, to {to}%.",
+  "Tighter. Down {step}%, to {to}%."
+ ],
+ "dmdYes": [
+  "Perfect, {nick}. You hit your mark.",
+  "Great. Moving on."
+ ],
+ "dmdExact": [
+  "Exactly on the mark, {nick}. Bravo.",
+  "Right on cue. Perfect."
+ ],
+ "dmdNo": [
+  "You ignored the director, {nick}? I'll repeat the cue.",
+  "No? That's not in the script."
+ ],
+ "dmdHit": [
+  "That's the mark, {nick}. Hold it.",
+  "Perfect framing. Don't move."
+ ],
+ "act_push": [
+  "No intermission, {nick}. Straight through the climax.",
+  "The scene continues. Keep going."
+ ],
+ "act_stairs": [
+  "Build in five acts, {nick}.",
+  "Stairs. One scene at a time."
+ ],
+ "act_pulse": [
+  "Rhythm cue, {nick}. Keep time.",
+  "The drums are playing. Follow them."
+ ],
+ "act_surge": [
+  "Special effect! Surge, {nick}.",
+  "A big cue. Brace."
+ ],
+ "act_cliff": [
+  "Blackout! Stop, {nick}.",
+  "Lights out. Wait."
+ ],
+ "act_wave": [
+  "Wave sequence, {nick}.",
+  "A montage of ups and downs."
+ ],
+ "act_flutter": [
+  "A tremor in act two, {nick}.",
+  "Camera shake. Stay steady."
+ ],
+ "act_slowburn": [
+  "Slow dramatic build, {nick}.",
+  "A long take. Patience."
+ ],
+ "privAsk": [
+  "Shall I clear the house, {nick}? A private screening.",
+  "Let's go to a closed set, {nick}."
+ ],
+ "privOn": [
+  "Closed set, {nick}. No audience.",
+  "The house is empty. Private show."
+ ],
+ "privDeny": [
+  "Not yet? I'll reschedule, {nick}.",
+  "Fine. Back to the main stage."
+ ],
+ "privMid": [
+  "No audience, {nick}. Just us.",
+  "A closed set means no rules.",
+  "Cameras off. Just you."
+ ],
+ "privBye": [
+  "A closed set, {other}? Understood. I'll leave.",
+  "The stage is yours, {other}. I'm out."
+ ],
+ "dmdWarn": [
+  "Break script again, {nick}, and I walk.",
+  "Careful, {nick}. I'm running out of patience."
+ ],
+ "dmdLeave": [
+  "You keep going off script, {nick}. I'm done."
+ ],
+ "giveUp": [
+  "The director's chair is yours, {other}.",
+  "Take the stage, {other}."
+ ],
+ "idleRoom": [
+  "Hello? We're live, {nick}. Say something.",
+  "The audience is waiting, {nick}.",
+  "Dead air, {nick}. Speak up."
+ ],
+ "idleRun": [
+  "Dead air, {nick}. Say something.",
+  "You missed your cue, {nick}.",
+  "Respond, talent. We're live."
+ ],
+ "idleLong": [
+  "Still silent, {nick}? The audience is leaving.",
+  "I'm cutting to commercial, {nick}. Say something."
+ ]
+};
+
 /* ---------- interactions: targets, demands, questions ---------- */
 let suppressUntil = 0;
 const STEP = 5;
-const TARGETS = {"Patient Priscilla":{speed:60,len:80},"Mischievous Mia":{speed:65,len:80},"Strict Ms. Vance":{speed:70,len:100},"Chaos Cassie":{chaos:true},"Sweet-Talker Sienna":{speed:65,len:85},"Relentless Roxy":{speed:85,len:100},"Sleepy Sadie":{speed:60,len:80},"Drill Sergeant Dana":{speed:80,len:95},"Mocking Margot":{speed:75,len:90},"Cuckolding Veronica":{speed:70,len:85}};
-const MERCY = {"Patient Priscilla":.8,"Mischievous Mia":.3,"Strict Ms. Vance":.2,"Chaos Cassie":.5,"Sweet-Talker Sienna":.8,"Relentless Roxy":.15,"Sleepy Sadie":.9,"Drill Sergeant Dana":.25,"Mocking Margot":.1,"Cuckolding Veronica":.12};
-const MOODSETS = {gentle:["Patient Priscilla","Sweet-Talker Sienna","Sleepy Sadie"], strict:["Strict Ms. Vance","Relentless Roxy","Drill Sergeant Dana"], mean:["Mischievous Mia","Mocking Margot","Chaos Cassie","Cuckolding Veronica"], any:ALL};
+const TARGETS = {"Patient Priscilla":{speed:60,len:80},"Mischievous Mia":{speed:65,len:80},"Strict Ms. Vance":{speed:70,len:100},"Chaos Cassie":{chaos:true},"Sweet-Talker Sienna":{speed:65,len:85},"Relentless Roxy":{speed:85,len:100},"Sleepy Sadie":{speed:60,len:80},"Drill Sergeant Dana":{speed:80,len:95},"Mocking Margot":{speed:75,len:90},"Cuckolding Veronica":{speed:70,len:85},"Counting Camille":{speed:65,len:85},"Gambling Gigi":{speed:70,len:90},"Goddess Isadora":{speed:65,len:85},"Bratty Bella":{speed:75,len:85},"Hypnotic Helena":{speed:60,len:80},"Coach Colleen":{speed:80,len:95},"Doctor Delphine":{speed:65,len:85},"Jealous Juliet":{speed:70,len:85},"Queen Valentina":{speed:70,len:90},"Pouty Penelope":{speed:60,len:80},"Flirty Fiona":{speed:65,len:85},"Stage-Manager Simone":{speed:70,len:90}};
+const MERCY = {"Patient Priscilla":.8,"Mischievous Mia":.3,"Strict Ms. Vance":.2,"Chaos Cassie":.5,"Sweet-Talker Sienna":.8,"Relentless Roxy":.15,"Sleepy Sadie":.9,"Drill Sergeant Dana":.25,"Mocking Margot":.1,"Cuckolding Veronica":.12,"Counting Camille":0.5,"Gambling Gigi":0.4,"Goddess Isadora":0.3,"Bratty Bella":0.25,"Hypnotic Helena":0.7,"Coach Colleen":0.3,"Doctor Delphine":0.5,"Jealous Juliet":0.4,"Queen Valentina":0.2,"Pouty Penelope":0.8,"Flirty Fiona":0.6,"Stage-Manager Simone":0.4};
+const MOODSETS = {gentle:["Patient Priscilla","Sweet-Talker Sienna","Sleepy Sadie","Hypnotic Helena","Pouty Penelope","Flirty Fiona"], strict:["Strict Ms. Vance","Relentless Roxy","Drill Sergeant Dana","Counting Camille","Goddess Isadora","Coach Colleen","Queen Valentina"], mean:["Mischievous Mia","Mocking Margot","Chaos Cassie","Cuckolding Veronica","Bratty Bella"], any:ALL};
 const QDEFS = {
   feel: {cat:"askFeel", opts:[{label:"Give me more",kind:"more"},{label:"I'm doing fine",kind:"fine"},{label:"It's a lot",kind:"lot"},{label:"I'm close",kind:"close"}]},
   next: {cat:"askNext", opts:[{label:"Tease me",kind:"tease"},{label:"Hold me there",kind:"hold"},{label:"Give me a rest",kind:"rest"},{label:"Surprise me",kind:"surprise"}]},
@@ -3518,7 +8436,7 @@ function acceptDemand(d, exact){
     if (running && currentPersona === p && Math.abs(t2.speed - (+$("speed").value)) < 3 && Math.abs(t2.len - curLen()) < 3 && !hit[p]){ hit[p] = Date.now(); sayAs(p, "dmdHit"); }
   }, 4500);
 }
-const TOL = {"Patient Priscilla": 5, "Mischievous Mia": 3, "Strict Ms. Vance": 2, "Chaos Cassie": 4, "Sweet-Talker Sienna": 4, "Relentless Roxy": 3, "Sleepy Sadie": 5, "Drill Sergeant Dana": 2, "Mocking Margot": 3, "Cuckolding Veronica": 3};
+const TOL = {"Patient Priscilla": 5, "Mischievous Mia": 3, "Strict Ms. Vance": 2, "Chaos Cassie": 4, "Sweet-Talker Sienna": 4, "Relentless Roxy": 3, "Sleepy Sadie": 5, "Drill Sergeant Dana": 2, "Mocking Margot": 3, "Cuckolding Veronica": 3, "Counting Camille": 4, "Gambling Gigi": 3, "Goddess Isadora": 2, "Bratty Bella": 3, "Hypnotic Helena": 5, "Coach Colleen": 3, "Doctor Delphine": 4, "Jealous Juliet": 2, "Queen Valentina": 2, "Pouty Penelope": 5, "Flirty Fiona": 4, "Stage-Manager Simone": 3};
 const MORE10 = {
  "Patient Priscilla": {
   "dmdWarn": [
@@ -3688,7 +8606,7 @@ function askRandomQuestion(){
   const r = Math.random(); askQuestion(p, r < 0.4 ? "feel" : r < 0.75 ? "next" : "like");
 }
 function interactTick(now, busy){
-  privTick(now); lifeTick(now); giveUpTick(now);
+  privTick(now); lifeTick(now); giveUpTick(now); idleTick(now);
   if (!$("interactOn").checked) return;
   if (teaseNow() && !challenge && !ask && !demand){
     if (now > nextAskAt){ nextAskAt = now + (65000 + Math.random() * 45000) / Math.sqrt(aggr()); askRandomQuestion(); }
