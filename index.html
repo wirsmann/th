@@ -279,7 +279,7 @@ const store = {
 };
 $("key").value = store.get("handyKey", "");
 const TEASE = [["tLow","Low speed (% of max)",15],["tPeakMin","Peak speed, lowest (% of max)",60],["tPeakMax","Peak speed, highest (% of max)",90],["tBuildMin","Build time, shortest (s)",20],["tBuildMax","Build time, longest (s)",60],["tHoldMin","Hold, shortest (s)",3],["tHoldMax","Hold, longest (s)",10],["tRestMin","Rest, shortest (s)",5],["tRestMax","Rest, longest (s)",20],["tAct","Special moves: chance per cycle (%)",35],["tFake","Fake-out chance (%)",20],["tEsc","Peak increase per cycle (%)",0],["rMin","Random length, shortest (min)",8],["rMax","Random length, longest (min)",20]];
-const CUSTOM = [["privMin","Private show offered after (min in control)",6],["rampStart","Ramp starts at (%)",10],["altSlow","Slow phase speed (%)",40],["endSlow","End slowdown goes to (%)",40],["cap","Max speed cap (%)",100],["delay","Start delay (s)",0],["vol","Beep volume (%)",30]];
+const CUSTOM = [["lifeRate","Real-life interruptions: chance per minute (%, 0 = off)",3],["privMin","Private show offered after (min in control)",6],["rampStart","Ramp starts at (%)",10],["altSlow","Slow phase speed (%)",40],["endSlow","End slowdown goes to (%)",40],["cap","Max speed cap (%)",100],["delay","Start delay (s)",0],["vol","Beep volume (%)",30]];
 function mkFields(boxId, list){
   list.forEach(([id, lab, def]) => {
     const d = document.createElement("div");
@@ -687,7 +687,7 @@ async function start(){
     if (currentPersona){ enterRoom(currentPersona, true); react("claimed", currentPersona); }
     challenge = null; nextChallengeAt = Date.now() + 30000 + Math.random() * 20000; Object.keys(attempts).forEach(k => attempts[k] = 0);
     demand = null; ask = null; removeOffer("demand"); removeOffer("ask"); nextAskAt = Date.now() + 40000 + Math.random() * 20000; nextDemandAt = Date.now() + 65000 + Math.random() * 20000;
-    Object.keys(defiance).forEach(k => defiance[k] = 0); privateShow = null; ctlWho = ""; removeOffer("priv"); denyAll = false; removeOffer("denyAllNote"); Object.keys(creep).forEach(k => delete creep[k]); Object.keys(hit).forEach(k => hit[k] = 0);
+    Object.keys(defiance).forEach(k => defiance[k] = 0); privateShow = null; lifeEv = null; lifeNextAt = 0; removeOffer("lifeCard"); ctlWho = ""; removeOffer("priv"); denyAll = false; removeOffer("denyAllNote"); Object.keys(creep).forEach(k => delete creep[k]); Object.keys(hit).forEach(k => hit[k] = 0);
     setTimeout(() => { if (running) commentSettings("start"); }, 4500);
     setTimeout(() => { if (running && (n("tFake", 20) >= 40 || n("tEsc", 0) > 0)) say("fakeNote"); }, 10000);
     if (runHidden) setTimeout(() => { if (running) say("hidden"); }, 7500);
@@ -712,7 +712,7 @@ async function finish(msg, timeUp, failed){
   if (!running && !paused) return;
   const wasRunning = running;
   holdStatusUntil = Date.now() + 6000;
-  const wasTease = runTease; midCat = ""; onBreak = false; challenge = null;
+  const wasTease = runTease; midCat = ""; onBreak = false; challenge = null; lifeEv = null; removeOffer("lifeCard");
   if (privateShow){ privateShow = null; removeOffer("priv"); addMsg("sys", "The private show is over. The lounge is open again."); renderRoom(); }
   const wasHidden = runHidden; runHidden = false;
   const leftNow = timeUp ? 0 : (running ? Math.max(0, endAt - Date.now()) : remaining);
@@ -967,9 +967,9 @@ function pruneOffers(){
 }
 const HYPE = {fake:6,fakeAfter:3,hold:3,holdMid:2,rest:2,restMid:1,build:2,challenge:10,defend:5,insist:5,resist:5,takeover:14,lose:6,keep:6,fail:12,win:12,enter:4,tempt:5,askControl:5,banter:2,watch:3,enjoy:4,heckle:4,spectate:3,crowd:3,jealousStay:4,jealousLeave:5,excitedStay:4};
 function sayAs(name, cat, action, vars){
-  const l = name && LINES[name]; if (!l || !l[cat] || !l[cat].length) return;
+  const l = name && LINES[name]; if (!l) return;
+  let arr = l[cat] && l[cat].length ? l[cat] : (SHARED[cat] || null); if (!arr) return;
   vars = vars || {};
-  let arr = l[cat];
   if (runHidden){ const f = arr.filter(x => !x.includes("{left}")); if (f.length) arr = f; }   // don't leak the end time
   const key = name + cat; let raw = arr[Math.floor(Math.random() * arr.length)];
   for (let i = 0; i < 4 && raw === lastSaid[key] && arr.length > 1; i++) raw = arr[Math.floor(Math.random() * arr.length)];
@@ -1379,7 +1379,7 @@ function setDenyAll(on){
   } else { nextChallengeAt = Date.now() + 20000; if (running) addMsg("sys", "Control requests are allowed again."); }
 }
 function startChallenge(){
-  if (!running || !runTease || onBreak || challenge || privateShow || denyAll) return;
+  if (!running || !runTease || onBreak || challenge || privateShow || denyAll || lifeEv) return;
   nextChallengeAt = Date.now() + (50000 + Math.random() * 40000) / aggr();
   const others = room.filter(p => p !== currentPersona);
   if (!others.length){
@@ -3213,10 +3213,143 @@ LINES["Cuckolding Veronica"] = {
   "You're no fun when you refuse, {nick}. I'm going to find someone better."
  ]
 };
+var SHARED = {
+ "life_cat": [
+  "Hang on... oh no, the cat just walked across my keyboard! Mittens, no!",
+  "Sorry, {nick}! The cat is sitting on the controls! asdfjkl;",
+  "The cat stepped on the keyboard. Whatever happens next is not my fault."
+ ],
+ "life_catEnd": [
+  "Okay, okay. Cat removed. Where were we, {nick}?",
+  "Got her off. Sorry about the chaos, {nick}. Or not sorry."
+ ],
+ "life_door": [
+  "Was that the doorbell? Don't move, {nick}. I'll be right back.",
+  "Someone's at the door. Stay exactly like that, {nick}.",
+  "Doorbell! Hold that pace, {nick}. Don't you dare change a thing."
+ ],
+ "life_doorEnd": [
+  "Back. Just a delivery. Now, where were we, {nick}?",
+  "Sorry, wrong address. Back to you, {nick}."
+ ],
+ "life_bf": [
+  "Oh, my phone. It's my boyfriend. Don't make a sound, {nick}.",
+  "Hold on, {nick}, my boyfriend is calling. Keep going while I answer.",
+  "Mm, a text from my boyfriend. Give me a second, {nick}. Stay where you are."
+ ],
+ "life_bfEnd": [
+  "Okay, he says hi. Back to you, {nick}.",
+  "Sorry, {nick}. He needed something. Now, where were we?"
+ ],
+ "life_sleep": [
+  "Mm... sorry... my eyes are so heavy... just resting them for a second...",
+  "I think I'm dozing off... keep going... don't mind me..."
+ ],
+ "life_sleepEnd": [
+  "Oh! I wasn't asleep. I was resting my eyes. Carry on, {nick}.",
+  "Did I doze off? Sorry, {nick}. I'm awake now."
+ ],
+ "life_snore": [
+  "...zzz...",
+  "*soft snoring*",
+  "mm... five more minutes..."
+ ],
+ "life_pass": [
+  "Oh... oh wow... I'm... I can't... *slumps over*",
+  "That was... too much... I need to... lie down... *out cold*",
+  "Mmh... I'm done... I'm so done... *passes out*"
+ ],
+ "life_wake": [
+  "Mmh?! I'm up! I'm up! Sorry, {nick}! How long was I out?",
+  "Wait, what? I fell asleep?! Sorry, {nick}!",
+  "Okay... I'm back. That was intense. Where were we, {nick}?"
+ ],
+ "life_wakeFail": [
+  "...zzz... not now...",
+  "mm... five more minutes...",
+  "*mumbles and rolls over*"
+ ],
+ "life_other": [
+  "{other}? Hello? ...Did she actually fall asleep?",
+  "Is {other} okay? She hasn't moved in ages.",
+  "Looks like {other} is out cold. Someone should do something."
+ ],
+ "life_takeover": [
+  "Finally. Someone had to take charge. Mine now, {nick}.",
+  "Oh good, she's out of the picture. My turn, {nick}."
+ ]
+};
+const LIFE_OV = {"Sleepy Sadie": {"life_sleep": ["Mm... so sleepy... just closing my eyes... for a second... {nick}...", "...zzz... mm... don't stop... I'm still here... zzz..."], "life_sleepEnd": ["Mm? I'm awake... I was just... resting... {nick}..."]}, "Cuckolding Veronica": {"life_bf": ["That's him calling. You stay quiet, {nick}. He doesn't know you're here.", "My boyfriend's calling. Look at your face. Don't make a sound, {nick}."], "life_bfEnd": ["He says hi. He asked who I was talking to. I said nobody, {nick}."]}};
+Object.keys(LIFE_OV).forEach(k => Object.keys(LIFE_OV[k]).forEach(c => { LINES[k][c] = LIFE_OV[k][c]; }));
+
+/* ---------- real-life events: low-chance interruptions while a persona is in control ---------- */
+var lifeEv = null, lifeNextAt = 0;
+const LIFE_TYPES = ["cat","door","bf","sleep","pass"];
+Object.assign(MOVE_LABEL, {cat:"cat on the keyboard", door:"stepped away", bf:"distracted", sleep:"dozing off", pass:"passed out"});
+function lifePick(p){
+  const w = {cat:3, door:3, bf:3, sleep: p === "Sleepy Sadie" ? 8 : 2, pass: 1}, pool = [];
+  LIFE_TYPES.forEach(t => { for (let i = 0; i < w[t]; i++) pool.push(t); });
+  return pickOne(pool);
+}
+function lifeTick(now){
+  if (lifeEv && now > lifeEv.nextSnore && (lifeEv.type === "sleep" || lifeEv.type === "pass")){ lifeEv.nextSnore = now + 22000 + Math.random() * 12000; sayAs(lifeEv.p, "life_snore"); }
+  if (lifeEv || !teaseNow() || !currentPersona || !room.includes(currentPersona) || challenge || demand || ask) return;
+  const rate = n("lifeRate", 3);
+  if (rate <= 0 || now < lifeNextAt || total - Math.max(0, endAt - now) < 120000) return;
+  if (Math.random() < rate / 6000) startLife(lifePick(currentPersona));
+}
+function startLife(type){
+  const p = currentPersona, now = Date.now();
+  const pct = Math.max(25, Math.min(100, Math.round(curSpeed / Math.max(1, n("speed", 50)) * 100)));
+  const cfg = {
+    cat:   {dur: rnd(14, 24), fn: (q, el) => 12 + 88 * Math.abs(Math.sin(Math.floor(el / 650) * 12.9898) * 43758.5453 % 1)},
+    door:  {dur: rnd(25, 45), fn: () => pct},
+    bf:    {dur: rnd(35, 70), fn: () => 35},
+    sleep: {dur: rnd(60, 110), fn: (q) => 38 - 18 * q},
+    pass:  {dur: rnd(170, 290), fn: (q, el) => 50 + 3 * Math.sin(el / 4000)}
+  }[type];
+  const ev = lifeEv = {type, p, until: now + cfg.dur * 1000, nextSnore: now + 15000, hand: false};
+  lifeNextAt = now + cfg.dur * 1000 + 180000;
+  forceCur({k: "move", type, dur: cfg.dur, fn: cfg.fn});
+  sayAs(p, "life_" + type);
+  if (type === "sleep" || type === "pass"){
+    const others = room.filter(x => x !== p);
+    if (others.length) setTimeout(() => { if (lifeEv === ev) sayAs(pickOne(room.filter(x => x !== p)), "life_other", null, {other: p, replyTo: p}); }, 11000 + Math.random() * 4000);
+    setTimeout(() => { if (lifeEv === ev) showLifeCard(ev); }, 20000);
+  }
+  setTimeout(() => { if (lifeEv === ev) endLife(ev, false); }, cfg.dur * 1000);
+}
+function endLife(ev, woken){
+  if (lifeEv !== ev) return; lifeEv = null; removeOffer("lifeCard");
+  nextDemandAt = Math.max(nextDemandAt, Date.now() + 15000);
+  if (!teaseNow() || currentPersona !== ev.p) return;
+  forceBuild();
+  sayAs(ev.p, ev.type === "sleep" || ev.type === "pass" ? "life_wake" : "life_" + ev.type + "End");
+}
+function showLifeCard(ev){
+  if (lifeEv !== ev) return;
+  const p = ev.p, inRoom = room.filter(x => x !== p), absent = ALL.filter(x => x !== p && !room.includes(x));
+  const cands = inRoom.slice(0, 2); while (cands.length < 2 && absent.length) cands.push(absent.splice(Math.floor(Math.random() * absent.length), 1)[0]);
+  const choices = [{label: "Wake " + SHORT[p] + " up", kind: "primary", apply: () => {
+      addMsg("me", "Wake up, " + SHORT[p] + "!");
+      if (Math.random() < 0.45) endLife(ev, true); else { sayAs(p, "life_wakeFail"); setTimeout(() => showLifeCard(ev), 1500); }
+    }}];
+  cands.forEach(c => choices.push({label: "Give " + SHORT[c] + " control", kind: "primary", apply: () => handOff(ev, c)}));
+  choices.push({label: "Keep waiting", kind: "ghost", apply: () => {}});
+  addOffer({id: "lifeCard", who: p, text: ev.type === "pass" ? "is out cold" : "has dozed off", ttl: 90000, valid: () => lifeEv === ev && teaseNow(), choices});
+}
+function handOff(ev, name){
+  if (lifeEv !== ev) return; lifeEv = null; removeOffer("lifeCard");
+  if (privateShow){ privateShow = null; addMsg("sys", "🔒 The room reopens."); renderRoom(); }
+  addMsg("me", "Giving control to " + SHORT[name] + ".");
+  enterRoom(name, true); switchController(name);
+  setTimeout(() => sayAs(name, "life_takeover"), 1500);
+  setTimeout(() => { if (room.includes(ev.p)) sayAs(ev.p, "life_wake"); }, 14000);
+}
 /* ---------- interactions: targets, demands, questions ---------- */
 let suppressUntil = 0;
 const STEP = 5;
-const TARGETS = {"Patient Priscilla":{speed:40,len:70},"Mischievous Mia":{speed:60,len:70},"Strict Ms. Vance":{speed:60,len:100},"Chaos Cassie":{chaos:true},"Sweet-Talker Sienna":{speed:50,len:80},"Relentless Roxy":{speed:80,len:100},"Sleepy Sadie":{speed:30,len:60},"Drill Sergeant Dana":{speed:75,len:90},"Mocking Margot":{speed:70,len:85},"Cuckolding Veronica":{speed:65,len:80}};
+const TARGETS = {"Patient Priscilla":{speed:60,len:80},"Mischievous Mia":{speed:65,len:80},"Strict Ms. Vance":{speed:70,len:100},"Chaos Cassie":{chaos:true},"Sweet-Talker Sienna":{speed:65,len:85},"Relentless Roxy":{speed:85,len:100},"Sleepy Sadie":{speed:60,len:80},"Drill Sergeant Dana":{speed:80,len:95},"Mocking Margot":{speed:75,len:90},"Cuckolding Veronica":{speed:70,len:85}};
 const MERCY = {"Patient Priscilla":.8,"Mischievous Mia":.3,"Strict Ms. Vance":.2,"Chaos Cassie":.5,"Sweet-Talker Sienna":.8,"Relentless Roxy":.15,"Sleepy Sadie":.9,"Drill Sergeant Dana":.25,"Mocking Margot":.1,"Cuckolding Veronica":.12};
 const MOODSETS = {gentle:["Patient Priscilla","Sweet-Talker Sienna","Sleepy Sadie"], strict:["Strict Ms. Vance","Relentless Roxy","Drill Sergeant Dana"], mean:["Mischievous Mia","Mocking Margot","Chaos Cassie","Cuckolding Veronica"], any:ALL};
 const QDEFS = {
@@ -3231,9 +3364,9 @@ Object.assign(FMAP, {dmdSpeedUp:"demand",dmdSpeedDown:"demand",dmdStrokeUp:"dema
 const creep = {}, defiance = {}, hit = {}, chaosT = {};
 let demand = null, ask = null, nextAskAt = Date.now() + 60000, nextDemandAt = Date.now() + 80000, nextMoodAt = Date.now() + 90000;
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-function rollChaos(p){ chaosT[p] = {speed: 5 * Math.round(rnd(30, 90) / 5), len: 5 * Math.round(rnd(40, 100) / 5)}; }
+function rollChaos(p){ chaosT[p] = {speed: 5 * Math.round(rnd(60, 95) / 5), len: 5 * Math.round(rnd(80, 100) / 5)}; }
 function targetOf(p){
-  const t = TARGETS[p] || {speed: 50, len: 70};
+  const t = TARGETS[p] || {speed: 60, len: 80};
   if (t.chaos){ if (!chaosT[p]) rollChaos(p); return chaosT[p]; }
   const c = creep[p] || {s: 0, l: 0};
   return {speed: clamp(t.speed + c.s, 1, 100), len: clamp(t.len + c.l, 5, 100)};
@@ -3257,7 +3390,7 @@ function forceHold(sec){ if (teaseNow()) { const lo = n("tPeakMin", 60); forceCu
 function demandInterval(p){ return Math.max(20000, (55000 + Math.random() * 40000) / aggr() * Math.pow(0.75, defiance[p] || 0)); }
 function makeDemand(){
   const now = Date.now(), p = currentPersona;
-  if (!p || !room.includes(p) || !teaseNow() || challenge || ask || demand || !$("interactOn").checked) return;
+  if (!p || !room.includes(p) || !teaseNow() || challenge || ask || demand || lifeEv || !$("interactOn").checked) return;
   nextDemandAt = now + demandInterval(p);
   if (TARGETS[p] && TARGETS[p].chaos) rollChaos(p);
   const t = targetOf(p), sp = +$("speed").value, ln = curLen(), gs = t.speed - sp, gl = t.len - ln;
@@ -3408,7 +3541,7 @@ function refuseDemand(d, ignored){
 }
 
 function askQuestion(p, qid){
-  if (ask || demand || challenge || !room.includes(p) || !$("interactOn").checked) return;
+  if (ask || demand || challenge || lifeEv || !room.includes(p) || !$("interactOn").checked) return;
   const q = QDEFS[qid], a = ask = {p, qid, el: null};
   sayAs(p, q.cat, null, {onShow: el => {
     if (ask !== a) return; a.el = el;
@@ -3457,7 +3590,7 @@ function askRandomQuestion(){
   const r = Math.random(); askQuestion(p, r < 0.4 ? "feel" : r < 0.75 ? "next" : "like");
 }
 function interactTick(now, busy){
-  privTick(now);
+  privTick(now); lifeTick(now);
   if (!$("interactOn").checked) return;
   if (teaseNow() && !challenge && !ask && !demand){
     if (now > nextAskAt){ nextAskAt = now + (65000 + Math.random() * 45000) / Math.sqrt(aggr()); askRandomQuestion(); }
