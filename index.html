@@ -106,10 +106,16 @@
   .ptimer{height:3px;border-radius:2px;margin-top:8px;background:var(--muted);opacity:.5;transform-origin:left;animation:ptime linear forwards}
   @keyframes ptime{from{transform:scaleX(1)}to{transform:scaleX(0)}}
   .arHead{display:flex;gap:10px;align-items:center;font-size:.85rem;margin-bottom:4px}
-  #offers{display:flex;flex-wrap:wrap;gap:8px;max-height:160px;overflow:auto}
+  #offers{display:flex;flex-direction:column;gap:8px;max-height:380px;overflow:auto}
+  .pc{display:flex;flex-direction:column;gap:2px}
+  .pnote{font-size:.72rem;color:var(--muted);padding:0 10px;line-height:1.3}
+  .pbtns .pbtn.ghost{align-self:flex-start}
+  .rchip.kick{cursor:pointer}
+  .rchip.kick:hover{outline:1px solid var(--stop);text-decoration:line-through}
+  @media (min-width:1001px){.timer{max-height:calc(100vh - 28px);overflow:auto}}
   .prompt{display:flex;flex-direction:column;gap:6px;border:2px solid var(--accent);border-radius:14px;padding:8px 10px;background:var(--panel);box-shadow:0 2px 8px rgba(0,0,0,.12);max-width:100%}
   .ptxt{font-size:.85rem}
-  .pbtns{display:flex;flex-wrap:wrap;gap:6px}
+  .pbtns{display:flex;flex-direction:column;gap:8px;align-items:stretch}
   .pbtn{padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer;font:inherit;font-size:.85rem;font-weight:600}
   .pbtn:hover{filter:brightness(.94)}
   .pbtn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
@@ -130,7 +136,6 @@
       <div id="roomWho" class="chips" style="margin:0 0 8px"></div>
       <div class="graphBox"><div class="gHead"><strong>Activity</strong><span id="gLegend"></span><span class="hint" id="gInfo" style="margin:0 0 0 auto"></span></div><canvas id="graph" height="130" aria-label="History of speed and stroke length, colored by who was in control"></canvas></div>
       <div id="chatLog" aria-live="polite"></div>
-      <div id="actionRow"><div id="offers" aria-live="polite"></div></div>
       <div class="inline"><input id="chatIn" type="text" autocomplete="off" placeholder="Say something to the room…" aria-label="Chat message"><button class="mini" id="chatSend" style="margin:0">Send</button></div>
     </section>
     <aside class="card timer">
@@ -147,7 +152,6 @@
     <button id="pause" disabled>Pause</button>
     <button id="stop" disabled>Stop</button>
   </div>
-  <button type="button" id="lubeNow" disabled>Lube break</button>
 
   <p id="status" role="status">Enter your key and press Start.</p>
   <div class="liveSet"><strong class="lsHead">Live settings</strong>
@@ -160,6 +164,11 @@
     <div><label for="smax">Stroke end: <span id="smaxVal">100</span>%</label>
   <input id="smax" type="range" min="5" max="100" value="100"></div>
   </div>
+  </div>
+  <div class="liveSet" id="actionBox"><strong class="lsHead">Your actions</strong>
+    <div id="actionRow"><div id="offers" aria-live="polite"></div><p class="hint" id="arHint" style="margin:6px 0 0">Nothing needs an answer right now.</p></div>
+    <button type="button" id="lubeNow" disabled>Lube break</button>
+    <span class="pnote" id="lubeNote" style="display:block;margin-top:4px">Pauses the session and slowly moves the Handy to the park position so you can lube up. Resume when ready.</span>
   </div>
         </aside>
   </div>
@@ -237,7 +246,7 @@
     <div class="row">
       <div><label for="lubeEvery">Break after (min of running)</label><input id="lubeEvery" type="number" min="1" max="999" value="15"></div>
       <div><label for="lubeGap">Manual break button: allowed every (min, 0 = any time)</label><input id="lubeGap" type="number" min="0" max="999" value="10"></div>
-      <div><label for="lubePark">Park position (%, 0 = bottom)</label><input id="lubePark" type="number" min="0" max="100" value="0"></div>
+      <div><label for="lubePark">Park position (%, moved to slowly)</label><input id="lubePark" type="number" min="0" max="100" value="20"></div>
     </div>
     <p class="hint">After that much running time, the session pauses, the device stops and moves to the park position, and the clock freezes. Press Resume when you're ready. Breaks don't count as failing, and they don't use up session time. No break starts in the last minute and a half. If 0% parks at the wrong end for you, try 100.</p>
   </section>
@@ -615,7 +624,7 @@ async function startBreak(){
   running = false; paused = true; clearInterval(tick); devStopped = true; midCat = "";
   setButtons();
   $("time").textContent = "Break";
-  status("Break time. Lube up if you need to, then press Resume. Moving to the park position…");
+  status("Break time. Lube up if you need to, then press Resume. Slowly moving to the park position…");
   breakChatAt = Date.now() + 40000 + Math.random() * 20000;
   say("lubeBreak", {id: "lube", ttl: 7200000, valid: () => onBreak, label: "Resume session", apply: () => { if (onBreak && !breakBusy) $("pause").click(); }});
   if (!currentPersona) addMsg("sys", "Break time: lube up if you need to, then press Resume.");
@@ -623,7 +632,7 @@ async function startBreak(){
     if (!(await sendStop())) throw new Error("couldn't confirm the stop");
     await api("PUT", "/slide", {min: 0, max: 100});                 // full range so the park position is the true end
     await api("PUT", "/mode", {mode: 2});                           // 2 = HDSP (position control)
-    await api("PUT", "/hdsp/xpvp", {position: Math.max(0, Math.min(100, n("lubePark", 0))), velocity: 30, stopOnTarget: true});
+    await api("PUT", "/hdsp/xpvp", {position: Math.max(0, Math.min(100, n("lubePark", 20))), velocity: 8, stopOnTarget: true});
     if (onBreak) status("Break time. Lube up if you need to, then press Resume.");
   } catch(e){
     if (onBreak) status("Break started, but the device may not have parked (" + e.message + "). Press Resume when you're ready.", true);
@@ -652,7 +661,7 @@ setInterval(lubeNowState, 500);
 
 /* ---------- run control ---------- */
 async function start(){
-  refreshLock(); if (locked) return;
+  refreshLock(); if (locked) return; exodusTok++; noJoinUntil = 0;
   let ms = duration(), capped = false;
   if ($("teaseOn").checked && $("tRandom").checked){ const lo = n("rMin", 8); ms = Math.round(rnd(lo, Math.max(lo, n("rMax", 20))) * 60) * 1000; }
   if (!$("key").value.trim()) return status("Enter your connection key first.", true);
@@ -741,10 +750,11 @@ async function finish(msg, timeUp, failed){
 
 async function togglePause(){
   if (running && runTease){
-    const m = n("failLock", 0) || n("cool", 0);
+    const m = n("failLock", 0) || n("cool", 0); userExodus();
     return finish("Session failed: you paused. The device is stopped." + (m ? " Locked out for " + m + " min." : " Set a cooldown or failure lockout under Limits to enforce a lockout."), false, true);
   }
   if (running){
+    userExodus();
     remaining = Math.max(0, endAt - Date.now());
     running = false; paused = true; clearInterval(tick); devStopped = true;
     setButtons(); status("Pausing…");
@@ -760,7 +770,7 @@ async function togglePause(){
       if (v0 > 0){ await api("PUT", "/hamp/velocity", {velocity: v0}); await api("PUT", "/hamp/start"); devStopped = false; }
       else devStopped = true;
     } catch(e){ setButtons(); return status(e.message, true); }
-    endAt = Date.now() + remaining; running = true; paused = false;
+    endAt = Date.now() + remaining; running = true; paused = false; exodusTok++; noJoinUntil = 0;
     if (onBreak){ onBreak = false; manualOkAt = Date.now() + n("lubeGap", 10) * 60000; nextBreakAt = (total - remaining) + n("lubeEvery", 15) * 60000; say("lubeResume"); }
     setButtons(); lockScreen(); status("Running.");
     tick = setInterval(update, 250); update();
@@ -773,10 +783,10 @@ $("pause").onclick = togglePause;
 $("stop").onclick = () => {
   if (starting){ cancelStart = true; return; }
   if (runTease && (running || paused)){
-    const m = n("failLock", 0) || n("cool", 0);
+    const m = n("failLock", 0) || n("cool", 0); userExodus();
     return finish("Session failed: you stopped early. The device is stopped." + (m ? " Locked out for " + m + " min." : " Set a cooldown or failure lockout under Limits to enforce a lockout."), false, true);
   }
-  finish("Stopped manually.", false);
+  userExodus(); finish("Stopped manually.", false);
 };
 document.addEventListener("keydown", e => { if (e.key === "Escape" && (running || paused || starting)) $("stop").click(); });
 
@@ -959,8 +969,35 @@ function addBot(name){
 }
 /* Sticky offers: every button the user can press lives here, pinned above the chat, never inside a message. */
 const offers = [];
-function syncRow(){ const e = $("arHint"); if (e) e.textContent = offers.length ? "" : "Nothing needs an answer right now. Use a quick reply or say something."; }
+function syncRow(){ const e = $("arHint"); if (e) e.textContent = offers.length ? "" : "Nothing needs an answer right now."; }
 function removeOffer(id){ const i = offers.findIndex(o => o.id === id); if (i >= 0){ offers[i].el.remove(); offers.splice(i, 1); } syncRow(); }
+const NOTES = [
+ [/^Do it/, "Apply exactly what she asked for."],
+ [/^Match her target/, "Set both sliders to her preferred numbers."],
+ [/^Do what you want/, "Hands her free rein for a few minutes. Her targets nudge up and she won't ask again for a while."],
+ [/^Refuse/, "Keep your own settings. Her targets ease down for a bit, and too many refusals can make her storm off."],
+ [/^Grant/, "She takes over from the current persona."],
+ [/^Deny all/, "Turns away every control request from now on."],
+ [/^Deny/, "The current persona keeps control."],
+ [/^Give .+ control/, "Hands her control right away."],
+ [/^Wake /, "Might wake her. If it fails you can try again or hand over."],
+ [/^Keep waiting/, "Do nothing and see if she comes round."],
+ [/^Go private/, "Locks the room and clears everyone out. She gets more intense."],
+ [/^Raise max speed/, "Lifts your speed slider so she can go faster."],
+ [/^Use the full stroke/, "Resets stroke to the full 0 to 100% range."],
+ [/^Resume session/, "Ends the break and carries on where you left off."],
+ [/^You decide/, "She picks an answer for you."],
+ [/^Give me more/, "She turns it up for a few minutes."],
+ [/^I'm doing fine/, "Nothing changes."],
+ [/^It's a lot/, "She eases off for a few minutes and may give you a short rest."],
+ [/^I'm close/, "She backs off a little and likely gives you a short rest."],
+ [/^Tease me/, "Starts a new build-up right away."],
+ [/^Hold me there/, "Holds the current level for about 10 to 16 seconds."],
+ [/^Give me a rest/, "She may stop for a short rest."],
+ [/^Surprise me/, "She picks one at random."],
+ [/^Being /, "Tells her what you like. Nothing changes."]
+];
+function noteFor(l){ const m = NOTES.find(x => x[0].test(l || "")); return m ? m[1] : ""; }
 function addOffer(o){
   removeOffer(o.id);
   if (!o.choices) o.choices = [{label: o.label, kind: "primary", apply: o.apply}];
@@ -971,7 +1008,7 @@ function addOffer(o){
     el.append(head);
   }
   const row = document.createElement("div"); row.className = "pbtns";
-  o.choices.forEach(c => { const b = document.createElement("button"); b.type = "button"; b.className = "pbtn " + (c.kind || "primary"); b.textContent = c.label; b.onclick = () => { removeOffer(o.id); if (c.apply) c.apply(); }; row.append(b); });
+  o.choices.forEach(c => { const b = document.createElement("button"); b.type = "button"; b.className = "pbtn " + (c.kind || "primary"); b.textContent = c.label; b.onclick = () => { removeOffer(o.id); if (c.apply) c.apply(); }; const nt = c.note || noteFor(c.label), w = document.createElement("div"); w.className = "pc"; w.append(b); if (nt){ b.title = nt; const s = document.createElement("span"); s.className = "pnote"; s.textContent = nt; w.append(s); } row.append(w); });
   if (o.choices.length === 1){ const x = document.createElement("button"); x.type = "button"; x.className = "pbtn ghost"; x.textContent = "✕"; x.title = "Dismiss"; x.setAttribute("aria-label", "Dismiss: " + o.choices[0].label); x.onclick = () => removeOffer(o.id); row.append(x); }
   if (o.ttl && o.ttl <= 120000){ const tb = document.createElement("div"); tb.className = "ptimer"; tb.style.animationDuration = o.ttl + "ms"; el.append(row, tb); } else el.append(row);
   o.el = el; o.exp = Date.now() + (o.ttl || 90000); offers.push(o); $("offers").append(el); syncRow();
@@ -1217,13 +1254,30 @@ function renderRoom(){
   room.forEach(p => {
     const c = document.createElement("span"); c.className = "rchip";
     const dot = document.createElement("span"); dot.className = "rdot"; dot.style.background = PCOL[p] || "";
-    c.append(dot, SHORT[p] + (p === currentPersona ? " ★" : "")); box.append(c);
+    c.append(dot, SHORT[p] + (p === currentPersona ? " ★" : "")); c.classList.add("kick"); c.title = "Click to kick " + SHORT[p] + " out"; c.setAttribute("role", "button"); c.tabIndex = 0; c.onclick = () => kickOut(p); c.onkeydown = e => { if (e.key === "Enter" || e.key === " ") kickOut(p); }; box.append(c);
   });
   renderCrowd();
 }
 function chatHeader(){ renderRoom(); }
+const MAXROOM = 5;
+var noJoinUntil = 0, exodusTok = 0;
+function kickOut(p){
+  if (!room.includes(p)) return;
+  if (privateShow){ addMsg("sys", "The room is locked for the private show."); return; }
+  if (p === currentPersona && (running || paused || starting || onBreak)){ addMsg("sys", "You can't kick out the persona in control mid-session. Stop the session or give control to someone else first."); return; }
+  removeOffer("give:" + p);
+  if (challenge && challenge.ch === p){ removeOffer("ch"); challenge = null; }
+  if (ask && ask.p === p){ removeOffer("ask"); ask = null; }
+  addMsg("sys", "You kicked " + SHORT[p] + " out of the lounge.");
+  room = room.filter(x => x !== p); lastLeft[p] = Date.now() + 180000; renderRoom(); followersLeave(p);
+}
+function userExodus(){
+  const tok = ++exodusTok; noJoinUntil = Date.now() + 120000; pop = Math.min(pop, 18);
+  room.slice().forEach(p => setTimeout(() => { if (tok !== exodusTok || running || privateShow || !room.includes(p)) return; leaveRoom(p); }, 4000 + Math.random() * 24000));
+}
 function enterRoom(p, silent){
   if (!SHORT[p] || room.includes(p) || (privateShow && p !== privateShow.p)) return false;
+  if (!silent && (room.length >= MAXROOM || Date.now() < noJoinUntil)) return false;
   room.push(p); renderRoom(); addMsg("sys", SHORT[p] + " joined the lounge."); if (!silent || running) followersJoin(p);
   if (!silent) setTimeout(() => { if (room.includes(p)) sayAs(p, "enter"); }, 1200 + Math.random() * 1500);
   return true;
@@ -1277,7 +1331,7 @@ function doTempt(p){
 }
 function temptUser(){
   const absent = ALL.filter(x => !room.includes(x) && Date.now() - (lastLeft[x] || 0) > 90000);
-  if ((!room.length || (room.length < 4 && Math.random() < 0.4)) && absent.length){
+  if ((!room.length || (room.length < MAXROOM && Math.random() < 0.4)) && absent.length && Date.now() > noJoinUntil){
     const p = pickOne(absent); enterRoom(p);
     setTimeout(() => doTempt(p), 5000 + Math.random() * 2000);
     return;
@@ -1289,7 +1343,7 @@ function temptUser(){
 function ambientEvent(){
   const busy = busyNow(), r = Math.random();
   const absent = ALL.filter(x => !room.includes(x) && Date.now() - (lastLeft[x] || 0) > 120000);
-  if ((!room.length || (room.length < 4 && r < 0.4)) && absent.length){ enterRoom(pickOne(absent)); return; }
+  if ((!room.length || (room.length < MAXROOM && r < 0.4)) && absent.length && Date.now() > noJoinUntil){ enterRoom(pickOne(absent)); return; }
   if (room.length >= 2 && r < 0.8){
     const a = pickOne(room), b = pickOne(room.filter(x => x !== a));
     sayAs(a, "banter", null, {other: b});
@@ -2804,7 +2858,7 @@ function requestPrivate(p){
     addOffer({id: "priv", who: p, text: "wants you all to herself", ttl: 40000, valid: () => teaseNow() && currentPersona === p && !privateShow,
       onGone: why => { if (why === "expired" && teaseNow() && currentPersona === p) sayAs(p, "privDeny"); },
       choices: [{label: "Go private", kind: "primary", apply: () => acceptPrivate(p)},
-                {label: "Not now", kind: "ghost", apply: () => { const m = addMsg("me", "Not now."); nextPrivAt = Date.now() + 4 * 60000; sayAs(p, "privDeny", null, {replyTo: m}); }}]});
+                {label: "Not now", kind: "ghost", note: "Stay in the open room. She won't ask again for a few minutes.", apply: () => { const m = addMsg("me", "Not now."); nextPrivAt = Date.now() + 4 * 60000; sayAs(p, "privDeny", null, {replyTo: m}); }}]});
   }});
 }
 function acceptPrivate(p){
@@ -8563,7 +8617,7 @@ function askQuestion(p, qid){
     if (ask !== a) return; a.el = el;
     addOffer({id: "ask", who: p, text: "asks you", ttl: 40000, valid: () => ask === a && (qid === "mood" || running),
       onGone: () => { if (ask === a) ask = null; },
-      choices: q.opts.map(o => ({label: o.label, kind: o.kind === "no" ? "ghost" : "primary", apply: () => answerQuestion(a, o)})).concat(qid === "mood" ? [] : [{label: "You decide", kind: "ghost", apply: () => { if (ask !== a) return; const o = pickOne(q.opts.filter(x => x.kind !== "no")); answerQuestion(a, {label: o.kind === "like" ? o.label : "You decide", kind: o.kind}); const now = Date.now(); nextAskAt = Math.max(nextAskAt, now + 240000); nextDemandAt = Math.max(nextDemandAt, now + 120000); }}])});
+      choices: q.opts.map(o => ({label: o.label, note: qid === "mood" ? ({gentle: "A gentler persona will ask to take over.", strict: "A stricter persona will ask to take over.", mean: "A meaner persona will ask to take over.", any: "Anyone might ask to take over.", no: "Skip this question."})[o.kind] : undefined, kind: o.kind === "no" ? "ghost" : "primary", apply: () => answerQuestion(a, o)})).concat(qid === "mood" ? [] : [{label: "You decide", kind: "ghost", apply: () => { if (ask !== a) return; const o = pickOne(q.opts.filter(x => x.kind !== "no")); answerQuestion(a, {label: o.kind === "like" ? o.label : "You decide", kind: o.kind}); const now = Date.now(); nextAskAt = Math.max(nextAskAt, now + 240000); nextDemandAt = Math.max(nextDemandAt, now + 120000); }}])});
   }});
 }
 function handleKind(p, kind, mine, o){
@@ -8640,6 +8694,7 @@ currentPersona = RENAMED[currentPersona] || currentPersona;
 if (currentPersona && !PERSONAS[currentPersona]) currentPersona = "";
 if (currentPersona) $("persona").value = currentPersona;
 addMsg("sys", "Welcome to the lounge. Personalities drop in and out. Pick one under Tease mode to hand over control, or wait for someone to tempt you.");
+try { if (!store.get("lubeParkMig", 0)){ if (+$("lubePark").value === 0) $("lubePark").value = 20; store.set("lubeParkMig", 1); saveInputs(); } } catch(e){}
 if (currentPersona) enterRoom(currentPersona, true); else renderRoom();
 
 /* ---------- profiles ---------- */
