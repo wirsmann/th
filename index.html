@@ -769,7 +769,7 @@ async function finish(msg, timeUp, failed){
   $("time").textContent = timeUp ? "0:00" : (wasHidden ? "??:??" : fmt(duration()));
   if (timeUp && $("beepEnd").checked) beep(3);
   else if (failed && $("beepEnd").checked) beep(2, 220);
-  if (wasTease && (failed || timeUp)){ say(failed ? "fail" : "win"); spectatorsReact(failed ? "spectateFail" : "spectateWin"); }
+  if (wasTease && (failed || timeUp)){ say(failed ? "fail" : "win"); if (failed) quitReact(); else spectatorsReact("spectateWin"); }
   nextTemptAt = Date.now() + 60000 + Math.random() * 30000;
   $("live").textContent = ok ? "Stopped" : "Stop failed";
   if (ok){ status(msg); setTimeout(refreshLock, 6500); } else status("Could not confirm the stop. Press the device button or turn it off.", true);
@@ -777,7 +777,7 @@ async function finish(msg, timeUp, failed){
 
 async function togglePause(){
   if (running && runTease){
-    const m = n("failLock", 0) || n("cool", 0); userExodus();
+    const m = n("failLock", 0) || n("cool", 0); userExodus(22000);
     return finish("Session failed: you paused. The device is stopped." + (m ? " Locked out for " + m + " min." : " Set a cooldown or failure lockout under Limits to enforce a lockout."), false, true);
   }
   if (running){
@@ -814,7 +814,7 @@ $("pause").onclick = togglePause;
 $("stop").onclick = () => {
   if (starting){ cancelStart = true; return; }
   if (runTease && (running || paused)){
-    const m = n("failLock", 0) || n("cool", 0); userExodus();
+    const m = n("failLock", 0) || n("cool", 0); userExodus(22000);
     return finish("Session failed: you stopped early. The device is stopped." + (m ? " Locked out for " + m + " min." : " Set a cooldown or failure lockout under Limits to enforce a lockout."), false, true);
   }
   userExodus(); finish("Stopped manually.", false);
@@ -1310,9 +1310,9 @@ function kickOut(p){
   addMsg("sys", "You kicked " + SHORT[p] + " out of the lounge.");
   room = room.filter(x => x !== p); lastLeft[p] = Date.now() + 180000; renderRoom(); followersLeave(p);
 }
-function userExodus(){
-  const tok = ++exodusTok; noJoinUntil = Date.now() + 120000; pop = Math.min(pop, 18);
-  room.slice().forEach(p => setTimeout(() => { if (tok !== exodusTok || running || privateShow || !room.includes(p)) return; leaveRoom(p); }, 4000 + Math.random() * 24000));
+function userExodus(late){
+  const tok = ++exodusTok; noJoinUntil = Date.now() + 120000 + (late || 0); pop = Math.min(pop, 18);
+  room.slice().forEach(p => setTimeout(() => { if (tok !== exodusTok || running || privateShow || !room.includes(p)) return; leaveRoom(p); }, 4000 + (late || 0) + Math.random() * 24000));
 }
 function enterRoom(p, silent){
   if (!SHORT[p] || room.includes(p) || (privateShow && p !== privateShow.p)) return false;
@@ -1420,6 +1420,12 @@ function spectate(){
   sayAs(sp, Math.random() < 0.4 ? "heckle" : "spectate", null, {ctrl: currentPersona, replyTo: currentPersona});
   if (currentPersona && room.includes(currentPersona) && Math.random() < 0.35)
     setTimeout(() => { if (room.includes(sp) && room.includes(currentPersona)) sayAs(currentPersona, "banter", null, {other: sp, replyTo: sp}); }, 3500 + Math.random() * 2000);
+}
+function quitReact(){
+  const ctl = currentPersona, others = room.filter(p => p !== ctl);
+  const offer = p => (locked || busyNow()) ? null : giveOffer(p, "Pick " + SHORT[p] + " (try again)", 90000);
+  if (ctl && room.includes(ctl)) setTimeout(() => { if (room.includes(ctl)) sayAs(ctl, "quitCtl", offer(ctl)); }, 6500 + Math.random() * 1500);
+  others.forEach((p, i) => setTimeout(() => { if (room.includes(p)) sayAs(p, "quitSpec", offer(p)); }, 3500 + i * 3200 + Math.random() * 1500));
 }
 function spectatorsReact(cat){
   const others = room.filter(p => p !== currentPersona); if (!others.length) return;
@@ -8476,6 +8482,9 @@ LINES["Stage-Manager Simone"] = {
 };
 
 Object.keys(__M).forEach(k => { LINES[k].manual = __M[k]; });
+const __QC = {"Patient Priscilla": ["Oh, {nick}... leaving already? I'll be even gentler next time. Come back to me, I promise.", "That was a lot for you, wasn't it? Try again with me. We'll go slower. Maybe."], "Mischievous Mia": ["Aw, {nick}, you quit? I'll be nicer next time! Probably! Come back and find out!", "Running away already? I promise to behave. Pinky swear. Try me again!"], "Strict Ms. Vance": ["That was disappointing, {nick}. Come back and I may be more lenient. Do not count on it.", "You stopped. Noted. Return and I'll consider easing my standards. Perhaps."], "Chaos Cassie": ["Wait, you're leaving?! Noooo! I'll be nice next time! Maybe! I don't know! Come back!", "Aww, {nick}, I'll behave! Totally! Start another one and see!"], "Sweet-Talker Sienna": ["Aww, {nick}, don't go. I'll be so sweet to you next time, I promise. Come back to me?", "That was too much? Come back and I'll be gentler. Pretty please."], "Relentless Roxy": ["Tapping out, {nick}? Weak. Come back and I might go easier. Might.", "You quit on me. Try again and maybe I'll slow down. Or not. Find out."], "Sleepy Sadie": ["Mm... you're going, {nick}? I'll be so gentle next time... come back... I'll go slow...", "Aww... don't go... try again with me... I promise to be nice... zzz..."], "Drill Sergeant Dana": ["You quit, {nick}?! Unacceptable! Come back and I'll go easier. Maybe. Get back here!", "Tapped out already, {nick}! Try again and I might lower the intensity. Might!"], "Mocking Margot": ["Quitting already, {nick}? So fragile. Come back and I'll be nicer. Probably. Maybe not. Try me.", "Aw, running off? I promise I'll be gentle next time, {nick}. Wouldn't you love to find out?"], "Cuckolding Veronica": ["You're giving up, {nick}? Come back. I'll be nicer next time. Maybe I'll even tell you about him.", "Leaving so soon, {nick}? Try again. I promise to be gentler. Well, until I start talking about my boyfriend."], "Counting Camille": ["The data is incomplete, {nick}. Try again and I'll adjust the parameters. Perhaps gentler ones.", "Session terminated early. Return, {nick}, and I'll revise the schedule. I may be more lenient."], "Gambling Gigi": ["Folding already, {nick}? The next hand is on me. I promise to go easier. Probably. Come back!", "You cashed out early! Try again, {nick}, and I'll sweeten the pot. Gentler odds, I swear."], "Goddess Isadora": ["You abandon my worship, {nick}? Return, and I shall be merciful. Perhaps.", "Leaving the temple already? Return, {nick}, and I will be more gracious. I may."], "Bratty Bella": ["Ugh, you quit?! Fine, come back and I'll be nicer. Maybe. If you ask nicely!", "You're leaving?! Try again, {nick}! I'll be good this time! Mostly!"], "Hypnotic Helena": ["Mm, waking up already, {nick}? Come back... I'll be so gentle... you'll drift right back down...", "Don't go... just try again... I'll be softer... it'll be easier this time..."], "Coach Colleen": ["You tapped out, {nick}? Get back in there! Next round I'll scale it back. A little!", "Don't quit on me, champ! Try again and I'll adjust the plan. Easier. Maybe."], "Doctor Delphine": ["Treatment interrupted, {nick}. Return and I'll modify the protocol. Gentler, if you like.", "You left mid-exam. Come back for a follow-up. I'll go easier on you. Possibly."], "Jealous Juliet": ["Leaving me, {nick}? Come back. I'll be nicer next time. I just can't stand you going.", "You stopped? Try again, my pet. I'll be gentler. Just don't leave me."], "Queen Valentina": ["You quit before I dismissed you, {nick}? Return and I may show mercy. I decree it.", "Leaving my court early, {nick}? Come back, and I may be kinder. Might."], "Pouty Penelope": ["Aww, you quit? Come back, {nick}, I'll be nicer, I promise! I'll try really hard!", "Don't go! Try again, {nick}, and I'll be sweeter. I mean it!"], "Flirty Fiona": ["Leaving already, {nick}? Come back. I'll behave this time. I swear. Mostly.", "Aw, you tapped out! Try again, {nick}. I'll go easier. Maybe."], "Stage-Manager Simone": ["You walked off stage, {nick}? Come back for the next show. I'll tone down the cues. A little.", "The show was cut short. Try again, {nick}, and I'll go gentler. We'll rehearse."]}, __QS = {"Patient Priscilla": ["Oh, that was over so fast. Pick me next time, love. We'll take our time.", "What a shame. Try again, and let me look after you."], "Mischievous Mia": ["Boo! That was fun! Try again and pick me! I'll make it even better!", "Aww, it's over? Next time pick me and I'll keep you guessing!"], "Strict Ms. Vance": ["Disappointing. A subject should finish what he starts. Return and let me supervise.", "Unfortunate. Pick me next time and I'll see that you finish properly."], "Chaos Cassie": ["Awww, party's over! Try again! Pick me! Anything could happen!", "Nooo, it was just getting good! Come back and pick me!"], "Sweet-Talker Sienna": ["Aww, that's a shame. Come back and let me take care of you. Pick me?", "Don't be discouraged. Try again, and let me help you last."], "Relentless Roxy": ["Weak. Come back and pick me. I'll show you how it's done.", "That was over fast. Try again with me, and I'll make you finish."], "Sleepy Sadie": ["Aww... it ended... try again... pick me... I'll make it cozy...", "Mm... that's sad... come back... I'll help..."], "Drill Sergeant Dana": ["Not good enough! Get back out there! Pick me, and I'll get you through it!", "Quitting already? Try again! Pick me next time, I'll whip you into shape!"], "Mocking Margot": ["Aw, couldn't take it? Come back and pick me. I promise I'll love every second.", "Quitters. Pick me next time. I'll make you wish you stayed."], "Cuckolding Veronica": ["Giving up already? Come back and pick me. I'll make it worth your while.", "Aw, that was short. Try again, and I'll give you something to think about."], "Counting Camille": ["The session ended early. Pick me for the next one. I'll build you a better schedule.", "Incomplete data. Try again with me. I'll make sure you finish."], "Gambling Gigi": ["Folded already? Come back and deal me in. I'll make it a game worth playing.", "That was a short hand. Pick me and I'll make the next one a winner."], "Goddess Isadora": ["How disappointing. Return, and let me guide you. A goddess finishes what she starts.", "A pity. Pick me next time, and I'll make you worthy."], "Bratty Bella": ["Ugh, it's over? Boring! Pick me next time! I'll make it way more fun!", "You quit?! Rude! Try again and pick me! I'm so much better!"], "Hypnotic Helena": ["Mm, that was too short... try again... pick me... let me help you drift...", "Shh, don't be sad... come back and let me guide you..."], "Coach Colleen": ["Don't get discouraged! Shake it off and try again. Pick me, and we'll get you to the finish!", "Tough break. Back in there! Let me coach you next time!"], "Doctor Delphine": ["Interesting. Early termination. Come back and let me supervise. I could help you complete it.", "Unfinished. Try again, and let me run the next session."], "Jealous Juliet": ["Good. You should come to me. Pick me and I'll never let you quit.", "That's what happens when you choose someone else. Come back and pick me."], "Queen Valentina": ["A pity. You should have knelt for me. Pick me next time. I shall ensure you finish.", "Disappointing. Return, and I may deign to preside over your next session."], "Pouty Penelope": ["Aww, that was so short! Try again, and pick me? I'll be really sweet!", "Boo, it ended! Come back and pick me, please? I'd make it better!"], "Flirty Fiona": ["Aw, so soon? Try again and pick me. I promise to make it fun.", "What a shame! Come back, trouble. Pick me and I'll show you a good time."], "Stage-Manager Simone": ["Show's cut short? Try again. Pick me and I'll run a proper production.", "The audience wanted more. Pick me next time, and I'll get you through the full show."]};
+Object.keys(__QC).forEach(k => { LINES[k].quitCtl = __QC[k]; LINES[k].quitSpec = __QS[k]; });
+Object.assign(HYPE, {quitCtl:3,quitSpec:3});
 /* ---------- interactions: targets, demands, questions ---------- */
 let suppressUntil = 0;
 const STEP = 5;
