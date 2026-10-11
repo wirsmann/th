@@ -1137,6 +1137,22 @@ function addOffer(o){
   if (o.choices.length === 1){ const x = document.createElement("button"); x.type = "button"; x.className = "pbtn ghost"; x.textContent = "✕"; x.title = "Dismiss"; x.setAttribute("aria-label", "Dismiss: " + o.choices[0].label); x.onclick = () => removeOffer(o.id); row.append(x); }
   if (o.ttl && o.ttl <= 120000){ const tb = document.createElement("div"); tb.className = "ptimer"; tb.style.animationDuration = o.ttl + "ms"; el.append(row, tb); } else el.append(row);
   o.el = el; o.exp = Date.now() + (o.ttl || 90000); offers.push(o); $("offers").append(el); syncRow();
+  simUserPick(o);
+}
+/* simulation mode: stands in for you. Offers get answered after a few seconds: usually the main choice, sometimes the refusal, sometimes ignored (single-choice prompts like Resume are always taken). */
+function simUserPick(o){
+  if (!simOn() || !running) return;
+  setTimeout(() => {
+    if (!offers.includes(o) || !running) return;
+    const ch = o.choices || []; if (!ch.length) return;
+    if (ch.length === 1){ removeOffer(o.id); if (ch[0].apply) ch[0].apply(); return; }
+    const r = Math.random();
+    const pos = ch.find(c => (c.kind || "primary") === "primary");
+    const neg = ch.find(c => c.kind === "danger" || /^(Deny|Not now)/.test(c.label));
+    const pick = r < 0.6 ? (pos || ch[0]) : r < 0.85 ? (neg || ch[ch.length - 1]) : null;
+    if (!pick) return;                                  // ignored: it expires like a real prompt
+    removeOffer(o.id); if (pick.apply) pick.apply();
+  }, 2500 + Math.random() * 3500);
 }
 function pruneOffers(){
   const now = Date.now();
