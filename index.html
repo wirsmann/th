@@ -1547,6 +1547,8 @@ const FANNAMES = ["moonlitmoth","pixelpanda","cozycrow","nightowl88","velvetfox"
 /* the crowd is measured in people, 0 to 1000: green is cool, around 500 is hot */
 const TIERS = [[0,"Quiet"],[30,"Warming up"],[100,"Buzzing"],[200,"Busy"],[350,"Packed"],[500,"Hot"],[750,"Legendary"]], CROWD_MAX = 1000;
 const tierOf = n => TIERS.filter(x => n >= x[0]).length - 1;
+let momentum = 0;   // sustained crowd energy from demands, questions and big moments; fades slowly
+function bump(exc, mom){ excite = Math.min(60, excite + exc); momentum = Math.min(40, momentum + mom); }
 let fans = [], excite = 0, pop = 0, fame = store.get("handyFame", 0), peakFans = store.get("handyPeak", 0), lastTier = 0, nextCrowdAt = Date.now() + 60000, tickN = 0;
 const FAME_PER_LEVEL = 60;
 function level(){ return 1 + Math.floor(fame / FAME_PER_LEVEL); }
@@ -1595,7 +1597,8 @@ function personaCrowdLine(){
 function crowdTick(){
   excite *= 0.97;
   const base = (running ? 28 : 0) + (running && runTease ? 8 : 0) + room.length * 5 + (paused && !onBreak ? 4 : 0);
-  const hype = Math.max(0, Math.min(100, base + excite));
+  momentum *= 0.9923;   // about a 90 second half-life at the 1 s tick
+  const hype = Math.max(0, Math.min(100, base + Math.min(30, momentum) + excite));
   pop += (hype - pop) * (hype > pop ? 0.011 : 0.02);
   if (running) fame += pop / 100 * 0.6;
   const baseline = room.length ? Math.min(12, Math.floor((level() - 1) / 25) * 2) : 0;
@@ -2445,7 +2448,7 @@ function acceptDemand(d, exact){
   if (demand !== d) return; demand = null;
   const p = d.p, t = targetOf(p); defiance[p] = Math.max(0, (defiance[p] || 0) - 1);
   if (exact){ setSpeedTo(t.speed); setLenTo(t.len); } else if (d.useSpeed) setSpeedTo(d.to); else setLenTo(d.to);
-  excite = Math.min(60, excite + 6); nextAskAt = Math.max(nextAskAt, Date.now() + 15000);
+  bump(6, 8); nextAskAt = Math.max(nextAskAt, Date.now() + 15000);
   if (d.free) mark("free", SHORT[p] + " has free rein"); else mark("yes", exact ? "Matched " + SHORT[p] + "'s target" : "Did what " + SHORT[p] + " asked");
   const mine = addMsg("me", exact ? "Matched " + SHORT[p] + "'s target: speed " + t.speed + "%, stroke " + t.len + "%." : (d.useSpeed ? "Speed " : "Stroke length ") + d.to + "%.");
   sayAs(p, exact ? "dmdExact" : "dmdYes", null, {replyTo: mine});
@@ -2484,7 +2487,7 @@ function stormOff(p){
 }
 function freeRein(d){
   if (demand !== d) return; d.free = true;
-  const p = d.p; addMod(p, 10, 5, 300000);
+  const p = d.p; addMod(p, 10, 5, 300000); bump(12, 20);   // handing over the reins is a big moment
   const mineMsg = "Do whatever you want, " + SHORT[p] + ".";
   acceptDemand(d, true);
   const now = Date.now(); nextDemandAt = now + 240000; nextAskAt = Math.max(nextAskAt, now + 240000);
@@ -2542,7 +2545,8 @@ const moodCall = kind => {
 function answerQuestion(a, o){
   if (ask !== a) return; ask = null;
   const p = a.p, mine = addMsg("me", o.label, a.el); mark("ask", "Told " + SHORT[p] + ": " + o.label);
-  excite = Math.min(60, excite + 4); nextDemandAt = Math.max(nextDemandAt, Date.now() + 12000);
+  if (/^Surprise/i.test(o.label) || o.kind === "any") bump(10, 16); else bump(4, 3);   // surprise picks are the big moments
+  nextDemandAt = Math.max(nextDemandAt, Date.now() + 12000);
   if (a.qid === "mood"){
     if (o.kind === "no"){ sayAs(p, "reply", null, {replyTo: mine}); return; }
     sayAs(p, "qMood", null, {replyTo: mine, answer: o.label.toLowerCase()}); setTimeout(() => moodCall(o.kind), 2500); return;
