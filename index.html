@@ -186,7 +186,7 @@
         </div>
         <div class="simBox" id="simBox" hidden aria-label="Simulated device">
     <div class="simRail"><div class="simBand" id="simBand"></div><div class="simPuck" id="simPuck"></div></div>
-    <div class="simInfo"><b>Simulated Handy</b><br><span id="simState">Stopped</span><br>Position <b id="simPos">0</b>%<br><span id="simRate"></span></div>
+    <div class="simInfo"><b id="simTitle">Simulated Handy</b><br><span id="simState">Stopped</span><br>Position <b id="simPos">0</b>%<br><span id="simRate"></span></div>
   </div>
       </div>
       <div class="graphBox"><div class="gHead"><strong>Activity</strong><span id="gLegend"></span><span class="hint" id="gInfo" style="margin:0 0 0 auto"></span></div><canvas id="graph" height="150" aria-label="History of speed and stroke length, colored by who was in control"></canvas><div id="gScrollRow" style="display:none;gap:8px;align-items:center;margin-top:6px"><input type="range" id="gScroll" min="0" max="0" value="0" aria-label="Scroll back through activity history" style="flex:1"><button class="mini" id="gLive" style="margin:0">Back to live</button></div><div class="hint" id="gKey" style="margin:4px 0 0"></div></div>
@@ -403,8 +403,9 @@ function status(msg, err){ const s=$("status"); s.textContent=msg; s.className=e
 function fmt(ms){ const t=Math.max(0,Math.ceil(ms/1000)); return Math.floor(t/60)+":"+String(t%60).padStart(2,"0"); }
 function duration(){ return ((+$("min").value||0)*60 + (+$("sec").value||0))*1000; }
 function showIdle(){ $("time").textContent = ($("teaseOn").checked && $("tRandom").checked) ? "??:??" : fmt(duration()); $("prog").style.strokeDashoffset = 0; }
+let awayPrev = false, emptyHalt = false;   // empty-room halt: see haltEmpty()
 function setButtons(){
-  $("start").disabled = running || paused || locked || starting;
+  $("start").disabled = running || (paused && !emptyHalt) || locked || starting;
   $("pause").disabled = !(running || paused);
   $("pause").textContent = paused ? "Resume" : (running && runTease ? "Pause (fails)" : "Pause");
   $("stop").textContent = (running || paused) && runTease ? "Stop (fails)" : "Stop";
@@ -463,6 +464,7 @@ async function api(method, path, body){
   });
   const data = await res.json().catch(()=>({}));
   if (!res.ok || data.error) throw new Error((data.error && data.error.message) || ("HTTP " + res.status));
+  devApply(method, path, body);
   return data;
 }
 /* ---------- simulation mode: a fake device that answers the same API calls ---------- */
@@ -473,13 +475,19 @@ async function simApi(method, path, body){
   await new Promise(r => setTimeout(r, 30 + Math.random() * 50));        // pretend network delay
   body = body || {};
   if (path === "/connected") return {connected: true};
+  devApply(method, path, body);
+  return {result: 0};
+}
+/* The Handy box: the same device model whether the calls go to a simulated or a real device.
+   On a real device it shows what the app has commanded (the real position isn't reported back). */
+function devApply(method, path, body){
+  body = body || {};
   if (path === "/mode"){ sim.mode = body.mode; sim.playing = false; sim.target = null; }
   else if (path === "/slide"){ sim.min = body.min; sim.max = body.max; }
   else if (path === "/hamp/velocity") sim.vel = body.velocity;
   else if (path === "/hamp/start"){ if (sim.mode === 0) sim.playing = true; }
   else if (path === "/hamp/stop"){ sim.playing = false; }
   else if (path === "/hdsp/xpvp"){ if (sim.mode === 2){ sim.target = Math.max(0, Math.min(100, body.position)); sim.tvel = body.velocity; } }
-  return {result: 0};
 }
 function simFrame(t){
   const dt = sim.last ? Math.min(0.1, (t - sim.last) / 1000) : 0; sim.last = t;
@@ -491,7 +499,7 @@ function simFrame(t){
     const d = sim.target - sim.pos, step = simTravel(sim.tvel) * dt;
     if (Math.abs(d) <= step){ sim.pos = sim.target; sim.target = null; } else sim.pos += Math.sign(d) * step;
   }
-  if (simOn()){
+  {
     const lo = sim.min, hi = sim.max;
     $("simBand").style.bottom = lo + "%"; $("simBand").style.height = Math.max(0, hi - lo) + "%";
     $("simPuck").style.bottom = sim.pos + "%";
@@ -504,7 +512,7 @@ function simFrame(t){
 }
 function simUI(){
   const on = simOn();
-  $("simBox").hidden = false; $("simPill").hidden = !on;
+  $("simBox").hidden = false; $("simPill").hidden = !on; $("simTitle").textContent = on ? "Simulated Handy" : "Your Handy";
   if (!running && !paused && !starting && /^(Enter your key|Ready\.|Simulation mode)/.test($("status").textContent)) status(on ? "Simulation mode: press Start. Nothing is sent to the device." : "Enter your key and press Start.");
 }
 $("simOn").addEventListener("change", () => { if (running || paused || starting){ $("simOn").checked = !$("simOn").checked; store.set("h_simOn", $("simOn").checked); status("Stop the session before switching simulation mode.", true); return; } sim.playing = false; sim.target = null; simUI(); });
@@ -529,7 +537,7 @@ function strokeRange(){
 }
 function sendStroke(){ return api("PUT", "/slide", strokeRange()); }
 function syncVibe(){
-  const want = running && runTease && !onBreak && !!tz && !!tz.cur && tz.cur.type === "vibrate";
+  const want = running && runTease && !onBreak && !ctlAway() && !!tz && !!tz.cur && tz.cur.type === "vibrate";
   if (want === vibeOn) return;
   vibeOn = want; lastVelAt = 0; sendStroke().catch(e => status(e.message, true));
 }
@@ -637,7 +645,7 @@ function teaseValue(el){
 }
 function velocityAt(elapsedMs, leftMs){
   const cap = Math.max(1, Math.min(100, n("cap", 100)));
-  const tease = $("teaseOn").checked;
+  const tease = $("teaseOn").checked && !ctlAway();   // nobody in control: the device runs at your own speed
   let v, stopped = false;
   if (tease){ const pct = teaseValue(elapsedMs); stopped = pct < 0.5; v = n("speed", 50) * pct / 100; }   // percentages of the speed slider
   else {
@@ -885,6 +893,7 @@ setInterval(lubeNowState, 500);
 
 /* ---------- run control ---------- */
 async function start(){
+  if (paused && emptyHalt){ emptyHalt = false; return togglePause(); }   // resume after an empty-room halt
   refreshLock(); if (locked) return; exodusTok++; noJoinUntil = 0;
   let ms = duration(), capped = false;
   if ($("teaseOn").checked && $("tRandom").checked){ const lo = n("rMin", 8); ms = Math.round(rnd(lo, Math.max(lo, n("rMax", 20))) * 60) * 1000; }
@@ -923,7 +932,7 @@ async function start(){
   if (runTease) say("start");
   if (runTease){
     nextNudgeAt = Date.now() + 90000 + Math.random() * 50000;
-    if (currentPersona){ enterRoom(currentPersona, true); react("claimed", currentPersona); }
+    if (currentPersona && !room.includes(currentPersona)) invitePersona(currentPersona); else if (currentPersona) react("claimed", currentPersona);
     challenge = null; nextChallengeAt = Date.now() + 30000 + Math.random() * 20000; Object.keys(attempts).forEach(k => attempts[k] = 0);
     demand = null; ask = null; removeOffer("demand"); removeOffer("ask"); nextAskAt = Date.now() + 40000 + Math.random() * 20000; nextDemandAt = Date.now() + 65000 + Math.random() * 20000;
     Object.keys(defiance).forEach(k => defiance[k] = 0); privateShow = null; lifeEv = null; lifeNextAt = 0; removeOffer("lifeCard"); ctlWho = ""; removeOffer("priv"); denyAll = false; removeOffer("denyAllNote"); Object.keys(creep).forEach(k => delete creep[k]); Object.keys(hit).forEach(k => hit[k] = 0);
@@ -931,6 +940,7 @@ async function start(){
     setTimeout(() => { if (running && (n("tFake", 20) >= 40 || n("tEsc", 0) > 0)) say("fakeNote"); }, 10000);
     if (runHidden) setTimeout(() => { if (running) say("hidden"); }, 7500);
   }
+  emptyHalt = false; awayPrev = ctlAway();
   tick = setInterval(update, 250); update();
 }
 
@@ -942,7 +952,7 @@ function update(){
   if (left <= 0) finish("Time is up. Stopped.", true);
   else if (lubeDue()) startBreak();
   else {
-    syncVibe(); pushVelocity(false); sample();
+    syncVibe(); pushVelocity(false); sample(); boredTick(); awayTick();
     midTick();
   }
 }
@@ -1379,7 +1389,8 @@ function pruneOffers(){
 }
 const HYPE = {fake:6,fakeAfter:3,hold:3,holdMid:2,rest:2,restMid:1,build:2,challenge:10,defend:5,insist:5,resist:5,takeover:14,lose:6,keep:6,fail:12,win:12,enter:4,tempt:5,askControl:5,banter:2,watch:3,enjoy:4,heckle:4,spectate:3,crowd:3,jealousStay:4,jealousLeave:5,excitedStay:4};
 function sayAs(name, cat, action, vars){
-  const l = name && LINES[name]; if (!l) return;
+  if (!name || !room.includes(name)) return;   // only personas in the lounge can speak
+  const l = LINES[name]; if (!l) return;
   let arr = l[cat] && l[cat].length ? l[cat] : (SHARED[cat] || null); if (!arr) return;
   vars = vars || {};
   if (runHidden){ const f = arr.filter(x => !x.includes("{left}")); if (f.length) arr = f; }   // don't leak the end time
@@ -1591,7 +1602,7 @@ function crowdTick(){
 /* Blackbook: per-persona stats for the friends list, kept in localStorage */
 let bb = store.get("handyBlackbook", {});
 const joinedAt = {};
-const BB_KEYS = ["inv", "acc", "dec", "busy", "off", "noR", "full", "joins", "ctrl", "sess", "fails", "mins", "seen"];
+const BB_KEYS = ["inv", "acc", "dec", "busy", "off", "noR", "full", "joins", "ctrl", "sess", "fails", "mins", "seen", "hang", "handed", "takeovers"];
 const bbRec = p => { if (!bb[p]) bb[p] = {}; const r = bb[p]; BB_KEYS.forEach(k => { if (!r[k]) r[k] = 0; }); return r; };
 function bbAdd(p, k, n){ if (!SHORT[p]) return; const r = bbRec(p); r[k] = r[k] + (n == null ? 1 : n); store.set("handyBlackbook", bb); }
 /* keeps join counts and time in the lounge right, whatever path moved the persona in or out */
@@ -1629,15 +1640,42 @@ function userExodus(late){
 function enterRoom(p, silent){
   if (!SHORT[p] || room.includes(p) || (privateShow && p !== privateShow.p)) return false;
   if (!silent && (room.length >= MAXROOM || Date.now() < noJoinUntil)) return false;
-  room.push(p); renderRoom(); addMsg("sys", SHORT[p] + " joined the lounge."); if (!silent || running) followersJoin(p);
+  const away = ctlAway();
+  room.push(p); renderRoom(); addMsg("sys", SHORT[p] + " joined the lounge.");
+  if (away) setTimeout(() => { if (room.includes(p) && ctlAway()) switchController(p); }, 1500);   // first one in takes control of an empty room if (!silent || running) followersJoin(p);
   if (!silent) setTimeout(() => { if (room.includes(p)) sayAs(p, "enter"); }, 1200 + Math.random() * 1500);
   return true;
 }
-function leaveRoom(p, quiet){
+function leaveRoom(p, quiet, force){
   if (!room.includes(p)) return;
-  if (p === currentPersona && (running || paused || starting)) return;
+  if (p === currentPersona && (running || paused || starting) && !force) return;
   if (!quiet) sayAs(p, "leave");
   setTimeout(() => { room = room.filter(x => x !== p); lastLeft[p] = Date.now(); renderRoom(); addMsg("sys", SHORT[p] + " left the lounge."); followersLeave(p); }, quiet ? 200 : 2800);
+}
+/* Realism: the active persona can get bored or be pulled away, leaving the room empty until someone joins. */
+function ctlAway(){ return (running || (paused && emptyHalt)) && runTease && !!currentPersona && !room.includes(currentPersona); }
+const BORE_DEF = {"Patient Priscilla":1,"Sleepy Sadie":1,"Strict Ms. Vance":2,"Counting Camille":2,"Chaos Cassie":6,"Mischievous Mia":5,"Bratty Bella":5,"Relentless Roxy":4};
+const boreRate = p => { const e = document.getElementById("bore_" + NAMEKEY[p]); const v = e ? parseFloat(e.value) : NaN; return isNaN(v) ? (BORE_DEF[p] != null ? BORE_DEF[p] : 3) : Math.max(0, Math.min(100, v)); };
+function boredTick(){
+  if (!running || !runTease || onBreak || lifeEv || challenge || privateShow || !room.includes(currentPersona)) return;
+  if (Math.random() * 100 < boreRate(currentPersona) * 0.25 / 60) leaveRoom(currentPersona, false, true);   // update() runs about every 250 ms
+}
+/* The room empties mid-session: the device stops where it is (not a fail) until Start is pressed. */
+function awayTick(){
+  if (emptyHalt){ if (running) emptyHalt = false; return; }
+  const away = ctlAway();
+  if (away && !awayPrev && running) haltEmpty();
+  awayPrev = away;
+}
+function haltEmpty(){
+  bbAdd(currentPersona, "hang");   // she walked out and left the room empty
+  remaining = Math.max(0, endAt - Date.now());
+  running = false; paused = true; emptyHalt = true; clearInterval(tick); devStopped = true;
+  setButtons();
+  if (!offers.some(o => o.id === "emptyRoom")) addOffer({id: "emptyRoom", text: "The room is empty, so the device has stopped where it is. Invite someone from Friends. Whoever joins first takes control. Press Start to continue.", ttl: 900000, valid: () => ctlAway(),
+    choices: [{label: "Open Friends", kind: "primary", apply: () => $("friendsBtn").click()}, {label: "Keep waiting", kind: "ghost", apply: () => {}}]});
+  status("The room is empty. The device has stopped where it is. Press Start to continue.", true);
+  sendStop();
 }
 /* Friends: every persona is on the friends list. You invite; she answers in her own time. */
 const pendingInv = {};            // persona -> time she was asked and didn't reply
@@ -1714,7 +1752,7 @@ function renderFriends(){
     const sm = document.createElement("summary");
     sm.textContent = "Blackbook: " + r.inv + " invited · " + r.joins + " joined · " + r.sess + " sessions · " + r.fails + " fails";
     const g = document.createElement("div"); g.className = "bbGrid";
-    g.innerHTML = [["Invited", r.inv], ["Accepted", r.acc], ["Declined", r.dec], ["Busy", r.busy], ["Offline", r.off], ["No reply", r.noR], ["Room full", r.full], ["Joined lounge", r.joins], ["Took control", r.ctrl], ["Sessions", r.sess], ["Fails", r.fails], ["Minutes in lounge", Math.round(r.mins)], ["Last seen", r.seen ? new Date(r.seen).toLocaleString() : "never"]].map(([k, v]) => "<div><span>" + k + "</span><b>" + v + "</b></div>").join("");
+    g.innerHTML = [["Invited", r.inv], ["Accepted", r.acc], ["Declined", r.dec], ["Busy", r.busy], ["Offline", r.off], ["No reply", r.noR], ["Room full", r.full], ["Joined lounge", r.joins], ["Took control", r.ctrl], ["Handed control", r.handed], ["Takeovers", r.takeovers], ["Left hanging", r.hang], ["Sessions", r.sess], ["Fails", r.fails], ["Minutes in lounge", Math.round(r.mins)], ["Last seen", r.seen ? new Date(r.seen).toLocaleString() : "never"]].map(([k, v]) => "<div><span>" + k + "</span><b>" + v + "</b></div>").join("");
     const pr = PROFILE[p] || {}, prof = document.createElement("div"); prof.className = "bbGrid one";
     prof.innerHTML = [["Age", pr.age], ["Lives in", pr.loc], ["Status", pr.status], ["Job", pr.job], ["Hobbies", (pr.hobbies || []).join(", ")], ["Fun fact", pr.quirk]].map(([k, v]) => "<div><span>" + k + "</span><b>" + (v == null ? "" : v) + "</b></div>").join("");
     det.append(sm, prof, g); box.append(det);
@@ -1863,10 +1901,12 @@ function setPersonaFields(name, jitter){
 }
 function switchController(name){
   if (!SHORT[name] || name === currentPersona) return;
-  bbAdd(name, "ctrl");
+  const prevCtl = currentPersona;
+  if (prevCtl && room.includes(prevCtl)){ bbAdd(prevCtl, "handed"); bbAdd(name, "takeovers"); }   // control passed between personas still in the lounge
+  bbAdd(name, "ctrl"); removeOffer("emptyRoom");
   setPersonaFields(name, true);
   currentPersona = name; store.set("h_persona", name); setActive(name); renderPersCfg();
-  enterRoom(name, true); renderRoom(); resetTease(); lastVelAt = 0;
+  renderRoom(); resetTease(); lastVelAt = 0;
   $("persDesc").textContent = PERSONAS[name].d + targetNote(name);
   addMsg("sys", SHORT[name] + " took control.");
   status("Control passed to " + SHORT[name] + ".");
@@ -1926,12 +1966,7 @@ function startChallenge(){
   if (!running || !runTease || onBreak || challenge || privateShow || denyAll || lifeEv) return;
   nextChallengeAt = Date.now() + (50000 + Math.random() * 40000) / aggr();
   const others = room.filter(p => p !== currentPersona);
-  if (!others.length){
-    const absent = ALL.filter(x => !room.includes(x) && x !== currentPersona); if (!absent.length) return;
-    const np = pickOne(absent); enterRoom(np, true);
-    setTimeout(() => { if (running && runTease && room.includes(np)) beginChallenge(np); }, 5000);   // newcomers always ask you
-    return;
-  }
+  if (!others.length) return;   // challenges are only between personas already in the lounge
   const w = others.map(p => (REACT[p] && REACT[p].askControl) || 1);
   let r = Math.random() * w.reduce((a, b) => a + b, 0), ch = others[0];
   for (let i = 0; i < others.length; i++){ r -= w[i]; if (r <= 0){ ch = others[i]; break; } }
@@ -2059,20 +2094,21 @@ function startLife(type){
     sleep: {dur: rnd(60, 110), fn: (q) => 38 - 18 * q},
     pass:  {dur: rnd(170, 290), fn: (q, el) => 50 + 3 * Math.sin(el / 4000)}
   }[type];
-  const ev = lifeEv = {type, p, until: now + cfg.dur * 1000, nextSnore: now + 15000, hand: false}; mark("life", SHORT[p] + ": " + (MOVE_LABEL[type] || type));
+  const ev = lifeEv = {type, p, until: now + cfg.dur * 1000, nextSnore: now + 15000, hand: false, leaves: type === "door" || type === "bf"}; mark("life", SHORT[p] + ": " + (MOVE_LABEL[type] || type));
   lifeNextAt = now + cfg.dur * 1000 + 180000;
   forceCur({k: "move", type, dur: cfg.dur, fn: cfg.fn});
   sayAs(p, "life_" + type);
   if (type === "sleep" || type === "pass"){
     const others = room.filter(x => x !== p);
     if (others.length) setTimeout(() => { if (lifeEv === ev) sayAs(pickOne(room.filter(x => x !== p)), "life_other", null, {other: p, replyTo: p}); }, 11000 + Math.random() * 4000);
-    setTimeout(() => { if (lifeEv === ev) showLifeCard(ev); }, 20000);
+    setTimeout(() => { if (lifeEv === ev && !ev.leaves) showLifeCard(ev); }, 20000);
   }
   setTimeout(() => { if (lifeEv === ev) endLife(ev, false); }, cfg.dur * 1000);
 }
 function endLife(ev, woken){
   if (lifeEv !== ev) return; lifeEv = null; removeOffer("lifeCard");
   nextDemandAt = Math.max(nextDemandAt, Date.now() + 15000);
+  if (ev.leaves && room.includes(ev.p)){ leaveRoom(ev.p, false, true); return; }   // she goes off to the door or the phone
   if (!teaseNow() || currentPersona !== ev.p) return;
   forceBuild();
   sayAs(ev.p, ev.type === "sleep" || ev.type === "pass" ? "life_wake" : "life_" + ev.type + "End");
@@ -2080,7 +2116,7 @@ function endLife(ev, woken){
 function showLifeCard(ev){
   if (lifeEv !== ev) return;
   const p = ev.p, inRoom = room.filter(x => x !== p), absent = ALL.filter(x => x !== p && !room.includes(x));
-  const cands = inRoom.slice(0, 2); while (cands.length < 2 && absent.length) cands.push(absent.splice(Math.floor(Math.random() * absent.length), 1)[0]);
+  const cands = inRoom.slice(0, 2);   // hand-off choices are only personas already in the lounge
   const choices = [{label: "Wake " + SHORT[p] + " up", kind: "primary", apply: () => {
       addMsg("me", "Wake up, " + SHORT[p] + "!");
       if (Math.random() < 0.45) endLife(ev, true); else { sayAs(p, "life_wakeFail"); setTimeout(() => showLifeCard(ev), 1500); }
@@ -2093,7 +2129,7 @@ function handOff(ev, name){
   if (lifeEv !== ev) return; lifeEv = null; removeOffer("lifeCard");
   if (privateShow){ privateShow = null; addMsg("sys", "🔒 The room reopens."); renderRoom(); }
   addMsg("me", "Giving control to " + SHORT[name] + ".");
-  enterRoom(name, true); switchController(name);
+  switchController(name);
   setTimeout(() => sayAs(name, "life_takeover"), 1500);
   setTimeout(() => { if (room.includes(ev.p)) sayAs(ev.p, "life_wake"); }, 14000);
 }
@@ -2152,6 +2188,7 @@ const INV_DEF = {"Chaos Cassie":70,"Bratty Bella":65,"Relentless Roxy":60,"Misch
       + '<div><label for="yld_' + k + '">Gives up control (%)</label><input id="yld_' + k + '" type="number" min="0" max="100" value="' + YIELD_DEF[p] + '"></div>'
       + '<div><label for="vibS_' + k + '">Vibration length (s)</label><input id="vibS_' + k + '" type="number" min="2" max="60" value="' + v[1] + '"></div>'
       + '</div>'
+      + '<div class="grid"><div><label for="bore_' + k + '">Gets bored (% per minute)</label><input id="bore_' + k + '" type="number" min="0" max="100" value="' + (BORE_DEF[p] != null ? BORE_DEF[p] : 3) + '"></div></div>'
       + '<strong class="subHead">Friend invites</strong>'
       + '<div class="grid"><div><label for="inv_' + k + '">Accepts invites (%)</label><input id="inv_' + k + '" type="number" min="0" max="100" value="' + (INV_DEF[p] != null ? INV_DEF[p] : 40) + '"></div>'
       + '<div><label for="invMsg_' + k + '">Busy message (optional)</label><input id="invMsg_' + k + '" type="text" maxlength="120" placeholder="e.g. On a call, back at nine"></div></div>'
@@ -2389,9 +2426,10 @@ function stormOff(p){
   sayAs(p, "dmdLeave");
   setTimeout(() => {
     if (currentPersona !== p) return;
-    const others = room.filter(x => x !== p), pool = Object.keys(PERSONAS).filter(x => x !== p && !room.includes(x));
-    const rep = others.length ? pickOne(others) : pickOne(pool);
-    if (running && runTease){ enterRoom(rep, true); switchController(rep); setTimeout(() => sayAs(rep, "takeover", null, {other: p}), 1200); }
+    const others = room.filter(x => x !== p);
+    if (!others.length) return;
+    const rep = pickOne(others);
+    if (running && runTease){ switchController(rep); setTimeout(() => sayAs(rep, "takeover", null, {other: p}), 1200); }
     leaveRoom(p, true);
   }, 3200);
 }
@@ -2448,8 +2486,8 @@ function handleKind(p, kind, mine, o){
 }
 const moodCall = kind => {
   const set = MOODSETS[kind] || ALL, inRoom = set.filter(x => room.includes(x)), out = set.filter(x => !room.includes(x));
-  const p = inRoom.length && (Math.random() < 0.7 || !out.length) ? pickOne(inRoom) : (out.length ? pickOne(out) : null);
-  if (!p) return; if (!room.includes(p)) enterRoom(p, true);
+  const p = inRoom.length ? pickOne(inRoom) : null;   // only personas already in the lounge
+  if (!p) return;
   setTimeout(() => doTempt(p), 4500 + Math.random() * 1500);
 };
 function answerQuestion(a, o){
@@ -2503,7 +2541,7 @@ renderPersCfg();
 simUI(); syncSimBtn();
 addMsg("sys", "Welcome to the lounge. Personalities drop in and out. Pick one under Personas to hand over control, or wait for someone to tempt you.");
 try { if (!store.get("lubeParkMig", 0)){ if (+$("lubePark").value === 0) $("lubePark").value = 20; store.set("lubeParkMig", 1); saveInputs(); } } catch(e){}
-if (currentPersona) enterRoom(currentPersona, true); else renderRoom();
+renderRoom();
 
 /* ---------- profiles ---------- */
 const PROF_FIELDS = FIELDS.filter(id => id !== "daily" && id !== "cool" && id !== "failLock");
