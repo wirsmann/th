@@ -1359,12 +1359,26 @@ document.addEventListener("mouseover", e => {
 /* AI-made portraits: put a file in an "images" folder next to index.html, named by the persona's key (e.g. images/priscilla.png, images/lola.jpg).
    A persona with no file keeps the built-in drawn avatar. Files are looked up once and remembered. */
 const AV_EXTS = ["png", "jpg", "jpeg", "webp"], avImg = {}, avProbe = {}, avList = {};
-/* Pictures per persona: images/<key>.png (or <key>1.png) is the first, then images/<key>2.png, <key>3.png and so on. */
+/* Pictures per persona: images/<key>.png (or <key>1.png) is the first, then images/<key>2.png, <key>3.png and so on.
+   ComfyUI's own file names work too, so its output can be copied in without renaming: images/<key>_00001_.png and up
+   are more portraits, and images/<key>_reward_00001_.png and up are reward shots. Reward shots go last in her list.
+   SHOW_REWARDS: for now reward shots appear in her profile like any other picture; they can be locked later. */
+const SHOW_REWARDS = true, avRewards = {};
 function setAvImg(el, url){ const im = new Image(); im.alt = ""; im.decoding = "async"; im.src = url; el.replaceChildren(im); }
 function loadOk(u){ return new Promise(r => { const t = new Image(); t.onload = () => r(true); t.onerror = () => r(false); t.src = u; }); }
 async function probeBase(base){
   for (const x of AV_EXTS){ const u = "images/" + base + "." + x; if (await loadOk(u)) return u; }
   return null;
+}
+/* ComfyUI numbers its files <prefix>00001_.png, 00002_ and so on. Gaps are fine (you may keep only the ones you like);
+   the search stops after 5 numbers in a row with no file. */
+async function probeComfy(prefix){
+  const found = [];
+  for (let i = 1, miss = 0; i <= 99 && miss < 5; i++){
+    const u = "images/" + prefix + String(i).padStart(5, "0") + "_.png";
+    if (await loadOk(u)){ found.push(u); miss = 0; } else miss++;
+  }
+  return found;
 }
 function findAvImgs(key){
   if (!avProbe[key]) avProbe[key] = (async () => {
@@ -1376,6 +1390,9 @@ function findAvImgs(key){
       if (!found) break;
       list.push(found);
     }
+    list.push(...await probeComfy(key + "_"));
+    const rewards = await probeComfy(key + "_reward_");
+    avRewards[key] = rewards; if (SHOW_REWARDS) list.push(...rewards);
     avList[key] = list; avImg[key] = list[0] || false;
     return list;
   })();
