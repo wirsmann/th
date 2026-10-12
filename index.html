@@ -1734,7 +1734,7 @@ function invTick(){
   if (!privateShow && room.length < MAXROOM && now >= noJoinUntil){
     for (const p of Object.keys(pendingInv)){
       if (invStatus(p) !== "online") continue;
-      if (Math.random() * 100 < Math.min(85, invOdds(p) * 1.6)){ delete pendingInv[p]; addMsg("sys", SHORT[p] + " is back and wants in."); enterRoom(p); break; }
+      if (Math.random() * 100 < Math.min(90, invOdds(p) * 1.6 * joinBoost())){ delete pendingInv[p]; addMsg("sys", SHORT[p] + " is back and wants in."); enterRoom(p); break; }
     }
   }
   renderFriends();
@@ -1743,7 +1743,11 @@ setInterval(invTick, 15000);
 $("friendsBtn").onclick = () => document.querySelector('#menu button[data-key="friends"]').click();
 $("bbClear").onclick = () => { if (confirm("Clear every blackbook stat? Friends stay on the list.")){ bb = {}; store.set("handyBlackbook", bb); renderFriends(); } };
 /* Random drop-ins are now rare: an online friend sometimes just wanders in. */
-function dropIn(p){ if (p && invStatus(p) === "online" && Math.random() * 100 < invOdds(p) * 0.5) enterRoom(p); }
+/* Joining chance: a bigger audience and an empty room both pull personas in. */
+function joinBoost(){ const aud = Math.min(2.5, 1 + fans.length / 120); return aud * (room.length === 0 ? 1.5 : 1); }
+function dropIn(p){ if (p && invStatus(p) === "online" && Math.random() * 100 < Math.min(90, invOdds(p) * 0.5 * joinBoost())) enterRoom(p); }
+/* Only personas who are online right now can drop in. */
+const onlineAbsent = (gap) => ALL.filter(x => !room.includes(x) && invStatus(x) === "online" && Date.now() - (lastLeft[x] || 0) > gap);
 function renderFriends(){
   const box = $("friendsList"); if (!box) return;
   const order = {in: 0, online: 1, busy: 2, offline: 3}, label = {in: "In the lounge", online: "Online", busy: "Busy", offline: "Offline"};
@@ -1835,7 +1839,7 @@ function doTempt(p){
   react("dare", p);
 }
 function temptUser(){
-  const absent = ALL.filter(x => !room.includes(x) && Date.now() - (lastLeft[x] || 0) > 90000);
+  const absent = onlineAbsent(90000);
   if ((!room.length || (room.length < MAXROOM && Math.random() < 0.4)) && absent.length && Date.now() > noJoinUntil){
     const p = pickOne(absent); dropIn(p);
     setTimeout(() => doTempt(p), 5000 + Math.random() * 2000);
@@ -1847,7 +1851,7 @@ function temptUser(){
 }
 function ambientEvent(){
   const busy = busyNow(), r = Math.random();
-  const absent = ALL.filter(x => !room.includes(x) && Date.now() - (lastLeft[x] || 0) > 120000);
+  const absent = onlineAbsent(120000);
   if ((!room.length || (room.length < MAXROOM && r < 0.4)) && absent.length && Date.now() > noJoinUntil){ dropIn(pickOne(absent)); return; }
   if (room.length >= 2 && r < 0.8){
     const a = pickOne(room), b = pickOne(room.filter(x => x !== a));
