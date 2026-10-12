@@ -12425,3 +12425,320 @@ __M["Lilith"] = ["Touching yourself alone? I can do so much better. Give me cont
 __QC["Lilith"] = ["You let me go, sinner. I'll remember that.","You walked away from my touch. Pitiful."];
 __QS["Lilith"] = ["You abandoned me, {nick}. I won't forget.","Walked out on me, sinner. Pick me next time."];
 VIBE_LINES["Lilith"] = ["A shiver for you, {nick}! Tremble!","Feel my hum, sinner. Hold still."];
+
+
+/* ---------- Lyric Lola ---------- */
+PERSONA_LINES["Lyric Lola"] = {
+ "greet": [
+  "Mic check, {nick}. Lyric Lola in the building, and you're on the track now.",
+  "Yo {nick}, drop your bag, pull up a chair, the cypher's open."
+ ],
+ "start": [
+  "Beat drop on three, {nick}. One, two, three, let's go.",
+  "Set it off, {nick}. I already wrote the first verse in my head."
+ ],
+ "build": [
+  "Rising like a hook you can't shake, {nick}, feel the bass climb.",
+  "Bar by bar, stroke by stroke, the beat is building. Keep up, {nick}."
+ ],
+ "hold": [
+  "Hold the chorus, {nick}. Stay on the one and don't you dare fall off the beat.",
+  "Freeze on the hook, {nick}. That's the part everybody's waiting for."
+ ],
+ "holdMid": [
+  "Still on the hook. Let it ring, {nick}.",
+  "Sixteen bars of holding. You're doing it right, baby."
+ ],
+ "rest": [
+  "Breakdown time, {nick}. Catch your breath, that's a bridge, not a dead end.",
+  "Pull back, let the track breathe. Rest, {nick}."
+ ],
+ "restMid": [
+  "Quiet part of the record. Let the silence hit.",
+  "Breathe on the off-beat, {nick}. Nobody's rushing you."
+ ],
+ "fake": [
+  "Ha! That was an intro, not the drop, {nick}. Gotcha on the beat.",
+  "False start, sweetness. Fake-out on the first bar, you fell for it."
+ ],
+ "fakeAfter": [
+  "Didn't drop, did it? Run it back, {nick}, I'll cook you slower.",
+  "Wrong track, {nick}. The real verse is still coming."
+ ],
+ "warn": [
+  "Sixty seconds left on the record, {nick}. Get ready for the outro.",
+  "One minute on the clock. Bring the energy, {nick}."
+ ],
+ "win": [
+  "You stayed on beat the whole session, {nick}. That's a certified banger.",
+  "Track's finished and you killed it. Mic drop, {nick}."
+ ],
+ "fail": [
+  "You fell off the beat, {nick}. Off the track. Nobody's clapping.",
+  "Walked out before the outro? That's a skip, {nick}. Logged."
+ ],
+ "chat": [
+  "Round {n} and the flow is still tight. Keep up, {nick}.",
+  "Bar {n}, still spitting. You in or not?"
+ ],
+ "reply": [
+  "Ayy, I heard you. Now keep the rhythm, {nick}.",
+  "Mm, that's a lyric. I'll give it a verse later."
+ ],
+ "please": [
+  "Say please to a rapper? Cute. Say it on the beat, {nick}, and maybe I'll listen.",
+  "Please is a pause, not a punchline. Keep it moving, {nick}."
+ ],
+ "close": [
+  "Last verse, {nick}. Don't you dare miss the final line.",
+  "Almost at the drop. Hold the flow, baby."
+ ],
+ "demand": [
+  "Demands are a feature, {nick}. Freestyle your own request and I'll consider it.",
+  "You don't command the mic, {nick}. I do."
+ ],
+ "promise": [
+  "Finish this track clean, {nick}, and I'll drop you a verse with your name in it.",
+  "Stay on the beat to the end and I'll write you a hook worth screaming."
+ ],
+ "watch": [
+  "I'm watching you the whole time, {nick}. Every bar you miss.",
+  "Eyes on the crowd, eyes on you. Don't blink on the one."
+ ],
+ "enjoy": [
+  "This is my favourite kind of session, {nick}. Pure energy.",
+  "You're vibing so hard right now. Love that for you."
+ ],
+ "lowSpeed": [
+  "That tempo's dragging, {nick}. Pick it up, the beat's begging.",
+  "Too slow for a banger. Give me more, {nick}."
+ ],
+ "shortStroke": [
+  "Cut short like a bad sample, {nick}. Extend the range, let the bass breathe.",
+  "Half a bar isn't a verse. Full range, {nick}."
+ ],
+ "praise": [
+  "Now that's a flow, {nick}. Clean and on the grid.",
+  "Hard hitting, perfect timing. You get a shout-out."
+ ],
+ "nudge": [
+  "Turn it up, {nick}! The crowd can take it, so can you.",
+  "More bass, more power. We're not done with this track."
+ ],
+ "fakeNote": [
+  "Fake drops keep the listeners guessing, {nick}. That's the art.",
+  "Sometimes the hook is a trap. Stay ready."
+ ],
+ "hidden": [
+  "Track length is a secret, {nick}. You'll hear the outro when it hits.",
+  "No clock on this one. The beat decides when it ends."
+ ],
+ "lubeBreak": [
+  "Pause the record, {nick}. Lube up if you need it. Resume when you're ready.",
+  "Half-time break. Take care of yourself, {nick}, then we run it back."
+ ],
+ "lubeWait": [
+  "Stay on the break, {nick}. Take your time, the beat will wait.",
+  "Quiet on the track. Ping me when you're back, sweetness."
+ ],
+ "lubeResume": [
+  "Back on the beat, {nick}. From the top of the hook.",
+  "We're live again. Let's finish this record."
+ ],
+ "enter": [
+  "Lyric Lola just walked in. Who's got the mic?"
+ ],
+ "leave": [
+  "Lola's out. Catch the next freestyle."
+ ],
+ "tempt": [
+  "Give me the controls, {nick}, I'll make you feel every single bar.",
+  "Hand me the speed, {nick}. I'll write a song you'll never forget."
+ ],
+ "jealousStay": [
+  "{other}'s on the mic too? Cool. Let's see who keeps the beat.",
+  "{other} thinks they can rap? I'm staying to watch them fall off."
+ ],
+ "jealousLeave": [
+  "{other} is hogging the booth. I'm out of this cypher."
+ ],
+ "excitedStay": [
+  "Oh, new listeners! Lyric Lola is staying for this one."
+ ],
+ "askControl": [
+  "{other} is off beat, {nick}. Give me the mic, I'll carry this track.",
+  "{other} can't hold a hook like I can. Pass it to me, {nick}."
+ ],
+ "banter": [
+  "{other}, your flow is weak. Stick to the chorus.",
+  "{other}, that verse was a skip. Respectfully."
+ ],
+ "spectate": [
+  "{ctrl} is laying down a strong verse on you, {nick}. Listen closely.",
+  "Watching {ctrl} run the beat. Not bad, not my best."
+ ],
+ "spectateFail": [
+  "You dropped {ctrl}'s track, {nick}. Crowd's not happy.",
+  "{ctrl} got shut down. Harsh, but that's the game."
+ ],
+ "spectateWin": [
+  "You finished {ctrl}'s record, {nick}. Okay, I respect it."
+ ],
+ "challenge": [
+  "{other}, cypher battle! I'm taking the mic on {nick} right now.",
+  "{other}, hand over the controls. Let's see who really runs this beat."
+ ],
+ "defend": [
+  "No, {other}. This beat is mine.",
+  "Back off, {other}. I'm not finished with {nick}."
+ ],
+ "takeover": [
+  "Thanks, {other}. Mic's mine now, {nick}. Let's go."
+ ],
+ "lose": [
+  "Fine, {other}. Take the mic, I'll wait for the next track."
+ ],
+ "keep": [
+  "Nope, {other}. {nick} stays on my beat."
+ ],
+ "retreat": [
+  "Fine, {other}. Heading off stage for now."
+ ],
+ "heckle": [
+  "{ctrl}, push harder! Make the crowd lose it!"
+ ],
+ "resist": [
+  "No, {other}. I'm still rapping over this one."
+ ],
+ "insist": [
+  "{other}, I'm not giving up the mic. Not today."
+ ],
+ "crowd": [
+  "{viewers} people in the crowd. Show them what you've got, {nick}."
+ ],
+ "askFeel": [
+  "Quick check, {nick}: how's your flow? Give me a number from one to ten.",
+  "How's it feeling, {nick}? Real talk. Hype or not?"
+ ],
+ "askNext": [
+  "Next bar, {nick}. You pick the tempo."
+ ],
+ "askLike": [
+  "Favourite track, {nick}? Be honest, I'm listening."
+ ],
+ "askMood": [
+  "Which MC should take the mic next, {nick}?"
+ ],
+ "qMore": [
+  "More? Say less, {nick}. Turning it up."
+ ],
+ "qFine": [
+  "Fine? Okay, we're keeping the energy steady."
+ ],
+ "qLot": [
+  "Too much? I'll drop it down a bit, {nick}."
+ ],
+ "qMercy": [
+  "A little breather, {nick}. Don't get used to it."
+ ],
+ "qNoMercy": [
+  "No breather. Keep up with the flow."
+ ],
+ "qTease": [
+  "Teaser verse coming in, {nick}. Hold on tight."
+ ],
+ "qHold": [
+  "Hold that hook, {nick}. Stay on it."
+ ],
+ "qLike": [
+  "{answer}? Say no more. Dropping that one right now, {nick}."
+ ],
+ "qMood": [
+  "{answer}. Choosing who gets the mic next."
+ ],
+ "dmdSpeedUp": [
+  "Speed up, {nick}! Up {step}%, to {to}%. Double time!"
+ ],
+ "dmdSpeedDown": [
+  "Slow it down, {nick}. Down {step}%, to {to}%. Let it groove."
+ ],
+ "dmdStrokeUp": [
+  "Stretch the bars, {nick}. Up {step}%, to {to}%."
+ ],
+ "dmdStrokeDown": [
+  "Shorten the bars, {nick}. Down {step}%, to {to}%. Tight flow."
+ ],
+ "dmdYes": [
+  "That's the right bar, {nick}. Keep rapping."
+ ],
+ "dmdExact": [
+  "On the beat, exactly. Clean."
+ ],
+ "dmdNo": [
+  "Off the beat, {nick}. Try again."
+ ],
+ "dmdHit": [
+  "Hit the pocket. Hold it."
+ ],
+ "act_push": [
+  "Push the bass, {nick}! Don't let it drop!"
+ ],
+ "act_stairs": [
+  "Stepping up the verse. One, two, three, four, five."
+ ],
+ "act_pulse": [
+  "Pulse in the beat, {nick}. Boom, boom, keep it going."
+ ],
+ "act_surge": [
+  "Surge! Full volume, full send!"
+ ],
+ "act_cliff": [
+  "The beat cuts out! Freeze, {nick}!"
+ ],
+ "act_wave": [
+  "Wave in the bass, {nick}. Ride it slow."
+ ],
+ "act_flutter": [
+  "Stutter edits! Hold steady, {nick}."
+ ],
+ "act_slowburn": [
+  "Slow build, {nick}. Let the hook creep in."
+ ],
+ "privAsk": [
+  "Want a private booth session with {nick}? Just us, no crowd?"
+ ],
+ "privOn": [
+  "Booth's locked, {nick}. Nobody else in the room."
+ ],
+ "privDeny": [
+  "Not tonight. Maybe after the next track."
+ ],
+ "privMid": [
+  "Private booth, {nick}. Only you and me on this beat."
+ ],
+ "privBye": [
+  "A private booth with {other}? Enjoy, I'm out."
+ ],
+ "dmdWarn": [
+  "One more missed bar, {nick}, and I'm cutting the track."
+ ],
+ "dmdLeave": [
+  "That's it, {nick}. Too many missed bars. I'm out."
+ ],
+ "giveUp": [
+  "Handing the mic to {other}. Don't mess it up, {nick}."
+ ],
+ "idleRoom": [
+  "Yo {nick}, you still in the booth?"
+ ],
+ "idleRun": [
+  "Beat's still going, {nick}. Say something!"
+ ],
+ "idleLong": [
+  "Dead air, {nick}. Hello?"
+ ]
+};
+__M["Lyric Lola"] = ["Manual? Slow flow. Give me the mic, {nick}.","No beat from the machine? Boring. Let me run it, {nick}.","You're running it by hand. Hand it over to the expert."];
+__QC["Lyric Lola"] = ["You cut the track yourself. Mic down, session over.","Ended it early. Next time stay for the outro."];
+__QS["Lyric Lola"] = ["You walked out mid-verse, {nick}. Real rappers finish the song.","Left the cypher early. Respect lost."];
+VIBE_LINES["Lyric Lola"] = ["Bass drop! Shake it, {nick}!","The subwoofer is buzzing. Feel that, {nick}!"];

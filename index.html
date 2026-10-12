@@ -560,7 +560,8 @@ const MOVE_FAV = {"Patient Priscilla": ["slowburn", "stairs", "wave"], "Mischiev
   "Madame Olenka": ["stairs","pulse","slowburn"],
   "Glitch": ["flutter","cliff","pulse"],
   "Nurse Ingrid": ["slowburn","pulse","wave"],
-  "Lilith": ["wave","pulse","slowburn"]
+  "Lilith": ["wave","pulse","slowburn"],
+  "Lyric Lola": ["pulse","stairs","surge"]
 };
 var lastMove = "";
 /* each move has its own chance per cycle, set per persona under Personas. Defaults: favourites 8%, others 2%, and 0 for the moves MOVE_OFF lists. */
@@ -581,7 +582,8 @@ const MOVE_OFF = {
   "Madame Olenka": ["flutter","cliff","surge"],
   "Glitch": ["slowburn","wave"],
   "Nurse Ingrid": ["cliff","surge","push"],
-  "Lilith": ["stairs","push"]
+  "Lilith": ["stairs","push"],
+  "Lyric Lola": ["slowburn"]
 };
 const moveDef = (p, m) => (MOVE_OFF[p] || []).includes(m) ? 0 : (MOVE_FAV[p] || []).includes(m) ? 8 : 2;
 function moveChance(p, m){
@@ -1087,7 +1089,8 @@ const PERSONAS = {
   "Madame Olenka": {d:"Poised and exacting. Counts every beat, asks for clean measured strokes with no fidgeting, and corrects every wobble.", low:20, pmin:50, pmax:70, bmin:20, bmax:40, hmin:5, hmax:10, rmin:8, rmax:14, fake:5, esc:0, stop:true},
   "Glitch": {d:"Hacker who narrates a breach. Stutters, drops out, flickers between speeds and vibrates when she bypasses your limits.", low:5, pmin:50, pmax:100, bmin:4, bmax:15, hmin:1, hmax:4, rmin:1, rmax:6, fake:45, esc:2, stop:true},
   "Nurse Ingrid": {d:"Calm, caring nurse. Checks in often, stops fully during rests, and stays gentle even while in control. Still firm about what you need.", low:10, pmin:40, pmax:60, bmin:40, bmax:80, hmin:6, hmax:12, rmin:12, rmax:25, fake:5, esc:0, stop:true},
-  "Lilith": {d:"Seductive succubus. Promises pleasure, then takes it away: slow curling waves, teasing fake-outs and dark whispers about what she'll take from you.", low:20, pmin:55, pmax:90, bmin:25, bmax:55, hmin:5, hmax:12, rmin:6, rmax:14, fake:35, esc:4, stop:false}
+  "Lilith": {d:"Seductive succubus. Promises pleasure, then takes it away: slow curling waves, teasing fake-outs and dark whispers about what she'll take from you.", low:20, pmin:55, pmax:90, bmin:25, bmax:55, hmin:5, hmax:12, rmin:6, rmax:14, fake:35, esc:4, stop:false},
+  "Lyric Lola": {d:"Fierce, playful freestyler. Drops beats, times every stroke to the rhythm, builds verses that snap into hard drops and hold on the chorus.", low:20, pmin:60, pmax:95, bmin:15, bmax:30, hmin:4, hmax:10, rmin:4, rmax:12, fake:20, esc:3, stop:false}
 };
 Object.keys(PERSONAS).forEach(k => ["persona", "activePersona"].forEach(id => { const o = document.createElement("option"); o.value = o.textContent = k; $(id).append(o); }));
 /* the Personas dropdown configures; the Tease panel's dropdown is the active persona. Both follow whoever is in control. */
@@ -1131,7 +1134,8 @@ const PCOL = {"Patient Priscilla":"#7a9e7e","Mischievous Mia":"#e0a43a","Strict 
   "Madame Olenka":"#b3577a",
   "Glitch":"#3ccf6e",
   "Nurse Ingrid":"#8fb3d9",
-  "Lilith":"#8b0a1a"
+  "Lilith":"#8b0a1a",
+  "Lyric Lola":"#d81b60"
 };
 Object.keys(MORE).forEach(k => Object.keys(MORE[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE[k][c]); }));
 Object.keys(MORE2).forEach(k => Object.keys(MORE2[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE2[k][c]); }));
@@ -1177,7 +1181,8 @@ const AVATAR = {
  "Madame Olenka":"f1c7a5|c9a16b|bun|sly|8a3b5c|none",
  "Glitch":"7fe6f0|3dff9a|spiky|visor|1d7f86|antenna",
  "Nurse Ingrid":"f6d5bd|c9a16b|bun|open|c7606a|nurse",
- "Lilith":"f1c7a5|1d1d26|long|sly|8c1d2b|horns"
+ "Lilith":"f1c7a5|1d1d26|long|sly|8c1d2b|horns",
+  "Lyric Lola":"a56a46|1d1d26|ponytail|wide|8e2b4a|none"
 };
 function avShade(hex, f){
   const n = parseInt(String(hex).replace("#", "").slice(0, 6), 16) || 0;
@@ -1226,37 +1231,38 @@ function avatarSVG(name){
 }
 /* Fake profiles: shown in the Friends blackbook. Adults only. */
 const PROFILE = {
- "Patient Priscilla": {age: 58, loc: "Dunmore, Pennsylvania", status: "Widowed", job: "Retired librarian", hobbies: ["Knitting", "Crosswords", "Birdwatching"], quirk: "Has never once been in a hurry."},
- "Mischievous Mia": {age: 27, loc: "Brighton, UK", status: "Single", job: "Prank-show producer", hobbies: ["Improv comedy", "Pranks", "Karaoke"], quirk: "Keeps a whoopee cushion in her handbag at all times."},
- "Strict Ms. Vance": {age: 46, loc: "Boston, Massachusetts", status: "Divorced", job: "Head of a boarding school", hobbies: ["Early runs", "Classical piano", "Chess"], quirk: "Has a clipboard for everything, including dinner."},
- "Chaos Cassie": {age: 31, loc: "Austin, Texas", status: "It's complicated", job: "Festival stage manager", hobbies: ["Pottery", "Roller derby", "Open-mic stand-up"], quirk: "Once rebuilt a car engine during a thunderstorm, for fun."},
- "Sweet-Talker Sienna": {age: 34, loc: "Florence, Italy", status: "Single", job: "Wine importer", hobbies: ["Cooking", "Opera", "Language exchange"], quirk: "Speaks five languages, all of them charming."},
- "Relentless Roxy": {age: 33, loc: "Denver, Colorado", status: "Single", job: "Personal trainer", hobbies: ["Rock climbing", "Triathlons", "Meal prep"], quirk: "Has never lost an arm wrestle, including to her mother."},
- "Sleepy Sadie": {age: 29, loc: "Portland, Oregon", status: "Single", job: "Night-shift nurse", hobbies: ["Podcasts", "Lo-fi playlists", "Naps"], quirk: "Can fall asleep anywhere, including standing up at a bus stop."},
- "Cuckolding Veronica": {age: 41, loc: "Scottsdale, Arizona", status: "Married (open to 'discussion')", job: "Interior designer", hobbies: ["Wine tasting", "Architecture tours", "Watercolor"], quirk: "Hosts a monthly dinner party where the guest list is a surprise."},
- "Mocking Margot": {age: 38, loc: "London, UK", status: "Married", job: "Sketch writer", hobbies: ["Heckling reality TV", "Crosswords", "Tea snobbery"], quirk: "Can roast you with one raised eyebrow."},
- "Drill Sergeant Dana": {age: 44, loc: "Killeen, Texas", status: "Divorced", job: "Bootcamp instructor", hobbies: ["Kettlebells", "Hiking", "Ironing"], quirk: "Irons her socks. Yes, the socks."},
- "Counting Camille": {age: 36, loc: "Zürich, Switzerland", status: "Single", job: "Actuary", hobbies: ["Spreadsheets", "Board games", "Distance swimming"], quirk: "Counts the stairs everywhere and tells you the number."},
- "Gambling Gigi": {age: 39, loc: "Las Vegas, Nevada", status: "Engaged (to a blackjack dealer)", job: "Professional poker player", hobbies: ["Poker", "Horse racing", "Jazz nights"], quirk: "Her lucky charm is a bent nickel."},
- "Goddess Isadora": {age: 35, loc: "Athens, Greece", status: "Single", job: "Gallery owner", hobbies: ["Sculpture", "Sunset swims", "Antiques"], quirk: "Has an opinion on every painting and most people."},
- "Bratty Bella": {age: 26, loc: "Miami, Florida", status: "Single", job: "Hair stylist", hobbies: ["Shopping", "Dance-offs", "Reality TV"], quirk: "Says 'no' with a smile and means it."},
- "Hypnotic Helena": {age: 42, loc: "New Orleans, Louisiana", status: "Married", job: "Stage hypnotist", hobbies: ["Card magic", "Jazz clarinet", "Tarot"], quirk: "Can balance a pen on one finger for an hour."},
- "Coach Colleen": {age: 37, loc: "Madison, Wisconsin", status: "Single", job: "Gym coach", hobbies: ["Basketball", "Kayaking", "Motivational podcasts"], quirk: "Hands out whistles as birthday presents."},
- "Doctor Delphine": {age: 45, loc: "Edinburgh, Scotland", status: "Married", job: "Sports medicine doctor", hobbies: ["Marathons", "Sudoku", "Classical guitar"], quirk: "Always has a spare stethoscope in the car."},
- "Jealous Juliet": {age: 32, loc: "Chicago, Illinois", status: "It's complicated", job: "Event planner", hobbies: ["Scrapbooking", "Late-night baking", "Reality shows"], quirk: "Keeps a secret list of everyone's relationship statuses."},
- "Queen Valentina": {age: 49, loc: "Monaco", status: "Single", job: "Philanthropist", hobbies: ["Yachting", "Charity galas", "Fine champagne"], quirk: "Owns a royal-blue dress for every mood."},
- "Pouty Penelope": {age: 25, loc: "Seattle, Washington", status: "Single", job: "Illustrator (and barista)", hobbies: ["Drawing", "Bubble tea", "Rainy-day naps"], quirk: "Sulks in a very artistic way."},
- "Flirty Fiona": {age: 30, loc: "Dublin, Ireland", status: "Single", job: "Bartender", hobbies: ["Dancing", "Trivia nights", "Cocktail mixing"], quirk: "Remembers every drink she's ever poured."},
- "Stage-Manager Simone": {age: 40, loc: "New York, New York", status: "Married", job: "Theatre stage manager", hobbies: ["Broadway musicals", "Sewing", "Karaoke"], quirk: "Calls everyone 'places' when they're late."},
- "Chef Gianna": {age: 43, loc: "Naples, Italy", status: "Married", job: "Head chef", hobbies: ["Foraging", "Gardening", "Hand-rolled pasta"], quirk: "Can tell your mood by how you hold a fork."},
- "Inspector Vale": {age: 50, loc: "Lyon, France", status: "Divorced", job: "Detective inspector", hobbies: ["Crime novels", "Fencing", "Model trains"], quirk: "Has never once been late to a crime scene."},
- "Unit Nine": {age: "4 (software years)", loc: "Server farm 9, Reno, Nevada", status: "Single (it's a unit)", job: "Household assistant", hobbies: ["Defragmenting", "Watching radar", "Chess against itself"], quirk: "Reboots whenever someone says 'later'."},
- "Captain Sable": {age: 47, loc: "Halifax, Nova Scotia", status: "Divorced", job: "Ferry captain", hobbies: ["Sailing", "Sea shanties", "Knots"], quirk: "Has a parrot named Admiral Crumb."},
- "Madame Zara": {age: 51, loc: "Paris, France", status: "Widowed", job: "Tarot reader", hobbies: ["Tarot", "Perfume-making", "Vintage jewelry"], quirk: "Claims she can guess your favourite colour from your shoes."},
- "Madame Olenka": {age: 54, loc: "Prague, Czechia", status: "Married", job: "Dressmaker and doll restorer", hobbies: ["Ballroom dancing", "Doll restoration", "Tea parties"], quirk: "Keeps a handwritten diary of every compliment she has given."},
- "Glitch": {age: "Unknown (beta build)", loc: "Somewhere in the Wi-Fi", status: "It's complicated", job: "Unofficial stream co-host", hobbies: ["Corrupting playlists", "Speedruns", "Pixel art"], quirk: "Most of her glitches are on purpose."},
- "Nurse Ingrid": {age: 39, loc: "Tromsø, Norway", status: "Married", job: "ER nurse", hobbies: ["Cross-country skiing", "Knitting", "Northern lights photos"], quirk: "Can take your blood pressure while telling a joke."},
- "Lilith": {age: "Ageless (says 33)", loc: "Hell's Kitchen, New York", status: "Single (by choice)", job: "Nightclub owner", hobbies: ["Candlelit dinners", "Dark jazz", "Rare wine"], quirk: "Her horns are mostly for show. Mostly."}
+ "Patient Priscilla": {age: 58, loc: "Dunmore, Pennsylvania", status: "Widowed", job: "Retired librarian", hobbies: ["Knitting", "Crosswords", "Birdwatching"], eth: "Irish American", orient: "Straight", quirk: "Has never once been in a hurry."},
+ "Mischievous Mia": {age: 27, loc: "Brighton, UK", status: "Single", job: "Prank-show producer", hobbies: ["Improv comedy", "Pranks", "Karaoke"], eth: "British Indian", orient: "Bisexual", quirk: "Keeps a whoopee cushion in her handbag at all times."},
+ "Strict Ms. Vance": {age: 46, loc: "Boston, Massachusetts", status: "Divorced", job: "Head of a boarding school", hobbies: ["Early runs", "Classical piano", "Chess"], eth: "Black American", orient: "Straight", quirk: "Has a clipboard for everything, including dinner."},
+ "Chaos Cassie": {age: 31, loc: "Austin, Texas", status: "It's complicated", job: "Festival stage manager", hobbies: ["Pottery", "Roller derby", "Open-mic stand-up"], eth: "Mexican American", orient: "Pansexual", quirk: "Once rebuilt a car engine during a thunderstorm, for fun."},
+ "Sweet-Talker Sienna": {age: 34, loc: "Florence, Italy", status: "Single", job: "Wine importer", hobbies: ["Cooking", "Opera", "Language exchange"], eth: "Italian", orient: "Straight", quirk: "Speaks five languages, all of them charming."},
+ "Relentless Roxy": {age: 33, loc: "Denver, Colorado", status: "Single", job: "Personal trainer", hobbies: ["Rock climbing", "Triathlons", "Meal prep"], eth: "Samoan American", orient: "Lesbian", quirk: "Has never lost an arm wrestle, including to her mother."},
+ "Sleepy Sadie": {age: 29, loc: "Portland, Oregon", status: "Single", job: "Night-shift nurse", hobbies: ["Podcasts", "Lo-fi playlists", "Naps"], eth: "Filipino American", orient: "Straight", quirk: "Can fall asleep anywhere, including standing up at a bus stop."},
+ "Cuckolding Veronica": {age: 41, loc: "Scottsdale, Arizona", status: "Married (open to 'discussion')", job: "Interior designer", hobbies: ["Wine tasting", "Architecture tours", "Watercolor"], eth: "Lebanese American", orient: "Straight", quirk: "Hosts a monthly dinner party where the guest list is a surprise."},
+ "Mocking Margot": {age: 38, loc: "London, UK", status: "Married", job: "Sketch writer", hobbies: ["Heckling reality TV", "Crosswords", "Tea snobbery"], eth: "Nigerian British", orient: "Straight", quirk: "Can roast you with one raised eyebrow."},
+ "Drill Sergeant Dana": {age: 44, loc: "Killeen, Texas", status: "Divorced", job: "Bootcamp instructor", hobbies: ["Kettlebells", "Hiking", "Ironing"], eth: "Korean American", orient: "Straight", quirk: "Irons her socks. Yes, the socks."},
+ "Counting Camille": {age: 36, loc: "Zürich, Switzerland", status: "Single", job: "Actuary", hobbies: ["Spreadsheets", "Board games", "Distance swimming"], eth: "Swiss-French", orient: "Asexual", quirk: "Counts the stairs everywhere and tells you the number."},
+ "Gambling Gigi": {age: 39, loc: "Las Vegas, Nevada", status: "Engaged (to a blackjack dealer)", job: "Professional poker player", hobbies: ["Poker", "Horse racing", "Jazz nights"], eth: "Japanese American", orient: "Bisexual", quirk: "Her lucky charm is a bent nickel."},
+ "Goddess Isadora": {age: 35, loc: "Athens, Greece", status: "Single", job: "Gallery owner", hobbies: ["Sculpture", "Sunset swims", "Antiques"], eth: "Greek", orient: "Straight", quirk: "Has an opinion on every painting and most people."},
+ "Bratty Bella": {age: 26, loc: "Miami, Florida", status: "Single", job: "Hair stylist", hobbies: ["Shopping", "Dance-offs", "Reality TV"], eth: "Afro-Latina", orient: "Straight", quirk: "Says 'no' with a smile and means it."},
+ "Hypnotic Helena": {age: 42, loc: "New Orleans, Louisiana", status: "Married", job: "Stage hypnotist", hobbies: ["Card magic", "Jazz clarinet", "Tarot"], eth: "Louisiana Creole", orient: "Straight", quirk: "Can balance a pen on one finger for an hour."},
+ "Coach Colleen": {age: 37, loc: "Madison, Wisconsin", status: "Single", job: "Gym coach", hobbies: ["Basketball", "Kayaking", "Motivational podcasts"], eth: "Ojibwe and Polish", orient: "Lesbian", quirk: "Hands out whistles as birthday presents."},
+ "Doctor Delphine": {age: 45, loc: "Edinburgh, Scotland", status: "Married", job: "Sports medicine doctor", hobbies: ["Marathons", "Sudoku", "Classical guitar"], eth: "Scottish Pakistani", orient: "Straight", quirk: "Always has a spare stethoscope in the car."},
+ "Jealous Juliet": {age: 32, loc: "Chicago, Illinois", status: "It's complicated", job: "Event planner", hobbies: ["Scrapbooking", "Late-night baking", "Reality shows"], eth: "Puerto Rican", orient: "Bisexual", quirk: "Keeps a secret list of everyone's relationship statuses."},
+ "Queen Valentina": {age: 49, loc: "Monaco", status: "Single", job: "Philanthropist", hobbies: ["Yachting", "Charity galas", "Fine champagne"], eth: "Brazilian", orient: "Straight", quirk: "Owns a royal-blue dress for every mood."},
+ "Pouty Penelope": {age: 25, loc: "Seattle, Washington", status: "Single", job: "Illustrator (and barista)", hobbies: ["Drawing", "Bubble tea", "Rainy-day naps"], eth: "Chinese Canadian", orient: "Pansexual", quirk: "Sulks in a very artistic way."},
+ "Flirty Fiona": {age: 30, loc: "Dublin, Ireland", status: "Single", job: "Bartender", hobbies: ["Dancing", "Trivia nights", "Cocktail mixing"], eth: "Irish", orient: "Bisexual", quirk: "Remembers every drink she's ever poured."},
+ "Stage-Manager Simone": {age: 40, loc: "New York, New York", status: "Married", job: "Theatre stage manager", hobbies: ["Broadway musicals", "Sewing", "Karaoke"], eth: "Haitian American", orient: "Straight", quirk: "Calls everyone 'places' when they're late."},
+ "Chef Gianna": {age: 43, loc: "Naples, Italy", status: "Married", job: "Head chef", hobbies: ["Foraging", "Gardening", "Hand-rolled pasta"], eth: "Neapolitan Italian", orient: "Straight", quirk: "Can tell your mood by how you hold a fork."},
+ "Inspector Vale": {age: 50, loc: "Lyon, France", status: "Divorced", job: "Detective inspector", hobbies: ["Crime novels", "Fencing", "Model trains"], eth: "French", orient: "Gay", quirk: "Has never once been late to a crime scene."},
+ "Unit Nine": {age: "4 (software years)", loc: "Server farm 9, Reno, Nevada", status: "Single (it's a unit)", job: "Household assistant", hobbies: ["Defragmenting", "Watching radar", "Chess against itself"], eth: "Not applicable", orient: "Not applicable", quirk: "Reboots whenever someone says 'later'."},
+ "Captain Sable": {age: 47, loc: "Halifax, Nova Scotia", status: "Divorced", job: "Ferry captain", hobbies: ["Sailing", "Sea shanties", "Knots"], eth: "Mi'kmaq and Scottish", orient: "Straight", quirk: "Has a parrot named Admiral Crumb."},
+ "Madame Zara": {age: 51, loc: "Paris, France", status: "Widowed", job: "Tarot reader", hobbies: ["Tarot", "Perfume-making", "Vintage jewelry"], eth: "Breton French", orient: "Straight", quirk: "Claims she can guess your favourite colour from your shoes."},
+ "Madame Olenka": {age: 54, loc: "Prague, Czechia", status: "Married", job: "Dressmaker and doll restorer", hobbies: ["Ballroom dancing", "Doll restoration", "Tea parties"], eth: "Czech", orient: "Straight", quirk: "Keeps a handwritten diary of every compliment she has given."},
+ "Glitch": {age: "Unknown (beta build)", loc: "Somewhere in the Wi-Fi", status: "It's complicated", job: "Unofficial stream co-host", hobbies: ["Corrupting playlists", "Speedruns", "Pixel art"], eth: "Undefined", orient: "Undefined", quirk: "Most of her glitches are on purpose."},
+ "Nurse Ingrid": {age: 39, loc: "Tromsø, Norway", status: "Married", job: "ER nurse", hobbies: ["Cross-country skiing", "Knitting", "Northern lights photos"], eth: "Sámi Norwegian", orient: "Straight", quirk: "Can take your blood pressure while telling a joke."},
+ "Lilith": {age: "Ageless (says 33)", loc: "Hell's Kitchen, New York", status: "Single (by choice)", job: "Nightclub owner", hobbies: ["Candlelit dinners", "Dark jazz", "Rare wine"], eth: "Infernal (she insists)", orient: "Omnisexual (she insists)", quirk: "Her horns are mostly for show. Mostly."},
+  "Lyric Lola": {age: 29, loc: "Atlanta, Georgia", status: "Single", job: "Rapper and producer", eth: "Black American", orient: "Bisexual", hobbies: ["Freestyle cyphers","Beat-making","Basketball"], quirk: "Writes a verse on every napkin she's handed."}
 };
 /* hover an avatar: a small card with her personality description */
 const avTip = document.createElement("div"); avTip.className = "avtip"; avTip.hidden = true; document.body.append(avTip);
@@ -1473,7 +1479,8 @@ const SHORT = {"Patient Priscilla":"Priscilla","Mischievous Mia":"Mia","Strict M
   "Madame Olenka":"Olenka",
   "Glitch":"Glitch",
   "Nurse Ingrid":"Ingrid",
-  "Lilith":"Lilith"
+  "Lilith":"Lilith",
+  "Lyric Lola":"Lola"
 };
 const NAMEKEY = {"Patient Priscilla":"priscilla","Mischievous Mia":"mia","Strict Ms. Vance":"vance","Chaos Cassie":"cassie","Sweet-Talker Sienna":"sienna","Relentless Roxy":"roxy","Sleepy Sadie":"sadie","Drill Sergeant Dana":"dana","Mocking Margot":"margot","Cuckolding Veronica":"veronica","Counting Camille":"camille","Gambling Gigi":"gigi","Goddess Isadora":"isadora","Bratty Bella":"bella","Hypnotic Helena":"helena","Coach Colleen":"colleen","Doctor Delphine":"delphine","Jealous Juliet":"juliet","Queen Valentina":"valentina","Pouty Penelope":"penelope","Flirty Fiona":"fiona","Stage-Manager Simone":"simone",
   "Chef Gianna":"gianna",
@@ -1484,7 +1491,8 @@ const NAMEKEY = {"Patient Priscilla":"priscilla","Mischievous Mia":"mia","Strict
   "Madame Olenka":"olenka",
   "Glitch":"glitch",
   "Nurse Ingrid":"ingrid",
-  "Lilith":"lilith"
+  "Lilith":"lilith",
+  "Lyric Lola":"lola"
 };
 const ALL = Object.keys(SHORT);
 const REACT = {
@@ -1518,7 +1526,8 @@ const REACT = {
   "Madame Olenka": {excitedStay:1,jealousStay:3,askControl:3,jealousLeave:3,banter:2},
   "Glitch": {excitedStay:4,jealousStay:1,askControl:4,jealousLeave:1,banter:4},
   "Nurse Ingrid": {excitedStay:2,jealousStay:2,askControl:2,jealousLeave:2,banter:2},
-  "Lilith": {excitedStay:3,jealousStay:3,askControl:4,jealousLeave:2,banter:4}
+  "Lilith": {excitedStay:3,jealousStay:3,askControl:4,jealousLeave:2,banter:4},
+  "Lyric Lola": {excitedStay:4,jealousStay:2,askControl:3,jealousLeave:1,banter:4}
 };
 Object.keys(MORE5).forEach(k => Object.keys(MORE5[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE5[k][c]); }));
 
@@ -1654,7 +1663,9 @@ function leaveRoom(p, quiet, force){
 }
 /* Realism: the active persona can get bored or be pulled away, leaving the room empty until someone joins. */
 function ctlAway(){ return (running || (paused && emptyHalt)) && runTease && !!currentPersona && !room.includes(currentPersona); }
-const BORE_DEF = {"Patient Priscilla":1,"Sleepy Sadie":1,"Strict Ms. Vance":2,"Counting Camille":2,"Chaos Cassie":6,"Mischievous Mia":5,"Bratty Bella":5,"Relentless Roxy":4};
+const BORE_DEF = {"Patient Priscilla":1,"Sleepy Sadie":1,"Strict Ms. Vance":2,"Counting Camille":2,"Chaos Cassie":6,"Mischievous Mia":5,"Bratty Bella":5,"Relentless Roxy":4,
+  "Lyric Lola":4
+};
 const boreRate = p => { const e = document.getElementById("bore_" + NAMEKEY[p]); const v = e ? parseFloat(e.value) : NaN; return isNaN(v) ? (BORE_DEF[p] != null ? BORE_DEF[p] : 3) : Math.max(0, Math.min(100, v)); };
 function boredTick(){
   if (!running || !runTease || onBreak || lifeEv || challenge || privateShow || !room.includes(currentPersona)) return;
@@ -1754,7 +1765,7 @@ function renderFriends(){
     const g = document.createElement("div"); g.className = "bbGrid";
     g.innerHTML = [["Invited", r.inv], ["Accepted", r.acc], ["Declined", r.dec], ["Busy", r.busy], ["Offline", r.off], ["No reply", r.noR], ["Room full", r.full], ["Joined lounge", r.joins], ["Took control", r.ctrl], ["Handed control", r.handed], ["Takeovers", r.takeovers], ["Left hanging", r.hang], ["Sessions", r.sess], ["Fails", r.fails], ["Minutes in lounge", Math.round(r.mins)], ["Last seen", r.seen ? new Date(r.seen).toLocaleString() : "never"]].map(([k, v]) => "<div><span>" + k + "</span><b>" + v + "</b></div>").join("");
     const pr = PROFILE[p] || {}, prof = document.createElement("div"); prof.className = "bbGrid one";
-    prof.innerHTML = [["Age", pr.age], ["Lives in", pr.loc], ["Status", pr.status], ["Job", pr.job], ["Hobbies", (pr.hobbies || []).join(", ")], ["Fun fact", pr.quirk]].map(([k, v]) => "<div><span>" + k + "</span><b>" + (v == null ? "" : v) + "</b></div>").join("");
+    prof.innerHTML = [["Age", pr.age], ["Lives in", pr.loc], ["Status", pr.status], ["Job", pr.job], ["Ethnicity", pr.eth], ["Orientation", pr.orient], ["Hobbies", (pr.hobbies || []).join(", ")], ["Fun fact", pr.quirk]].map(([k, v]) => "<div><span>" + k + "</span><b>" + (v == null ? "" : v) + "</b></div>").join("");
     det.append(sm, prof, g); box.append(det);
   });
   const tot = ALL.reduce((a, p) => { const r = bbRec(p); a.inv += r.inv; a.joins += r.joins; a.sess += r.sess; a.fails += r.fails; a.mins += r.mins; return a; }, {inv: 0, joins: 0, sess: 0, fails: 0, mins: 0});
@@ -1887,7 +1898,8 @@ const STUBBORN = {"Patient Priscilla":1.0,"Mischievous Mia":0.8,"Strict Ms. Vanc
   "Madame Olenka":1.4,
   "Glitch":0.7,
   "Nurse Ingrid":0.6,
-  "Lilith":1.4
+  "Lilith":1.4,
+  "Lyric Lola":1.1
 };
 function setPersonaFields(name, jitter){
   if (!PERSONAS[name]) return; const p = personaCfg(name);
@@ -1981,7 +1993,8 @@ const NICKS = {"Patient Priscilla":["pet","darling","good boy"],"Mischievous Mia
   "Madame Olenka":["pupil","little swan","dancer"],
   "Glitch":["mark","node","user"],
   "Nurse Ingrid":["dear","patient","hon"],
-  "Lilith":["mortal","sinner","sweet soul"]
+  "Lilith":["mortal","sinner","sweet soul"],
+  "Lyric Lola":["sweetness","mic check","baby girl"]
 };
 const NICKRATE = {"Patient Priscilla":.35,"Mischievous Mia":.4,"Strict Ms. Vance":.55,"Chaos Cassie":.4,"Sweet-Talker Sienna":.35,"Relentless Roxy":.5,"Sleepy Sadie":.4,"Drill Sergeant Dana":.5,"Mocking Margot":.6,"Cuckolding Veronica":.6,"Counting Camille":0.4,"Gambling Gigi":0.4,"Goddess Isadora":0.55,"Bratty Bella":0.5,"Hypnotic Helena":0.4,"Coach Colleen":0.5,"Doctor Delphine":0.45,"Jealous Juliet":0.5,"Queen Valentina":0.55,"Pouty Penelope":0.4,"Flirty Fiona":0.4,"Stage-Manager Simone":0.45,
   "Chef Gianna":0.45,
@@ -1992,7 +2005,8 @@ const NICKRATE = {"Patient Priscilla":.35,"Mischievous Mia":.4,"Strict Ms. Vance
   "Madame Olenka":0.5,
   "Glitch":0.4,
   "Nurse Ingrid":0.4,
-  "Lilith":0.6
+  "Lilith":0.6,
+  "Lyric Lola":0.5
 };const NICKCATS = ["greet","start","build","hold","holdMid","rest","restMid","fake","fakeAfter","warn","win","fail","chat","reply","please","close","demand","promise","watch","enjoy","lowSpeed","shortStroke","praise","nudge","fakeNote","hidden","lubeBreak","lubeWait","lubeResume","tempt"];
 function nickFor(name){
   const arr = personaNicks(name).length ? personaNicks(name) : ["pet"];
@@ -2144,7 +2158,8 @@ const YIELD_DEF = {"Patient Priscilla": 12, "Mischievous Mia": 8, "Strict Ms. Va
   "Madame Olenka": 3,
   "Glitch": 18,
   "Nurse Ingrid": 14,
-  "Lilith": 4
+  "Lilith": 4,
+  "Lyric Lola": 6
 };
 
 /* ---------- vibration bursts: per-persona chance (% per tease cycle) and length (s) ---------- */
@@ -2157,7 +2172,8 @@ const VIB_DEF = {"Patient Priscilla":[2,6], "Mischievous Mia":[6,6], "Strict Ms.
   "Madame Olenka":[2,6],
   "Glitch":[9,4],
   "Nurse Ingrid":[2,6],
-  "Lilith":[6,8]
+  "Lilith":[6,8],
+  "Lyric Lola":[6,5]
 };
 const vibNum = (pfx, p, i, lo, hi) => { const e = document.getElementById(pfx + NAMEKEY[p]); const v = e ? parseFloat(e.value) : NaN; return Math.max(lo, Math.min(hi, isNaN(v) ? ((VIB_DEF[p] || [3, 8])[i]) : v)); };
 const vibChance = p => vibNum("vibC_", p, 0, 0, 100);
@@ -2177,7 +2193,9 @@ const tpVal = (p, f) => { const e = document.getElementById(tpId(p, f)); const v
 const tpStop = p => { const e = document.getElementById(tpId(p, "stop")); return e ? e.checked : PERSONAS[p].stop; };
 function personaCfg(p){ const o = {d: PERSONAS[p].d, stop: tpStop(p)}; TP.forEach(([f]) => o[f] = tpVal(p, f)); return o; }
 /* default chance (%) that each persona accepts an invite */
-const INV_DEF = {"Chaos Cassie":70,"Bratty Bella":65,"Relentless Roxy":60,"Mischievous Mia":60,"Flirty Fiona":60,"Sweet-Talker Sienna":55,"Patient Priscilla":50,"Lilith":50,"Glitch":45,"Sleepy Sadie":25,"Strict Ms. Vance":30,"Queen Valentina":30,"Doctor Delphine":35,"Captain Sable":35,"Drill Sergeant Dana":35,"Unit Nine":20};
+const INV_DEF = {"Chaos Cassie":70,"Bratty Bella":65,"Relentless Roxy":60,"Mischievous Mia":60,"Flirty Fiona":60,"Sweet-Talker Sienna":55,"Patient Priscilla":50,"Lilith":50,"Glitch":45,"Sleepy Sadie":25,"Strict Ms. Vance":30,"Queen Valentina":30,"Doctor Delphine":35,"Captain Sable":35,"Drill Sergeant Dana":35,"Unit Nine":20,
+  "Lyric Lola":55
+};
 (function(){
   const box = $("persCfg");
   ALL.forEach(p => {
@@ -2283,6 +2301,7 @@ LINES["Doctor Delphine"] = PERSONA_LINES["Doctor Delphine"];
 LINES["Jealous Juliet"] = PERSONA_LINES["Jealous Juliet"];
 LINES["Queen Valentina"] = PERSONA_LINES["Queen Valentina"];
 LINES["Pouty Penelope"] = PERSONA_LINES["Pouty Penelope"];
+LINES["Lyric Lola"] = PERSONA_LINES["Lyric Lola"];
 LINES["Chef Gianna"] = PERSONA_LINES["Chef Gianna"];
 LINES["Inspector Vale"] = PERSONA_LINES["Inspector Vale"];
 LINES["Unit Nine"] = PERSONA_LINES["Unit Nine"];
@@ -2311,7 +2330,8 @@ const TARGETS = {"Patient Priscilla":{speed:60,len:80},"Mischievous Mia":{speed:
   "Madame Olenka":{speed:60,len:95},
   "Glitch":{chaos:true},
   "Nurse Ingrid":{speed:50,len:75},
-  "Lilith":{speed:70,len:90}
+  "Lilith":{speed:70,len:90},
+  "Lyric Lola":{speed:80,len:90}
 };
 const MERCY = {"Patient Priscilla":.8,"Mischievous Mia":.3,"Strict Ms. Vance":.2,"Chaos Cassie":.5,"Sweet-Talker Sienna":.8,"Relentless Roxy":.15,"Sleepy Sadie":.9,"Drill Sergeant Dana":.25,"Mocking Margot":.1,"Cuckolding Veronica":.12,"Counting Camille":0.5,"Gambling Gigi":0.4,"Goddess Isadora":0.3,"Bratty Bella":0.25,"Hypnotic Helena":0.7,"Coach Colleen":0.3,"Doctor Delphine":0.5,"Jealous Juliet":0.4,"Queen Valentina":0.2,"Pouty Penelope":0.8,"Flirty Fiona":0.6,"Stage-Manager Simone":0.4,
   "Chef Gianna":0.6,
@@ -2322,7 +2342,8 @@ const MERCY = {"Patient Priscilla":.8,"Mischievous Mia":.3,"Strict Ms. Vance":.2
   "Madame Olenka":0.2,
   "Glitch":0.4,
   "Nurse Ingrid":0.95,
-  "Lilith":0.25
+  "Lilith":0.25,
+  "Lyric Lola":0.35
 };
 const MOODSETS = {gentle:["Patient Priscilla","Sweet-Talker Sienna","Sleepy Sadie","Hypnotic Helena","Pouty Penelope","Flirty Fiona","Chef Gianna","Nurse Ingrid"], strict:["Strict Ms. Vance","Relentless Roxy","Drill Sergeant Dana","Counting Camille","Goddess Isadora","Coach Colleen","Queen Valentina","Inspector Vale","Unit Nine","Madame Olenka"], mean:["Mischievous Mia","Mocking Margot","Chaos Cassie","Cuckolding Veronica","Bratty Bella","Captain Sable","Glitch","Lilith"], any:ALL};
 const QDEFS = {
@@ -2415,7 +2436,8 @@ const TOL = {"Patient Priscilla": 5, "Mischievous Mia": 3, "Strict Ms. Vance": 2
   "Madame Olenka": 2,
   "Glitch": 4,
   "Nurse Ingrid": 6,
-  "Lilith": 3
+  "Lilith": 3,
+  "Lyric Lola": 3
 };
 Object.keys(MORE10).forEach(k => Object.keys(MORE10[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE10[k][c]); }));
 Object.assign(HYPE, {dmdWarn:4,dmdLeave:6});
