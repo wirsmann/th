@@ -705,7 +705,7 @@ function mark(kind, label){
 function gSummary(){
   if (hist.length < 2) return "";
   let pk = 0; hist.forEach(k => { if (k.v > pk) pk = k.v; });
-  return "Elapsed " + fmt(hist.length * 1000) + " · peak " + Math.round(pk) + "% · dashed line = stroke length";
+  return "Elapsed " + fmt(hist.length * 1000) + " · peak " + Math.round(pk) + "%";
 }
 function updateKey(){
   const k = $("gKey"); if (!k) return; const seen = []; marks.forEach(m => { if (!seen.includes(m.kind)) seen.push(m.kind); });
