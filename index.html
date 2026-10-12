@@ -75,6 +75,10 @@
   #portrait figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:10px;max-width:100%}
   #portrait img{max-width:92vw;max-height:78vh;object-fit:contain;border-radius:14px;border:3px solid var(--c,#888);box-shadow:0 10px 40px rgba(0,0,0,.5)}
   #portrait figcaption{color:#fff;font-weight:600;font-size:15px;text-align:center}
+  #portrait .pvNav{position:fixed;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;border:0;background:rgba(255,255,255,.18);color:#fff;font-size:28px;line-height:1;cursor:pointer;padding:0}
+  #portrait .pvNav[hidden]{display:none}
+  #portrait .pvPrev{left:12px}
+  #portrait .pvNext{right:12px}
   #portrait .pvClose{position:fixed;top:12px;right:12px;width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.18);color:#fff;font-size:18px;cursor:pointer;padding:0;margin:0}
   .av.lg{width:56px;height:56px;margin:4px 0 2px}
   .rchip .av{width:20px;height:20px;margin-right:-2px}
@@ -589,6 +593,11 @@ const MOVE_FAV = {"Patient Priscilla": ["slowburn", "stairs", "wave"], "Mischiev
   "Madame Olenka": ["stairs","pulse","slowburn"],
   "Glitch": ["flutter","cliff","pulse"],
   "Nurse Ingrid": ["slowburn","pulse","wave"],
+  "High-Energy Holly": ["pulse","surge","stairs"],
+  "Starlet Sloane": ["slowburn","wave","cliff"],
+  "Office Olivia": ["stairs","pulse"],
+  "Satin Sasha": ["wave","flutter","slowburn"],
+  "Livestream Lexi": ["surge","pulse","flutter"],
   "Lilith": ["wave","pulse","slowburn"],
   "Lyric Lola": ["pulse","stairs","surge"]
 };
@@ -611,6 +620,11 @@ const MOVE_OFF = {
   "Madame Olenka": ["flutter","cliff","surge"],
   "Glitch": ["slowburn","wave"],
   "Nurse Ingrid": ["cliff","surge","push"],
+  "High-Energy Holly": ["wave","flutter"],
+  "Starlet Sloane": ["pulse","stairs"],
+  "Office Olivia": ["surge","flutter"],
+  "Satin Sasha": ["cliff","push"],
+  "Livestream Lexi": ["slowburn","wave"],
   "Lilith": ["stairs","push"],
   "Lyric Lola": ["slowburn"]
 };
@@ -1121,6 +1135,11 @@ const PERSONAS = {
   "Madame Olenka": {d:"Poised and exacting. Counts every beat, asks for clean measured strokes with no fidgeting, and corrects every wobble.", low:20, pmin:50, pmax:70, bmin:20, bmax:40, hmin:5, hmax:10, rmin:8, rmax:14, fake:5, esc:0, stop:true},
   "Glitch": {d:"Hacker who narrates a breach. Stutters, drops out, flickers between speeds and vibrates when she bypasses your limits.", low:5, pmin:50, pmax:100, bmin:4, bmax:15, hmin:1, hmax:4, rmin:1, rmax:6, fake:45, esc:2, stop:true},
   "Nurse Ingrid": {d:"Calm, caring nurse. Checks in often, stops fully during rests, and stays gentle even while in control. Still firm about what you need.", low:10, pmin:40, pmax:60, bmin:40, bmax:80, hmin:6, hmax:12, rmin:12, rmax:25, fake:5, esc:0, stop:true},
+  "High-Energy Holly": {d:"Relentless 80s aerobics instructor. Counts every rep, shouts 'one more!', builds fast through the warmup and pushes hard through the burnout finish.", low:25, pmin:70, pmax:100, bmin:10, bmax:25, hmin:2, hmax:6, rmin:3, rmax:8, fake:15, esc:3, stop:false},
+  "Starlet Sloane": {d:"Old-Hollywood movie star. Dramatic pauses, slow reveals and a close-up on every hold. Takes her time and expects you to hold the scene.", low:10, pmin:45, pmax:80, bmin:30, bmax:60, hmin:6, hmax:14, rmin:10, rmax:20, fake:25, esc:5, stop:true},
+  "Office Olivia": {d:"Efficient office secretary. Keeps a tidy schedule, takes dictation, and works through the to-do list one neat item at a time. Stern about deadlines.", low:15, pmin:50, pmax:75, bmin:20, bmax:40, hmin:4, hmax:10, rmin:6, rmax:14, fake:10, esc:2, stop:true},
+  "Satin Sasha": {d:"Lingerie model. Poised, playful and camera-ready. Poses, teases with slow turns, and expects a compliment before she gives anything.", low:20, pmin:55, pmax:85, bmin:15, bmax:35, hmin:4, hmax:9, rmin:5, rmax:12, fake:20, esc:4, stop:false},
+  "Livestream Lexi": {d:"Chronically online streamer. Reads chat out loud, takes requests, reacts to every move, and promises a quick session that is never quick.", low:30, pmin:60, pmax:95, bmin:12, bmax:25, hmin:3, hmax:8, rmin:4, rmax:10, fake:30, esc:4, stop:false},
   "Lilith": {d:"Seductive succubus. Promises pleasure, then takes it away: slow curling waves, teasing fake-outs and dark whispers about what she'll take from you.", low:20, pmin:55, pmax:90, bmin:25, bmax:55, hmin:5, hmax:12, rmin:6, rmax:14, fake:35, esc:4, stop:false},
   "Lyric Lola": {d:"Fierce, playful freestyler. Drops beats, times every stroke to the rhythm, builds verses that snap into hard drops and hold on the chorus.", low:20, pmin:60, pmax:95, bmin:15, bmax:30, hmin:4, hmax:10, rmin:4, rmax:12, fake:20, esc:3, stop:false}
 };
@@ -1132,10 +1151,10 @@ function updateTimerPortrait(p){
   const b = $("tPort"); if (!b) return;
   b.dataset.p = p; b.hidden = true;
   const key = p && NAMEKEY[p]; if (!key) return;
-  findAvImg(key).then(u => {
-    if (!u || b.dataset.p !== p) return;
-    const im = new Image(); im.alt = ""; im.src = u; b.replaceChildren(im);
-    b.style.setProperty("--c", PCOL[p] || "#888"); b.onclick = () => openPortrait(p); b.hidden = false;
+  findAvImgs(key).then(list => {
+    if (!list.length || b.dataset.p !== p) return;
+    const im = new Image(); im.alt = ""; im.src = list[0]; b.replaceChildren(im);
+    b.style.setProperty("--c", PCOL[p] || "#888"); b.onclick = () => openPortrait(p, 0); b.hidden = false;
   });
 }
 function applyPersona(name, jitter){
@@ -1177,6 +1196,11 @@ const PCOL = {"Patient Priscilla":"#7a9e7e","Mischievous Mia":"#e0a43a","Strict 
   "Madame Olenka":"#b3577a",
   "Glitch":"#3ccf6e",
   "Nurse Ingrid":"#8fb3d9",
+  "High-Energy Holly":"#ff4fa3",
+  "Starlet Sloane":"#c9a227",
+  "Office Olivia":"#5b6f8a",
+  "Satin Sasha":"#e07a9c",
+  "Livestream Lexi":"#7c4dff",
   "Lilith":"#8b0a1a",
   "Lyric Lola":"#d81b60"
 };
@@ -1224,6 +1248,11 @@ const AVATAR = {
  "Madame Olenka":"f1c7a5|c9a16b|bun|sly|8a3b5c|none",
  "Glitch":"7fe6f0|3dff9a|spiky|visor|1d7f86|antenna",
  "Nurse Ingrid":"f6d5bd|c9a16b|bun|open|c7606a|nurse",
+ "High-Energy Holly":"e8b895|e0a43a|ponytail|wide|e0475a|headset",
+ "Starlet Sloane":"f6d5bd|c9a16b|bob|sly|b5474f|none",
+ "Office Olivia":"f1c7a5|6b3e26|bun|open|a0525a|glasses",
+ "Satin Sasha":"c98f6b|1d1d26|long|sly|e58fa8|bow",
+ "Livestream Lexi":"f6d5bd|7b5cff|long|wide|e58fa8|headset",
  "Lilith":"f1c7a5|1d1d26|long|sly|8c1d2b|horns",
   "Lyric Lola":"a56a46|1d1d26|ponytail|wide|8e2b4a|none"
 };
@@ -1304,6 +1333,11 @@ const PROFILE = {
  "Madame Olenka": {age: 54, loc: "Prague, Czechia", status: "Married", job: "Dressmaker and doll restorer", hobbies: ["Ballroom dancing", "Doll restoration", "Tea parties"], eth: "Czech", orient: "Straight", quirk: "Keeps a handwritten diary of every compliment she has given.", partner: "spouse"},
  "Glitch": {age: "Unknown (beta build)", loc: "Somewhere in the Wi-Fi", status: "It's complicated", job: "Unofficial stream co-host", hobbies: ["Corrupting playlists", "Speedruns", "Pixel art"], eth: "Undefined", orient: "Undefined", quirk: "Most of her glitches are on purpose."},
  "Nurse Ingrid": {age: 39, loc: "Tromsø, Norway", status: "Married", job: "ER nurse", hobbies: ["Cross-country skiing", "Knitting", "Northern lights photos"], eth: "Sámi Norwegian", orient: "Straight", quirk: "Can take your blood pressure while telling a joke.", partner: "spouse"},
+ "High-Energy Holly": {age: 58, loc: "Venice Beach, California", status: "Divorced", job: "Aerobics instructor (retired and back again)", hobbies: ["Step aerobics", "Smoothie bars", "Synth-pop"], eth: "Italian American", orient: "Straight", quirk: "Still counts reps in her sleep, out loud."},
+ "Starlet Sloane": {age: 49, loc: "Beverly Hills, California", status: "Single", job: "Film actress", hobbies: ["Old-film screenings", "Horse riding", "Ballroom dancing"], eth: "Swedish American", orient: "Bisexual", quirk: "Has a signed photo of herself on every wall, and a spare one in the bathroom."},
+ "Office Olivia": {age: 36, loc: "Chicago, Illinois", status: "Single", job: "Executive secretary", hobbies: ["Calligraphy", "Spreadsheet puzzles", "Early-morning yoga"], eth: "Polish American", orient: "Straight", quirk: "Colour-codes her calendar and has never missed a deadline."},
+ "Satin Sasha": {age: 26, loc: "Los Angeles, California", status: "Single", job: "Lingerie model", hobbies: ["Pilates", "Vintage cameras", "Dance classes"], eth: "Thai American", orient: "Pansexual", quirk: "Changes her nail colour to match whatever she's wearing."},
+ "Livestream Lexi": {age: 23, loc: "Dallas, Texas", status: "Single", job: "Full-time streamer", hobbies: ["Speedruns", "Cosplay", "Gaming marathons"], eth: "Vietnamese American", orient: "Bisexual", quirk: "Has a chat-only emote for every mood, and uses them all."},
  "Lilith": {age: "Ageless (says 33)", loc: "Hell's Kitchen, New York", status: "Single (by choice)", job: "Nightclub owner", hobbies: ["Candlelit dinners", "Dark jazz", "Rare wine"], eth: "Infernal (she insists)", orient: "Omnisexual (she insists)", quirk: "Her horns are mostly for show. Mostly."},
   "Lyric Lola": {age: 29, loc: "Atlanta, Georgia", status: "Single", job: "Rapper and producer", eth: "Black American", orient: "Bisexual", hobbies: ["Freestyle cyphers","Beat-making","Basketball"], quirk: "Writes a verse on every napkin she's handed."}
 };
@@ -1324,16 +1358,26 @@ document.addEventListener("mouseover", e => {
 });
 /* AI-made portraits: put a file in an "images" folder next to index.html, named by the persona's key (e.g. images/priscilla.png, images/lola.jpg).
    A persona with no file keeps the built-in drawn avatar. Files are looked up once and remembered. */
-const AV_EXTS = ["png", "jpg", "jpeg", "webp"], avImg = {}, avProbe = {};
+const AV_EXTS = ["png", "jpg", "jpeg", "webp"], avImg = {}, avProbe = {}, avList = {};
+/* Pictures per persona: images/<key>.png (or <key>1.png) is the first, then images/<key>2.png, <key>3.png and so on. */
 function setAvImg(el, url){ const im = new Image(); im.alt = ""; im.decoding = "async"; im.src = url; el.replaceChildren(im); }
-function findAvImg(key){
+function loadOk(u){ return new Promise(r => { const t = new Image(); t.onload = () => r(true); t.onerror = () => r(false); t.src = u; }); }
+async function probeBase(base){
+  for (const x of AV_EXTS){ const u = "images/" + base + "." + x; if (await loadOk(u)) return u; }
+  return null;
+}
+function findAvImgs(key){
   if (!avProbe[key]) avProbe[key] = (async () => {
-    for (const x of AV_EXTS){
-      const u = "images/" + key + "." + x;
-      const ok = await new Promise(r => { const t = new Image(); t.onload = () => r(true); t.onerror = () => r(false); t.src = u; });
-      if (ok){ avImg[key] = u; return u; }
+    const list = [];
+    for (let i = 1; i <= 20; i++){
+      const bases = i === 1 ? [key, key + "1"] : [key + i];
+      let found = null;
+      for (const b of bases){ found = await probeBase(b); if (found) break; }
+      if (!found) break;
+      list.push(found);
     }
-    avImg[key] = false; return null;
+    avList[key] = list; avImg[key] = list[0] || false;
+    return list;
   })();
   return avProbe[key];
 }
@@ -1342,7 +1386,7 @@ function fillAvatar(el, name){
   const key = NAMEKEY[name]; if (!key) return;
   if (avImg[key]){ setAvImg(el, avImg[key]); return; }
   if (avImg[key] === false) return;
-  findAvImg(key).then(u => { if (u) setAvImg(el, u); });
+  findAvImgs(key).then(list => { if (list[0]) setAvImg(el, list[0]); });
 }
 function avatarEl(name){
   const el = document.createElement("span"); el.className = "av"; fillAvatar(el, name); el.setAttribute("aria-hidden", "true"); el.dataset.persona = name;
@@ -1553,6 +1597,11 @@ const SHORT = {"Patient Priscilla":"Priscilla","Mischievous Mia":"Mia","Strict M
   "Madame Olenka":"Olenka",
   "Glitch":"Glitch",
   "Nurse Ingrid":"Ingrid",
+  "High-Energy Holly":"Holly",
+  "Starlet Sloane":"Sloane",
+  "Office Olivia":"Olivia",
+  "Satin Sasha":"Sasha",
+  "Livestream Lexi":"Lexi",
   "Lilith":"Lilith",
   "Lyric Lola":"Lola"
 };
@@ -1565,6 +1614,11 @@ const NAMEKEY = {"Patient Priscilla":"priscilla","Mischievous Mia":"mia","Strict
   "Madame Olenka":"olenka",
   "Glitch":"glitch",
   "Nurse Ingrid":"ingrid",
+  "High-Energy Holly":"holly",
+  "Starlet Sloane":"sloane",
+  "Office Olivia":"olivia",
+  "Satin Sasha":"sasha",
+  "Livestream Lexi":"lexi",
   "Lilith":"lilith",
   "Lyric Lola":"lola"
 };
@@ -1600,6 +1654,11 @@ const REACT = {
   "Madame Olenka": {excitedStay:1,jealousStay:3,askControl:3,jealousLeave:3,banter:2},
   "Glitch": {excitedStay:4,jealousStay:1,askControl:4,jealousLeave:1,banter:4},
   "Nurse Ingrid": {excitedStay:2,jealousStay:2,askControl:2,jealousLeave:2,banter:2},
+  "High-Energy Holly": {excitedStay:4,jealousStay:2,askControl:4,jealousLeave:1,banter:4},
+  "Starlet Sloane": {excitedStay:3,jealousStay:3,askControl:3,jealousLeave:3,banter:3},
+  "Office Olivia": {excitedStay:2,jealousStay:2,askControl:3,jealousLeave:3,banter:4},
+  "Satin Sasha": {excitedStay:4,jealousStay:3,askControl:2,jealousLeave:2,banter:3},
+  "Livestream Lexi": {excitedStay:5,jealousStay:3,askControl:4,jealousLeave:1,banter:5},
   "Lilith": {excitedStay:3,jealousStay:3,askControl:4,jealousLeave:2,banter:4},
   "Lyric Lola": {excitedStay:4,jealousStay:2,askControl:3,jealousLeave:1,banter:4}
 };
@@ -1753,7 +1812,7 @@ function leaveRoom(p, quiet, force){
 }
 /* Realism: the active persona can get bored or be pulled away, leaving the room empty until someone joins. */
 function ctlAway(){ return (running || (paused && emptyHalt)) && runTease && !!currentPersona && !room.includes(currentPersona); }
-const BORE_DEF = {"Patient Priscilla":1,"Sleepy Sadie":1,"Strict Ms. Vance":2,"Counting Camille":2,"Chaos Cassie":6,"Mischievous Mia":5,"Bratty Bella":5,"Relentless Roxy":4,
+const BORE_DEF = {"Livestream Lexi":3,"High-Energy Holly":2,"Starlet Sloane":2,"Office Olivia":1,"Satin Sasha":2,"Patient Priscilla":1,"Sleepy Sadie":1,"Strict Ms. Vance":2,"Counting Camille":2,"Chaos Cassie":6,"Mischievous Mia":5,"Bratty Bella":5,"Relentless Roxy":4,
   "Lyric Lola":4
 };
 const boreRate = p => { const e = document.getElementById("bore_" + NAMEKEY[p]); const v = e ? parseFloat(e.value) : NaN; return isNaN(v) ? (BORE_DEF[p] != null ? BORE_DEF[p] : 3) : Math.max(0, Math.min(100, v)); };
@@ -1881,34 +1940,53 @@ function openBlackbook(p){
   det.style.outline = "2px solid " + (PCOL[p] || "var(--accent)"); det.style.borderRadius = "8px";
   setTimeout(() => { det.style.outline = ""; }, 1400);
 }
-/* Portrait viewer: a larger view of a persona's AI-made image. Only shown when an image file exists for her. */
+/* Portrait viewer: a larger view of a persona's pictures. Arrows (or the left and right keys) move between them. */
 const pvEl = document.createElement("div"); pvEl.id = "portrait"; pvEl.hidden = true;
-pvEl.innerHTML = '<figure><img alt=""><figcaption></figcaption></figure><button type="button" class="pvClose" aria-label="Close portrait">✕</button>';
+pvEl.innerHTML = '<figure><img alt=""><figcaption></figcaption></figure><button type="button" class="pvNav pvPrev" aria-label="Previous picture">‹</button><button type="button" class="pvNav pvNext" aria-label="Next picture">›</button><button type="button" class="pvClose" aria-label="Close portrait">✕</button>';
 document.body.append(pvEl);
+let pvList = [], pvIdx = 0, pvPersona = "";
 function closePortrait(){ pvEl.hidden = true; }
-function openPortrait(p){
+function renderPortrait(){
+  const p = pvPersona, n = pvList.length;
+  pvEl.querySelector("img").src = pvList[pvIdx];
+  pvEl.querySelector("figcaption").textContent = SHORT[p] + (PROFILE[p] && PROFILE[p].job ? " · " + PROFILE[p].job : "") + (n > 1 ? " · " + (pvIdx + 1) + " / " + n : "");
+  pvEl.style.setProperty("--c", PCOL[p] || "#888");
+  pvEl.querySelectorAll(".pvNav").forEach(b => { b.hidden = n < 2; });
+}
+function stepPortrait(d){ if (pvList.length < 2) return; pvIdx = (pvIdx + d + pvList.length) % pvList.length; renderPortrait(); }
+function openPortrait(p, idx){
   const key = NAMEKEY[p]; if (!key) return;
-  findAvImg(key).then(u => {
-    if (!u) return;
-    pvEl.querySelector("img").src = u;
-    pvEl.querySelector("figcaption").textContent = SHORT[p] + (PROFILE[p] && PROFILE[p].job ? " · " + PROFILE[p].job : "");
-    pvEl.style.setProperty("--c", PCOL[p] || "#888");
-    pvEl.hidden = false;
+  findAvImgs(key).then(list => {
+    if (!list.length) return;
+    pvList = list; pvPersona = p; pvIdx = Math.min(idx || 0, list.length - 1);
+    renderPortrait(); pvEl.hidden = false;
     pvEl.querySelector(".pvClose").focus();
   });
 }
-pvEl.addEventListener("click", e => { if (e.target === pvEl || e.target.classList.contains("pvClose")) closePortrait(); });
-document.addEventListener("keydown", e => { if (e.key === "Escape" && !pvEl.hidden) closePortrait(); });
-/* the thumbnail in a blackbook entry: only appears when that persona has a portrait file */
+pvEl.addEventListener("click", e => {
+  const t = e.target;
+  if (t === pvEl || t.classList.contains("pvClose")) closePortrait();
+  else if (t.classList.contains("pvPrev")) stepPortrait(-1);
+  else if (t.classList.contains("pvNext")) stepPortrait(1);
+});
+/* capture phase, so Escape and the arrow keys only work on the viewer while it is open */
+document.addEventListener("keydown", e => {
+  if (pvEl.hidden) return;
+  if (e.key === "Escape"){ closePortrait(); e.stopPropagation(); }
+  else if (e.key === "ArrowLeft"){ stepPortrait(-1); e.stopPropagation(); }
+  else if (e.key === "ArrowRight"){ stepPortrait(1); e.stopPropagation(); }
+}, true);
+/* the thumbnail in a blackbook entry: only appears when that persona has a picture */
 function portraitBtn(p){
   const b = document.createElement("button"); b.type = "button"; b.className = "bbPort"; b.hidden = true;
-  b.title = "View portrait larger"; b.setAttribute("aria-label", "View " + SHORT[p] + "'s portrait larger");
+  b.setAttribute("aria-label", "View " + SHORT[p] + "'s pictures larger");
   b.style.setProperty("--c", PCOL[p] || "#888");
   const key = NAMEKEY[p];
-  if (key) findAvImg(key).then(u => {
-    if (!u) return;
-    const im = new Image(); im.alt = ""; im.src = u; b.replaceChildren(im);
-    b.hidden = false; b.onclick = e => { e.stopPropagation(); openPortrait(p); };
+  if (key) findAvImgs(key).then(list => {
+    if (!list.length) return;
+    const im = new Image(); im.alt = ""; im.src = list[0]; b.replaceChildren(im);
+    b.title = list.length > 1 ? list.length + " pictures, click to view" : "View portrait larger";
+    b.hidden = false; b.onclick = e => { e.stopPropagation(); openPortrait(p, 0); };
   });
   return b;
 }
@@ -2064,6 +2142,11 @@ const STUBBORN = {"Patient Priscilla":1.0,"Mischievous Mia":0.8,"Strict Ms. Vanc
   "Madame Olenka":1.4,
   "Glitch":0.7,
   "Nurse Ingrid":0.6,
+  "High-Energy Holly":1.2,
+  "Starlet Sloane":1.3,
+  "Office Olivia":1.5,
+  "Satin Sasha":1.0,
+  "Livestream Lexi":1.0,
   "Lilith":1.4,
   "Lyric Lola":1.1
 };
@@ -2159,6 +2242,11 @@ const NICKS = {"Patient Priscilla":["pet","darling","good boy"],"Mischievous Mia
   "Madame Olenka":["pupil","little swan","dancer"],
   "Glitch":["mark","node","user"],
   "Nurse Ingrid":["dear","patient","hon"],
+  "High-Energy Holly":["champ","sweetheart","gym buddy"],
+  "Starlet Sloane":["darling","sweetheart","dear"],
+  "Office Olivia":["dear","sweetie","pal"],
+  "Satin Sasha":["gorgeous","darling","sweetie"],
+  "Livestream Lexi":["bestie","chat","legend"],
   "Lilith":["mortal","sinner","sweet soul"],
   "Lyric Lola":["sweetness","mic check","baby girl"]
 };
@@ -2171,6 +2259,11 @@ const NICKRATE = {"Patient Priscilla":.35,"Mischievous Mia":.4,"Strict Ms. Vance
   "Madame Olenka":0.5,
   "Glitch":0.4,
   "Nurse Ingrid":0.4,
+  "High-Energy Holly":.4,
+  "Starlet Sloane":.35,
+  "Office Olivia":.3,
+  "Satin Sasha":.45,
+  "Livestream Lexi":.5,
   "Lilith":0.6,
   "Lyric Lola":0.5
 };const NICKCATS = ["greet","start","build","hold","holdMid","rest","restMid","fake","fakeAfter","warn","win","fail","chat","reply","please","close","demand","promise","watch","enjoy","lowSpeed","shortStroke","praise","nudge","fakeNote","hidden","lubeBreak","lubeWait","lubeResume","tempt"];
@@ -2324,6 +2417,11 @@ const YIELD_DEF = {"Patient Priscilla": 12, "Mischievous Mia": 8, "Strict Ms. Va
   "Madame Olenka": 3,
   "Glitch": 18,
   "Nurse Ingrid": 14,
+  "High-Energy Holly": 6,
+  "Starlet Sloane": 8,
+  "Office Olivia": 5,
+  "Satin Sasha": 9,
+  "Livestream Lexi": 7,
   "Lilith": 4,
   "Lyric Lola": 6
 };
@@ -2338,6 +2436,11 @@ const VIB_DEF = {"Patient Priscilla":[2,6], "Mischievous Mia":[6,6], "Strict Ms.
   "Madame Olenka":[2,6],
   "Glitch":[9,4],
   "Nurse Ingrid":[2,6],
+  "High-Energy Holly":[5,6],
+  "Starlet Sloane":[2,4],
+  "Office Olivia":[3,5],
+  "Satin Sasha":[4,7],
+  "Livestream Lexi":[5,7],
   "Lilith":[6,8],
   "Lyric Lola":[6,5]
 };
@@ -2359,7 +2462,7 @@ const tpVal = (p, f) => { const e = document.getElementById(tpId(p, f)); const v
 const tpStop = p => { const e = document.getElementById(tpId(p, "stop")); return e ? e.checked : PERSONAS[p].stop; };
 function personaCfg(p){ const o = {d: PERSONAS[p].d, stop: tpStop(p)}; TP.forEach(([f]) => o[f] = tpVal(p, f)); return o; }
 /* default chance (%) that each persona accepts an invite */
-const INV_DEF = {"Chaos Cassie":70,"Bratty Bella":65,"Relentless Roxy":60,"Mischievous Mia":60,"Flirty Fiona":60,"Sweet-Talker Sienna":55,"Patient Priscilla":50,"Lilith":50,"Glitch":45,"Sleepy Sadie":25,"Strict Ms. Vance":30,"Queen Valentina":30,"Doctor Delphine":35,"Captain Sable":35,"Drill Sergeant Dana":35,"Unit Nine":20,
+const INV_DEF = {"Livestream Lexi":65,"High-Energy Holly":55,"Starlet Sloane":40,"Office Olivia":35,"Satin Sasha":50,"Chaos Cassie":70,"Bratty Bella":65,"Relentless Roxy":60,"Mischievous Mia":60,"Flirty Fiona":60,"Sweet-Talker Sienna":55,"Patient Priscilla":50,"Lilith":50,"Glitch":45,"Sleepy Sadie":25,"Strict Ms. Vance":30,"Queen Valentina":30,"Doctor Delphine":35,"Captain Sable":35,"Drill Sergeant Dana":35,"Unit Nine":20,
   "Lyric Lola":55
 };
 (function(){
@@ -2482,6 +2585,11 @@ LINES["Madame Olenka"] = PERSONA_LINES["Madame Olenka"];
 LINES["Glitch"] = PERSONA_LINES["Glitch"];
 LINES["Nurse Ingrid"] = PERSONA_LINES["Nurse Ingrid"];
 LINES["Lilith"] = PERSONA_LINES["Lilith"];
+LINES["High-Energy Holly"] = PERSONA_LINES["High-Energy Holly"];
+LINES["Starlet Sloane"] = PERSONA_LINES["Starlet Sloane"];
+LINES["Office Olivia"] = PERSONA_LINES["Office Olivia"];
+LINES["Satin Sasha"] = PERSONA_LINES["Satin Sasha"];
+LINES["Livestream Lexi"] = PERSONA_LINES["Livestream Lexi"];
 LINES["Flirty Fiona"] = PERSONA_LINES["Flirty Fiona"];
 LINES["Stage-Manager Simone"] = PERSONA_LINES["Stage-Manager Simone"];
 
@@ -2501,6 +2609,11 @@ const TARGETS = {"Patient Priscilla":{speed:60,len:80},"Mischievous Mia":{speed:
   "Madame Olenka":{speed:60,len:95},
   "Glitch":{chaos:true},
   "Nurse Ingrid":{speed:50,len:75},
+  "High-Energy Holly":{speed:75,len:90},
+  "Starlet Sloane":{speed:50,len:85},
+  "Office Olivia":{speed:55,len:75},
+  "Satin Sasha":{speed:65,len:85},
+  "Livestream Lexi":{speed:70,len:90},
   "Lilith":{speed:70,len:90},
   "Lyric Lola":{speed:80,len:90}
 };
@@ -2513,10 +2626,15 @@ const MERCY = {"Patient Priscilla":.8,"Mischievous Mia":.3,"Strict Ms. Vance":.2
   "Madame Olenka":0.2,
   "Glitch":0.4,
   "Nurse Ingrid":0.95,
+  "High-Energy Holly":.25,
+  "Starlet Sloane":.5,
+  "Office Olivia":.5,
+  "Satin Sasha":.4,
+  "Livestream Lexi":.3,
   "Lilith":0.25,
   "Lyric Lola":0.35
 };
-const MOODSETS = {gentle:["Patient Priscilla","Sweet-Talker Sienna","Sleepy Sadie","Hypnotic Helena","Pouty Penelope","Flirty Fiona","Chef Gianna","Nurse Ingrid"], strict:["Strict Ms. Vance","Relentless Roxy","Drill Sergeant Dana","Counting Camille","Goddess Isadora","Coach Colleen","Queen Valentina","Inspector Vale","Unit Nine","Madame Olenka"], mean:["Mischievous Mia","Mocking Margot","Chaos Cassie","Cuckolding Veronica","Bratty Bella","Captain Sable","Glitch","Lilith"], any:ALL};
+const MOODSETS = {gentle:["Patient Priscilla","Sweet-Talker Sienna","Sleepy Sadie","Hypnotic Helena","Pouty Penelope","Flirty Fiona","Chef Gianna","Nurse Ingrid"], strict:["Strict Ms. Vance","High-Energy Holly","Office Olivia","Relentless Roxy","Drill Sergeant Dana","Counting Camille","Goddess Isadora","Coach Colleen","Queen Valentina","Inspector Vale","Unit Nine","Madame Olenka"], mean:["Mischievous Mia","Livestream Lexi","Starlet Sloane","Satin Sasha","Mocking Margot","Chaos Cassie","Cuckolding Veronica","Bratty Bella","Captain Sable","Glitch","Lilith"], any:ALL};
 const QDEFS = {
   feel: {cat:"askFeel", opts:[{label:"Give me more",kind:"more"},{label:"I'm doing fine",kind:"fine"},{label:"It's a lot",kind:"lot"},{label:"I'm close",kind:"close"}]},
   next: {cat:"askNext", opts:[{label:"Tease me",kind:"tease"},{label:"Hold me there",kind:"hold"},{label:"Give me a rest",kind:"rest"},{label:"Surprise me",kind:"surprise"}]},
@@ -2607,6 +2725,11 @@ const TOL = {"Patient Priscilla": 5, "Mischievous Mia": 3, "Strict Ms. Vance": 2
   "Madame Olenka": 2,
   "Glitch": 4,
   "Nurse Ingrid": 6,
+  "High-Energy Holly": 3,
+  "Starlet Sloane": 4,
+  "Office Olivia": 4,
+  "Satin Sasha": 3,
+  "Livestream Lexi": 3,
   "Lilith": 3,
   "Lyric Lola": 3
 };
