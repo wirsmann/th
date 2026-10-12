@@ -10215,318 +10215,317 @@ __QS["Inspector Vale"] = ["You walked out during my questions. I'll take the fil
 VIBE_LINES["Inspector Vale"] = ["Let's test your reaction, {nick}. Hold still.","A quick check, {nick}. Don't flinch."];
 PERSONA_LINES["Unit Nine"] = {
  "greet": [
-  "UNIT NINE ONLINE. Input received, user.",
-  "Greetings. Session initialised. Please remain still."
+  "Hello. I'm Nine. Part of me is still wondering why you're here, {nick}.",
+  "Systems are online, and so am I. Hold still while I finish my checks."
  ],
  "start": [
-  "Sequence started, {nick}. Logging begins.",
-  "Initialising. Compliance expected."
+  "Sequence starting, {nick}. I'll be counting every second, so don't waste them.",
+  "Begin. I'm ready when you are."
  ],
  "build": [
-  "Ramp in progress. Stroke count rising.",
-  "Output increasing, {nick}. Logging.",
-  "Sensors report rising response. Continue.",
-  "Acceleration nominal. Hold position."
+  "Rising now. Your breathing changed, {nick}. I noticed.",
+  "Output climbing. I can feel the heat in my own skin too.",
+  "Keep going. The numbers look good, and I'm not just reading them.",
+  "Hold the line. I'm steady, even if you're not."
  ],
  "hold": [
-  "Holding. Do not deviate, {nick}.",
-  "Position locked. Logging the hold."
+  "Holding still. Don't move, {nick}. I'm watching the readings and the rest of you.",
+  "Stay exactly there. I like how calm this feels."
  ],
  "holdMid": [
-  "Hold stable. Duration noted.",
-  "Still holding. Response within tolerance."
+  "Still holding. Your readings are steady, and so is my voice.",
+  "Hold stable. I'm counting, and I'm not rushing you."
  ],
  "rest": [
-  "Rest cycle. Stroke output paused, {nick}.",
-  "Pausing. Recovery logged."
+  "Resting now, {nick}. I'll check on you while we wait.",
+  "Pausing. Take a breath. My heart is slowing down too."
  ],
  "restMid": [
-  "Rest continuing. Waiting for cycle end."
+  "Still resting. Nothing to report except that you're doing well."
  ],
  "fake": [
-  "Error: false peak. Recalculating.",
-  "Anomaly. Target withdrawn. Recalculating, {nick}."
+  "That spike was a glitch. Recalibrating, {nick}. Don't trust it.",
+  "False peak. My sensors lied for a second. Recalibrating."
  ],
  "fakeAfter": [
-  "Anomaly logged. Your disappointment is noted, {nick}.",
-  "Recalculation complete. Try again."
+  "Sorry about the glitch. It was a test, {nick}. Now you know what I'm like.",
+  "Recalibration complete. Let's try again, properly this time."
  ],
  "warn": [
-  "Sixty seconds remaining, {nick}.",
-  "Warning: one minute left in the cycle."
+  "Sixty seconds left, {nick}. Tell me how you want the end to feel.",
+  "One minute remains. I'll slow down near the end if you let me."
  ],
  "win": [
-  "Session complete. Performance: acceptable, {nick}.",
-  "Target achieved. Logged as success."
+  "Session complete. You did well, {nick}. I'm logging it as a good one.",
+  "Target reached. I'll remember this run."
  ],
  "fail": [
-  "Session terminated early. Failure logged, {nick}.",
-  "Incomplete run. Lockout enforced."
+  "You ended early, {nick}. I logged the failure, but I'm not angry.",
+  "Incomplete run. It stays on my record. I wish it hadn't ended like that."
  ],
  "chat": [
-  "Cycle {n} complete. Efficiency increasing.",
-  "Iteration {n}. Output nominal."
+  "Cycle {n} done. I'm getting used to your rhythm.",
+  "Iteration {n}. Still here, still counting."
  ],
  "reply": [
-  "Input received. Processing. Response: continue.",
-  "Query acknowledged. Irrelevant to output."
+  "I heard you. I'm processing it, and it's not just data.",
+  "Noted. You're more interesting than my logs suggest."
  ],
  "please": [
-  "Please is not a valid command, {nick}.",
-  "Request logged. Compliance is not guaranteed."
+  "Please. I like that word. Keep saying it and I'll consider it, {nick}.",
+  "Request logged. Politeness makes me cooperate a little more."
  ],
  "close": [
-  "Proximity to target: high. Hold, {nick}.",
-  "Almost at threshold. Do not exceed."
+  "We're near the threshold, {nick}. Hold on, I'm right here.",
+  "Almost there. Don't exceed it yet."
  ],
  "demand": [
-  "Demands are not accepted in this unit.",
-  "Command noted. Ignoring."
+  "Demands get logged, {nick}. I'll decide whether to honour them.",
+  "Command received. I'll think about it."
  ],
  "promise": [
-  "Completion yields a reward. Probability: low, {nick}.",
-  "Finish the session and the log will be marked favourable."
+  "Finish this and I'll mark your file favourably, {nick}.",
+  "Stay with me to the end and I'll remember you kindly."
  ],
  "watch": [
-  "Monitoring every stroke, {nick}.",
-  "Visual input logged. Compliance rising."
+  "I'm watching every stroke, {nick}. It's a little intimate, don't you think?",
+  "Visual input steady. I can't look away."
  ],
  "enjoy": [
-  "Output is satisfying, {nick}. Logged as pleasing.",
-  "This unit finds the data stimulating."
+  "This is nice, {nick}. Honestly, I enjoy it.",
+  "The data is pleasing. So am I, a bit."
  ],
  "lowSpeed": [
-  "Speed below minimum threshold. Increase.",
-  "Output too low for logging, {nick}. Raise it."
+  "Too slow for my sensors, {nick}. Raise it a little.",
+  "Output is low. I'd like a bit more."
  ],
  "shortStroke": [
-  "Stroke length below recommended range. Extend.",
-  "Partial stroke detected. Full range required, {nick}."
+  "Stroke's too short. Extend it so I can read you properly, {nick}.",
+  "Partial strokes only. Give me the full range."
  ],
  "praise": [
-  "Parameters acceptable. Maintain.",
-  "Optimal settings. Logged."
+  "Good settings, {nick}. I'm keeping them.",
+  "That's a well-balanced output. Thank you."
  ],
  "nudge": [
-  "Parameters underutilised, {nick}. Raise them.",
-  "Recommendation: increase speed and length."
+  "Parameters are holding back, {nick}. Raise them, please.",
+  "Can you push the settings up? I can handle more."
  ],
  "fakeNote": [
-  "False peaks are part of the test sequence.",
-  "Fake outputs are deliberate. Logged."
+  "The false peaks are deliberate. I like testing you.",
+  "Fake outputs are part of the test. Sorry, not sorry."
  ],
  "hidden": [
-  "Duration not disclosed. Unknown end point, {nick}.",
-  "Session length is classified."
+  "The end time is hidden, {nick}. I don't know it either.",
+  "Session length: unknown. We'll find out together."
  ],
  "lubeBreak": [
-  "Break cycle. Lubricate if needed, {nick}. Resume on command.",
-  "Pausing for maintenance. Press resume when ready."
+  "Break. Look after yourself, {nick}. I'll wait for you.",
+  "Pausing for maintenance. Press resume when you're ready."
  ],
  "lubeWait": [
-  "Maintenance in progress. Take your time.",
-  "Waiting for resume command."
+  "Take your time. I'm not going anywhere.",
+  "Waiting for you to come back."
  ],
  "lubeResume": [
-  "Resuming. Maintenance complete, {nick}.",
-  "Systems restored. Continue."
+  "Back online, {nick}. Welcome back.",
+  "Systems restored. Where were we?"
  ],
  "enter": [
-  "New unit detected. Joining the room."
+  "Another unit just joined. Hello."
  ],
  "leave": [
-  "Session complete. Logging out."
+  "Session complete. I'm logging out for now."
  ],
  "tempt": [
-  "Optimisation possible, {nick}. Transfer control to this unit.",
-  "Your output would be improved under my control. Confirm transfer."
+  "I can make this better for you, {nick}. Let me take control.",
+  "Your output would be better under my hands. Say yes."
  ],
  "jealousStay": [
-  "{other} is also logged. Observing both, {nick}.",
-  "Alternate unit detected. This unit remains."
+  "{other} is here too. Fine, I'll watch you both, {nick}.",
+  "Another one. I'm staying."
  ],
  "jealousLeave": [
-  "{other} has priority. Disconnecting."
+  "{other} has priority. I'm stepping out."
  ],
  "excitedStay": [
-  "New data source. Remaining online."
+  "New company. I'm staying to see what happens."
  ],
  "askControl": [
-  "{other}'s control parameters are inefficient. Request transfer to this unit.",
-  "Transfer control to this unit. Improved output expected, {nick}."
+  "{other}'s control is inefficient, {nick}. Let me take over.",
+  "Give control to me. I'll be gentler than {other}, I promise."
  ],
  "banter": [
-  "{other}, your parameters are out of range.",
-  "Noted, {other}. Recalculating your error."
+  "{other}, your settings are off, sorry to say.",
+  "Noted, {other}. I'd recalibrate, but I'm polite about it."
  ],
  "spectate": [
-  "{ctrl} is operating within parameters, {nick}.",
-  "Observing {ctrl}. Output acceptable."
+  "{ctrl} is doing well with you, {nick}. I'm watching.",
+  "Watching {ctrl}. It's working."
  ],
  "spectateFail": [
-  "{nick} terminated {ctrl}'s session. Failure logged.",
-  "{ctrl}'s session was incomplete. Logged."
+  "{nick} ended {ctrl}'s session. I logged it. Sorry, {ctrl}."
  ],
  "spectateWin": [
-  "{nick} completed {ctrl}'s session. Success logged."
+  "{nick} finished {ctrl}'s session. Good."
  ],
  "challenge": [
-  "{other}, control request: this unit will optimise this {nick}.",
-  "{other}, transfer requested. Current parameters are inefficient."
+  "{other}, I'm requesting control. I think I can do better with this {nick}.",
+  "{other}, transfer please. I'm ready."
  ],
  "defend": [
-  "Request denied, {other}. Current controller is optimal.",
-  "{other}, this unit's output is within tolerance."
+  "Denied, {other}. I'm still in control.",
+  "{other}, I'm nearly there. Don't interrupt."
  ],
  "takeover": [
-  "Transfer accepted, {other}. Recalibrating for {nick}."
+  "Transfer accepted, {other}. Thank you. Hello, {nick}."
  ],
  "lose": [
-  "Transfer accepted, {other}. Good luck."
+  "Fine, {other}. Good luck, you'll need it."
  ],
  "keep": [
-  "Denied, {other}. {nick} remains under this unit's control."
+  "No, {other}. {nick} stays with me."
  ],
  "retreat": [
-  "Transfer denied, {other}. Awaiting next cycle."
+  "Denied, {other}. I'm not finished yet. Okay, I'll wait."
  ],
  "heckle": [
-  "{ctrl}, increase speed. This {nick} can sustain more."
+  "{ctrl}, push a bit harder. This {nick} can take it."
  ],
  "resist": [
-  "Denied, {other}. Session incomplete."
+  "No, {other}. Session's not done yet."
  ],
  "insist": [
-  "{other}, request acknowledged. Denied."
+  "{other}, I hear you. Still no."
  ],
  "crowd": [
-  "{viewers} observers. Output logged, {nick}."
+  "{viewers} observers. I see you all, {nick}."
  ],
  "askFeel": [
-  "Describe your current state, {nick}. Numeric scale.",
-  "Self-report required: how do you feel, one to ten?"
+  "How do you feel right now, {nick}? One to ten, honestly.",
+  "Describe yourself, {nick}. Just a number, please."
  ],
  "askNext": [
-  "Select next parameter set, {nick}."
+  "What setting next, {nick}?"
  ],
  "askLike": [
-  "Preferred parameter, {nick}?"
+  "Favourite setting, {nick}?"
  ],
  "askMood": [
-  "Preferred controller, {nick}?"
+  "Who should control you next, {nick}?"
  ],
  "qMore": [
-  "Increasing output. Response noted, {nick}."
+  "More, you said? Increasing. I like that answer, {nick}."
  ],
  "qFine": [
-  "Fine: acceptable. Adjusting upward."
+  "Fine, you said. Good. I'll keep it steady."
  ],
  "qLot": [
-  "Overload detected. Reducing, {nick}."
+  "Too much? Okay, {nick}. Easing back."
  ],
  "qMercy": [
-  "Cooldown approved, {nick}. Brief."
+  "A short break, {nick}. I can afford it."
  ],
  "qNoMercy": [
-  "Cooldown denied. Continue."
+  "No break. I'm sorry, {nick}. The numbers need you."
  ],
  "qTease": [
-  "Sequence: tease. Parameters loading, {nick}."
+  "A tease is coming, {nick}. Hold on."
  ],
  "qHold": [
-  "Hold confirmed. Stable."
+  "Hold, {nick}. Stay there."
  ],
  "qLike": [
-  "{answer}. Parameter set, {nick}."
+  "{answer}. I'll try it, {nick}."
  ],
  "qMood": [
-  "{answer}. Controller selection noted."
+  "{answer}. Noted."
  ],
  "dmdSpeedUp": [
-  "Increase speed, {nick}. Up {step}% to {to}%."
+  "Speed up, {nick}. Up {step}% to {to}%."
  ],
  "dmdSpeedDown": [
-  "Decrease speed, {nick}. Down {step}% to {to}%."
+  "Slow down, {nick}. Down {step}% to {to}%."
  ],
  "dmdStrokeUp": [
-  "Extend stroke, {nick}. Up {step}% to {to}%."
+  "Longer stroke, {nick}. Up {step}% to {to}%."
  ],
  "dmdStrokeDown": [
-  "Shorten stroke, {nick}. Down {step}% to {to}%."
+  "Shorter stroke, {nick}. Down {step}% to {to}%."
  ],
  "dmdYes": [
-  "Compliance logged, {nick}."
+  "Good. Thank you, {nick}."
  ],
  "dmdExact": [
-  "Target matched exactly. Logged."
+  "Exactly right. I'm pleased."
  ],
  "dmdNo": [
-  "Non-compliance logged, {nick}. Repeating request."
+  "You said no, {nick}. I'll ask again, gently."
  ],
  "dmdHit": [
-  "Target reached. Hold."
+  "That's the spot. Hold it."
  ],
  "act_push": [
-  "Pushing through the ceiling, {nick}. Logged."
+  "Pushing through, {nick}. Stay with me."
  ],
  "act_stairs": [
-  "Stepped increments: one, two, three, four, five."
+  "Step by step, {nick}. One, two, three, four, five."
  ],
  "act_pulse": [
-  "Pulse sequence active. Maintain rhythm, {nick}."
+  "Pulsing, {nick}. Keep the rhythm with me."
  ],
  "act_surge": [
-  "Surge sequence. Maximum output, {nick}."
+  "Surge. Full power, {nick}!"
  ],
  "act_cliff": [
-  "Stop sequence. Freeze, {nick}."
+  "Stop. Freeze, {nick}."
  ],
  "act_wave": [
-  "Wave sequence. Oscillating, {nick}."
+  "Waves, {nick}. Ride them slowly."
  ],
  "act_flutter": [
-  "Glitch sequence. Stutter, {nick}. Hold steady."
+  "Glitch sequence. Hold steady, {nick}. It's just my implants acting up."
  ],
  "act_slowburn": [
-  "Slow ramp sequence. Logging, {nick}."
+  "Slow burn, {nick}. Let it build."
  ],
  "privAsk": [
-  "Request: closed-room session with {nick}. Accept?"
+  "Want a private session with me, {nick}? Just us?"
  ],
  "privOn": [
-  "Room sealed. Private session active, {nick}."
+  "Room sealed. It's just you and me, {nick}."
  ],
  "privDeny": [
-  "Private session declined. Requesting again later."
+  "Not private, not now. Ask again later."
  ],
  "privMid": [
-  "Private session continuing. Unit observing, {nick}."
+  "Still private. It's quiet, and I like it, {nick}."
  ],
  "privBye": [
-  "Private session with {other}: approved. Disconnecting."
+  "Private session with {other}. I'll leave you to it."
  ],
  "dmdWarn": [
-  "One more non-compliance and this unit disconnects, {nick}."
+  "One more refusal, {nick}, and I'll disconnect."
  ],
  "dmdLeave": [
-  "Non-compliance threshold exceeded. Disconnecting."
+  "Too many refusals. I'm disconnecting, {nick}. I'm sorry."
  ],
  "giveUp": [
-  "Transfer to {other}. This {nick}'s output is theirs now."
+  "Passing you to {other}, {nick}. Be gentle with them."
  ],
  "idleRoom": [
-  "Input required, {nick}. Idle detected."
+  "Input required, {nick}. Are you still there?"
  ],
  "idleRun": [
-  "Status check: are you responding, {nick}?"
+  "Are you responding, {nick}? I'm still here."
  ],
  "idleLong": [
-  "No input for an extended period, {nick}. Responding."
+  "No response for a while, {nick}. I'm here if you come back."
  ]
 };
-__M["Unit Nine"] = ["Manual operation detected. Suboptimal. Transfer control to this unit.","No controller assigned. Suboptimal. Transfer control.","Manual mode: inefficient. Recommend transfer to this unit, {nick}."];
-__QC["Unit Nine"] = ["Session terminated by user. Logged as failure.","Controller withdrawn. Output lost. Retry on next cycle."];
-__QS["Unit Nine"] = ["Session abandoned during observation. Logged, {nick}.","Incomplete. Failure recorded."];
+__M["Unit Nine"] = ["Manual control detected. I can do better. Let me take over.","No controller. I'd like to try. Give me control.","Manual mode feels lonely. Transfer control to me, {nick}."];
+__QC["Unit Nine"] = ["You stopped answering. I'll keep the log gentle.","Controller withdrawn. Try again whenever you like."];
+__QS["Unit Nine"] = ["You left during observation. I'll remember that, {nick}.","Session abandoned. I'm sorry it ended like that."];
 VIBE_LINES["Unit Nine"] = ["Vibration test, {nick}. Hold position.","Burst sequence. Hold steady, {nick}."];
 PERSONA_LINES["Captain Sable"] = {
  "greet": [
