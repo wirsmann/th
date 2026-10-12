@@ -1392,6 +1392,13 @@ function simUserPick(o){
     if (!offers.includes(o) || !running) return;
     const ch = o.choices || []; if (!ch.length) return;
     if (ch.length === 1){ removeOffer(o.id); if (ch[0].apply) ch[0].apply(); return; }
+    if (o.id === "ch" || (o.id || "").indexOf("give:") === 0){   // control requests always get an answer: she grants most, denies some
+      const r2 = Math.random(), grant = ch.find(c => c.kind === "primary"), deny = ch.find(c => c.kind === "danger" && /^Deny$/.test(c.label)) || ch.find(c => c.kind === "danger");
+      const denyAll = ch.find(c => /^Deny all/.test(c.label));
+      const answer = o.id === "ch" ? (r2 < 0.6 ? grant : r2 < 0.9 ? deny : (denyAll || deny)) : grant;
+      removeOffer(o.id); if (answer && answer.apply) answer.apply();
+      return;
+    }
     const r = Math.random();
     const pos = ch.find(c => (c.kind || "primary") === "primary");
     const neg = ch.find(c => c.kind === "danger" || /^(Deny|Not now)/.test(c.label));
