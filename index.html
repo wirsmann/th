@@ -347,6 +347,9 @@
     <div class="row">
       <div><label for="failLock">Lockout after a failed tease session (min, 0 = same as cooldown)</label><input id="failLock" type="number" min="0" max="999" value="0"></div>
     </div>
+    <div class="row">
+      <div><label for="winLevel">Win the tease session when the room reaches this level (0 = off)</label><input id="winLevel" type="number" min="0" max="99" value="0"></div>
+    </div>
     <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:10px"><input type="checkbox" id="failCharge"> Failed tease sessions use up their full planned time from the daily limit</label>
     <p class="hint">While a cooldown or the daily limit is active, Start is disabled and the limit boxes are locked. By default a failed session only counts the time you actually ran, plus the lockout. This lives in your browser, so clearing site data or using another browser bypasses it.</p>
   </section>
@@ -395,7 +398,7 @@ mkFields("teaseFields", TEASE); mkFields("customFields", CUSTOM);
 // these live in other panels: random length under Session, persona behaviour under Personas
 ["rMin","rMax"].forEach(id => $("sessRandFields").append($(id).parentElement));
 ["privMin","lifeRate"].forEach(id => $("persFields").append($(id).parentElement));
-const FIELDS = ["vibWidth","speed","smin","smax","min","sec","ramp","slow","pattern","period","daily","cool","failLock","aimCtl","lubeEvery","lubeGap","lubePark"].concat(TEASE.map(t=>t[0]), CUSTOM.map(c=>c[0]));
+const FIELDS = ["winLevel","vibWidth","speed","smin","smax","min","sec","ramp","slow","pattern","period","daily","cool","failLock","aimCtl","lubeEvery","lubeGap","lubePark"].concat(TEASE.map(t=>t[0]), CUSTOM.map(c=>c[0]));
 FIELDS.forEach(id => { const v = store.get("h_"+id, null); if (v !== null) $(id).value = v; });
 const BOOLS = {beepEnd:true, beepWarn:true, awake:true, teaseOn:false, tStop:true, hideClock:false, tRandom:false, failCharge:false, lubeOn:true, lubeReg:true, fansOn:true, crowdBoost:true, interactOn:true, stormOn:true, privOn:true, simOn:false, vibOn:true};
 Object.keys(BOOLS).forEach(id => { $(id).checked = store.get("h_"+id, BOOLS[id]); $(id).onchange = () => store.set("h_"+id, $(id).checked); });
@@ -927,7 +930,7 @@ async function start(){
     await api("PUT", "/hamp/velocity", {velocity: lastVel});
     await api("PUT", "/hamp/start");
   } catch(e){ setButtons(); return status(e.message, true); }
-  total = ms; endAt = Date.now() + ms; running = true; paused = false; warned = false; runTease = $("teaseOn").checked; runHidden = runTease && $("tRandom").checked;
+  total = ms; endAt = Date.now() + ms; running = true; paused = false; warned = false; winArmed = winGoal() > 0 && level() < winGoal(); runTease = $("teaseOn").checked; runHidden = runTease && $("tRandom").checked;
   setButtons(); lockScreen();
   status((runSim ? "Simulation: " : "") + (capped ? "Running. Shortened to " + (runHidden ? "fit" : fmt(ms) + " to fit") + " your daily limit." : "Running.") + (runHidden ? " The end time is hidden." : "") + (runTease ? " Stopping or pausing now counts as failing this session." : ""));
   nextChatAt = Date.now() + 20000 + Math.random() * 20000;
@@ -963,6 +966,7 @@ function update(){
 }
 
 async function finish(msg, timeUp, failed){
+  if (failed){ dip = Math.min(45, dip + 30); momentum = Math.max(0, momentum - 20); excite = 0; }   // fails hit the room hard
   if (!running && !paused) return;
   const wasRunning = running;
   holdStatusUntil = Date.now() + 6000;
@@ -1547,10 +1551,19 @@ const FANNAMES = ["moonlitmoth","pixelpanda","cozycrow","nightowl88","velvetfox"
 /* the crowd is measured in people, 0 to 1000: green is cool, around 500 is hot */
 const TIERS = [[0,"Quiet"],[30,"Warming up"],[100,"Buzzing"],[200,"Busy"],[350,"Packed"],[500,"Hot"],[750,"Legendary"]], CROWD_MAX = 1000;
 const tierOf = n => TIERS.filter(x => n >= x[0]).length - 1;
+let dip = 0;        // a failed session knocks the room down; fades over about 30 seconds
 let momentum = 0;   // sustained crowd energy from demands, questions and big moments; fades slowly
 function bump(exc, mom){ excite = Math.min(60, excite + exc); momentum = Math.min(40, momentum + mom); }
 let fans = [], excite = 0, pop = 0, fame = store.get("handyFame", 0), peakFans = store.get("handyPeak", 0), lastTier = 0, nextCrowdAt = Date.now() + 60000, tickN = 0;
 const FAME_PER_LEVEL = 60;
+const winGoal = () => Math.max(0, Math.round(+$("winLevel").value || 0));
+let winArmed = false;   // only a goal the room has to reach during this session counts
+function checkWin(){
+  if (!running || !runTease || !winArmed || !winGoal() || level() < winGoal()) return;
+  winArmed = false;
+  if (currentPersona) bbAdd(currentPersona, "wins");   // the active persona gets the win in her blackbook
+  finish("Room reached level " + level() + ". You won the session.", true, false);
+}
 function level(){ return 1 + Math.floor(fame / FAME_PER_LEVEL); }
 function aggr(){ if (privateShow) return 2.2; return $("fansOn").checked ? 1 + Math.min(1.5, fans.length / 300) : 1; }
 function crowdLevel(){ if (privateShow) return 0.9; return ($("crowdBoost").checked && $("fansOn").checked) ? Math.min(1, (aggr() - 1) / 1.5) : 0; }
@@ -1558,7 +1571,7 @@ function renderCrowd(){
   const t = TIERS[tierOf(fans.length)][1];
   $("roomCount").textContent = privateShow ? "🔒 Private show with " + SHORT[privateShow.p] + " · room locked" : room.length + " in the room · " + fans.length + " watching";
   $("hypeBar").style.width = (100 - Math.max(2, Math.min(100, fans.length / CROWD_MAX * 100))) + "%";
-  $("hypeLbl").textContent = t + " · Lv " + level();
+  $("hypeLbl").textContent = t + " · Lv " + level() + (winGoal() && level() < winGoal() ? " / " + winGoal() : "");
   $("hypeLbl").title = "Fame " + Math.round(fame) + " · " + Math.ceil(FAME_PER_LEVEL - (fame % FAME_PER_LEVEL)) + " to the next level. Fame only grows while a session is running.";
 }
 function addFan(fav){
@@ -1598,7 +1611,11 @@ function crowdTick(){
   excite *= 0.97;
   const base = (running ? 28 : 0) + (running && runTease ? 8 : 0) + room.length * 5 + (paused && !onBreak ? 4 : 0);
   momentum *= 0.9923;   // about a 90 second half-life at the 1 s tick
-  const hype = Math.max(0, Math.min(100, base + Math.min(30, momentum) + excite));
+  dip *= 0.977;         // about a 30 second half-life at the 1 s tick
+  /* Strong settings excite the room, gentle ones calm it: speed (50 is neutral) and stroke range (60 is neutral). */
+  const setAdj = running ? clamp(10 * (+$("speed").value - 50) / 50 + 6 * (+$("smax").value - +$("smin").value - 60) / 40, -14, 14) : 0;
+  const lubeAdj = onBreak ? -4 : 0;   // a lube break cools the room a little
+  const hype = Math.max(0, Math.min(100, base + Math.min(30, momentum) + excite + setAdj + lubeAdj - dip));
   pop += (hype - pop) * (hype > pop ? 0.011 : 0.02);
   if (running) fame += pop / 100 * 0.6;
   const baseline = room.length ? Math.min(12, Math.floor((level() - 1) / 25) * 2) : 0;
@@ -1619,7 +1636,7 @@ function crowdTick(){
 /* Blackbook: per-persona stats for the friends list, kept in localStorage */
 let bb = store.get("handyBlackbook", {});
 const joinedAt = {};
-const BB_KEYS = ["inv", "acc", "dec", "busy", "off", "noR", "full", "joins", "ctrl", "sess", "fails", "mins", "seen", "hang", "handed", "takeovers"];
+const BB_KEYS = ["inv", "acc", "dec", "busy", "off", "noR", "full", "joins", "ctrl", "sess", "fails", "mins", "seen", "hang", "handed", "takeovers", "wins"];
 const bbRec = p => { if (!bb[p]) bb[p] = {}; const r = bb[p]; BB_KEYS.forEach(k => { if (!r[k]) r[k] = 0; }); return r; };
 function bbAdd(p, k, n){ if (!SHORT[p]) return; const r = bbRec(p); r[k] = r[k] + (n == null ? 1 : n); store.set("handyBlackbook", bb); }
 /* keeps join counts and time in the lounge right, whatever path moved the persona in or out */
@@ -1777,7 +1794,7 @@ function renderFriends(){
     const sm = document.createElement("summary");
     sm.textContent = "Blackbook: " + r.inv + " invited · " + r.joins + " joined · " + r.sess + " sessions · " + r.fails + " fails";
     const g = document.createElement("div"); g.className = "bbGrid";
-    g.innerHTML = [["Invited", r.inv], ["Accepted", r.acc], ["Declined", r.dec], ["Busy", r.busy], ["Offline", r.off], ["No reply", r.noR], ["Room full", r.full], ["Joined lounge", r.joins], ["Took control", r.ctrl], ["Handed control", r.handed], ["Takeovers", r.takeovers], ["Left hanging", r.hang], ["Sessions", r.sess], ["Fails", r.fails], ["Minutes in lounge", Math.round(r.mins)], ["Last seen", r.seen ? new Date(r.seen).toLocaleString() : "never"]].map(([k, v]) => "<div><span>" + k + "</span><b>" + v + "</b></div>").join("");
+    g.innerHTML = [["Invited", r.inv], ["Accepted", r.acc], ["Declined", r.dec], ["Busy", r.busy], ["Offline", r.off], ["No reply", r.noR], ["Room full", r.full], ["Joined lounge", r.joins], ["Took control", r.ctrl], ["Handed control", r.handed], ["Takeovers", r.takeovers], ["Left hanging", r.hang], ["Sessions", r.sess], ["Fails", r.fails], ["Wins", r.wins], ["Minutes in lounge", Math.round(r.mins)], ["Last seen", r.seen ? new Date(r.seen).toLocaleString() : "never"]].map(([k, v]) => "<div><span>" + k + "</span><b>" + v + "</b></div>").join("");
     const pr = PROFILE[p] || {}, prof = document.createElement("div"); prof.className = "bbGrid one";
     prof.innerHTML = [["Age", pr.age], ["Lives in", pr.loc], ["Status", pr.status], ["Job", pr.job], ["Ethnicity", pr.eth], ["Orientation", pr.orient], ["Hobbies", (pr.hobbies || []).join(", ")], ["Fun fact", pr.quirk]].map(([k, v]) => "<div><span>" + k + "</span><b>" + (v == null ? "" : v) + "</b></div>").join("");
     det.append(sm, prof, g); box.append(det);
@@ -1907,7 +1924,7 @@ function spectatorsReact(cat){
 }
 setInterval(() => {
   const now = Date.now(), busy = busyNow(), ag = aggr();
-  crowdTick(); pruneOffers();
+  crowdTick(); pruneOffers(); checkWin();
   if (now > nextRoomAt){ nextRoomAt = now + (35000 + Math.random() * 45000) / (1 + (ag - 1) * 0.6); ambientEvent(); }
   if (!busy && !locked && now > nextTemptAt){ nextTemptAt = now + 80000 + Math.random() * 60000; temptUser(); }
   if (running && runTease && now > nextSpectateAt){ nextSpectateAt = now + (30000 + Math.random() * 30000) / ag; spectate(); }
@@ -2545,7 +2562,7 @@ const moodCall = kind => {
 function answerQuestion(a, o){
   if (ask !== a) return; ask = null;
   const p = a.p, mine = addMsg("me", o.label, a.el); mark("ask", "Told " + SHORT[p] + ": " + o.label);
-  if (/^Surprise/i.test(o.label) || o.kind === "any") bump(10, 16); else bump(4, 3);   // surprise picks are the big moments
+  if (/^Surprise/i.test(o.label) || o.kind === "any" || o.kind === "more") bump(10, 16); else bump(4, 3);   // surprise and give-me-more are the big moments
   nextDemandAt = Math.max(nextDemandAt, Date.now() + 12000);
   if (a.qid === "mood"){
     if (o.kind === "no"){ sayAs(p, "reply", null, {replyTo: mine}); return; }
