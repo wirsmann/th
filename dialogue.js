@@ -3870,13 +3870,13 @@ var SHARED = {
   "Sorry, wrong address. Back to you, {nick}."
  ],
  "life_bf": [
-  "Oh, my phone. It's my boyfriend. Don't make a sound, {nick}.",
-  "Hold on, {nick}, my boyfriend is calling. Keep going while I answer.",
-  "Mm, a text from my boyfriend. Give me a second, {nick}. Stay where you are."
+  "Oh, my phone. It's my {partner}. Don't make a sound, {nick}.",
+  "Hold on, {nick}, my {partner} is calling. Keep going while I answer.",
+  "Mm, a text from my {partner}. Give me a second, {nick}. Stay where you are."
  ],
  "life_bfEnd": [
-  "Okay, he says hi. Back to you, {nick}.",
-  "Sorry, {nick}. He needed something. Now, where were we?"
+  "Okay, they say hi. Back to you, {nick}.",
+  "Sorry, {nick}. They needed something. Now, where were we?"
  ],
  "life_sleep": [
   "Mm... sorry... my eyes are so heavy... just resting them for a second...",
@@ -3919,17 +3919,10 @@ var SHARED = {
 
 /* Per-persona overrides for real-life events */
 const LIFE_OV = {
- "Sleepy Sadie": {
-  "life_sleep": [
-   "Mm... so sleepy... just closing my eyes... for a second... {nick}...",
-   "...zzz... mm... don't stop... I'm still here... zzz..."
-  ],
-  "life_sleepEnd": ["Mm? I'm awake... I was just... resting... {nick}..."]
- },
  "Cuckolding Veronica": {
   "life_bf": [
    "That's him calling. You stay quiet, {nick}. He doesn't know you're here.",
-   "My boyfriend's calling. Look at your face. Don't make a sound, {nick}."
+   "My {partner}'s calling. Look at your face. Don't make a sound, {nick}."
   ],
   "life_bfEnd": ["He says hi. He asked who I was talking to. I said nobody, {nick}."]
  }
@@ -4147,7 +4140,7 @@ const __M = {
   "I'd have so much more fun with you if you weren't driving. Hand it over and embarrass yourself properly."
  ],
  "Cuckolding Veronica": [
-  "Doing it yourself, {nick}? Typical. You'd enjoy it more if I ran it and talked about my boyfriend the whole time.",
+  "Doing it yourself, {nick}? Typical. You'd enjoy it more if I ran it and talked about my {partner} the whole time.",
   "Manual mode. Fine, but we both know you're happier when I'm in control and you're just watching.",
   "Look at you, driving all by yourself. Give it to me, {nick}. I'll make it humiliating, the way you like it."
  ],
@@ -4253,7 +4246,7 @@ const __QC = {
  ],
  "Cuckolding Veronica": [
   "You're giving up, {nick}? Come back. I'll be nicer next time. Maybe I'll even tell you about him.",
-  "Leaving so soon, {nick}? Try again. I promise to be gentler. Well, until I start talking about my boyfriend."
+  "Leaving so soon, {nick}? Try again. I promise to be gentler. Well, until I start talking about my {partner}."
  ],
  "Counting Camille": [
   "The data is incomplete, {nick}. Try again and I'll adjust the parameters. Perhaps gentler ones.",
