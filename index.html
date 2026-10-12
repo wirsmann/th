@@ -1360,8 +1360,9 @@ document.addEventListener("mouseover", e => {
    A persona with no file keeps the built-in drawn avatar. Files are looked up once and remembered. */
 const AV_EXTS = ["png", "jpg", "jpeg", "webp"], avImg = {}, avProbe = {}, avList = {};
 /* Pictures per persona: images/<key>.png (or <key>1.png) is the first, then images/<key>2.png, <key>3.png and so on.
-   ComfyUI's own file names work too, so its output can be copied in without renaming: images/<key>_00001_.png and up
-   are more portraits, and images/<key>_reward_00001_.png and up are reward shots. Reward shots go last in her list.
+   Reward shots: images/<key>_reward.png, then <key>_reward2.png, <key>_reward3.png and so on. They go last in her list.
+   The browser can't list a folder, so numbering must have no gaps: run "make_avatars.py --tidy <images folder>" after
+   copying in ComfyUI files (names like lola_00012_.png) and it renames them to these names.
    SHOW_REWARDS: for now reward shots appear in her profile like any other picture; they can be locked later. */
 const SHOW_REWARDS = true, avRewards = {};
 function setAvImg(el, url){ const im = new Image(); im.alt = ""; im.decoding = "async"; im.src = url; el.replaceChildren(im); }
@@ -1370,28 +1371,22 @@ async function probeBase(base){
   for (const x of AV_EXTS){ const u = "images/" + base + "." + x; if (await loadOk(u)) return u; }
   return null;
 }
-/* ComfyUI numbers its files <prefix>00001_.png, 00002_ and so on. Gaps are fine (you may keep only the ones you like);
-   the search stops after 5 numbers in a row with no file. */
-async function probeComfy(prefix){
+/* <stem>.png (or <stem>1.png), then <stem>2.png, <stem>3.png... until the first missing number */
+async function probeSeq(stem){
   const found = [];
-  for (let i = 1, miss = 0; i <= 99 && miss < 5; i++){
-    const u = "images/" + prefix + String(i).padStart(5, "0") + "_.png";
-    if (await loadOk(u)){ found.push(u); miss = 0; } else miss++;
+  for (let i = 1; i <= 20; i++){
+    const bases = i === 1 ? [stem, stem + "1"] : [stem + i];
+    let u = null;
+    for (const b of bases){ u = await probeBase(b); if (u) break; }
+    if (!u) break;
+    found.push(u);
   }
   return found;
 }
 function findAvImgs(key){
   if (!avProbe[key]) avProbe[key] = (async () => {
-    const list = [];
-    for (let i = 1; i <= 20; i++){
-      const bases = i === 1 ? [key, key + "1"] : [key + i];
-      let found = null;
-      for (const b of bases){ found = await probeBase(b); if (found) break; }
-      if (!found) break;
-      list.push(found);
-    }
-    list.push(...await probeComfy(key + "_"));
-    const rewards = await probeComfy(key + "_reward_");
+    const list = await probeSeq(key);
+    const rewards = await probeSeq(key + "_reward");
     avRewards[key] = rewards; if (SHOW_REWARDS) list.push(...rewards);
     avList[key] = list; avImg[key] = list[0] || false;
     return list;
