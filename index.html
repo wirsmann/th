@@ -235,7 +235,7 @@
   <button type="button" id="simBtn" class="teaseBtn simBtn" aria-pressed="false" title="Runs everything as normal but sends nothing to the Handy. No connection key needed. Simulated sessions aren't logged and don't count toward limits or lockouts.">Simulation: off</button>
 
   <p id="status" role="status">Enter your key and press Start.</p>
-  <div class="liveSet"><strong class="lsHead">Live settings</strong>
+  <div class="liveSet">
   <label for="speed">Speed: <span id="speedVal">50</span>%</label>
   <input id="speed" type="range" min="1" max="100" value="50">
 
@@ -436,8 +436,8 @@ let awayPrev = false, emptyHalt = false;   // empty-room halt: see haltEmpty()
 function setButtons(){
   $("start").disabled = running || (paused && !emptyHalt) || locked || starting;
   $("pause").disabled = !(running || paused);
-  $("pause").textContent = paused ? "Resume" : (running && runTease ? "Pause (fails)" : "Pause");
-  $("stop").textContent = (running || paused) && runTease ? "Stop (fails)" : "Stop";
+  $("pause").textContent = paused ? "Resume" : "Pause";
+  $("stop").textContent = "Stop";
   $("teaseOn").disabled = running || paused || starting;
   $("simOn").disabled = running || paused || starting; if (typeof syncSimBtn === "function") syncSimBtn();
   $("stop").disabled = !(running || paused || starting);
@@ -955,7 +955,7 @@ async function start(){
   } catch(e){ setButtons(); return status(e.message, true); }
   total = ms; endAt = Date.now() + ms; running = true; paused = false; warned = false; winArmed = winGoal() > 0 && level() < winGoal(); runTease = $("teaseOn").checked; runHidden = runTease && $("tRandom").checked;
   setButtons(); lockScreen();
-  status((runSim ? "Simulation: " : "") + (capped ? "Running. Shortened to " + (runHidden ? "fit" : fmt(ms) + " to fit") + " your daily limit." : "Running.") + (runHidden ? " The end time is hidden." : "") + (runTease ? " Stopping or pausing now counts as failing this session." : ""));
+  status((runSim ? "Simulation: " : "") + (capped ? "Shortened to " + (runHidden ? "fit" : fmt(ms) + " to fit") + " your daily limit." : "") + (runHidden ? " The end time is hidden." : "") + (runTease ? " Stopping or pausing now counts as failing this session." : ""));
   nextChatAt = Date.now() + 20000 + Math.random() * 20000;
   nextPromiseAt = Date.now() + 40000 + Math.random() * 30000;
   onBreak = false; nextBreakAt = n("lubeEvery", 15) * 60000; manualOkAt = Date.now() + n("lubeGap", 10) * 60000;
@@ -1041,7 +1041,7 @@ async function togglePause(){
     } catch(e){ setButtons(); return status(e.message, true); }
     endAt = Date.now() + remaining; running = true; paused = false; exodusTok++; noJoinUntil = 0;
     if (onBreak){ onBreak = false; manualOkAt = Date.now() + n("lubeGap", 10) * 60000; nextBreakAt = (total - remaining) + n("lubeEvery", 15) * 60000; say("lubeResume"); mark("lube", "Back from lube break"); }
-    setButtons(); lockScreen(); status(runSim ? "Simulation: running." : "Running.");
+    setButtons(); lockScreen(); status(runSim ? "Simulation: resumed." : "Resumed.");
     tick = setInterval(update, 250); update();
   }
 }
