@@ -74,6 +74,11 @@
   .frow .av{width:32px;height:32px}
   .frow .fn{flex:1;min-width:0;line-height:1.3}
   .frow small{color:var(--muted)}
+  .bbk{margin:0 0 4px 42px;font-size:.84rem}
+  .bbk summary{cursor:pointer;color:var(--muted);padding:2px 0}
+  .bbGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 14px;padding:6px 0 4px}
+  .bbGrid div{display:flex;justify-content:space-between;gap:8px;border-bottom:1px dotted var(--line);padding:2px 0}
+  .bbGrid span{color:var(--muted)}
   .msg.sys{align-self:center;background:none;color:var(--muted);font-size:.75rem;padding:0 8px;line-height:1.3}
   .inline input[type=text]{flex:1}
   .msg.typing{opacity:.6;letter-spacing:2px}
@@ -288,7 +293,9 @@
     <section class="panel" data-key="friends" hidden>
       <strong class="subHead">Friends</strong>
       <p class="hint">Everyone here is on your friends list. Invite anyone at any time. Each one answers in her own time: she may accept, decline, be busy or offline, or not reply at all. A friend who didn't reply can still come in later, more easily while the room has space. How often she accepts, and an optional busy message, are set under Personas.</p>
+      <p class="hint" id="bbTotals"></p>
       <div id="friendsList"></div>
+      <button type="button" class="mini" id="bbClear" style="margin-top:8px">Clear blackbook</button>
     </section>
     <section class="panel" data-key="speed" hidden>
     <div class="row">
@@ -942,6 +949,7 @@ async function finish(msg, timeUp, failed){
   const wasRunning = running;
   holdStatusUntil = Date.now() + 6000;
   const wasTease = runTease; midCat = ""; onBreak = false; challenge = null; lifeEv = null; removeOffer("lifeCard");
+  if (wasTease && currentPersona){ bbAdd(currentPersona, "sess"); if (failed) bbAdd(currentPersona, "fails"); }
   if (privateShow){ privateShow = null; removeOffer("priv"); addMsg("sys", "The private show is over. The lounge is open again."); renderRoom(); }
   const wasHidden = runHidden; runHidden = false;
   const leftNow = timeUp ? 0 : (running ? Math.max(0, endAt - Date.now()) : remaining);
@@ -1528,7 +1536,20 @@ function crowdTick(){
   renderCrowd();
 }
 
+/* Blackbook: per-persona stats for the friends list, kept in localStorage */
+let bb = store.get("handyBlackbook", {});
+const joinedAt = {};
+const BB_KEYS = ["inv", "acc", "dec", "busy", "off", "noR", "full", "joins", "ctrl", "sess", "fails", "mins", "seen"];
+const bbRec = p => { if (!bb[p]) bb[p] = {}; const r = bb[p]; BB_KEYS.forEach(k => { if (!r[k]) r[k] = 0; }); return r; };
+function bbAdd(p, k, n){ if (!SHORT[p]) return; const r = bbRec(p); r[k] = r[k] + (n == null ? 1 : n); store.set("handyBlackbook", bb); }
+/* keeps join counts and time in the lounge right, whatever path moved the persona in or out */
+function syncRoomTime(){
+  const now = Date.now();
+  room.forEach(p => { if (!(p in joinedAt)){ joinedAt[p] = now; bbRec(p).seen = now; bbAdd(p, "joins"); } });
+  Object.keys(joinedAt).forEach(p => { if (!room.includes(p)){ bbRec(p).seen = now; bbAdd(p, "mins", (now - joinedAt[p]) / 60000); delete joinedAt[p]; } });
+}
 function renderRoom(){
+  syncRoomTime();
   const box = $("roomWho"); box.innerHTML = "";
   room.forEach(p => {
     const c = document.createElement("span"); c.className = "rchip";
@@ -1586,20 +1607,22 @@ function invitePersona(p){
   if (!SHORT[p]) return;
   if (room.includes(p)){ addMsg("sys", SHORT[p] + " is already in the lounge."); return; }
   if (privateShow){ addMsg("sys", "The room is locked for the private show."); return; }
+  bbAdd(p, "inv");
   const st = invStatus(p);
-  if (st === "offline"){ addMsg("sys", SHORT[p] + " is offline. The invite will reach her when she's back."); queueInv(p); return; }
-  if (st === "busy"){ const c = invCustom(p); if (c) invSay(p, c); else { invSay(p, pick(INV_BUSY)); } queueInv(p); return; }
+  if (st === "offline"){ bbAdd(p, "off"); addMsg("sys", SHORT[p] + " is offline. The invite will reach her when she's back."); queueInv(p); return; }
+  if (st === "busy"){ bbAdd(p, "busy"); const c = invCustom(p); if (c) invSay(p, c); else { invSay(p, pick(INV_BUSY)); } queueInv(p); return; }
   addMsg("sys", "Invite sent to " + SHORT[p] + ".");
   const odds = invOdds(p);
   setTimeout(() => {
     if (room.includes(p)) return;
     if (Math.random() * 100 >= odds){
-      if (Math.random() < 0.5) invSay(p, pick(INV_NO));
-      else { addMsg("sys", SHORT[p] + " didn't reply."); queueInv(p); }
+      if (Math.random() < 0.5){ bbAdd(p, "dec"); invSay(p, pick(INV_NO)); }
+      else { bbAdd(p, "noR"); addMsg("sys", SHORT[p] + " didn't reply."); queueInv(p); }
       renderFriends(); return;
     }
-    if (room.length >= MAXROOM){ addMsg("sys", "The room is full. " + SHORT[p] + " will come in when there's space."); queueInv(p); return; }
+    if (room.length >= MAXROOM){ bbAdd(p, "full"); addMsg("sys", "The room is full. " + SHORT[p] + " will come in when there's space."); queueInv(p); return; }
     if (Date.now() < noJoinUntil){ addMsg("sys", "The room isn't taking anyone right now. " + SHORT[p] + " will try again."); queueInv(p); return; }
+    bbAdd(p, "acc");
     enterRoom(p);
   }, 1500 + Math.random() * 2500);
 }
@@ -1617,6 +1640,7 @@ function invTick(){
 }
 setInterval(invTick, 15000);
 $("friendsBtn").onclick = () => document.querySelector('#menu button[data-key="friends"]').click();
+$("bbClear").onclick = () => { if (confirm("Clear every blackbook stat? Friends stay on the list.")){ bb = {}; store.set("handyBlackbook", bb); renderFriends(); } };
 /* Random drop-ins are now rare: an online friend sometimes just wanders in. */
 function dropIn(p){ if (p && invStatus(p) === "online" && Math.random() * 100 < invOdds(p) * 0.5) enterRoom(p); }
 function renderFriends(){
@@ -1634,7 +1658,15 @@ function renderFriends(){
     btn.textContent = st === "in" ? "Here" : pendingInv[p] ? "Ask again" : "Invite";
     btn.disabled = st === "in"; btn.onclick = () => invitePersona(p);
     row.append(avatarEl(p), info, btn); box.append(row);
+    const r = bbRec(p), det = document.createElement("details"); det.className = "bbk";
+    const sm = document.createElement("summary");
+    sm.textContent = "Blackbook: " + r.inv + " invited · " + r.joins + " joined · " + r.sess + " sessions · " + r.fails + " fails";
+    const g = document.createElement("div"); g.className = "bbGrid";
+    g.innerHTML = [["Invited", r.inv], ["Accepted", r.acc], ["Declined", r.dec], ["Busy", r.busy], ["Offline", r.off], ["No reply", r.noR], ["Room full", r.full], ["Joined lounge", r.joins], ["Took control", r.ctrl], ["Sessions", r.sess], ["Fails", r.fails], ["Minutes in lounge", Math.round(r.mins)], ["Last seen", r.seen ? new Date(r.seen).toLocaleString() : "never"]].map(([k, v]) => "<div><span>" + k + "</span><b>" + v + "</b></div>").join("");
+    det.append(sm, g); box.append(det);
   });
+  const tot = ALL.reduce((a, p) => { const r = bbRec(p); a.inv += r.inv; a.joins += r.joins; a.sess += r.sess; a.fails += r.fails; a.mins += r.mins; return a; }, {inv: 0, joins: 0, sess: 0, fails: 0, mins: 0});
+  $("bbTotals").textContent = tot.inv + " invites sent · " + tot.joins + " joined · " + tot.sess + " sessions · " + tot.fails + " fails · " + Math.round(tot.mins) + " minutes in the lounge";
 }
 function manualRun(){ return running && !runTease && !onBreak && !privateShow; }
 function takeOverManual(p){
@@ -1777,6 +1809,7 @@ function setPersonaFields(name, jitter){
 }
 function switchController(name){
   if (!SHORT[name] || name === currentPersona) return;
+  bbAdd(name, "ctrl");
   setPersonaFields(name, true);
   currentPersona = name; store.set("h_persona", name); setActive(name); renderPersCfg();
   enterRoom(name, true); renderRoom(); resetTease(); lastVelAt = 0;
