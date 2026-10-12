@@ -2244,12 +2244,13 @@ const INV_DEF = {"Chaos Cassie":70,"Bratty Bella":65,"Relentless Roxy":60,"Misch
   "Lyric Lola":55
 };
 (function(){
-  const box = $("persCfg");
+  const box = $("persCfg"), SHORT0 = Object.assign({}, SHORT);   // SHORT0: the built-in names, for resetting
   ALL.forEach(p => {
     const k = NAMEKEY[p], v = VIB_DEF[p] || [3, 8], g = document.createElement("div"), P = PERSONAS[p];
     g.dataset.p = p; g.hidden = true;
     const tp = TP.map(([f, lab]) => '<div><label for="' + tpId(p, f) + '">' + lab + '</label><input id="' + tpId(p, f) + '" type="number" min="0" max="999" value="' + P[f] + '"></div>').join("");
     g.innerHTML = '<div class="grid">'
+      + '<div><label for="nm_' + k + '">Name (shown in the lounge, max 20)</label><input id="nm_' + k + '" type="text" maxlength="20" value="' + SHORT[p] + '"></div>'
       + '<div><label for="yld_' + k + '">Gives up control (%)</label><input id="yld_' + k + '" type="number" min="0" max="100" value="' + YIELD_DEF[p] + '"></div>'
       + '<div><label for="vibS_' + k + '">Vibration length (s)</label><input id="vibS_' + k + '" type="number" min="2" max="60" value="' + v[1] + '"></div>'
       + '</div>'
@@ -2269,11 +2270,15 @@ const INV_DEF = {"Chaos Cassie":70,"Bratty Bella":65,"Relentless Roxy":60,"Misch
     box.append(g);
     g.querySelectorAll("input, select").forEach(e => {
       const sv = store.get("h_" + e.id, null);
+      if (e.id === "nm_" + k){ if (sv !== null && String(sv).trim()) SHORT[p] = String(sv).trim().slice(0, 20); e.value = SHORT[p];
+        e.onchange = () => { const v = e.value.trim().slice(0, 20); SHORT[p] = v || SHORT0[p]; e.value = SHORT[p]; store.set("h_" + e.id, SHORT[p]); renameRefresh(); }; return; }
       if (e.type === "checkbox"){ if (sv !== null) e.checked = !!sv; e.onchange = () => store.set("h_" + e.id, e.checked); }
       else { if (sv !== null) e.value = sv; e.onchange = () => store.set("h_" + e.id, e.value); }
     });
   });
 })();
+/* after a rename: the lounge, the blackbook and the settings heading all use the new name */
+function renameRefresh(){ renderRoom(); renderFriends(); renderPersCfg(); }
 function renderPersCfg(){
   const p = $("persona").value;
   document.querySelectorAll("#persCfg > [data-p]").forEach(g => g.hidden = g.dataset.p !== p);
@@ -2562,7 +2567,7 @@ const moodCall = kind => {
 function answerQuestion(a, o){
   if (ask !== a) return; ask = null;
   const p = a.p, mine = addMsg("me", o.label, a.el); mark("ask", "Told " + SHORT[p] + ": " + o.label);
-  if (/^Surprise/i.test(o.label) || o.kind === "any" || o.kind === "more") bump(10, 16); else bump(4, 3);   // surprise and give-me-more are the big moments
+  if (/^(Surprise|You decide)/i.test(o.label) || o.kind === "any" || o.kind === "more") bump(10, 16); else bump(4, 3);   // surprise and give-me-more are the big moments
   nextDemandAt = Math.max(nextDemandAt, Date.now() + 12000);
   if (a.qid === "mood"){
     if (o.kind === "no"){ sayAs(p, "reply", null, {replyTo: mine}); return; }
