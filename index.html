@@ -66,6 +66,7 @@
   .rdot{width:8px;height:8px;border-radius:50%}
   .av{display:inline-block;width:22px;height:22px;border-radius:50%;overflow:hidden;flex:none;vertical-align:middle}
   .av svg{display:block;width:100%;height:100%}
+  .av img{display:block;width:100%;height:100%;object-fit:cover}
   .av.lg{width:56px;height:56px;margin:4px 0 2px}
   .rchip .av{width:20px;height:20px;margin-right:-2px}
   .msg.bot > .av{float:left;margin:1px 8px 2px 0}
@@ -971,6 +972,8 @@ function update(){
 }
 
 async function finish(msg, timeUp, failed){
+  emptyHalt = false; removeOffer("emptyRoom");
+  if (simOn()) setTimeout(simRestart, 25000 + Math.random() * 30000);   // simulated user starts another session later
   if (failed){ dip = Math.min(45, dip + 30); momentum = Math.max(0, momentum - 20); excite = 0; }   // fails hit the room hard
   if (!running && !paused) return;
   const wasRunning = running;
@@ -1291,8 +1294,30 @@ document.addEventListener("mouseover", e => {
   const y = Math.max(8, Math.min(innerHeight - h - 8, r.top + r.height / 2 - h / 2));
   avTip.style.left = x + "px"; avTip.style.top = y + "px";
 });
+/* AI-made portraits: put a file in an "images" folder next to index.html, named by the persona's key (e.g. images/priscilla.png, images/lola.jpg).
+   A persona with no file keeps the built-in drawn avatar. Files are looked up once and remembered. */
+const AV_EXTS = ["png", "jpg", "jpeg", "webp"], avImg = {}, avProbe = {};
+function setAvImg(el, url){ const im = new Image(); im.alt = ""; im.decoding = "async"; im.src = url; el.replaceChildren(im); }
+function findAvImg(key){
+  if (!avProbe[key]) avProbe[key] = (async () => {
+    for (const x of AV_EXTS){
+      const u = "images/" + key + "." + x;
+      const ok = await new Promise(r => { const t = new Image(); t.onload = () => r(true); t.onerror = () => r(false); t.src = u; });
+      if (ok){ avImg[key] = u; return u; }
+    }
+    avImg[key] = false; return null;
+  })();
+  return avProbe[key];
+}
+function fillAvatar(el, name){
+  el.innerHTML = avatarSVG(name);
+  const key = NAMEKEY[name]; if (!key) return;
+  if (avImg[key]){ setAvImg(el, avImg[key]); return; }
+  if (avImg[key] === false) return;
+  findAvImg(key).then(u => { if (u) setAvImg(el, u); });
+}
 function avatarEl(name){
-  const el = document.createElement("span"); el.className = "av"; el.innerHTML = avatarSVG(name); el.setAttribute("aria-hidden", "true"); el.dataset.persona = name;
+  const el = document.createElement("span"); el.className = "av"; fillAvatar(el, name); el.setAttribute("aria-hidden", "true"); el.dataset.persona = name;
   return el;
 }
 function addMsg(kind, text, replyEl){
@@ -1712,7 +1737,10 @@ function boredTick(){
 function awayTick(){
   if (emptyHalt){ if (running) emptyHalt = false; return; }
   const away = ctlAway();
-  if (away && !awayPrev && running) haltEmpty();
+  if (away && !awayPrev && running){
+    if (room.length) switchController(pickOne(room));   // others are still here: one of them takes over
+    else haltEmpty();
+  }
   awayPrev = away;
 }
 function haltEmpty(){
@@ -1934,6 +1962,8 @@ function spectatorsReact(cat){
   const sp = pickOne(others);
   setTimeout(() => { if (room.includes(sp)) sayAs(sp, cat, null, {ctrl: currentPersona, replyTo: currentPersona}); }, 4000 + Math.random() * 3000);
 }
+/* Simulation only: the simulated user starts another session after one ends. */
+function simRestart(){ if (simOn() && !running && !paused && !starting && !locked) start(); }
 /* Simulation only: the simulated user reacts with emotes now and then, and invites friends in when the room is empty. */
 let simChatAt = 0, simInviteAt = 0;
 function simUserTick(now){
@@ -2313,7 +2343,7 @@ function renderPersCfg(){
   const p = $("persona").value;
   document.querySelectorAll("#persCfg > [data-p]").forEach(g => g.hidden = g.dataset.p !== p);
   $("persCfgHead").textContent = p ? SHORT[p] + "'s settings" : "Her settings";
-  const pav = $("persAv"); pav.hidden = !p; pav.innerHTML = p ? avatarSVG(p) : ""; pav.dataset.persona = p || "";
+  const pav = $("persAv"); pav.hidden = !p; pav.innerHTML = ""; if (p) fillAvatar(pav, p); pav.dataset.persona = p || "";
   $("persDesc").hidden = !p; $("persDesc").textContent = p && PERSONAS[p] ? PERSONAS[p].d + targetNote(p) : "";
   $("persCfgNone").hidden = !!p; $("persCfgHint").hidden = !p;
 }
