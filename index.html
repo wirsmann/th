@@ -106,6 +106,7 @@
   .top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
   .top h1{margin:0;font-size:1.15rem}
   #menu{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+  .emoteRow{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
   #menu button{padding:6px 14px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;cursor:pointer;font:inherit;font-size:.875rem}
   #menu button:hover{background:var(--ring-bg)}
   #menu button[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
@@ -195,6 +196,7 @@
       <div class="graphBox"><div class="gHead"><strong>Activity</strong><span id="gLegend"></span><span class="hint" id="gInfo" style="margin:0 0 0 auto"></span></div><canvas id="graph" height="150" aria-label="History of speed and stroke length, colored by who was in control"></canvas><div id="gScrollRow" style="display:none;gap:8px;align-items:center;margin-top:6px"><input type="range" id="gScroll" min="0" max="0" value="0" aria-label="Scroll back through activity history" style="flex:1"><button class="mini" id="gLive" style="margin:0">Back to live</button></div><div class="hint" id="gKey" style="margin:4px 0 0"></div></div>
       <div id="chatLog" aria-live="polite"></div>
       <div class="inline"><input id="chatIn" type="text" autocomplete="off" placeholder="Say something to the room…" aria-label="Chat message"><button class="mini" id="chatSend" style="margin:0">Send</button></div>
+      <div class="emoteRow" id="emoteRow" aria-label="Emotes"></div>
     </section>
     <aside class="card timer">
   <div class="dial" aria-hidden="true">
@@ -2588,6 +2590,25 @@ function interactTick(now, busy){
   }
   if (!busy && !locked && !ask && room.length && now > nextMoodAt){ nextMoodAt = now + 110000 + Math.random() * 60000; askQuestion(pickOne(room), "mood"); }
 }
+/* Emotes: quick reactions. Expressive ones stir the room up, calm one settles it. */
+const EMOTES = [
+  {label: "Whimper", text: "*whimpers*", exc: 6, mom: 6},
+  {label: "Frustrated", text: "*groans in frustration*", exc: 8, mom: 6},
+  {label: "Begging", text: "*begs, voice shaking*", exc: 8, mom: 8},
+  {label: "Gasping", text: "*gasps for breath*", exc: 10, mom: 8},
+  {label: "Moaning", text: "*moans*", exc: 10, mom: 10},
+  {label: "Hyped", text: "*whoops!*", exc: 6, mom: 6},
+  {label: "Calm", text: "*sighs and settles*", exc: 0, mom: -6},
+  {label: "Yawn", text: "*yawns*", exc: 0, mom: -5}
+];
+function emote(e){
+  const mine = addMsg("me", e.text);
+  if (e.mom >= 0) bump(e.exc, e.mom);
+  else { momentum = Math.max(0, momentum + e.mom); excite = Math.max(0, excite - 4); }   // calm settles the room
+  const speaker = (runTease && currentPersona && room.includes(currentPersona)) ? currentPersona : (room.length ? pickOne(room) : null);
+  if (speaker) sayAs(speaker, e.mom < 0 ? "reply" : "enjoy", null, {replyTo: mine});
+}
+EMOTES.forEach(e => { const b = document.createElement("button"); b.type = "button"; b.className = "qchip"; b.textContent = e.label; b.title = "Send " + e.text.replace(/\*/g, "").trim(); b.onclick = () => emote(e); $("emoteRow").append(b); });
 function sendChat(){
   const box = $("chatIn"), t = box.value.trim(); if (!t) return;
   box.value = ""; const mine = addMsg("me", t); excite = Math.min(60, excite + 2);
