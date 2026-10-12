@@ -307,6 +307,9 @@
     </section>
     <section class="panel" data-key="speed" hidden>
     <div class="row">
+      <div><label for="vibSpeed">Vibration speed (% of max, for vibration bursts)</label><input id="vibSpeed" type="number" min="1" max="100" value="100"></div>
+    </div>
+    <div class="row">
       <div><label for="ramp">Ramp up over</label>
         <select id="ramp"><option value="0">Off</option><option value="60">1 min</option><option value="120">2 min</option><option value="300">5 min</option></select></div>
       <div><label for="slow">Slow down for last</label>
@@ -400,7 +403,7 @@ mkFields("teaseFields", TEASE); mkFields("customFields", CUSTOM);
 // these live in other panels: random length under Session, persona behaviour under Personas
 ["rMin","rMax"].forEach(id => $("sessRandFields").append($(id).parentElement));
 ["privMin","lifeRate"].forEach(id => $("persFields").append($(id).parentElement));
-const FIELDS = ["winLevel","vibWidth","speed","smin","smax","min","sec","ramp","slow","pattern","period","daily","cool","failLock","aimCtl","lubeEvery","lubeGap","lubePark"].concat(TEASE.map(t=>t[0]), CUSTOM.map(c=>c[0]));
+const FIELDS = ["vibSpeed","winLevel","vibWidth","speed","smin","smax","min","sec","ramp","slow","pattern","period","daily","cool","failLock","aimCtl","lubeEvery","lubeGap","lubePark"].concat(TEASE.map(t=>t[0]), CUSTOM.map(c=>c[0]));
 FIELDS.forEach(id => { const v = store.get("h_"+id, null); if (v !== null) $(id).value = v; });
 const BOOLS = {beepEnd:true, beepWarn:true, awake:true, teaseOn:false, tStop:true, hideClock:false, tRandom:false, failCharge:false, lubeOn:true, lubeReg:true, fansOn:true, crowdBoost:true, interactOn:true, stormOn:true, privOn:true, simOn:false, vibOn:true};
 Object.keys(BOOLS).forEach(id => { $(id).checked = store.get("h_"+id, BOOLS[id]); $(id).onchange = () => store.set("h_"+id, $(id).checked); });
@@ -631,7 +634,7 @@ function newCycle(){
   const bMin = n("tBuildMin", 20), bd = rnd(bMin, Math.max(bMin, n("tBuildMax", 60)));
   const rMin = n("tRestMin", 5), hMin = n("tHoldMin", 3);
   const rest = {k: "rest", dur: Math.max(1, rnd(rMin, Math.max(rMin, n("tRestMax", 20))) * (1 - 0.3 * cl)), v: $("tStop").checked ? 0 : low};
-  if (tz.cycle > 1 && $("vibOn").checked && Math.random() * 100 < vibChance(currentPersona)){ tz.q.push(mv("vibrate", vibSecs(currentPersona), () => 100), rest); return; }
+  if (tz.cycle > 1 && $("vibOn").checked && Math.random() * 100 < vibChance(currentPersona)){ /* vibration runs at its own speed setting, not the slider */ tz.q.push(mv("vibrate", vibSecs(currentPersona), () => n("vibSpeed", 100) * 100 / Math.max(1, n("speed", 50))), rest); return; }
   const special = tz.cycle > 1 ? pickMove() : null;
   if (special){ queueMove(special, low, pk, bd); return; }
   if (Math.random() * 100 < n("tFake", 20) + 10 * cl){
@@ -1924,9 +1927,27 @@ function spectatorsReact(cat){
   const sp = pickOne(others);
   setTimeout(() => { if (room.includes(sp)) sayAs(sp, cat, null, {ctrl: currentPersona, replyTo: currentPersona}); }, 4000 + Math.random() * 3000);
 }
+/* Simulation only: the simulated user reacts with emotes now and then, and invites friends in when the room is empty. */
+let simChatAt = 0, simInviteAt = 0;
+function simUserTick(now){
+  if (!simOn()) return;
+  if (emptyHalt || (running && !room.length)){
+    if (now < simInviteAt) return;
+    simInviteAt = now + 20000 + Math.random() * 10000;   // keep inviting until someone joins
+    const online = ALL.filter(p => !room.includes(p) && invStatus(p) === "online");
+    const pool = online.length ? online : ALL.filter(p => !room.includes(p));
+    if (pool.length) invitePersona(pickOne(pool));
+    return;
+  }
+  if (!running || !room.length || now < simChatAt) return;
+  simChatAt = now + 25000 + Math.random() * 35000;
+  const spd = +$("speed").value;   // emotes follow the intensity: wild when high, bored when low
+  const fit = spd >= 70 ? ["Gasping", "Moaning", "Whimper"] : spd >= 40 ? ["Begging", "Frustrated", "Hyped"] : ["Yawn", "Calm", "Frustrated"];
+  const e = EMOTES.find(x => x.label === pickOne(fit)); if (e) emote(e);
+}
 setInterval(() => {
   const now = Date.now(), busy = busyNow(), ag = aggr();
-  crowdTick(); pruneOffers(); checkWin();
+  crowdTick(); pruneOffers(); checkWin(); simUserTick(now);
   if (now > nextRoomAt){ nextRoomAt = now + (35000 + Math.random() * 45000) / (1 + (ag - 1) * 0.6); ambientEvent(); }
   if (!busy && !locked && now > nextTemptAt){ nextTemptAt = now + 80000 + Math.random() * 60000; temptUser(); }
   if (running && runTease && now > nextSpectateAt){ nextSpectateAt = now + (30000 + Math.random() * 30000) / ag; spectate(); }
