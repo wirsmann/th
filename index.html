@@ -79,6 +79,9 @@
   .bbGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 14px;padding:6px 0 4px}
   .bbGrid div{display:flex;justify-content:space-between;gap:8px;border-bottom:1px dotted var(--line);padding:2px 0}
   .bbGrid span{color:var(--muted)}
+  .bbGrid.one{grid-template-columns:1fr}
+  .avtip{position:fixed;z-index:9999;max-width:260px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-left:4px solid var(--c,#888);border-radius:10px;padding:8px 10px;font-size:.84rem;line-height:1.4;box-shadow:0 6px 18px rgba(0,0,0,.2);pointer-events:none}
+  .avtip b{display:block;margin-bottom:2px}
   .msg.sys{align-self:center;background:none;color:var(--muted);font-size:.75rem;padding:0 8px;line-height:1.3}
   .inline input[type=text]{flex:1}
   .msg.typing{opacity:.6;letter-spacing:2px}
@@ -1211,8 +1214,57 @@ function avatarSVG(name){
   if (acc === "antenna") s += '<path d="M20 5 L20 1.2" stroke="#6fd3e8" stroke-width=".8"/><circle cx="20" cy="1" r="1.2" fill="#6fd3e8"/>';
   return s + '</svg>';
 }
+/* Fake profiles: shown in the Friends blackbook. Adults only. */
+const PROFILE = {
+ "Patient Priscilla": {age: 58, loc: "Dunmore, Pennsylvania", status: "Widowed", job: "Retired librarian", hobbies: ["Knitting", "Crosswords", "Birdwatching"], quirk: "Has never once been in a hurry."},
+ "Mischievous Mia": {age: 27, loc: "Brighton, UK", status: "Single", job: "Prank-show producer", hobbies: ["Improv comedy", "Pranks", "Karaoke"], quirk: "Keeps a whoopee cushion in her handbag at all times."},
+ "Strict Ms. Vance": {age: 46, loc: "Boston, Massachusetts", status: "Divorced", job: "Head of a boarding school", hobbies: ["Early runs", "Classical piano", "Chess"], quirk: "Has a clipboard for everything, including dinner."},
+ "Chaos Cassie": {age: 31, loc: "Austin, Texas", status: "It's complicated", job: "Festival stage manager", hobbies: ["Pottery", "Roller derby", "Open-mic stand-up"], quirk: "Once rebuilt a car engine during a thunderstorm, for fun."},
+ "Sweet-Talker Sienna": {age: 34, loc: "Florence, Italy", status: "Single", job: "Wine importer", hobbies: ["Cooking", "Opera", "Language exchange"], quirk: "Speaks five languages, all of them charming."},
+ "Relentless Roxy": {age: 33, loc: "Denver, Colorado", status: "Single", job: "Personal trainer", hobbies: ["Rock climbing", "Triathlons", "Meal prep"], quirk: "Has never lost an arm wrestle, including to her mother."},
+ "Sleepy Sadie": {age: 29, loc: "Portland, Oregon", status: "Single", job: "Night-shift nurse", hobbies: ["Podcasts", "Lo-fi playlists", "Naps"], quirk: "Can fall asleep anywhere, including standing up at a bus stop."},
+ "Cuckolding Veronica": {age: 41, loc: "Scottsdale, Arizona", status: "Married (open to 'discussion')", job: "Interior designer", hobbies: ["Wine tasting", "Architecture tours", "Watercolor"], quirk: "Hosts a monthly dinner party where the guest list is a surprise."},
+ "Mocking Margot": {age: 38, loc: "London, UK", status: "Married", job: "Sketch writer", hobbies: ["Heckling reality TV", "Crosswords", "Tea snobbery"], quirk: "Can roast you with one raised eyebrow."},
+ "Drill Sergeant Dana": {age: 44, loc: "Killeen, Texas", status: "Divorced", job: "Bootcamp instructor", hobbies: ["Kettlebells", "Hiking", "Ironing"], quirk: "Irons her socks. Yes, the socks."},
+ "Counting Camille": {age: 36, loc: "Zürich, Switzerland", status: "Single", job: "Actuary", hobbies: ["Spreadsheets", "Board games", "Distance swimming"], quirk: "Counts the stairs everywhere and tells you the number."},
+ "Gambling Gigi": {age: 39, loc: "Las Vegas, Nevada", status: "Engaged (to a blackjack dealer)", job: "Professional poker player", hobbies: ["Poker", "Horse racing", "Jazz nights"], quirk: "Her lucky charm is a bent nickel."},
+ "Goddess Isadora": {age: 35, loc: "Athens, Greece", status: "Single", job: "Gallery owner", hobbies: ["Sculpture", "Sunset swims", "Antiques"], quirk: "Has an opinion on every painting and most people."},
+ "Bratty Bella": {age: 26, loc: "Miami, Florida", status: "Single", job: "Hair stylist", hobbies: ["Shopping", "Dance-offs", "Reality TV"], quirk: "Says 'no' with a smile and means it."},
+ "Hypnotic Helena": {age: 42, loc: "New Orleans, Louisiana", status: "Married", job: "Stage hypnotist", hobbies: ["Card magic", "Jazz clarinet", "Tarot"], quirk: "Can balance a pen on one finger for an hour."},
+ "Coach Colleen": {age: 37, loc: "Madison, Wisconsin", status: "Single", job: "Gym coach", hobbies: ["Basketball", "Kayaking", "Motivational podcasts"], quirk: "Hands out whistles as birthday presents."},
+ "Doctor Delphine": {age: 45, loc: "Edinburgh, Scotland", status: "Married", job: "Sports medicine doctor", hobbies: ["Marathons", "Sudoku", "Classical guitar"], quirk: "Always has a spare stethoscope in the car."},
+ "Jealous Juliet": {age: 32, loc: "Chicago, Illinois", status: "It's complicated", job: "Event planner", hobbies: ["Scrapbooking", "Late-night baking", "Reality shows"], quirk: "Keeps a secret list of everyone's relationship statuses."},
+ "Queen Valentina": {age: 49, loc: "Monaco", status: "Single", job: "Philanthropist", hobbies: ["Yachting", "Charity galas", "Fine champagne"], quirk: "Owns a royal-blue dress for every mood."},
+ "Pouty Penelope": {age: 25, loc: "Seattle, Washington", status: "Single", job: "Illustrator (and barista)", hobbies: ["Drawing", "Bubble tea", "Rainy-day naps"], quirk: "Sulks in a very artistic way."},
+ "Flirty Fiona": {age: 30, loc: "Dublin, Ireland", status: "Single", job: "Bartender", hobbies: ["Dancing", "Trivia nights", "Cocktail mixing"], quirk: "Remembers every drink she's ever poured."},
+ "Stage-Manager Simone": {age: 40, loc: "New York, New York", status: "Married", job: "Theatre stage manager", hobbies: ["Broadway musicals", "Sewing", "Karaoke"], quirk: "Calls everyone 'places' when they're late."},
+ "Chef Gianna": {age: 43, loc: "Naples, Italy", status: "Married", job: "Head chef", hobbies: ["Foraging", "Gardening", "Hand-rolled pasta"], quirk: "Can tell your mood by how you hold a fork."},
+ "Inspector Vale": {age: 50, loc: "Lyon, France", status: "Divorced", job: "Detective inspector", hobbies: ["Crime novels", "Fencing", "Model trains"], quirk: "Has never once been late to a crime scene."},
+ "Unit Nine": {age: "4 (software years)", loc: "Server farm 9, Reno, Nevada", status: "Single (it's a unit)", job: "Household assistant", hobbies: ["Defragmenting", "Watching radar", "Chess against itself"], quirk: "Reboots whenever someone says 'later'."},
+ "Captain Sable": {age: 47, loc: "Halifax, Nova Scotia", status: "Divorced", job: "Ferry captain", hobbies: ["Sailing", "Sea shanties", "Knots"], quirk: "Has a parrot named Admiral Crumb."},
+ "Madame Zara": {age: 51, loc: "Paris, France", status: "Widowed", job: "Tarot reader", hobbies: ["Tarot", "Perfume-making", "Vintage jewelry"], quirk: "Claims she can guess your favourite colour from your shoes."},
+ "Madame Olenka": {age: 54, loc: "Prague, Czechia", status: "Married", job: "Dressmaker and doll restorer", hobbies: ["Ballroom dancing", "Doll restoration", "Tea parties"], quirk: "Keeps a handwritten diary of every compliment she has given."},
+ "Glitch": {age: "Unknown (beta build)", loc: "Somewhere in the Wi-Fi", status: "It's complicated", job: "Unofficial stream co-host", hobbies: ["Corrupting playlists", "Speedruns", "Pixel art"], quirk: "Most of her glitches are on purpose."},
+ "Nurse Ingrid": {age: 39, loc: "Tromsø, Norway", status: "Married", job: "ER nurse", hobbies: ["Cross-country skiing", "Knitting", "Northern lights photos"], quirk: "Can take your blood pressure while telling a joke."},
+ "Lilith": {age: "Ageless (says 33)", loc: "Hell's Kitchen, New York", status: "Single (by choice)", job: "Nightclub owner", hobbies: ["Candlelit dinners", "Dark jazz", "Rare wine"], quirk: "Her horns are mostly for show. Mostly."}
+};
+/* hover an avatar: a small card with her personality description */
+const avTip = document.createElement("div"); avTip.className = "avtip"; avTip.hidden = true; document.body.append(avTip);
+document.addEventListener("mouseover", e => {
+  const el = e.target.closest ? e.target.closest("[data-persona]") : null;
+  const p = el && el.dataset.persona;
+  if (!p || !PERSONAS[p]){ avTip.hidden = true; return; }
+  const b = document.createElement("b"); b.textContent = SHORT[p]; b.style.color = PCOL[p] || "";
+  const t = document.createElement("div"); t.textContent = PERSONAS[p].d;
+  avTip.style.setProperty("--c", PCOL[p] || "#888");
+  avTip.replaceChildren(b, t); avTip.hidden = false;
+  const r = el.getBoundingClientRect(), w = avTip.offsetWidth, h = avTip.offsetHeight;
+  let x = r.right + 10; if (x + w > innerWidth - 8) x = r.left - w - 10; if (x < 8) x = 8;
+  const y = Math.max(8, Math.min(innerHeight - h - 8, r.top + r.height / 2 - h / 2));
+  avTip.style.left = x + "px"; avTip.style.top = y + "px";
+});
 function avatarEl(name){
-  const el = document.createElement("span"); el.className = "av"; el.innerHTML = avatarSVG(name); el.setAttribute("aria-hidden", "true");
+  const el = document.createElement("span"); el.className = "av"; el.innerHTML = avatarSVG(name); el.setAttribute("aria-hidden", "true"); el.dataset.persona = name;
   return el;
 }
 function addMsg(kind, text, replyEl){
@@ -1663,7 +1715,9 @@ function renderFriends(){
     sm.textContent = "Blackbook: " + r.inv + " invited · " + r.joins + " joined · " + r.sess + " sessions · " + r.fails + " fails";
     const g = document.createElement("div"); g.className = "bbGrid";
     g.innerHTML = [["Invited", r.inv], ["Accepted", r.acc], ["Declined", r.dec], ["Busy", r.busy], ["Offline", r.off], ["No reply", r.noR], ["Room full", r.full], ["Joined lounge", r.joins], ["Took control", r.ctrl], ["Sessions", r.sess], ["Fails", r.fails], ["Minutes in lounge", Math.round(r.mins)], ["Last seen", r.seen ? new Date(r.seen).toLocaleString() : "never"]].map(([k, v]) => "<div><span>" + k + "</span><b>" + v + "</b></div>").join("");
-    det.append(sm, g); box.append(det);
+    const pr = PROFILE[p] || {}, prof = document.createElement("div"); prof.className = "bbGrid one";
+    prof.innerHTML = [["Age", pr.age], ["Lives in", pr.loc], ["Status", pr.status], ["Job", pr.job], ["Hobbies", (pr.hobbies || []).join(", ")], ["Fun fact", pr.quirk]].map(([k, v]) => "<div><span>" + k + "</span><b>" + (v == null ? "" : v) + "</b></div>").join("");
+    det.append(sm, prof, g); box.append(det);
   });
   const tot = ALL.reduce((a, p) => { const r = bbRec(p); a.inv += r.inv; a.joins += r.joins; a.sess += r.sess; a.fails += r.fails; a.mins += r.mins; return a; }, {inv: 0, joins: 0, sess: 0, fails: 0, mins: 0});
   $("bbTotals").textContent = tot.inv + " invites sent · " + tot.joins + " joined · " + tot.sess + " sessions · " + tot.fails + " fails · " + Math.round(tot.mins) + " minutes in the lounge";
@@ -2122,7 +2176,7 @@ function renderPersCfg(){
   const p = $("persona").value;
   document.querySelectorAll("#persCfg > [data-p]").forEach(g => g.hidden = g.dataset.p !== p);
   $("persCfgHead").textContent = p ? SHORT[p] + "'s settings" : "Her settings";
-  const pav = $("persAv"); pav.hidden = !p; pav.innerHTML = p ? avatarSVG(p) : "";
+  const pav = $("persAv"); pav.hidden = !p; pav.innerHTML = p ? avatarSVG(p) : ""; pav.dataset.persona = p || "";
   $("persDesc").hidden = !p; $("persDesc").textContent = p && PERSONAS[p] ? PERSONAS[p].d + targetNote(p) : "";
   $("persCfgNone").hidden = !!p; $("persCfgHint").hidden = !p;
 }
