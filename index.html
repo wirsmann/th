@@ -67,6 +67,15 @@
   .av{display:inline-block;width:22px;height:22px;border-radius:50%;overflow:hidden;flex:none;vertical-align:middle}
   .av svg{display:block;width:100%;height:100%}
   .av img{display:block;width:100%;height:100%;object-fit:cover}
+  .bbPort{display:block;width:120px;height:120px;border-radius:12px;overflow:hidden;padding:0;margin:6px 0 10px;border:2px solid var(--c,#888);background:none;cursor:zoom-in}
+  .bbPort[hidden]{display:none}
+  .bbPort img{display:block;width:100%;height:100%;object-fit:cover}
+  #portrait{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.82);display:flex;align-items:center;justify-content:center;padding:16px}
+  #portrait[hidden]{display:none}
+  #portrait figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:10px;max-width:100%}
+  #portrait img{max-width:92vw;max-height:78vh;object-fit:contain;border-radius:14px;border:3px solid var(--c,#888);box-shadow:0 10px 40px rgba(0,0,0,.5)}
+  #portrait figcaption{color:#fff;font-weight:600;font-size:15px;text-align:center}
+  #portrait .pvClose{position:fixed;top:12px;right:12px;width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.18);color:#fff;font-size:18px;cursor:pointer;padding:0;margin:0}
   .av.lg{width:56px;height:56px;margin:4px 0 2px}
   .rchip .av{width:20px;height:20px;margin-right:-2px}
   .msg.bot > .av{float:left;margin:1px 8px 2px 0}
@@ -116,6 +125,13 @@
   .timer{position:sticky;top:14px}
   .timer .dial{width:min(190px,100%)}
   .timer .time{font-size:2.3rem}
+  /* the timer card: just the remaining time, with the active persona's portrait above it */
+  .timer .dial svg{display:none}
+  .timer .dial{width:auto;aspect-ratio:auto;height:auto;margin:4px auto 2px}
+  .timer .time{position:static;display:block;font-size:3rem;text-align:center;line-height:1.1}
+  .tPort{display:block;width:100%;max-width:200px;aspect-ratio:3/4;margin:0 auto 8px;padding:0;border:3px solid var(--c,#888);border-radius:14px;overflow:hidden;background:none;cursor:zoom-in}
+  .tPort[hidden]{display:none}
+  .tPort img{display:block;width:100%;height:100%;object-fit:cover}
   .hypeRow{display:flex;align-items:center;gap:10px;margin:0 0 8px}
   .hype{flex:1;height:8px;border-radius:999px;overflow:hidden;position:relative;background:linear-gradient(90deg,#3fae6a 0%,#7cc47a 18%,#e0c23a 38%,#e8923b 55%,#d9534f 78%)}
   #hypeBar{position:absolute;right:0;top:0;height:100%;width:98%;background:var(--ring-bg);transition:width .8s}
@@ -200,6 +216,7 @@
       <div class="emoteRow" id="emoteRow" aria-label="Emotes"></div>
     </section>
     <aside class="card timer">
+  <button type="button" class="tPort" id="tPort" hidden aria-label="View portrait larger"></button>
   <div class="dial" aria-hidden="true">
     <svg viewBox="0 0 100 100"><circle class="track" cx="50" cy="50" r="44"/><circle id="prog" class="prog" cx="50" cy="50" r="44" stroke-dasharray="276.46" stroke-dashoffset="0"/></svg>
     <div class="time" id="time">10:00</div>
@@ -1109,7 +1126,18 @@ const PERSONAS = {
 };
 Object.keys(PERSONAS).forEach(k => ["persona", "activePersona"].forEach(id => { const o = document.createElement("option"); o.value = o.textContent = k; $(id).append(o); }));
 /* the Personas dropdown configures; the Tease panel's dropdown is the active persona. Both follow whoever is in control. */
-function setActive(n){ $("persona").value = n || ""; $("activePersona").value = n || ""; }
+function setActive(n){ $("persona").value = n || ""; $("activePersona").value = n || ""; updateTimerPortrait(n || ""); }
+/* the active persona's portrait sits above the timer; hidden when she has no image file */
+function updateTimerPortrait(p){
+  const b = $("tPort"); if (!b) return;
+  b.dataset.p = p; b.hidden = true;
+  const key = p && NAMEKEY[p]; if (!key) return;
+  findAvImg(key).then(u => {
+    if (!u || b.dataset.p !== p) return;
+    const im = new Image(); im.alt = ""; im.src = u; b.replaceChildren(im);
+    b.style.setProperty("--c", PCOL[p] || "#888"); b.onclick = () => openPortrait(p); b.hidden = false;
+  });
+}
 function applyPersona(name, jitter){
   if (!PERSONAS[name]) return; const p = personaCfg(name);
   if (running || paused || starting){ status("Stop the session before changing personality.", true); setActive(currentPersona); renderPersCfg(); return; }
@@ -1837,7 +1865,7 @@ function renderFriends(){
     g.innerHTML = [["Invited", r.inv], ["Accepted", r.acc], ["Declined", r.dec], ["Busy", r.busy], ["Offline", r.off], ["No reply", r.noR], ["Room full", r.full], ["Joined lounge", r.joins], ["Took control", r.ctrl], ["Handed control", r.handed], ["Takeovers", r.takeovers], ["Left hanging", r.hang], ["Sessions", r.sess], ["Fails", r.fails], ["Wins", r.wins], ["Minutes in lounge", Math.round(r.mins)], ["Last seen", r.seen ? new Date(r.seen).toLocaleString() : "never"]].map(([k, v]) => "<div><span>" + k + "</span><b>" + v + "</b></div>").join("");
     const pr = PROFILE[p] || {}, prof = document.createElement("div"); prof.className = "bbGrid one";
     prof.innerHTML = [["Age", pr.age], ["Lives in", pr.loc], ["Status", pr.status], ["Job", pr.job], ["Ethnicity", pr.eth], ["Orientation", pr.orient], ["Hobbies", (pr.hobbies || []).join(", ")], ["Fun fact", pr.quirk]].map(([k, v]) => "<div><span>" + k + "</span><b>" + (v == null ? "" : v) + "</b></div>").join("");
-    det.append(sm, prof, g); box.append(det);
+    det.append(sm, portraitBtn(p), prof, g); box.append(det);
   });
   const tot = ALL.reduce((a, p) => { const r = bbRec(p); a.inv += r.inv; a.joins += r.joins; a.sess += r.sess; a.fails += r.fails; a.mins += r.mins; return a; }, {inv: 0, joins: 0, sess: 0, fails: 0, mins: 0});
   $("bbTotals").textContent = tot.inv + " invites sent · " + tot.joins + " joined · " + tot.sess + " sessions · " + tot.fails + " fails · " + Math.round(tot.mins) + " minutes in the lounge";
@@ -1852,6 +1880,37 @@ function openBlackbook(p){
   det.scrollIntoView({block: "center", behavior: "smooth"});
   det.style.outline = "2px solid " + (PCOL[p] || "var(--accent)"); det.style.borderRadius = "8px";
   setTimeout(() => { det.style.outline = ""; }, 1400);
+}
+/* Portrait viewer: a larger view of a persona's AI-made image. Only shown when an image file exists for her. */
+const pvEl = document.createElement("div"); pvEl.id = "portrait"; pvEl.hidden = true;
+pvEl.innerHTML = '<figure><img alt=""><figcaption></figcaption></figure><button type="button" class="pvClose" aria-label="Close portrait">✕</button>';
+document.body.append(pvEl);
+function closePortrait(){ pvEl.hidden = true; }
+function openPortrait(p){
+  const key = NAMEKEY[p]; if (!key) return;
+  findAvImg(key).then(u => {
+    if (!u) return;
+    pvEl.querySelector("img").src = u;
+    pvEl.querySelector("figcaption").textContent = SHORT[p] + (PROFILE[p] && PROFILE[p].job ? " · " + PROFILE[p].job : "");
+    pvEl.style.setProperty("--c", PCOL[p] || "#888");
+    pvEl.hidden = false;
+    pvEl.querySelector(".pvClose").focus();
+  });
+}
+pvEl.addEventListener("click", e => { if (e.target === pvEl || e.target.classList.contains("pvClose")) closePortrait(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !pvEl.hidden) closePortrait(); });
+/* the thumbnail in a blackbook entry: only appears when that persona has a portrait file */
+function portraitBtn(p){
+  const b = document.createElement("button"); b.type = "button"; b.className = "bbPort"; b.hidden = true;
+  b.title = "View portrait larger"; b.setAttribute("aria-label", "View " + SHORT[p] + "'s portrait larger");
+  b.style.setProperty("--c", PCOL[p] || "#888");
+  const key = NAMEKEY[p];
+  if (key) findAvImg(key).then(u => {
+    if (!u) return;
+    const im = new Image(); im.alt = ""; im.src = u; b.replaceChildren(im);
+    b.hidden = false; b.onclick = e => { e.stopPropagation(); openPortrait(p); };
+  });
+  return b;
 }
 document.addEventListener("click", e => {
   const el = e.target.closest ? e.target.closest("[data-persona]") : null;
@@ -2690,6 +2749,7 @@ currentPersona = store.get("h_persona", "");
 const RENAMED = {"Mischievous Milo":"Mischievous Mia","Chaos Casper":"Chaos Cassie","Sweet-Talker Sol":"Sweet-Talker Sienna","Relentless Rex":"Relentless Roxy","Sleepy Sunday":"Sleepy Sadie"};
 currentPersona = RENAMED[currentPersona] || currentPersona;
 if (currentPersona && !PERSONAS[currentPersona]) currentPersona = "";
+updateTimerPortrait(currentPersona);
 if (currentPersona) setActive(currentPersona);
 renderPersCfg();
 simUI(); syncSimBtn();
