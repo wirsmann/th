@@ -136,6 +136,8 @@
   .tPort{display:block;width:100%;max-width:200px;aspect-ratio:3/4;margin:0 auto 8px;padding:0;border:3px solid var(--c,#888);border-radius:14px;overflow:hidden;background:none;cursor:zoom-in}
   .tPort[hidden]{display:none}
   .tPort img{display:block;width:100%;height:100%;object-fit:cover}
+  .av.teasing,.tPort.teasing{box-shadow:0 0 0 2px var(--c,#e8795a),0 0 14px var(--c,#e8795a);animation:teaseGlow 1.6s ease-in-out infinite alternate}
+  @keyframes teaseGlow{from{box-shadow:0 0 0 2px var(--c,#e8795a),0 0 6px var(--c,#e8795a)}to{box-shadow:0 0 0 2px var(--c,#e8795a),0 0 18px var(--c,#e8795a)}}
   .hypeRow{display:flex;align-items:center;gap:10px;margin:0 0 8px}
   .hype{flex:1;height:8px;border-radius:999px;overflow:hidden;position:relative;background:linear-gradient(90deg,#3fae6a 0%,#7cc47a 18%,#e0c23a 38%,#e8923b 55%,#d9534f 78%)}
   #hypeBar{position:absolute;right:0;top:0;height:100%;width:98%;background:var(--ring-bg);transition:width .8s}
@@ -732,7 +734,7 @@ function hexA(h, a){ const m = /^#?([0-9a-f]{6})$/i.exec(h || ""); if (!m) retur
 const whoColor = w => PCOL[w] || "#0f7b8a";
 const whoName = w => w === "__you" ? "Manual" : (SHORT[w] || w);
 var marks = [];
-const MKIND = {move:["◆","Move"], fake:["✕","Fake-out"], yes:["✓","Obeyed"], no:["✗","Refused"], free:["★","Free rein"], ask:["?","Answered"], lube:["L","Lube break"], priv:["🔒","Private show"], life:["!","Real-life event"], hold:["H","Hold"], rest:["R","Rest"]};
+const MKIND = {move:["◆","Move"], fake:["✕","Fake-out"], yes:["✓","Obeyed"], no:["✗","Refused"], free:["★","Free rein"], ask:["?","Answered"], lube:["L","Lube break"], tease:["♥","Tease"], priv:["🔒","Private show"], life:["!","Real-life event"], hold:["H","Hold"], rest:["R","Rest"]};
 function mark(kind, label){
   if (!(running || paused) || !MKIND[kind]) return;
   marks.push({i: hist.length, kind, label: label || MKIND[kind][1], who: runTease && currentPersona ? currentPersona : "__you"});
@@ -1005,6 +1007,7 @@ function update(){
 async function finish(msg, timeUp, failed){
   emptyHalt = false; removeOffer("emptyRoom");
   strokeCapNow = 100; nextLimitAskAt = 0; removeOffer("strokeAsk");   // the stroke limit only lasts for one session
+  endAllTeases();
   if (simOn()) setTimeout(simRestart, 25000 + Math.random() * 30000);   // simulated user starts another session later
   if (failed){ dip = Math.min(45, dip + 30); momentum = Math.max(0, momentum - 20); excite = 0; }   // fails hit the room hard
   if (!running && !paused) return;
@@ -1154,7 +1157,8 @@ function updateTimerPortrait(p){
   const key = p && NAMEKEY[p]; if (!key) return;
   findAvImgs(key).then(list => {
     if (!list.length || b.dataset.p !== p) return;
-    const im = new Image(); im.alt = ""; im.src = list[0]; b.replaceChildren(im);
+    const im = new Image(); im.alt = ""; im.src = (teasing[key] && teasing[key].url) || list[0]; b.replaceChildren(im);
+    b.classList.toggle("teasing", !!teasing[key]);
     b.style.setProperty("--c", PCOL[p] || "#888"); b.onclick = () => openPortrait(p, 0); b.hidden = false;
   });
 }
@@ -1366,6 +1370,9 @@ const AV_EXTS = ["png", "jpg", "jpeg", "webp"], avImg = {}, avProbe = {}, avList
    copying in ComfyUI files (names like lola_00012_.png) and it renames them to these names.
    SHOW_REWARDS: for now reward shots appear in her profile like any other picture; they can be locked later. */
 const SHOW_REWARDS = true, avRewards = {};
+/* Prize: images/<key>_prize.png is her best picture, saved for a real unlock reward. It's found and kept in avPrize, but it is
+   never used for teases and isn't shown in her profile. When unlocking is built, show avPrize[key] once it's earned. */
+const avPrize = {};
 function setAvImg(el, url){ const im = new Image(); im.alt = ""; im.decoding = "async"; im.src = url; el.replaceChildren(im); }
 function loadOk(u){ return new Promise(r => { const t = new Image(); t.onload = () => r(true); t.onerror = () => r(false); t.src = u; }); }
 async function probeBase(base){
@@ -1389,6 +1396,7 @@ function findAvImgs(key){
     const list = await probeSeq(key);
     const rewards = await probeSeq(key + "_reward");
     avRewards[key] = rewards; if (SHOW_REWARDS) list.push(...rewards);
+    avPrize[key] = await probeBase(key + "_prize");   // the special one: never teased, not in the profile until unlocked
     avList[key] = list; avImg[key] = list[0] || false;
     return list;
   })();
@@ -1397,6 +1405,7 @@ function findAvImgs(key){
 function fillAvatar(el, name){
   el.innerHTML = avatarSVG(name);
   const key = NAMEKEY[name]; if (!key) return;
+  el.classList.toggle("teasing", !!teasing[key]); if (teasing[key]){ el.style.setProperty("--c", PCOL[name] || ""); setAvImg(el, teasing[key].url); return; }
   if (avImg[key]){ setAvImg(el, avImg[key]); return; }
   if (avImg[key] === false) return;
   findAvImgs(key).then(list => { if (list[0]) setAvImg(el, list[0]); });
@@ -1404,6 +1413,51 @@ function fillAvatar(el, name){
 function avatarEl(name){
   const el = document.createElement("span"); el.className = "av"; fillAvatar(el, name); el.setAttribute("aria-hidden", "true"); el.dataset.persona = name;
   return el;
+}
+
+/* ---------- teases: she swaps her picture for one of her reward shots for a short while ----------
+   Going private always triggers one. Asking to go private has a chance of a preview. During a private show she may tease again.
+   In the open room it only happens when the room is hot (Packed or above), after she's been in control a few minutes,
+   and with a long cooldown. A tease in the open room hypes the room. The prize picture is never used. */
+const TEASE_RATE = {4: 2, 5: 4, 6: 7};      // chance per minute in the open room, by crowd tier: Packed, Hot, Legendary
+const TEASE_PREVIEW = 0.25;                  // chance she flashes a preview when she asks to go private
+const teasing = {}, nextTeaseAt = {};
+function refreshAvatars(p){
+  document.querySelectorAll(".av[data-persona]").forEach(el => { if (el.dataset.persona === p) fillAvatar(el, p); });
+  if ($("persAv") && $("persAv").dataset.persona === p) fillAvatar($("persAv"), p);
+  if ($("tPort") && $("tPort").dataset.p === p) updateTimerPortrait(p);
+}
+function startTease(p, why){
+  const key = NAMEKEY[p]; if (!key || teasing[key] || !room.includes(p)) return;
+  findAvImgs(key).then(() => {
+    const pool = avRewards[key] || []; if (!pool.length || teasing[key] || !room.includes(p)) return;
+    const last = nextTeaseAt[p + ":last"], pick = pool.length > 1 ? pickOne(pool.filter(u => u !== last)) : pool[0];
+    const priv = why === "private" || why === "privMid", secs = priv ? rnd(30, 50) : why === "preview" ? rnd(15, 25) : rnd(20, 35);
+    const t = teasing[key] = {url: pick, p, why}; nextTeaseAt[p + ":last"] = pick;
+    nextTeaseAt[p] = Date.now() + (6 + Math.random() * 4) * 60000;   // cooldown before she'll tease the open room again
+    refreshAvatars(p); sayAs(p, "teaseShow");
+    mark("tease", SHORT[p] + (priv ? " teased you in private" : why === "preview" ? " flashed a preview" : " teased the room"));
+    if (!privateShow){
+      addMsg("sys", "👀 " + SHORT[p] + " is giving the room a peek.");
+      bump(15, 8); pop = Math.min(100, pop + 8);
+      if ($("fansOn").checked) for (let i = 0; i < 2 + Math.floor(Math.random() * 4); i++) setTimeout(() => { if (!privateShow) { addFan(p); renderCrowd(); } }, 800 + i * 900);
+      react("tease", p);
+    } else bump(8, 4);
+    setTimeout(() => endTease(key, t), secs * 1000);
+  });
+}
+function endTease(key, t){
+  if (teasing[key] !== t) return;
+  delete teasing[key]; refreshAvatars(t.p);
+  if (room.includes(t.p) && running) sayAs(t.p, "teaseEnd");
+}
+function endAllTeases(){ Object.keys(teasing).forEach(k => { const t = teasing[k]; delete teasing[k]; refreshAvatars(t.p); }); }
+function teaseTick(now){
+  const p = currentPersona;
+  if (!teaseNow() || !p || !room.includes(p) || privateShow || lifeEv || teasing[NAMEKEY[p]]) return;
+  if (ctlWho !== p || now - ctlAt < 4 * 60000 || now < (nextTeaseAt[p] || 0)) return;
+  const rate = TEASE_RATE[tierOf(fans.length)] || 0; if (!rate) return;
+  if (Math.random() < rate / 100 / 60) startTease(p, "room");
 }
 function addMsg(kind, text, replyEl){
   const d = document.createElement("div"); d.className = "msg " + kind;
@@ -2356,9 +2410,10 @@ Object.keys(MORE12).forEach(k => Object.keys(MORE12[k]).forEach(c => { LINES[k][
 Object.assign(HYPE, {privAsk:3,privOn:8,privDeny:2,privMid:3,privBye:2});
 
 /* ---------- private show: after a long stretch in control, a persona may lock the room and get more intense ---------- */
-var privateShow = null, ctlWho = "", ctlAt = 0, nextPrivAt = 0, nextPrivMidAt = 0;
+var privateShow = null, ctlWho = "", ctlAt = 0, nextPrivAt = 0, nextPrivMidAt = 0, nextPrivTeaseAt = 0;
 function requestPrivate(p){
   nextPrivAt = Date.now() + 3 * 60000;
+  if (Math.random() < TEASE_PREVIEW) setTimeout(() => { if (currentPersona === p && !privateShow) startTease(p, "preview"); }, 2500);
   sayAs(p, "privAsk", null, {onShow: () => {
     addOffer({id: "priv", who: p, text: "wants you all to herself", ttl: 40000, valid: () => teaseNow() && currentPersona === p && !privateShow,
       onGone: why => { if (why === "expired" && teaseNow() && currentPersona === p) sayAs(p, "privDeny"); },
@@ -2379,6 +2434,9 @@ function acceptPrivate(p){
   });
   setTimeout(() => { fans.length = 0; fanFav = {}; renderRoom(); }, 2500);
   excite = Math.min(60, excite + 12); nextPrivMidAt = Date.now() + 14000; nextDemandAt = Date.now() + 9000; nextAskAt = Date.now() + 50000;
+  const key = NAMEKEY[p]; if (teasing[key]) endTease(key, teasing[key]);   // a running preview gives way to the real thing
+  setTimeout(() => { if (privateShow && privateShow.p === p) startTease(p, "private"); }, 5500);
+  nextPrivTeaseAt = Date.now() + (3 + Math.random() * 2) * 60000;
   setTimeout(forceBuild, 3500); renderRoom();
 }
 function privTick(now){
@@ -2387,6 +2445,7 @@ function privTick(now){
   if (ctlWho !== currentPersona){ ctlWho = currentPersona; ctlAt = now; nextPrivAt = 0; }
   if (privateShow){
     if (now > nextPrivMidAt){ nextPrivMidAt = now + 20000 + Math.random() * 15000; say("privMid"); }
+    if (now > nextPrivTeaseAt){ nextPrivTeaseAt = now + (2 + Math.random() * 2) * 60000; if (Math.random() < 0.35) startTease(currentPersona, "privMid"); }
     return;
   }
   if (!$("privOn").checked || challenge || demand || ask || offers.some(o => o.id === "priv") || !room.includes(currentPersona)) return;
@@ -2653,6 +2712,8 @@ Object.keys(__M).forEach(k => { LINES[k].manual = __M[k]; });
 Object.keys(VIBE_LINES).forEach(k => { LINES[k].act_vibrate = VIBE_LINES[k]; });
 [["strokeLimit", STROKE_LIMIT], ["strokeAsk", STROKE_ASK], ["strokeMore", STROKE_MORE], ["strokeStill", STROKE_STILL]].forEach(([cat, src]) => Object.keys(src).forEach(k => { if (LINES[k]) LINES[k][cat] = src[k]; }));
 Object.assign(HYPE, {strokeLimit:2, strokeAsk:2, strokeMore:4, strokeStill:2});
+[["teaseShow", TEASE_SHOW], ["teaseEnd", TEASE_END]].forEach(([cat, src]) => Object.keys(src).forEach(k => { if (LINES[k]) LINES[k][cat] = src[k]; }));
+Object.assign(HYPE, {teaseShow:6, teaseEnd:1});
 Object.keys(__QC).forEach(k => { LINES[k].quitCtl = __QC[k]; LINES[k].quitSpec = __QS[k]; });
 Object.assign(HYPE, {quitCtl:3,quitSpec:3});
 /* ---------- interactions: targets, demands, questions ---------- */
@@ -2880,7 +2941,7 @@ function askRandomQuestion(){
   const r = Math.random(); askQuestion(p, r < 0.55 ? "feel" : "next");
 }
 function interactTick(now, busy){
-  privTick(now); lifeTick(now); giveUpTick(now); idleTick(now); manualTick(now); limitTick(now);
+  privTick(now); lifeTick(now); giveUpTick(now); idleTick(now); manualTick(now); limitTick(now); teaseTick(now);
   if (!$("interactOn").checked) return;
   if (teaseNow() && !challenge && !ask && !demand){
     if (now > nextAskAt){ nextAskAt = now + (65000 + Math.random() * 45000) / Math.sqrt(aggr()); askRandomQuestion(); }

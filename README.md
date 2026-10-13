@@ -104,6 +104,8 @@ Picking a personality in the Tease panel's **Active persona** dropdown fills in 
 - A personality storms off after too many refusals.
 - Personalities challenge each other for control (Grant / Deny / Deny all) and can hand control over on their own (Personas panel).
 - Private shows lock the room and raise the intensity.
+- Teases: the persona swaps her picture (chat avatars, timer portrait) for one of her reward shots (`images/<key>_reward.png`, `_reward2`...) for 15 to 50 seconds, with a glow and a line from her (`TEASE_SHOW` / `TEASE_END` in `dialogue.js`). Going private always triggers one, asking to go private has a 25% chance of a preview, and a private show may bring more. In the open room it only happens when the crowd is Packed or bigger (2, 4 or 7% a minute at Packed, Hot, Legendary), after 4 minutes in control, with a 6 to 10 minute cooldown. An open-room tease hypes the room and draws viewers. Tuning: `TEASE_RATE` and `TEASE_PREVIEW` in `index.html`.
+- Prize picture: `images/<key>_prize.png` is reserved for a real unlock reward. It's found (`avPrize`) but never used for teases and not shown in the profile.
 - Real-life interruptions (cat on the keyboard, doorbell, phone call, dozing off, passing out) come with wake-up or hand-off options.
 
 ## Dialogue (`dialogue.js`)
@@ -179,6 +181,7 @@ The session log can be exported as CSV.
 
 ## Changelog
 
+- **2026-10-12:** Teases: personas swap their picture for a reward shot now and then (always when going private, sometimes when asking, rarely in a hot open room), hyping the room. `<key>_prize.png` is reserved for a future unlock.
 - **2026-10-12:** The short-stroke prompt has an "I can't take a full stroke" answer. It sets a stroke limit for the session that every persona respects. While it's set, the one in control checks in every few minutes to ask if you can take more. Every persona replies in character.
 - **2026-10-11:** Lounge header is tighter. The simulated Handy box sits beside the header, heat bar and names, and is always visible.
 - **2026-10-11:** The graph shows a one-minute window. Slide left to look back at history, and press Live to return to the current activity.
