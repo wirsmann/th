@@ -100,6 +100,7 @@ Picking a personality in the Tease panel's **Active persona** dropdown fills in 
 ### Lounge interactions (toggles under Customize)
 - A simulated audience that grows with activity and can nudge tease intensity. The audience only joins and leaves. It never chats.
 - Personalities ask questions and make speed and stroke demands, with Do it / Match her target / Refuse buttons.
+- When your stroke is short, the one in control asks for a longer one. Besides "Use the full stroke", you can answer "I can't take a full stroke". Your current length becomes a stroke limit for this session only, and she replies in character. While it's set, her target, her stroke demands and "Match her target" never go past it, and every 2 to 3 minutes she checks in: "Give me the full stroke", "A little more (+10%)" or "Still can't", each with an in-character reply. The limit clears when the session ends. Lines: `STROKE_LIMIT`, `STROKE_ASK`, `STROKE_MORE` and `STROKE_STILL` in `dialogue.js`.
 - A personality storms off after too many refusals.
 - Personalities challenge each other for control (Grant / Deny / Deny all) and can hand control over on their own (Personas panel).
 - Private shows lock the room and raise the intensity.
@@ -178,6 +179,7 @@ The session log can be exported as CSV.
 
 ## Changelog
 
+- **2026-10-12:** The short-stroke prompt has an "I can't take a full stroke" answer. It sets a stroke limit for the session that every persona respects. While it's set, the one in control checks in every few minutes to ask if you can take more. Every persona replies in character.
 - **2026-10-11:** Lounge header is tighter. The simulated Handy box sits beside the header, heat bar and names, and is always visible.
 - **2026-10-11:** The graph shows a one-minute window. Slide left to look back at history, and press Live to return to the current activity.
 - **2026-10-11:** Simulated users now answer offers and questions after a short pause.

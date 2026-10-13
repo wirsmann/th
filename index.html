@@ -1004,6 +1004,7 @@ function update(){
 
 async function finish(msg, timeUp, failed){
   emptyHalt = false; removeOffer("emptyRoom");
+  strokeCapNow = 100; nextLimitAskAt = 0; removeOffer("strokeAsk");   // the stroke limit only lasts for one session
   if (simOn()) setTimeout(simRestart, 25000 + Math.random() * 30000);   // simulated user starts another session later
   if (failed){ dip = Math.min(45, dip + 30); momentum = Math.max(0, momentum - 20); excite = 0; }   // fails hit the room hard
   if (!running && !paused) return;
@@ -1452,6 +1453,12 @@ const offers = [];
 function syncRow(){ const e = $("arHint"); if (e) e.textContent = offers.length ? "" : "Nothing needs an answer right now."; }
 function removeOffer(id){ const i = offers.findIndex(o => o.id === id); if (i >= 0){ offers[i].el.remove(); offers.splice(i, 1); } syncRow(); }
 const NOTES = [
+ [/^I can't take a full stroke/, "Sets a stroke limit for this session. She won't ask for more, but she'll check in later to see if you can take more."],
+ [/^I can't take more than this/, "Lowers this session's stroke limit to your current length."],
+ [/^Use my longest stroke/, "Sets your stroke to this session's limit."],
+ [/^Give me the full stroke/, "Lifts the limit and sets the full 0 to 100% stroke."],
+ [/^A little more/, "Raises the limit by 10% and lengthens your stroke to match."],
+ [/^Still can't/, "Keeps the limit. She'll ask again in a few minutes."],
  [/^Do it/, "Apply exactly what she asked for."],
  [/^Match her target/, "Set both sliders to her preferred numbers."],
  [/^Do what you want/, "Hands her free rein for a few minutes. Her targets nudge up and she won't ask again for a while."],
@@ -1550,9 +1557,46 @@ function speedAction(){
   const cur = +$("speed").value, nv = Math.min(100, cur + 15); if (nv <= cur) return null;
   return {id: "speedUp", ttl: 60000, label: "Raise max speed to " + nv + "%", apply: () => { $("speed").value = nv; $("speed").dispatchEvent(new Event("input")); addMsg("sys", "Max speed raised to " + nv + "%."); }};
 }
+/* Stroke limit: set when you tell her you can't take a full stroke. It only lasts for the current session (reset in finish),
+   and while it's set the persona in control checks in every few minutes to ask if you can take more now. */
+var strokeCapNow = 100, nextLimitAskAt = 0;
+function lenCap(){ return clamp(Math.round(strokeCapNow), 5, 100); }
+function fullStrokeNow(){ $("smin").value = 0; $("smin").dispatchEvent(new Event("input")); $("smax").value = 100; $("smax").dispatchEvent(new Event("input")); }
 function strokeAction(){
-  if (+$("smin").value <= 0 && +$("smax").value >= 100) return null;
-  return {id: "fullStroke", ttl: 60000, label: "Use the full stroke (0–100%)", apply: () => { $("smin").value = 0; $("smin").dispatchEvent(new Event("input")); $("smax").value = 100; $("smax").dispatchEvent(new Event("input")); addMsg("sys", "Stroke set to the full range."); }};
+  const cap = lenCap(), len = +$("smax").value - +$("smin").value, p = currentPersona;
+  if (len >= cap) return null;
+  const longest = cap >= 100
+    ? {label: "Use the full stroke (0–100%)", kind: "primary", apply: () => { fullStrokeNow(); addMsg("sys", "Stroke set to the full range."); }}
+    : {label: "Use my longest stroke (" + cap + "%)", kind: "primary", apply: () => { setLenTo(cap); addMsg("sys", "Stroke set to your limit of " + cap + "%."); }};
+  return {id: "fullStroke", ttl: 60000, choices: [longest,
+    {label: cap >= 100 ? "I can't take a full stroke" : "I can't take more than this", kind: "ghost", apply: () => setStrokeLimit(p, len, cap >= 100)}]};
+}
+function setStrokeLimit(p, len, wasFull){
+  strokeCapNow = clamp(Math.round(len), 5, 100);
+  nextLimitAskAt = Date.now() + 120000 + Math.random() * 80000;
+  const m = addMsg("me", wasFull ? "I can't take a full stroke." : "I can't take more than this.");
+  if (p && room.includes(p)) sayAs(p, "strokeLimit", null, {replyTo: m});
+  mark("ask", "Stroke limit " + strokeCapNow + "% for now");
+  setTimeout(() => addMsg("sys", "Stroke limit set to " + strokeCapNow + "% for this session. She'll check in later to see if you can take more."), 1200);
+}
+/* the check-in: while a limit is set and she's in control, ask every 2 to 3 minutes */
+function limitTick(now){
+  if (strokeCapNow >= 100 || now < nextLimitAskAt || !teaseNow()) return;
+  const p = currentPersona;
+  if (!p || !room.includes(p) || challenge || ask || demand || lifeEv || !$("interactOn").checked) return;
+  nextLimitAskAt = now + 60000;   // placeholder until she's answered or ignored
+  const a = ask = {p, qid: "stroke", el: null};
+  const done = (cat, mine) => { if (ask === a) ask = null; if (strokeCapNow < 100) nextLimitAskAt = Date.now() + 120000 + Math.random() * 80000; if (cat) setTimeout(() => sayAs(p, cat, null, {replyTo: mine}), 600); };
+  sayAs(p, "strokeAsk", null, {onShow: el => {
+    if (ask !== a) return; a.el = el;
+    const more = Math.min(100, lenCap() + 10);
+    addOffer({id: "strokeAsk", who: p, text: "asks you", ttl: 40000, valid: () => ask === a && running,
+      onGone: why => { if (ask === a) done(null); },
+      choices: [
+        {label: "Give me the full stroke", kind: "primary", apply: () => { if (ask !== a) return; strokeCapNow = 100; fullStrokeNow(); mark("yes", "Took the full stroke"); done("strokeMore", addMsg("me", "Give me the full stroke.", el)); }},
+        {label: "A little more (" + more + "%)", kind: "primary", apply: () => { if (ask !== a) return; strokeCapNow = more; setLenTo(more); mark("yes", "Stroke limit raised to " + more + "%"); done("strokeMore", addMsg("me", "A little more.", el)); }},
+        {label: "Still can't", kind: "ghost", apply: () => { if (ask !== a) return; done("strokeStill", addMsg("me", "Still can't.", el)); }}]});
+  }});
 }
 function commentSettings(kind){
   if (!currentPersona || Date.now() < suppressUntil) return;
@@ -2607,6 +2651,8 @@ LINES["Stage-Manager Simone"] = PERSONA_LINES["Stage-Manager Simone"];
 
 Object.keys(__M).forEach(k => { LINES[k].manual = __M[k]; });
 Object.keys(VIBE_LINES).forEach(k => { LINES[k].act_vibrate = VIBE_LINES[k]; });
+[["strokeLimit", STROKE_LIMIT], ["strokeAsk", STROKE_ASK], ["strokeMore", STROKE_MORE], ["strokeStill", STROKE_STILL]].forEach(([cat, src]) => Object.keys(src).forEach(k => { if (LINES[k]) LINES[k][cat] = src[k]; }));
+Object.assign(HYPE, {strokeLimit:2, strokeAsk:2, strokeMore:4, strokeStill:2});
 Object.keys(__QC).forEach(k => { LINES[k].quitCtl = __QC[k]; LINES[k].quitSpec = __QS[k]; });
 Object.assign(HYPE, {quitCtl:3,quitSpec:3});
 /* ---------- interactions: targets, demands, questions ---------- */
@@ -2665,14 +2711,14 @@ function addMod(p, ds, dl, ms){
 }
 function targetOf(p){
   const t = TARGETS[p] || {speed: 60, len: 80}, m = tmod[p] && tmod[p].until > Date.now() ? tmod[p] : {s: 0, l: 0};
-  if (t.chaos){ if (!chaosT[p]) rollChaos(p); return {speed: clamp(chaosT[p].speed + m.s, 30, 100), len: clamp(chaosT[p].len + m.l, 50, 100)}; }
+  if (t.chaos){ if (!chaosT[p]) rollChaos(p); return {speed: clamp(chaosT[p].speed + m.s, 30, 100), len: Math.min(lenCap(), clamp(chaosT[p].len + m.l, 50, 100))}; }
   const c = creep[p] || {s: 0, l: 0};
-  return {speed: clamp(t.speed + c.s + m.s, 30, 100), len: clamp(t.len + c.l + m.l, 50, 100)};
+  return {speed: clamp(t.speed + c.s + m.s, 30, 100), len: Math.min(lenCap(), clamp(t.len + c.l + m.l, 50, 100))};
 }
 function targetNote(p){ const t = TARGETS[p]; if (!t) return ""; return t.chaos ? " Her target changes every time." : " Her target: speed " + t.speed + "%, stroke length " + t.len + "%."; }
 function setSpeedTo(v){ suppressUntil = Date.now() + 5000; $("speed").value = clamp(Math.round(v), 1, 100); $("speed").dispatchEvent(new Event("input")); }
 function setLenTo(len){
-  suppressUntil = Date.now() + 5000; len = clamp(Math.round(len), 5, 100);
+  suppressUntil = Date.now() + 5000; len = clamp(Math.round(len), 5, lenCap());
   const cmn = +$("smin").value;
   let mn = cmn, mx = cmn + len; if (mx > 100){ mx = 100; mn = 100 - len; }
   const setMax = () => { $("smax").value = mx; $("smax").dispatchEvent(new Event("input")); };
@@ -2834,7 +2880,7 @@ function askRandomQuestion(){
   const r = Math.random(); askQuestion(p, r < 0.55 ? "feel" : "next");
 }
 function interactTick(now, busy){
-  privTick(now); lifeTick(now); giveUpTick(now); idleTick(now); manualTick(now);
+  privTick(now); lifeTick(now); giveUpTick(now); idleTick(now); manualTick(now); limitTick(now);
   if (!$("interactOn").checked) return;
   if (teaseNow() && !challenge && !ask && !demand){
     if (now > nextAskAt){ nextAskAt = now + (65000 + Math.random() * 45000) / Math.sqrt(aggr()); askRandomQuestion(); }
