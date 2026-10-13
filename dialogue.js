@@ -13470,3 +13470,380 @@ const TEASE_END = {
 };
 SHARED.teaseShow = ["A little peek, {nick}."];
 SHARED.teaseEnd = ["That's all for now, {nick}."];
+
+
+/* Ease-off requests: now and then a persona who is already on her preferred settings asks you to go slower or shorter,
+   for teasing, endurance or training. Merged into LINES in index.html. {to} is the new value. */
+const EASE_LINES = {
+ "Patient Priscilla": {
+  "easeSpeed": [
+   "Let's slow down a little, {nick}. Ease it to {to}%. I want this to last a long, long time.",
+   "Mm, you're doing so well. Back off to {to}%, and let's stretch this out together."
+  ],
+  "easeStroke": [
+   "A little shorter now, {nick}. Down to {to}%. Gentle and slow keeps you here longer.",
+   "Shorten the stroke to {to}%. We're in no hurry, are we?"
+  ]
+ },
+ "Mischievous Mia": {
+  "easeSpeed": [
+   "Oh, you're keeping up so nicely. How boring! Slow down to {to}%, {nick}, let's see how you squirm.",
+   "Ooh, too easy for you. Drop to {to}%. I like to watch you wait."
+  ],
+  "easeStroke": [
+   "Shorter strokes, to {to}%. Just a little tease, {nick}!",
+   "Cut the stroke to {to}%. Let's see how long you can behave."
+  ]
+ },
+ "Strict Ms. Vance": {
+  "easeSpeed": [
+   "Endurance is built, {nick}, not given. Reduce your speed to {to}%. Now.",
+   "You're comfortable. That will not do. Slow to {to}% and hold it there."
+  ],
+  "easeStroke": [
+   "Shorten the stroke to {to}%. Control the length. Discipline.",
+   "Reduce stroke length to {to}%. Precision, not enthusiasm."
+  ]
+ },
+ "Chaos Cassie": {
+  "easeSpeed": [
+   "Wait, wait, I changed my mind! Slow it down to {to}%! Why? No reason!",
+   "Ooh, plot twist! Drop to {to}%, {nick}! Let's see what happens!"
+  ],
+  "easeStroke": [
+   "New idea! Shorter strokes, {to}%! It'll be hilarious!",
+   "Stroke to {to}%! Don't ask me why, I just feel like it!"
+  ]
+ },
+ "Sweet-Talker Sienna": {
+  "easeSpeed": [
+   "You're doing so well, {nick}. Let's slow it right down to {to}%, and make it last for me.",
+   "Shh, easy now. Ease it to {to}%, and let me enjoy you a little longer."
+  ],
+  "easeStroke": [
+   "A shorter stroke now, {nick}. Down to {to}%. Slow and sweet.",
+   "Mmm, let's keep it small for a moment. {to}%. Feels better, doesn't it?"
+  ]
+ },
+ "Relentless Roxy": {
+  "easeSpeed": [
+   "Fine. Slow to {to}%. A little torture builds stamina, rookie.",
+   "Drop it to {to}% for a bit. Don't think I'm going soft. I'll make you pay for it later."
+  ],
+  "easeStroke": [
+   "Shorter, to {to}%. Fewer inches, more pain.",
+   "Cut the stroke to {to}%. Think of it as a warm-up for what's coming."
+  ]
+ },
+ "Sleepy Sadie": {
+  "easeSpeed": [
+   "Mm... slower, {nick}... go down to {to}%... I like it nice and lazy...",
+   "Let's drift down to {to}%... slow... stay with me..."
+  ],
+  "easeStroke": [
+   "Shorter now... {to}%... small and slow... mm...",
+   "Little strokes, {nick}... {to}%... lazy and warm..."
+  ]
+ },
+ "Drill Sergeant Dana": {
+  "easeSpeed": [
+   "Endurance drill! Cut your speed to {to}%, {nick}! Hold it! Prove you can last!",
+   "Pace change! Drop to {to}%! A strong recruit can hold a slow tempo!"
+  ],
+  "easeStroke": [
+   "Shorten that stroke to {to}%! Control, not speed!",
+   "Stroke down to {to}%! Control is the test!"
+  ]
+ },
+ "Mocking Margot": {
+  "easeSpeed": [
+   "Oh, you think you're doing so well? Slow down to {to}%, {nick}. Let's see how long you last.",
+   "You're a little too comfortable. Drop to {to}%. I want to hear you beg for speed."
+  ],
+  "easeStroke": [
+   "Shorter strokes, to {to}%. Go ahead and whimper.",
+   "Cut it to {to}%. Does a little denial hurt, {nick}?"
+  ]
+ },
+ "Cuckolding Veronica": {
+  "easeSpeed": [
+   "Slow down to {to}%, {nick}. I want you to feel every second while I tell you about him.",
+   "Drop to {to}%. Take your time. He always did."
+  ],
+  "easeStroke": [
+   "Shorten the stroke to {to}%. Small and sad, just the way I like you.",
+   "Down to {to}%. Smaller strokes for someone who watches."
+  ]
+ },
+ "Counting Camille": {
+  "easeSpeed": [
+   "Endurance data requires variation. Reduce speed to {to}%, {nick}, and I'll log the effect.",
+   "Test phase two. Lower your speed to {to}%. Let's see how you hold up."
+  ],
+  "easeStroke": [
+   "Shorten stroke length to {to}% for the next trial.",
+   "Reduce the stroke to {to}%. I'll count how long you can hold."
+  ]
+ },
+ "Gambling Gigi": {
+  "easeSpeed": [
+   "Time to raise the stakes, {nick}! Slow to {to}%. Prove you can last, double or nothing!",
+   "I bet you can't last at {to}%. Slow down and prove me wrong!"
+  ],
+  "easeStroke": [
+   "Shorter stroke, {to}%! New bet, new rules!",
+   "Down to {to}% on the stroke. Go on, it'll be worth the wait."
+  ]
+ },
+ "Goddess Isadora": {
+  "easeSpeed": [
+   "Slower, {nick}. {to}%. Patience is a form of worship.",
+   "Reduce your pace to {to}%. A goddess likes to savor."
+  ],
+  "easeStroke": [
+   "Shorten your stroke to {to}%. Devotion needs no excess.",
+   "Down to {to}%. I will decide when you have earned more."
+  ]
+ },
+ "Bratty Bella": {
+  "easeSpeed": [
+   "Ugh, this is boring. Slow down to {to}%, {nick}! I want to see you suffer a bit.",
+   "Hmm, I changed my mind. Slower, {to}%. Because I said so!"
+  ],
+  "easeStroke": [
+   "Shorter, to {to}%! I'm not done playing with you!",
+   "Stroke down to {to}%. It's funnier that way."
+  ]
+ },
+ "Hypnotic Helena": {
+  "easeSpeed": [
+   "Slower now... let it fade down to {to}%... deeper... longer...",
+   "Down to {to}%, {nick}... slow, steady... let it last..."
+  ],
+  "easeStroke": [
+   "Shorter now... {to}%... smaller and softer... drifting...",
+   "Let the stroke shrink to {to}%... slowly... deeper..."
+  ]
+ },
+ "Coach Colleen": {
+  "easeSpeed": [
+   "Time for an endurance set, champ! Drop to {to}% and hold it! Build that stamina!",
+   "Slow-tempo drill! Down to {to}%! Control is what wins!"
+  ],
+  "easeStroke": [
+   "Short-stroke set! Cut to {to}%! Keep it tight!",
+   "Technique round! Stroke length {to}%! Show me control!"
+  ]
+ },
+ "Doctor Delphine": {
+  "easeSpeed": [
+   "Interesting. For the next test, reduce speed to {to}%, {nick}. I want to measure your endurance.",
+   "Please lower the speed to {to}%. I'd like to observe a slower baseline."
+  ],
+  "easeStroke": [
+   "Shorten the stroke to {to}% for the next observation.",
+   "Reduce stroke length to {to}%. Let's see how you respond to less."
+  ]
+ },
+ "Jealous Juliet": {
+  "easeSpeed": [
+   "Slow down to {to}%, {nick}. I want you to last for me. Only me.",
+   "Drop to {to}%. I'm not ready to let you go yet."
+  ],
+  "easeStroke": [
+   "Shorter strokes, {to}%. Stay close, stay with me.",
+   "Down to {to}%. I'm keeping you right where I want you."
+  ]
+ },
+ "Queen Valentina": {
+  "easeSpeed": [
+   "Reduce your speed to {to}%, {nick}. Your queen wishes to savor this.",
+   "I decree a slower pace. {to}%. You will last, as ordered."
+  ],
+  "easeStroke": [
+   "Shorten your stroke to {to}%. It is my decision.",
+   "Stroke to {to}%. Obey."
+  ]
+ },
+ "Pouty Penelope": {
+  "easeSpeed": [
+   "Slow down to {to}%, {nick}? I want this to last, pretty please!",
+   "Go slower, {to}%? I'm not done with you yet, I promise it's fun!"
+  ],
+  "easeStroke": [
+   "Shorter strokes, {to}%? It's cuter that way, I think.",
+   "Make the stroke smaller, {to}%? Just for a little bit, honey!"
+  ]
+ },
+ "Flirty Fiona": {
+  "easeSpeed": [
+   "Let's slow it down to {to}%, {nick}. Nice and teasing. Let me enjoy the view.",
+   "Ooh, drop to {to}%. I like watching you try to behave."
+  ],
+  "easeStroke": [
+   "Shorter strokes, {to}%. Make me work for it, handsome.",
+   "Down to {to}% on the stroke. A tease is better when it's small."
+  ]
+ },
+ "Stage-Manager Simone": {
+  "easeSpeed": [
+   "Cue change! Slow to {to}%, {nick}. Slow tempo, big payoff. The audience will wait.",
+   "Go to {to}% for this scene. Hold it. We'll build it up again."
+  ],
+  "easeStroke": [
+   "Blocking note: stroke to {to}%. Tight and controlled.",
+   "Shorter stroke, {to}%. We're in a quiet scene."
+  ]
+ },
+ "Chef Gianna": {
+  "easeSpeed": [
+   "Lower the heat, {nick}. Slow to {to}%. A good dish needs a long simmer.",
+   "Let it simmer down to {to}%. Patience makes the flavor deeper."
+  ],
+  "easeStroke": [
+   "Shorter strokes, {to}%. Just a gentle stir.",
+   "Down to {to}% on the stroke. Don't rush the pot."
+  ]
+ },
+ "Inspector Vale": {
+  "easeSpeed": [
+   "Slow down to {to}%, {nick}. I'm not finished with my questions.",
+   "Drop to {to}%. Let's see how steady you are when you're not rushing."
+  ],
+  "easeStroke": [
+   "Shorten the stroke to {to}%. I want to see how you react.",
+   "Down to {to}%. Take it slow, answer carefully."
+  ]
+ },
+ "Unit Nine": {
+  "easeSpeed": [
+   "Diagnostic: reduce speed to {to}%. Endurance test initiated, {nick}.",
+   "Parameter adjustment: speed {to}%. Stability required."
+  ],
+  "easeStroke": [
+   "Reduce stroke length to {to}%. Precision calibration.",
+   "Stroke length {to}%. Hold for the calibration cycle."
+  ]
+ },
+ "Captain Sable": {
+  "easeSpeed": [
+   "Ease the sails, {nick}! Slow to {to}%. A calm sea tests a sailor's patience.",
+   "Slow to {to}%! We're becalmed, and you'll sit in it a while."
+  ],
+  "easeStroke": [
+   "Shorter strokes, {to}%! Keep her steady, matey.",
+   "Stroke down to {to}%. Hold your course through the doldrums."
+  ]
+ },
+ "Madame Zara": {
+  "easeSpeed": [
+   "The cards say slow down, {nick}. {to}%. A long road to the peak.",
+   "I see patience in your future. Reduce speed to {to}%."
+  ],
+  "easeStroke": [
+   "The cards want a shorter stroke. {to}%. Trust them.",
+   "Shorten to {to}%. The spirits say hold back."
+  ]
+ },
+ "Madame Olenka": {
+  "easeSpeed": [
+   "Slower tempo, {nick}. {to}%. Control is the grace of every stroke.",
+   "Adagio now. Reduce to {to}%. Feel every beat."
+  ],
+  "easeStroke": [
+   "Shorter stroke, {to}%. Small, precise, elegant.",
+   "Stroke to {to}%. Measured, like a slow turn."
+  ]
+ },
+ "Glitch": {
+  "easeSpeed": [
+   "Throttle limit... reducing speed to {to}%, {nick}. Hold it while I scan...",
+   "Slow down to {to}%. Firewall adjusting. Don't trigger the alarm."
+  ],
+  "easeStroke": [
+   "Shorten stroke to {to}%. Packet size reduced.",
+   "Stroke to {to}%. Stay under the radar."
+  ]
+ },
+ "Nurse Ingrid": {
+  "easeSpeed": [
+   "Let's take it slower, {nick}. Down to {to}%. A little endurance training is good for you.",
+   "Slow to {to}%, dear. I want to see how well you handle it."
+  ],
+  "easeStroke": [
+   "Shorter strokes now, {to}%. Easy does it.",
+   "Let's try a smaller stroke, {to}%. Gentle for a moment."
+  ]
+ },
+ "High-Energy Holly": {
+  "easeSpeed": [
+   "Cooldown set, champ! Slow to {to}%! Control the pace, build the stamina!",
+   "Tempo change! {to}%! Slow reps burn the most! You've got this!"
+  ],
+  "easeStroke": [
+   "Short-range reps! Stroke to {to}%! Stay tight!",
+   "Half reps at {to}%! Feel the burn! Don't cheat!"
+  ]
+ },
+ "Starlet Sloane": {
+  "easeSpeed": [
+   "Darling, a dramatic pause. Slow to {to}%. The audience should wait for it.",
+   "Slower, {nick}. {to}%. Every great scene needs its slow burn."
+  ],
+  "easeStroke": [
+   "A shorter stroke, {to}%. Subtle, like a close-up.",
+   "Down to {to}%. A little restraint is so glamorous."
+  ]
+ },
+ "Office Olivia": {
+  "easeSpeed": [
+   "I'm adjusting the schedule, {nick}. Reduce speed to {to}%. Endurance review.",
+   "Please slow to {to}%. It's a long meeting."
+  ],
+  "easeStroke": [
+   "Shorten stroke to {to}%. Efficient, no excess.",
+   "Reduce stroke to {to}%. Let's keep it professional."
+  ]
+ },
+ "Satin Sasha": {
+  "easeSpeed": [
+   "Slower for the camera, {nick}. {to}%. Let me pose a little longer.",
+   "Slow down to {to}%, gorgeous. I want to tease you for a while."
+  ],
+  "easeStroke": [
+   "A shorter stroke, {to}%. Just a small tease.",
+   "Stroke to {to}%. Let me take my time."
+  ]
+ },
+ "Livestream Lexi": {
+  "easeSpeed": [
+   "Viewers say slow it down! {to}%, {nick}! Let's see if you last!",
+   "The room wants a slow burn! Drop to {to}%! Let's see if you tap out!"
+  ],
+  "easeStroke": [
+   "The vote's in: shorter strokes! {to}%!",
+   "Short strokes, {to}%! By popular request!"
+  ]
+ },
+ "Lilith": {
+  "easeSpeed": [
+   "Slower, {nick}. {to}%. I'll feed on your wanting.",
+   "Drop to {to}%. Hunger makes everything sweeter."
+  ],
+  "easeStroke": [
+   "Shorter strokes, {to}%. I want you aching for more.",
+   "Down to {to}%. Let it burn slowly."
+  ]
+ },
+ "Lyric Lola": {
+  "easeSpeed": [
+   "Slow the beat to {to}%, {nick}. Let the verse breathe.",
+   "Half-time! Drop to {to}%. Stay in the pocket and last the song."
+  ],
+  "easeStroke": [
+   "Shorter stroke, {to}%. Tight bars, clean flow.",
+   "Stroke to {to}%. Keep it in the pocket."
+  ]
+ }
+};
+SHARED.easeNo = ["Hm. Fine, {nick}. Stay as you are. For now.","No? Alright. Maybe next time.","Suit yourself, {nick}."];

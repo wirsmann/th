@@ -2814,6 +2814,43 @@ function forceBuild(){ if (!teaseNow()) return; if (!tz) resetTease(); tz.q = []
 function forceHold(sec){ if (teaseNow()) { const lo = n("tPeakMin", 60); forceCur({k: "hold", dur: sec, v: Math.min(100, rnd(lo, Math.max(lo, n("tPeakMax", 90))))}); } }
 
 function demandInterval(p){ return Math.max(20000, (55000 + Math.random() * 40000) / aggr() * Math.pow(0.75, defiance[p] || 0)); }
+Object.keys(EASE_LINES).forEach(k => { if (LINES[k]) Object.assign(LINES[k], EASE_LINES[k]); });
+Object.assign(HYPE, {easeSpeed:3, easeStroke:3, easeNo:2});
+/* chance that a persona who is already on her preferred settings asks you to ease off instead (per demand check) */
+const EASE_CH = {"Mischievous Mia":.2,"Sleepy Sadie":.18,"Mocking Margot":.18,"Cuckolding Veronica":.18,"Hypnotic Helena":.18,"Flirty Fiona":.18,"Chef Gianna":.2,"Nurse Ingrid":.18,"Satin Sasha":.18,"Lilith":.2,"Chaos Cassie":.16,"Coach Colleen":.15,"Relentless Roxy":.05,"Bratty Bella":.07,"Jealous Juliet":.07};
+const easeChance = p => EASE_CH[p] != null ? EASE_CH[p] : 0.11;
+function easeDemand(p, sp, ln){
+  const step = 5 * Math.round(rnd(10, 20) / 5);
+  const canS = sp - 5 >= 40, canL = ln - 5 >= 60;
+  if (!canS && !canL) return false;
+  const useSpeed = canS && (!canL || Math.random() < 0.6);
+  const cur = useSpeed ? sp : ln, to = Math.max(useSpeed ? 40 : 60, cur - step), real = cur - to;
+  const d = demand = {p, useSpeed, to, step: real, ease: true};
+  sayAs(p, useSpeed ? "easeSpeed" : "easeStroke", null, {step: real, to: to, onShow: () => {
+    if (demand !== d) return;
+    addOffer({id: "demand", who: p, text: "wants you to ease off: " + (useSpeed ? "speed" : "stroke") + " " + real + "% lower → " + to + "%", ttl: 30000, valid: () => demand === d && running,
+      onGone: why => { if (demand !== d) return; demand = null; nextDemandAt = Date.now() + 40000; },
+      choices: [
+        {label: (useSpeed ? "Slow down" : "Shorten") + " (" + to + "%)", kind: "primary", note: "She holds a lower target for a minute or two, then asks you back up.", apply: () => acceptEase(d)},
+        {label: "No thanks", kind: "ghost", note: "Stay as you are. No penalty.", apply: () => declineEase(d)}]});
+  }});
+  return true;
+}
+function acceptEase(d){
+  if (demand !== d) return; demand = null;
+  const p = d.p;
+  if (d.useSpeed){ setSpeedTo(d.to); addMod(p, -d.step, 0, 90000); } else { setLenTo(d.to); addMod(p, 0, -d.step, 90000); }
+  hit[p] = 0; bump(3, 4); nextDemandAt = Date.now() + 75000; nextAskAt = Math.max(nextAskAt, Date.now() + 15000);
+  mark("yes", "Eased " + (d.useSpeed ? "speed" : "stroke") + " to " + d.to + "% for " + SHORT[p]);
+  const mine = addMsg("me", (d.useSpeed ? "Speed " : "Stroke length ") + d.to + "%.");
+  sayAs(p, "dmdYes", null, {replyTo: mine});
+}
+function declineEase(d){
+  if (demand !== d) return; demand = null;
+  const p = d.p, mine = addMsg("me", "No thanks.");
+  nextDemandAt = Date.now() + 60000; mark("no", "Declined " + SHORT[p] + "'s ease-off");
+  sayAs(p, "easeNo", null, {replyTo: mine});
+}
 function makeDemand(){
   const now = Date.now(), p = currentPersona;
   if (!p || !room.includes(p) || !teaseNow() || challenge || ask || demand || lifeEv || !$("interactOn").checked) return;
@@ -2821,6 +2858,7 @@ function makeDemand(){
   if (TARGETS[p] && TARGETS[p].chaos) rollChaos(p);
   const t = targetOf(p), sp = +$("speed").value, ln = curLen(), gs = t.speed - sp, gl = t.len - ln;
   if (Math.abs(gs) < 3 && Math.abs(gl) < 3){
+    if (!(tmod[p] && tmod[p].until > now && (tmod[p].s < 0 || tmod[p].l < 0)) && Math.random() < easeChance(p) && easeDemand(p, sp, ln)) return;   // sometimes she wants you to go lower instead
     if (!hit[p]){ hit[p] = now; sayAs(p, "dmdHit"); }
     else if (now - hit[p] > 80000){ const c = creep[p] = creep[p] || {s: 0, l: 0}; c.s = Math.min(15, c.s + 5); c.l = Math.min(10, c.l + 5); hit[p] = 0; nextDemandAt = now + 8000; }
     return;
