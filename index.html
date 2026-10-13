@@ -1090,8 +1090,14 @@ function strokeChanged(which){
   saveInputs(); commentLater();
   if (running){ clearTimeout(strokeTimer); strokeTimer = setTimeout(() => sendStroke().catch(e => status(e.message, true)), 250); }
 }
-$("smin").oninput = () => strokeChanged("smin");
-$("smax").oninput = () => strokeChanged("smax");
+/* moving a stroke slider yourself takes back control: it clears this session's stroke limit.
+   Changes made by the app (her demands, buttons) aren't trusted events, so they don't count. */
+function manualStroke(e){
+  if (!e || !e.isTrusted || !liftStrokeLimit()) return;
+  addMsg("sys", "Stroke limit removed: you set the length yourself.");
+}
+$("smin").oninput = e => { strokeChanged("smin"); manualStroke(e); };
+$("smax").oninput = e => { strokeChanged("smax"); manualStroke(e); };
 $("speed").oninput = e => {
   $("speedVal").textContent = e.target.value; saveInputs();
   lastVelAt = 0; commentLater();
@@ -1624,6 +1630,13 @@ function strokeAction(){
     : {label: "Use my longest stroke (" + cap + "%)", kind: "primary", apply: () => { setLenTo(cap); addMsg("sys", "Stroke set to your limit of " + cap + "%."); }};
   return {id: "fullStroke", ttl: 60000, choices: [longest,
     {label: cap >= 100 ? "I can't take a full stroke" : "I can't take more than this", kind: "ghost", apply: () => setStrokeLimit(p, len, cap >= 100)}]};
+}
+/* clears this session's stroke limit (free rein); returns true if one was set */
+function liftStrokeLimit(){
+  if (strokeCapNow >= 100) return false;
+  strokeCapNow = 100; nextLimitAskAt = 0; removeOffer("strokeAsk");
+  if (ask && ask.qid === "stroke") ask = null;
+  return true;
 }
 function setStrokeLimit(p, len, wasFull){
   strokeCapNow = clamp(Math.round(len), 5, 100);
@@ -2872,7 +2885,9 @@ function freeRein(d){
   if (demand !== d) return; d.free = true;
   const p = d.p; addMod(p, 10, 5, 300000); bump(12, 20);   // handing over the reins is a big moment
   const mineMsg = "Do whatever you want, " + SHORT[p] + ".";
+  const lifted = liftStrokeLimit();   // free rein means her stroke, not your limit
   acceptDemand(d, true);
+  if (lifted) addMsg("sys", "Stroke limit lifted. " + SHORT[p] + " sets the length now.");
   const now = Date.now(); nextDemandAt = now + 240000; nextAskAt = Math.max(nextAskAt, now + 240000);
   addMsg("sys", SHORT[p] + " has free rein for a few minutes. She won't ask again for a while.");
 }
