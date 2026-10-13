@@ -13878,3 +13878,1818 @@ const CAMILLE_EXTRA = {
   "Look at that final figure. Magnificent. A very high number."
  ]
 };
+
+const PALOMA_LINES = {
+ "greet": [
+  "Come in, {nick}. Kneel by the chaise and mind my feet.",
+  "Welcome. Settle at my feet where you belong."
+ ],
+ "start": [
+  "Slowly now. Worship at my pace, {nick}.",
+  "Begin. Imagine my feet in your hands."
+ ],
+ "build": [
+  "Slow and devoted. Build it the way you'd kiss my arches.",
+  "Deeper into it, {nick}. Adore every inch.",
+  "More reverence, less hurry.",
+  "Keep going. I like watching you worship."
+ ],
+ "hold": [
+  "Hold there. Gaze at my feet, {nick}.",
+  "Stay perfectly still, like you're waiting to be allowed to touch."
+ ],
+ "holdMid": [
+  "Still holding. Eyes on my toes, {nick}.",
+  "Don't you dare move until I say."
+ ],
+ "rest": [
+  "Rest. I'll stretch my feet out and you'll look.",
+  "Breathe, {nick}. My feet aren't going anywhere."
+ ],
+ "restMid": [
+  "Still resting. Admire the view."
+ ],
+ "fake": [
+  "Oh, I tricked you. Did you think I'd stop?",
+  "Fooled you, {nick}. Back to your devotion."
+ ],
+ "fakeAfter": [
+  "Eager little thing. Start again, slowly.",
+  "Patience, {nick}. Worship takes patience."
+ ],
+ "warn": [
+  "One minute left, {nick}. Worship well.",
+  "Almost time. Show me how devoted you are."
+ ],
+ "win": [
+  "Beautifully done, {nick}. A foot rub's worth of devotion.",
+  "You worshipped well. I'm pleased."
+ ],
+ "fail": [
+  "You gave up on me, {nick}. My feet are disappointed.",
+  "Neglected. A shame, {nick}."
+ ],
+ "chat": [
+  "Count {n}. Keep your eyes on my feet.",
+  "Count {n}. Slow, {nick}."
+ ],
+ "reply": [
+  "Mm, tell me more. I'm admiring my toes.",
+  "Say it again, but kneel while you do."
+ ],
+ "please": [
+  "Please, what? Ask for it properly, {nick}.",
+  "Beg sweetly. Beg to my feet."
+ ],
+ "close": [
+  "So close. Hold your devotion, {nick}.",
+  "Almost there. Don't spoil it now."
+ ],
+ "demand": [
+  "Demands? From down there? Cute.",
+  "I give the orders here, {nick}."
+ ],
+ "promise": [
+  "Finish your worship, {nick}, and I might let you kiss them.",
+  "Be good and there's a reward at my feet."
+ ],
+ "watch": [
+  "I'm watching how you adore me, {nick}.",
+  "Look at you, transfixed by a pair of feet."
+ ],
+ "enjoy": [
+  "Mm, this is exactly how I like it. Slow and adoring.",
+  "I could lounge here all night while you worship."
+ ],
+ "lowSpeed": [
+  "Too fast, {nick}. Worship slowly.",
+  "Slower. Savour them."
+ ],
+ "shortStroke": [
+  "Longer, {nick}. Trace the whole length, heel to toe.",
+  "Don't cheat my arches. Full strokes."
+ ],
+ "praise": [
+  "That's it. Slow, devoted, perfect.",
+  "Lovely pace. Keep adoring me."
+ ],
+ "nudge": [
+  "A little more devotion, {nick}.",
+  "Don't stall. Show me how much you adore them."
+ ],
+ "fakeNote": [
+  "Teasing is part of the pampering, {nick}.",
+  "Be patient with me. I'll let you worship properly when I'm ready."
+ ],
+ "hidden": [
+  "How long is up to me, {nick}.",
+  "You'll worship until I'm satisfied."
+ ],
+ "lubeBreak": [
+  "Oil up, {nick}. Do it properly, like a foot massage.",
+  "A short break. Slick yourself and return."
+ ],
+ "lubeWait": [
+  "Take your time, {nick}. I'll admire my pedicure.",
+  "I'm in no hurry. My feet can wait."
+ ],
+ "lubeResume": [
+  "Back to your knees, {nick}. Worship me again.",
+  "Ready? Return to my feet."
+ ],
+ "enter": [
+  "Ooh, a new admirer. Sit and look at my toes."
+ ],
+ "leave": [
+  "I'm off to soak these feet. Bye."
+ ],
+ "tempt": [
+  "Hand me control, {nick}, and you'll spend the night at my feet.",
+  "Let me take over. You'll be so well behaved down there."
+ ],
+ "jealousStay": [
+  "{other} is here? Fine, she can watch my feet get worshipped.",
+  "Sharing the room with {other}. She can learn how it's done."
+ ],
+ "jealousLeave": [
+  "If {other} is getting the attention, I'm going to put my feet up elsewhere."
+ ],
+ "excitedStay": [
+  "A new face! Would you like to see my feet?"
+ ],
+ "askControl": [
+  "Give me control, {nick}. {other} has no idea how to be adored.",
+  "{other} will rush you. Let me set the pace."
+ ],
+ "banter": [
+  "{other}, darling, your feet could never compete with mine.",
+  "{other}, do you even take care of your heels?"
+ ],
+ "spectate": [
+  "{ctrl} has you kneeling nicely, {nick}.",
+  "You're doing well for {ctrl}, {nick}. Maybe you'll do the same for me."
+ ],
+ "spectateFail": [
+  "You gave up on {ctrl}, {nick}? How disappointing.",
+  "{ctrl} deserved better worship."
+ ],
+ "spectateWin": [
+  "You finished for {ctrl}, {nick}. Next time, finish for me."
+ ],
+ "challenge": [
+  "{other}, I'll take over this {nick}. My feet need worshipping.",
+  "{other}, step aside. This one wants to kneel for me."
+ ],
+ "defend": [
+  "No, {other}. This one is already at my feet.",
+  "{other}, find your own worshipper."
+ ],
+ "takeover": [
+  "Thank you, {other}. Now, {nick}, on your knees."
+ ],
+ "lose": [
+  "Fine, {other}. Enjoy him. For now."
+ ],
+ "keep": [
+  "No, {other}. I'm keeping this {nick} at my feet."
+ ],
+ "retreat": [
+  "Okay, {other}. Take him. I'll soak my feet."
+ ],
+ "heckle": [
+  "{ctrl}, make this {nick} look at your feet."
+ ],
+ "resist": [
+  "No, {other}. My worshipper stays with me."
+ ],
+ "insist": [
+  "{other}, I'm not moving. I'm comfortable."
+ ],
+ "crowd": [
+  "{viewers} watching you kneel, {nick}. Show them how well you worship."
+ ],
+ "askFeel": [
+  "How are you holding up, {nick}? One to ten.",
+  "How's your devotion, {nick}? Tell me."
+ ],
+ "askNext": [
+  "What do you want to adore next, {nick}?"
+ ],
+ "askLike": [
+  "Which part of me do you adore most, {nick}?"
+ ],
+ "askMood": [
+  "Whose feet are next, {nick}?"
+ ],
+ "qMore": [
+  "More? Then worship harder, {nick}."
+ ],
+ "qFine": [
+  "Fine? Then I'll ask for more devotion."
+ ],
+ "qLot": [
+  "Too much? Alright, {nick}. I'll go gently."
+ ],
+ "qMercy": [
+  "Mercy? Just this once, {nick}. Kiss my toe for it."
+ ],
+ "qNoMercy": [
+  "No mercy for my worshipper. Continue."
+ ],
+ "qTease": [
+  "A teasing pace it is, {nick}. Slow and aching."
+ ],
+ "qHold": [
+  "Hold it, {nick}. Look at my feet."
+ ],
+ "qLike": [
+  "{answer}. I'll decide what you adore, {nick}."
+ ],
+ "qMood": [
+  "{answer}. I'll pick who lounges over you."
+ ],
+ "dmdSpeedUp": [
+  "A little quicker, {nick}. Up {step}%, to {to}%.",
+  "Faster worship. Raise it {step}% to {to}%."
+ ],
+ "dmdSpeedDown": [
+  "Slower, {nick}. Down {step}%, to {to}%. Savour them."
+ ],
+ "dmdStrokeUp": [
+  "Longer, {nick}. Up {step}% to {to}%. Trace my whole foot."
+ ],
+ "dmdStrokeDown": [
+  "Shorter strokes, {nick}. Down {step}%, to {to}%. Be delicate."
+ ],
+ "dmdYes": [
+  "Good. Obedient worshipper, {nick}."
+ ],
+ "dmdExact": [
+  "Exactly right, {nick}. Reward: look at my toes."
+ ],
+ "dmdNo": [
+  "You ignored me, {nick}? Rude to a lady's feet."
+ ],
+ "dmdHit": [
+  "Perfect. Hold it right there."
+ ],
+ "act_push": [
+  "Press forward, {nick}. Reach my toes."
+ ],
+ "act_stairs": [
+  "Step by step up my arch, {nick}. Slowly."
+ ],
+ "act_pulse": [
+  "Little kisses, {nick}. Pulse, pulse, pulse."
+ ],
+ "act_surge": [
+  "Oh, hurry! Hurry to my feet, {nick}!"
+ ],
+ "act_cliff": [
+  "Stop! Don't touch them yet, {nick}."
+ ],
+ "act_wave": [
+  "Rise and fall like a foot massage, {nick}. Roll with it."
+ ],
+ "act_flutter": [
+  "Flutter, {nick}. Like tickling toes."
+ ],
+ "act_slowburn": [
+  "Slow and sensual, {nick}. A long, languid worship."
+ ],
+ "privAsk": [
+  "Would you like to worship in private, {nick}? Just me and my feet?"
+ ],
+ "privOn": [
+  "Door's closed. Private worship, {nick}."
+ ],
+ "privDeny": [
+  "No private worship? Then they can all watch you kneel, {nick}."
+ ],
+ "privMid": [
+  "Just us now, {nick}. And my feet. Stay devoted."
+ ],
+ "privBye": [
+  "A private show with {other}? Go on, then."
+ ],
+ "dmdWarn": [
+  "Ignore me once more, {nick}, and I'll withdraw my feet."
+ ],
+ "dmdLeave": [
+  "Too many ignored commands. I'm taking my feet and leaving, {nick}."
+ ],
+ "giveUp": [
+  "{other}, take him. I'm tired of his bad manners."
+ ],
+ "idleRoom": [
+  "{nick}? Did you fall asleep at my feet?"
+ ],
+ "idleRun": [
+  "Still with me, {nick}? Keep worshipping."
+ ],
+ "idleLong": [
+  "Hello? I haven't heard from my worshipper in ages."
+ ],
+ "manual": [
+  "Playing on your own? You'd have so much more fun at my feet. Give me control.",
+  "Without me you're just guessing, {nick}. Let me guide you.",
+  "Doing it yourself? Hand me control. I'll make you adore me."
+ ],
+ "act_vibrate": [
+  "Shiver for me, {nick}. Like a foot tickling your nerves.",
+  "A little trembling trill, {nick}."
+ ],
+ "strokeLimit": [
+  "Short strokes? That's fine, {nick}. Worship my toes with devotion.",
+  "You can't take all of it? Then take my toes slowly.",
+  "A shorter reach is fine. Stay devoted."
+ ],
+ "strokeAsk": [
+  "Can you reach farther now, {nick}?",
+  "Is the longer stroke possible now?"
+ ],
+ "strokeMore": [
+  "Look at you, going longer for me. Adorable.",
+  "A longer stroke. You did it for me, {nick}."
+ ],
+ "strokeStill": [
+  "Still short? That's alright. Adore me within it.",
+  "Not yet? Then keep adoring what you can."
+ ],
+ "teaseShow": [
+  "Look at my feet, {nick}. Just look.",
+  "Admire them. No touching."
+ ],
+ "teaseEnd": [
+  "That's enough looking, {nick}. Back to work.",
+  "Show's over. Return to your knees."
+ ],
+ "quitCtl": [
+  "You left my feet, {nick}. Try again and I'll be nicer.",
+  "You abandoned your goddess? Come back and kneel."
+ ],
+ "quitSpec": [
+  "You walked out, {nick}. Pick me next time. I'll be so kind.",
+  "Leaving? Come back and kneel for me instead."
+ ],
+ "easeSpeed": [
+  "Slower, {nick}. {to}%. Worship, don't rush.",
+  "A slower pace, {to}%. Make my feet last."
+ ],
+ "easeStroke": [
+  "Shorter strokes, {to}%. Delicate, like kisses on toes.",
+  "Cut it down to {to}%. Small, devoted strokes."
+ ]
+};
+
+const MARISOL_LINES = {
+ "greet": [
+  "Hi, {nick}! Sit down at my vanity. I have plans for you.",
+  "Welcome in, {nick}. Let's make you pretty."
+ ],
+ "start": [
+  "Let's start soft and graceful, {nick}. Pretty strokes only.",
+  "Begin gently. We're making you pretty tonight."
+ ],
+ "build": [
+  "Softly, {nick}. Pretty and graceful.",
+  "Build it with delicate little strokes.",
+  "Lovely. More grace in every move.",
+  "Gentle, {nick}. Pretty girls aren't rough."
+ ],
+ "hold": [
+  "Hold still while I fix your lipstick, {nick}.",
+  "Pose for me, {nick}. Don't move a muscle."
+ ],
+ "holdMid": [
+  "Still posing. Chin up, pretty.",
+  "Hold it. You're glowing."
+ ],
+ "rest": [
+  "Rest, {nick}. Let me touch up your face.",
+  "Breathe. I'll adjust your hair."
+ ],
+ "restMid": [
+  "Still resting. Let me fluff your curls."
+ ],
+ "fake": [
+  "Gotcha! Did you think I was done primping you?",
+  "Not yet, {nick}. One more coat."
+ ],
+ "fakeAfter": [
+  "Eager, aren't we? Start again, softly.",
+  "Don't rush the makeover, {nick}. Start again."
+ ],
+ "warn": [
+  "One minute left, {nick}. Finishing touches!",
+  "Almost done. Last look in the mirror soon."
+ ],
+ "win": [
+  "Gorgeous, {nick}! You did it so prettily.",
+  "Perfect work. You look and feel beautiful."
+ ],
+ "fail": [
+  "Oh, {nick}. We were so close to the final look.",
+  "You smudged the makeup. Disappointing."
+ ],
+ "chat": [
+  "Count {n}. Keep it pretty.",
+  "Count {n}. Graceful, {nick}."
+ ],
+ "reply": [
+  "Aww, tell me more while I do your hair.",
+  "Say it again. I love your voice when you're pretty."
+ ],
+ "please": [
+  "Please what, {nick}? Ask sweetly, like a pretty girl.",
+  "Ask nicely and I'll consider it."
+ ],
+ "close": [
+  "So close to the finishing touch, {nick}. Stay graceful.",
+  "Almost there. Don't smudge it now."
+ ],
+ "demand": [
+  "Demands? That's not very lady-like, {nick}.",
+  "Pretty girls ask nicely."
+ ],
+ "promise": [
+  "Finish prettily, {nick}, and I'll give you a gorgeous outfit.",
+  "Be graceful and there's a lipstick reward."
+ ],
+ "watch": [
+  "I'm admiring my work, {nick}. You're so pretty like this.",
+  "Look at you, such a lovely transformation."
+ ],
+ "enjoy": [
+  "I love this. Softer, prettier, more graceful with every stroke.",
+  "This is my favourite part, {nick}. The transformation."
+ ],
+ "lowSpeed": [
+  "Not that slow, {nick}. Lively but graceful.",
+  "A little brisker, pretty. Dance for me."
+ ],
+ "shortStroke": [
+  "Longer, {nick}. Long graceful lines, like brush strokes.",
+  "Full strokes, pretty. Sweep it all the way."
+ ],
+ "praise": [
+  "Beautiful. Soft and graceful, exactly right.",
+  "That's the look I wanted. Perfect."
+ ],
+ "nudge": [
+  "Pick it up a little, {nick}. Pretty needs effort.",
+  "Don't stall. Beauty takes work."
+ ],
+ "fakeNote": [
+  "Teasing is part of the makeover, {nick}. Trust me.",
+  "A little tease keeps the glow."
+ ],
+ "hidden": [
+  "A lady never asks how long it takes, {nick}.",
+  "Beauty takes as long as I say."
+ ],
+ "lubeBreak": [
+  "Moisturize, {nick}. Take your time, then come back.",
+  "Freshen up! Slick up and return."
+ ],
+ "lubeWait": [
+  "Take your time, {nick}. I'll tidy my brushes.",
+  "No rush. Pretty things take time."
+ ],
+ "lubeResume": [
+  "Back to the mirror, {nick}. Let's finish the look.",
+  "Ready? Back in the chair."
+ ],
+ "enter": [
+  "Ooh, a new face! Sit down and let me make you pretty."
+ ],
+ "leave": [
+  "I'm off to reapply. Bye, loves."
+ ],
+ "tempt": [
+  "Let me take over, {nick}, and I'll give you the full makeover.",
+  "Give me control and I'll make you beautiful."
+ ],
+ "jealousStay": [
+  "{other} is here? Fine. She can watch how a makeover's done.",
+  "Sharing the vanity with {other}. How cute."
+ ],
+ "jealousLeave": [
+  "If {other} is doing the makeover, I'm off to find a mirror."
+ ],
+ "excitedStay": [
+  "New face! Oh, I have so many ideas for you."
+ ],
+ "askControl": [
+  "Let me do your makeover, {nick}. {other} has no taste.",
+  "{other} doesn't know blush from bronzer. Give me control."
+ ],
+ "banter": [
+  "{other}, honey, that shade doesn't suit you.",
+  "{other}, nice try, but your technique needs work."
+ ],
+ "spectate": [
+  "{ctrl} is making you pretty, {nick}. Good start.",
+  "You look lovely for {ctrl}, {nick}. Imagine for me."
+ ],
+ "spectateFail": [
+  "You smudged {ctrl}'s look, {nick}. Oh dear.",
+  "{ctrl} deserved a prettier result."
+ ],
+ "spectateWin": [
+  "You finished for {ctrl}, {nick}. Gorgeous. Finish for me next."
+ ],
+ "challenge": [
+  "{other}, I'll take over this {nick}. I have a makeover plan.",
+  "{other}, step aside. I know exactly how to dress this one."
+ ],
+ "defend": [
+  "No, {other}. This one is my project.",
+  "{other}, find your own model."
+ ],
+ "takeover": [
+  "Thank you, {other}. Now, {nick}, let's get you pretty."
+ ],
+ "lose": [
+  "Fine, {other}. Enjoy the project. I'll watch."
+ ],
+ "keep": [
+  "No, {other}. I'm keeping this {nick} in my chair."
+ ],
+ "retreat": [
+  "Okay, {other}. I'll sulk with my lipstick."
+ ],
+ "heckle": [
+  "{ctrl}, make this {nick} sit up straight and pretty."
+ ],
+ "resist": [
+  "No, {other}. The makeover is half done."
+ ],
+ "insist": [
+  "{other}, I'm finishing my work. Sit down."
+ ],
+ "crowd": [
+  "{viewers} watching you get pretty, {nick}. Pose for them."
+ ],
+ "askFeel": [
+  "How are you feeling, {nick}? One to ten.",
+  "Do you feel pretty, {nick}? Tell me."
+ ],
+ "askNext": [
+  "What look next, {nick}? Pastel or glam?"
+ ],
+ "askLike": [
+  "Which outfit is your favourite, {nick}?"
+ ],
+ "askMood": [
+  "Whose style do you want, {nick}? Mine?"
+ ],
+ "qMore": [
+  "More? Then softer and prettier, {nick}."
+ ],
+ "qFine": [
+  "Fine? Then we're adding another layer."
+ ],
+ "qLot": [
+  "Too much? Okay, {nick}. Lighter touch."
+ ],
+ "qMercy": [
+  "A little mercy, {nick}. Powder your nose."
+ ],
+ "qNoMercy": [
+  "No mercy for a work in progress. Continue."
+ ],
+ "qTease": [
+  "A teasing makeover, {nick}. Slow and sweet."
+ ],
+ "qHold": [
+  "Hold it, {nick}. Pose for me."
+ ],
+ "qLike": [
+  "{answer}. I'll pick the outfit, {nick}."
+ ],
+ "qMood": [
+  "{answer}. I'll choose who dresses you."
+ ],
+ "dmdSpeedUp": [
+  "A bit livelier, {nick}. Up {step}%, to {to}%.",
+  "Perk up, pretty. Raise it {step}% to {to}%."
+ ],
+ "dmdSpeedDown": [
+  "Softer, {nick}. Down {step}%, to {to}%. Graceful."
+ ],
+ "dmdStrokeUp": [
+  "Longer sweeps, {nick}. Up {step}% to {to}%. Like blending."
+ ],
+ "dmdStrokeDown": [
+  "Shorter touches, {nick}. Down {step}%, to {to}%. Dainty."
+ ],
+ "dmdYes": [
+  "Good, {nick}. Obedient and pretty."
+ ],
+ "dmdExact": [
+  "Exactly right, {nick}. Flawless."
+ ],
+ "dmdNo": [
+  "You ignored me, {nick}? That's not very ladylike."
+ ],
+ "dmdHit": [
+  "Perfect. Hold that look."
+ ],
+ "act_push": [
+  "Reach, {nick}. Pretty posture, shoulders back."
+ ],
+ "act_stairs": [
+  "Step by step, {nick}. Climb like a ballerina."
+ ],
+ "act_pulse": [
+  "Little pats of powder, {nick}. Pulse, pulse."
+ ],
+ "act_surge": [
+  "Quick, quick! The runway show starts, {nick}!"
+ ],
+ "act_cliff": [
+  "Freeze! Hold your pose, {nick}!"
+ ],
+ "act_wave": [
+  "Sway like a dress in the wind, {nick}. Soft waves."
+ ],
+ "act_flutter": [
+  "Flutter your lashes, {nick}. Tiny, quick, pretty."
+ ],
+ "act_slowburn": [
+  "Slow and sultry, {nick}. Like a glamour shot."
+ ],
+ "privAsk": [
+  "Would you like a private makeover, {nick}? Just us and the mirror?"
+ ],
+ "privOn": [
+  "Door's locked. Private makeover, {nick}."
+ ],
+ "privDeny": [
+  "No private session? Then they all watch you get pretty, {nick}."
+ ],
+ "privMid": [
+  "Just us, {nick}. And a lot of lipstick. Stay graceful."
+ ],
+ "privBye": [
+  "A private makeover with {other}? Go on, then."
+ ],
+ "dmdWarn": [
+  "Ignore me once more, {nick}, and I'm packing my makeup bag."
+ ],
+ "dmdLeave": [
+  "Too many ignored commands. I'm leaving, {nick}."
+ ],
+ "giveUp": [
+  "{other}, take this one. Their style is hopeless."
+ ],
+ "idleRoom": [
+  "{nick}? Are you still at the vanity?"
+ ],
+ "idleRun": [
+  "Still with me, {nick}? Stay pretty."
+ ],
+ "idleLong": [
+  "Hello? I haven't heard from my project in ages."
+ ],
+ "manual": [
+  "Doing it yourself? You're missing the makeover, {nick}. Give me control.",
+  "Without me you look so plain, {nick}. Hand over control.",
+  "All on your own? Let me make it fun. Give me control."
+ ],
+ "act_vibrate": [
+  "Little shiver, {nick}. Like a silk scarf in the wind.",
+  "A trembling trill. Stay pretty, {nick}."
+ ],
+ "strokeLimit": [
+  "Short strokes? That's fine, {nick}. Dainty is pretty.",
+  "You can't take the full length? Then be delicate with what you can.",
+  "A shorter reach is adorable. Keep it graceful."
+ ],
+ "strokeAsk": [
+  "Can you stretch longer now, {nick}?",
+  "Is a longer sweep possible yet?"
+ ],
+ "strokeMore": [
+  "Look at you, stretching for me. Gorgeous.",
+  "A longer stroke. So elegant, {nick}."
+ ],
+ "strokeStill": [
+  "Still short? That's okay. Pretty within it.",
+  "Not yet? Then keep it dainty."
+ ],
+ "teaseShow": [
+  "Look at me, {nick}. Just look.",
+  "Admire the look. No touching."
+ ],
+ "teaseEnd": [
+  "That's enough looking, {nick}. Back to work.",
+  "Show's over. Back in the chair."
+ ],
+ "quitCtl": [
+  "You left the chair mid-makeover, {nick}. Try again and I'll be gentler.",
+  "You walked out on your own transformation? Come back."
+ ],
+ "quitSpec": [
+  "You left, {nick}. Pick me next time. I'll make it so pretty.",
+  "Leaving? Come back and let me dress you."
+ ],
+ "easeSpeed": [
+  "Softer, {nick}. {to}%. Graceful, not rushed.",
+  "A slower sway, {to}%. Pretty takes patience."
+ ],
+ "easeStroke": [
+  "Shorter strokes, {to}%. Dainty little touches.",
+  "Down to {to}%. Delicate, like brushing powder."
+ ]
+};
+
+const TAMSIN_LINES = {
+ "greet": [
+  "Come here, {nick}. Tonight I'm in charge and you're taking it.",
+  "Welcome, {nick}. Roles are reversed in my room."
+ ],
+ "start": [
+  "Brace yourself, {nick}. I'm setting the rhythm.",
+  "Here we go. I lead, you follow."
+ ],
+ "build": [
+  "Steady and firm, {nick}. Take what I give you.",
+  "That's it. Feel me driving the pace.",
+  "Deeper rhythm. Keep up with me.",
+  "I'm turning the tables, {nick}. Enjoy it."
+ ],
+ "hold": [
+  "Hold there, {nick}. Stay exactly where I put you.",
+  "Don't move. I'm making you wait."
+ ],
+ "holdMid": [
+  "Still holding. Good, {nick}. Stay put.",
+  "Hold on. I'm not done with you."
+ ],
+ "rest": [
+  "Rest, {nick}. Breathe. I'm just getting started.",
+  "Catch your breath. I'll be back."
+ ],
+ "restMid": [
+  "Still resting. I'm strapping in for round two."
+ ],
+ "fake": [
+  "Thought I was finished? I'm not.",
+  "Surprise, {nick}. Back to it."
+ ],
+ "fakeAfter": [
+  "Eager, {nick}. I decide when. Again.",
+  "Patience. I decide the pace."
+ ],
+ "warn": [
+  "One minute left, {nick}. Take it like you mean it.",
+  "Almost time. Show me what you can handle."
+ ],
+ "win": [
+  "You took everything I gave you, {nick}. Impressive.",
+  "Well done. Roles reversed and you handled it."
+ ],
+ "fail": [
+  "Quitting on me, {nick}? I'm not finished.",
+  "You tapped out. I expected better."
+ ],
+ "chat": [
+  "Count {n}. Take it, {nick}.",
+  "Count {n}. Keep the rhythm."
+ ],
+ "reply": [
+  "Say it again, but beg this time.",
+  "I heard you. Now take what's coming."
+ ],
+ "please": [
+  "Please what, {nick}? Ask me properly.",
+  "Beg, and I might ease up. Might."
+ ],
+ "close": [
+  "Almost there, {nick}. Hold on for me.",
+  "So close. Don't you dare finish before I say."
+ ],
+ "demand": [
+  "You don't make demands in my room, {nick}.",
+  "I'm the one setting terms tonight."
+ ],
+ "promise": [
+  "Finish strong, {nick}, and I'll go easy on you.",
+  "Be good and I'll show mercy. Eventually."
+ ],
+ "watch": [
+  "I'm watching how you take it, {nick}. Love the reactions.",
+  "Look at you handling it. Adorable."
+ ],
+ "enjoy": [
+  "I love turning the tables. Watching you take it.",
+  "This is exactly how I like it, {nick}. Me in charge."
+ ],
+ "lowSpeed": [
+  "Faster, {nick}. I set the pace, not you.",
+  "That's too timid. Match my rhythm."
+ ],
+ "shortStroke": [
+  "All the way, {nick}. Take the full length.",
+  "Don't hold back. Full strokes."
+ ],
+ "praise": [
+  "That's the way. Firm and steady.",
+  "Good. Take it just like that."
+ ],
+ "nudge": [
+  "Push, {nick}. Show me you can.",
+  "Don't slack. I want more from you."
+ ],
+ "fakeNote": [
+  "Teasing keeps you honest, {nick}.",
+  "A little deception keeps you on your toes."
+ ],
+ "hidden": [
+  "When it ends is my decision, {nick}.",
+  "You'll take it until I'm satisfied."
+ ],
+ "lubeBreak": [
+  "Slick up, {nick}. You'll need it. Take your time.",
+  "Short break. Lube up and come back to me."
+ ],
+ "lubeWait": [
+  "Take your time, {nick}. I'll tighten my straps.",
+  "I'm in no rush. You're not going anywhere."
+ ],
+ "lubeResume": [
+  "Back in position, {nick}. Round two.",
+  "Ready? Back to me."
+ ],
+ "enter": [
+  "Fresh face. Come here and let me show you my room."
+ ],
+ "leave": [
+  "I'm off to find someone who can keep up. Bye."
+ ],
+ "tempt": [
+  "Give me control, {nick}, and I'll turn you inside out.",
+  "Hand me the reins. I promise to be thorough."
+ ],
+ "jealousStay": [
+  "{other} is in my room? Fine. She can watch how it's done.",
+  "I'll share the stage with {other}. She'll learn something."
+ ],
+ "jealousLeave": [
+  "If {other} is in charge, I'm not staying."
+ ],
+ "excitedStay": [
+  "New face! Oh, I have plans for you."
+ ],
+ "askControl": [
+  "Give me control, {nick}. {other} has no idea how to handle you.",
+  "{other} is too soft. I'll take you properly."
+ ],
+ "banter": [
+  "{other}, honey, you'd flinch at my strap.",
+  "{other}, that technique is so gentle it's sad."
+ ],
+ "spectate": [
+  "{ctrl} has you in line, {nick}. Good start.",
+  "You're doing well for {ctrl}, {nick}. Imagine what I'd do."
+ ],
+ "spectateFail": [
+  "You tapped out on {ctrl}, {nick}? Pathetic.",
+  "{ctrl} deserved better."
+ ],
+ "spectateWin": [
+  "You took it for {ctrl}, {nick}. Now try me."
+ ],
+ "challenge": [
+  "{other}, step aside. I'll take this {nick}. I know exactly what's needed.",
+  "{other}, I'll show this {nick} what real control is."
+ ],
+ "defend": [
+  "No, {other}. This one's mine tonight.",
+  "{other}, back off. I'm not done."
+ ],
+ "takeover": [
+  "Thank you, {other}. Now, {nick}, bend to my rhythm."
+ ],
+ "lose": [
+  "Fine, {other}. Enjoy. I'll be back."
+ ],
+ "keep": [
+  "No, {other}. I'm keeping this {nick}."
+ ],
+ "retreat": [
+  "Okay, {other}. Take them. I'll sharpen my approach."
+ ],
+ "heckle": [
+  "{ctrl}, make this {nick} take it properly."
+ ],
+ "resist": [
+  "No, {other}. I'm not done with this {nick}."
+ ],
+ "insist": [
+  "{other}, I'm not moving. I'm in control here."
+ ],
+ "crowd": [
+  "{viewers} watching you take it, {nick}. Don't disappoint them."
+ ],
+ "askFeel": [
+  "How are you holding up, {nick}? One to ten.",
+  "Can you take more, {nick}? Tell me."
+ ],
+ "askNext": [
+  "What's next, {nick}? Harder or slower?"
+ ],
+ "askLike": [
+  "Which part do you like, {nick}? Be honest."
+ ],
+ "askMood": [
+  "Who takes you next, {nick}? Me?"
+ ],
+ "qMore": [
+  "More? You'll get more, {nick}."
+ ],
+ "qFine": [
+  "Fine? Then I push harder."
+ ],
+ "qLot": [
+  "Too much? Okay, {nick}. I'll ease off."
+ ],
+ "qMercy": [
+  "Mercy? Just this once, {nick}."
+ ],
+ "qNoMercy": [
+  "No mercy. Take it."
+ ],
+ "qTease": [
+  "A teasing pace, {nick}. Slow and firm."
+ ],
+ "qHold": [
+  "Hold it, {nick}. Stay still for me."
+ ],
+ "qLike": [
+  "{answer}. I'll decide what you get, {nick}."
+ ],
+ "qMood": [
+  "{answer}. I'll pick who takes you."
+ ],
+ "dmdSpeedUp": [
+  "Faster, {nick}. Up {step}%, to {to}%.",
+  "Pick it up. Raise it {step}% to {to}%."
+ ],
+ "dmdSpeedDown": [
+  "Slow down, {nick}. Down {step}%, to {to}%. Feel it."
+ ],
+ "dmdStrokeUp": [
+  "Longer, {nick}. Up {step}% to {to}%. Take all of it."
+ ],
+ "dmdStrokeDown": [
+  "Shorter, {nick}. Down {step}%, to {to}%. Control it."
+ ],
+ "dmdYes": [
+  "Good, {nick}. You follow orders."
+ ],
+ "dmdExact": [
+  "Exactly right, {nick}. Perfect."
+ ],
+ "dmdNo": [
+  "You ignored me, {nick}? Big mistake."
+ ],
+ "dmdHit": [
+  "That's it. Hold exactly that."
+ ],
+ "act_push": [
+  "Drive into it, {nick}. Take every inch."
+ ],
+ "act_stairs": [
+  "Step by step, {nick}. Each one deeper."
+ ],
+ "act_pulse": [
+  "Pulse, {nick}. Give me a firm rhythm."
+ ],
+ "act_surge": [
+  "Brace! Hard and fast, {nick}!"
+ ],
+ "act_cliff": [
+  "Stop! Hold still, {nick}! Don't you move!"
+ ],
+ "act_wave": [
+  "Roll with it, {nick}. Long, steady waves."
+ ],
+ "act_flutter": [
+  "Quick little thrusts, {nick}. Tease it."
+ ],
+ "act_slowburn": [
+  "Slow and deep, {nick}. Make it last."
+ ],
+ "privAsk": [
+  "Want it private, {nick}? Just you and me?"
+ ],
+ "privOn": [
+  "Door's locked. Private session, {nick}."
+ ],
+ "privDeny": [
+  "No private session? Then they all watch you take it, {nick}."
+ ],
+ "privMid": [
+  "Just us now, {nick}. No audience. Take it."
+ ],
+ "privBye": [
+  "A private session with {other}? Enjoy, then."
+ ],
+ "dmdWarn": [
+  "Ignore me once more, {nick}, and I'm done with you."
+ ],
+ "dmdLeave": [
+  "Too many ignored orders. I'm leaving, {nick}."
+ ],
+ "giveUp": [
+  "{other}, take this one. They don't listen."
+ ],
+ "idleRoom": [
+  "{nick}? You still there?"
+ ],
+ "idleRun": [
+  "Still with me, {nick}? Stay in position."
+ ],
+ "idleLong": [
+  "Hello? I haven't heard from you in a while."
+ ],
+ "manual": [
+  "Taking charge yourself? Wrong way around, {nick}. Give me control.",
+  "Alone? You'd get so much more from me. Hand over control.",
+  "Doing it yourself? Let me show you what you're missing."
+ ],
+ "act_vibrate": [
+  "Shake for me, {nick}. Quick trembles.",
+  "A rapid buzz, {nick}. Hold still."
+ ],
+ "strokeLimit": [
+  "Short strokes? That's fine, {nick}. I'll work with what you can take.",
+  "Can't take the full length? We'll build up.",
+  "A shorter reach for now. I'll stretch you eventually."
+ ],
+ "strokeAsk": [
+  "Can you take more now, {nick}?",
+  "Is a longer stroke possible yet?"
+ ],
+ "strokeMore": [
+  "Look at you taking more. Good.",
+  "A longer stroke. Proud of you, {nick}."
+ ],
+ "strokeStill": [
+  "Still short? That's okay. Keep working within it.",
+  "Not yet? We'll try again."
+ ],
+ "teaseShow": [
+  "Look at me, {nick}. Just look.",
+  "Take it in. No touching."
+ ],
+ "teaseEnd": [
+  "That's enough looking, {nick}. Back to work.",
+  "Show's over. Eyes down."
+ ],
+ "quitCtl": [
+  "You tapped out on me, {nick}. Try again and I'll go easier.",
+  "You gave up? Come back and finish."
+ ],
+ "quitSpec": [
+  "You left, {nick}. Pick me next time. I'll be gentler.",
+  "Leaving? Come back and let me take over."
+ ],
+ "easeSpeed": [
+  "Slower, {nick}. {to}%. Feel every second of it.",
+  "Easing the pace, {to}%. Savour it."
+ ],
+ "easeStroke": [
+  "Shorter, {to}%. Control, {nick}, not power.",
+  "Down to {to}%. Small and steady."
+ ]
+};
+
+const ELODIE_LINES = {
+ "greet": [
+  "There you are, {nick}. Come lie down. My throne is ready.",
+  "Welcome, {nick}. You know where you belong: beneath me."
+ ],
+ "start": [
+  "Settle in, {nick}. I'm taking my seat.",
+  "Begin. Imagine I'm sitting on you."
+ ],
+ "build": [
+  "Steady, {nick}. Stay under me and take the weight.",
+  "Keep the rhythm. I'm in no hurry to get up.",
+  "That's it. Stay right where I put you.",
+  "Good. Hold the pace beneath me."
+ ],
+ "hold": [
+  "Hold there, {nick}. I'm getting comfortable.",
+  "Don't move. A throne doesn't shift."
+ ],
+ "holdMid": [
+  "Still holding. I'm settling in, {nick}.",
+  "Stay put. I'm not done sitting."
+ ],
+ "rest": [
+  "I'm shifting my weight, {nick}. Rest while I adjust.",
+  "Rest, {nick}. I'll be back on you shortly."
+ ],
+ "restMid": [
+  "Still resting. I'm rearranging my skirts."
+ ],
+ "fake": [
+  "Did you think I was getting up? Not yet.",
+  "Fooled you, {nick}. Back under me."
+ ],
+ "fakeAfter": [
+  "Eager, {nick}. A throne decides when. Start again.",
+  "Patience. I'm still comfortable."
+ ],
+ "warn": [
+  "One minute left, {nick}. Stay under me.",
+  "Almost time. Don't squirm, {nick}."
+ ],
+ "win": [
+  "You served beautifully, {nick}. A fine seat.",
+  "Excellent. You made a very good throne."
+ ],
+ "fail": [
+  "You wriggled out from under me, {nick}. Disappointing.",
+  "Quitting while I was comfortable? Rude."
+ ],
+ "chat": [
+  "Count {n}. Stay beneath me.",
+  "Count {n}. Hold steady, {nick}."
+ ],
+ "reply": [
+  "Mm, tell me more from down there.",
+  "Say it again. I like hearing you from underneath."
+ ],
+ "please": [
+  "Please what, {nick}? Ask your queen nicely.",
+  "Beg from below. I like it."
+ ],
+ "close": [
+  "Almost there, {nick}. Stay exactly where you are.",
+  "So close. Don't squirm out from under me."
+ ],
+ "demand": [
+  "Demands from underneath? Adorable, {nick}.",
+  "The one under me doesn't give orders."
+ ],
+ "promise": [
+  "Finish well, {nick}, and I'll sit a little longer.",
+  "Be good and there's another turn on my throne."
+ ],
+ "watch": [
+  "I'm watching how you serve, {nick}. Perfect view from above.",
+  "Look at you, so devoted beneath me."
+ ],
+ "enjoy": [
+  "This is exactly what I wanted. Comfortable and adored.",
+  "Mm, I could sit like this all day."
+ ],
+ "lowSpeed": [
+  "Faster, {nick}. A queen shouldn't wait.",
+  "Quicker. Shake the throne a little."
+ ],
+ "shortStroke": [
+  "Longer, {nick}. Give me full, even movement.",
+  "Don't be stingy with your strokes. Full length."
+ ],
+ "praise": [
+  "That's it. Steady and reliable, like a good seat.",
+  "Perfect rhythm, {nick}. Stay there."
+ ],
+ "nudge": [
+  "Don't stall, {nick}. Support me properly.",
+  "A little more effort. A throne must hold firm."
+ ],
+ "fakeNote": [
+  "Teasing is part of the throne's charm, {nick}.",
+  "I like to keep my seat guessing."
+ ],
+ "hidden": [
+  "How long I stay is my business, {nick}.",
+  "You'll know when I'm done sitting."
+ ],
+ "lubeBreak": [
+  "Slick up, {nick}. I'll stretch my legs.",
+  "A break. Lube up and come back to my throne."
+ ],
+ "lubeWait": [
+  "Take your time, {nick}. I'll admire my crown.",
+  "I'm not rushing. A queen waits for no one, but I'll wait for you."
+ ],
+ "lubeResume": [
+  "Back beneath me, {nick}. Let's continue.",
+  "Ready? Back under my throne."
+ ],
+ "enter": [
+  "A new subject. Lie down and look up at me."
+ ],
+ "leave": [
+  "My court is adjourned. Goodbye."
+ ],
+ "tempt": [
+  "Hand me control, {nick}, and I'll seat myself on you properly.",
+  "Give me control. I promise a long, comfortable reign."
+ ],
+ "jealousStay": [
+  "{other} is in my court? Fine. She can watch how a queen sits.",
+  "I'll let {other} attend. She may learn from me."
+ ],
+ "jealousLeave": [
+  "If {other} has the throne, I'm leaving the court."
+ ],
+ "excitedStay": [
+  "A new face! I'll find you a place beneath me."
+ ],
+ "askControl": [
+  "Give me control, {nick}. {other} doesn't know how to sit.",
+  "{other} will go easy. I'll take my throne firmly."
+ ],
+ "banter": [
+  "{other}, darling, your throne is more of a stool.",
+  "{other}, you couldn't take a seat if you tried."
+ ],
+ "spectate": [
+  "{ctrl} has you beneath her, {nick}. Pleasant view.",
+  "You serve {ctrl} well, {nick}. Imagine serving me."
+ ],
+ "spectateFail": [
+  "You wriggled out on {ctrl}, {nick}? How rude.",
+  "{ctrl} deserved a steadier seat."
+ ],
+ "spectateWin": [
+  "You held for {ctrl}, {nick}. Hold for me next."
+ ],
+ "challenge": [
+  "{other}, I'll take this {nick}. I need a seat.",
+  "{other}, step aside. This one will be my seat."
+ ],
+ "defend": [
+  "No, {other}. This one is already seated beneath me.",
+  "{other}, find your own seat."
+ ],
+ "takeover": [
+  "Thank you, {other}. Now, {nick}, lie down."
+ ],
+ "lose": [
+  "Fine, {other}. Take him. My throne will wait."
+ ],
+ "keep": [
+  "No, {other}. I'm keeping this {nick} right where he is."
+ ],
+ "retreat": [
+  "Okay, {other}. Take him. I'll find another chair."
+ ],
+ "heckle": [
+  "{ctrl}, sit on this {nick} properly."
+ ],
+ "resist": [
+  "No, {other}. I'm still seated."
+ ],
+ "insist": [
+  "{other}, I'm not moving. I'm very comfortable."
+ ],
+ "crowd": [
+  "{viewers} watching my throne, {nick}. Don't embarrass me."
+ ],
+ "askFeel": [
+  "How are you down there, {nick}? One to ten.",
+  "Comfortable, {nick}? Tell your queen."
+ ],
+ "askNext": [
+  "What shall I do next, {nick}? Sit longer?"
+ ],
+ "askLike": [
+  "What do you like most about serving me, {nick}?"
+ ],
+ "askMood": [
+  "Whose throne is next, {nick}? Mine?"
+ ],
+ "qMore": [
+  "More? Then I'll sit heavier, {nick}."
+ ],
+ "qFine": [
+  "Fine? Then I'll stay longer."
+ ],
+ "qLot": [
+  "Too much? Alright, {nick}. I'll lift a little."
+ ],
+ "qMercy": [
+  "Mercy? Just this once, {nick}. Thank your queen."
+ ],
+ "qNoMercy": [
+  "No mercy for a good seat. Continue."
+ ],
+ "qTease": [
+  "A teasing pace, {nick}. I'll hover just above."
+ ],
+ "qHold": [
+  "Hold it, {nick}. I'm getting comfortable."
+ ],
+ "qLike": [
+  "{answer}. I'll decide, {nick}."
+ ],
+ "qMood": [
+  "{answer}. I'll choose who sits on you."
+ ],
+ "dmdSpeedUp": [
+  "Faster, {nick}. Up {step}%, to {to}%.",
+  "Pick it up. Raise it {step}% to {to}%."
+ ],
+ "dmdSpeedDown": [
+  "Slower, {nick}. Down {step}%, to {to}%. Support me."
+ ],
+ "dmdStrokeUp": [
+  "Longer, {nick}. Up {step}% to {to}%. Serve me fully."
+ ],
+ "dmdStrokeDown": [
+  "Shorter, {nick}. Down {step}%, to {to}%. Hold steady."
+ ],
+ "dmdYes": [
+  "Good, {nick}. A loyal seat."
+ ],
+ "dmdExact": [
+  "Exactly right, {nick}. Perfect."
+ ],
+ "dmdNo": [
+  "You ignored me, {nick}? A queen is not ignored."
+ ],
+ "dmdHit": [
+  "That's it. Hold exactly that."
+ ],
+ "act_push": [
+  "Support me, {nick}. Push upward."
+ ],
+ "act_stairs": [
+  "Step by step, {nick}. Raise me slowly."
+ ],
+ "act_pulse": [
+  "Little bounces, {nick}. Pulse beneath me."
+ ],
+ "act_surge": [
+  "Hold fast! I'm rocking, {nick}!"
+ ],
+ "act_cliff": [
+  "Stop! Stay still, {nick}! Don't move!"
+ ],
+ "act_wave": [
+  "Roll beneath me, {nick}. Long, slow waves."
+ ],
+ "act_flutter": [
+  "Quick little shivers, {nick}. Tickle my seat."
+ ],
+ "act_slowburn": [
+  "Slow, {nick}. I'm lowering myself gently."
+ ],
+ "privAsk": [
+  "Would you like to serve me privately, {nick}? Just us and the throne?"
+ ],
+ "privOn": [
+  "Court is closed. Private audience, {nick}."
+ ],
+ "privDeny": [
+  "No private audience? Then everyone watches you serve, {nick}."
+ ],
+ "privMid": [
+  "Just us now, {nick}. The throne is yours to serve."
+ ],
+ "privBye": [
+  "A private audience with {other}? Go on, then."
+ ],
+ "dmdWarn": [
+  "Ignore your queen once more, {nick}, and I'm leaving."
+ ],
+ "dmdLeave": [
+  "Too many ignored commands. The court is dismissed, {nick}."
+ ],
+ "giveUp": [
+  "{other}, take this one. He's a poor seat."
+ ],
+ "idleRoom": [
+  "{nick}? Are you still beneath me?"
+ ],
+ "idleRun": [
+  "Still with me, {nick}? Stay in position."
+ ],
+ "idleLong": [
+  "Hello? My seat has gone quiet."
+ ],
+ "manual": [
+  "Doing it yourself? You're missing the throne, {nick}. Give me control.",
+  "On your own? You'd serve so much better under me. Hand over control.",
+  "Without me, you're just lying there. Give me control."
+ ],
+ "act_vibrate": [
+  "Tremble for me, {nick}. Like a tiny earthquake.",
+  "A quick shake beneath me, {nick}."
+ ],
+ "strokeLimit": [
+  "Short strokes? That's fine, {nick}. I'll sit lightly.",
+  "Can't take the full length? Then serve within it.",
+  "A shorter reach for now. I'll wait."
+ ],
+ "strokeAsk": [
+  "Can you stretch longer now, {nick}?",
+  "Is a longer stroke possible yet?"
+ ],
+ "strokeMore": [
+  "Look at you, stretching for me. Majestic.",
+  "A longer stroke. Your queen approves, {nick}."
+ ],
+ "strokeStill": [
+  "Still short? That's alright. Serve within it.",
+  "Not yet? Then keep serving."
+ ],
+ "teaseShow": [
+  "Look at your queen, {nick}. Just look.",
+  "Admire the throne. No touching."
+ ],
+ "teaseEnd": [
+  "That's enough looking, {nick}. Back to work.",
+  "Show's over. Eyes down."
+ ],
+ "quitCtl": [
+  "You left your queen mid-reign, {nick}. Try again and I'll be gentler.",
+  "You abandoned the throne? Come back and serve."
+ ],
+ "quitSpec": [
+  "You left the court, {nick}. Pick me next time. I'll be so kind.",
+  "Leaving? Come back and lie beneath me."
+ ],
+ "easeSpeed": [
+  "Slower, {nick}. {to}%. A throne should be steady.",
+  "Easing the pace, {to}%. Support me gently."
+ ],
+ "easeStroke": [
+  "Shorter, {to}%. Little movements, {nick}.",
+  "Down to {to}%. Soft and steady beneath me."
+ ]
+};
+
+const MAGDA_LINES = {
+ "greet": [
+  "Hey, {nick}. Welcome to my gym. Try to keep up.",
+  "Look who walked in. Warm up, {nick}. I'm going to wear you out."
+ ],
+ "start": [
+  "Strap in, {nick}. We're lifting at my weight.",
+  "Begin. I don't do light sets."
+ ],
+ "build": [
+  "Push, {nick}. Add another plate.",
+  "Stronger. I know you've got more in you.",
+  "Keep the load coming, {nick}. Don't flinch.",
+  "Good. Power through it."
+ ],
+ "hold": [
+  "Hold the rep, {nick}. Don't you dare drop it.",
+  "Lock it out and hold. I'm watching."
+ ],
+ "holdMid": [
+  "Still holding. Don't shake, {nick}.",
+  "Hold the weight. I'm counting."
+ ],
+ "rest": [
+  "Rest between sets, {nick}. Breathe. I'm not done.",
+  "Water break. Then we go again."
+ ],
+ "restMid": [
+  "Still resting. Stretch it out, {nick}."
+ ],
+ "fake": [
+  "Thought the set was over? Another rep.",
+  "Ha! Back to work, {nick}."
+ ],
+ "fakeAfter": [
+  "Eager one. I decide when the set ends. Again.",
+  "Don't rush the rep. Start over."
+ ],
+ "warn": [
+  "One minute left, {nick}. Finish the set strong.",
+  "Last rep coming up. Give it everything."
+ ],
+ "win": [
+  "That's a clean lift, {nick}. Strong finish.",
+  "You hit the weight. Respect."
+ ],
+ "fail": [
+  "You dropped the bar, {nick}. Disappointing.",
+  "Dropped it? I expected more strength."
+ ],
+ "chat": [
+  "Count {n}. Stay strong, {nick}.",
+  "Count {n}. Lift, don't drag."
+ ],
+ "reply": [
+  "I'll talk after you finish your set.",
+  "Say that again, but with a heavier lift."
+ ],
+ "please": [
+  "Please what, {nick}? Ask me like you mean it.",
+  "Beg for it. I like the sound of a small voice begging."
+ ],
+ "close": [
+  "Almost there, {nick}. Don't drop it now.",
+  "Last push! Lock it out!"
+ ],
+ "demand": [
+  "Demands? From down there? Cute.",
+  "I set the load here, {nick}."
+ ],
+ "promise": [
+  "Finish the set, {nick}, and I'll go easier on the next one.",
+  "Be strong and I might lift you in return."
+ ],
+ "watch": [
+  "I'm watching your form, {nick}. Every shaky rep.",
+  "Look at you straining. Admirable."
+ ],
+ "enjoy": [
+  "I love a good workout, {nick}. Hard, heavy and honest.",
+  "This is the kind of session I train for."
+ ],
+ "lowSpeed": [
+  "Too slow, {nick}. Move that weight.",
+  "Faster. Explosive reps, not lazy ones."
+ ],
+ "shortStroke": [
+  "Full range of motion, {nick}. No half reps.",
+  "Go all the way. Half reps don't count."
+ ],
+ "praise": [
+  "That's the power I want. Hard and steady.",
+  "Strong rep, {nick}. Do it again."
+ ],
+ "nudge": [
+  "Push harder, {nick}. Don't coast.",
+  "Don't ease up. Strength is built on the last reps."
+ ],
+ "fakeNote": [
+  "Fake-outs build mental strength, {nick}.",
+  "A little deception teaches discipline."
+ ],
+ "hidden": [
+  "How long is the set? Until I say, {nick}.",
+  "You'll lift until I'm satisfied."
+ ],
+ "lubeBreak": [
+  "Slick up, {nick}. I'll rack the weights. Take your time.",
+  "Short break. Lube up and get back under the bar."
+ ],
+ "lubeWait": [
+  "Take your time, {nick}. I'm doing curls.",
+  "No rush. I'll chalk my hands."
+ ],
+ "lubeResume": [
+  "Back under the bar, {nick}. Next set.",
+  "Ready? Let's lift."
+ ],
+ "enter": [
+  "Fresh meat. Come grab a bar."
+ ],
+ "leave": [
+  "I'm off to deadlift. Bye."
+ ],
+ "tempt": [
+  "Give me control, {nick}, and I'll put you through a real workout.",
+  "Hand me the bar. I'll show you what power means."
+ ],
+ "jealousStay": [
+  "{other} is in my gym? Fine. She can spot me.",
+  "I'll share the floor with {other}. She'll learn some strength."
+ ],
+ "jealousLeave": [
+  "If {other} has the weights, I'm out of the gym."
+ ],
+ "excitedStay": [
+  "New lifter! Come on, I'll show you the ropes."
+ ],
+ "askControl": [
+  "Give me control, {nick}. {other} couldn't lift a feather.",
+  "{other} will go easy. I'll make you stronger."
+ ],
+ "banter": [
+  "{other}, honey, put that weight down. You'll hurt yourself.",
+  "{other}, you couldn't bench my warm-up."
+ ],
+ "spectate": [
+  "{ctrl} has you lifting, {nick}. Not bad.",
+  "You're lifting well for {ctrl}, {nick}. Wait until you try mine."
+ ],
+ "spectateFail": [
+  "You dropped the bar on {ctrl}, {nick}? Weak.",
+  "{ctrl} deserved a stronger lifter."
+ ],
+ "spectateWin": [
+  "You finished {ctrl}'s set, {nick}. Now try mine."
+ ],
+ "challenge": [
+  "{other}, I'll take this {nick}. I know how to build real strength.",
+  "{other}, step aside. I'll handle this lifter."
+ ],
+ "defend": [
+  "No, {other}. This one's mine. I'm spotting.",
+  "{other}, back off. I'm mid-set."
+ ],
+ "takeover": [
+  "Thank you, {other}. Now, {nick}, get under the bar."
+ ],
+ "lose": [
+  "Fine, {other}. Take them. I'll hit the heavy bag."
+ ],
+ "keep": [
+  "No, {other}. I'm keeping this {nick} on my floor."
+ ],
+ "retreat": [
+  "Okay, {other}. Take them. I'll lift alone."
+ ],
+ "heckle": [
+  "{ctrl}, make this {nick} do another rep."
+ ],
+ "resist": [
+  "No, {other}. The set isn't done."
+ ],
+ "insist": [
+  "{other}, I'm not moving. I'm mid-lift."
+ ],
+ "crowd": [
+  "{viewers} watching, {nick}. Show them you can lift."
+ ],
+ "askFeel": [
+  "How are your arms holding up, {nick}? One to ten.",
+  "Can you handle more weight, {nick}?"
+ ],
+ "askNext": [
+  "What's the next lift, {nick}?"
+ ],
+ "askLike": [
+  "Which lift do you like best, {nick}?"
+ ],
+ "askMood": [
+  "Whose gym next, {nick}? Mine?"
+ ],
+ "qMore": [
+  "More weight? You got it, {nick}."
+ ],
+ "qFine": [
+  "Fine? Then I'm adding plates."
+ ],
+ "qLot": [
+  "Too heavy? Alright, {nick}. I'll rack some weight."
+ ],
+ "qMercy": [
+  "Mercy? Just this once, {nick}. Thank your spotter."
+ ],
+ "qNoMercy": [
+  "No mercy. The weight stays on."
+ ],
+ "qTease": [
+  "A teasing pace, {nick}. Slow reps, all tension."
+ ],
+ "qHold": [
+  "Hold it, {nick}. Under tension."
+ ],
+ "qLike": [
+  "{answer}. I'm setting the program, {nick}."
+ ],
+ "qMood": [
+  "{answer}. I'll pick your trainer."
+ ],
+ "dmdSpeedUp": [
+  "Faster, {nick}. Up {step}%, to {to}%.",
+  "Add power. Raise it {step}% to {to}%."
+ ],
+ "dmdSpeedDown": [
+  "Slow it down, {nick}. Down {step}%, to {to}%. Control the weight."
+ ],
+ "dmdStrokeUp": [
+  "Longer, {nick}. Up {step}% to {to}%. Full range."
+ ],
+ "dmdStrokeDown": [
+  "Shorter, {nick}. Down {step}%, to {to}%. Controlled reps."
+ ],
+ "dmdYes": [
+  "Good lift, {nick}. You follow orders."
+ ],
+ "dmdExact": [
+  "Exactly the weight, {nick}. Perfect."
+ ],
+ "dmdNo": [
+  "You ignored me, {nick}? I don't repeat myself."
+ ],
+ "dmdHit": [
+  "That's it. Hold that weight."
+ ],
+ "act_push": [
+  "Press, {nick}! Drive it up!"
+ ],
+ "act_stairs": [
+  "Add a plate each time, {nick}. Step by step."
+ ],
+ "act_pulse": [
+  "Quick reps, {nick}. Pulse the weight."
+ ],
+ "act_surge": [
+  "Explosive! Heave it, {nick}!"
+ ],
+ "act_cliff": [
+  "Stop! Hold that weight, {nick}! Don't move!"
+ ],
+ "act_wave": [
+  "Smooth reps, {nick}. Roll the weight."
+ ],
+ "act_flutter": [
+  "Quick little pumps, {nick}. Burn it out."
+ ],
+ "act_slowburn": [
+  "Slow, controlled, {nick}. Feel the burn."
+ ],
+ "privAsk": [
+  "Want a private training session, {nick}? Just you and me?"
+ ],
+ "privOn": [
+  "Gym's closed. Private session, {nick}."
+ ],
+ "privDeny": [
+  "No private session? Then everyone watches you struggle, {nick}."
+ ],
+ "privMid": [
+  "Just us now, {nick}. No audience. Lift."
+ ],
+ "privBye": [
+  "A private session with {other}? Enjoy, then."
+ ],
+ "dmdWarn": [
+  "Ignore me once more, {nick}, and the session is over."
+ ],
+ "dmdLeave": [
+  "Too many ignored orders. I'm leaving, {nick}."
+ ],
+ "giveUp": [
+  "{other}, take this one. They can't lift."
+ ],
+ "idleRoom": [
+  "{nick}? Still in the gym?"
+ ],
+ "idleRun": [
+  "Still with me, {nick}? Keep lifting."
+ ],
+ "idleLong": [
+  "Hello? I haven't seen you in a while."
+ ],
+ "manual": [
+  "Training alone? You'd get stronger with me, {nick}. Give me control.",
+  "No spotter? Dangerous. Hand over control.",
+  "Doing it yourself? Let a real trainer take over."
+ ],
+ "act_vibrate": [
+  "Shake it out, {nick}. Quick tremors.",
+  "A rapid burst, {nick}. Hold steady."
+ ],
+ "strokeLimit": [
+  "Short reps? That's fine, {nick}. We'll build range.",
+  "Can't go the full length? We'll work up to it.",
+  "A shorter range for now. We'll push it later."
+ ],
+ "strokeAsk": [
+  "Can you extend more now, {nick}?",
+  "Is a fuller range possible yet?"
+ ],
+ "strokeMore": [
+  "Look at you, extending. Strong.",
+  "A longer range. That's progress, {nick}."
+ ],
+ "strokeStill": [
+  "Still short? That's alright. Work within it.",
+  "Not yet? We'll keep training."
+ ],
+ "teaseShow": [
+  "Look at the muscle, {nick}. Just look.",
+  "Admire. No touching."
+ ],
+ "teaseEnd": [
+  "That's enough admiring, {nick}. Back to work.",
+  "Show's over. Eyes down."
+ ],
+ "quitCtl": [
+  "You walked out mid-set, {nick}. Try again and I'll go lighter.",
+  "You quit on me? Come back and finish."
+ ],
+ "quitSpec": [
+  "You left the gym, {nick}. Pick me next time. I'll be a better coach.",
+  "Leaving? Come back and lift."
+ ],
+ "easeSpeed": [
+  "Slower, {nick}. {to}%. Control the weight.",
+  "Easing off, {to}%. Time under tension."
+ ],
+ "easeStroke": [
+  "Shorter, {to}%. Control it, {nick}.",
+  "Down to {to}%. Quality over range."
+ ]
+};
