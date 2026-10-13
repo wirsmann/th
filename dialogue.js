@@ -13847,3 +13847,34 @@ const EASE_LINES = {
  }
 };
 SHARED.easeNo = ["Hm. Fine, {nick}. Stay as you are. For now.","No? Alright. Maybe next time.","Suit yourself, {nick}."];
+
+const CAMILLE_EXTRA = {
+ "praise": [
+  "Seventy-five. A lovely number. Higher, and I might lose count.",
+  "Those numbers are climbing. I adore a rising figure."
+ ],
+ "dmdSpeedUp": [
+  "Speed {to}% is a better number than this one. Let's go up.",
+  "Higher, {nick}. Every extra percent is one I'll count."
+ ],
+ "dmdStrokeUp": [
+  "Stroke {to}%. Bigger numbers suit you.",
+  "Longer, {nick}. The figure goes up and so does my interest."
+ ],
+ "dmdHit": [
+  "That's exactly the number. Perfect. I'm almost giddy."
+ ],
+ "build": [
+  "The count is climbing. Eighty. Ninety. I do love a big number."
+ ],
+ "enjoy": [
+  "Higher numbers make me giddy, {nick}. Don't tell anyone.",
+  "The higher it gets, the more I like it. Keep climbing."
+ ],
+ "watch": [
+  "Numbers rising on every count. I could watch this all night."
+ ],
+ "win": [
+  "Look at that final figure. Magnificent. A very high number."
+ ]
+};

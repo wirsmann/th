@@ -2815,6 +2815,7 @@ function forceHold(sec){ if (teaseNow()) { const lo = n("tPeakMin", 60); forceCu
 
 function demandInterval(p){ return Math.max(20000, (55000 + Math.random() * 40000) / aggr() * Math.pow(0.75, defiance[p] || 0)); }
 Object.keys(EASE_LINES).forEach(k => { if (LINES[k]) Object.assign(LINES[k], EASE_LINES[k]); });
+if (typeof CAMILLE_EXTRA !== "undefined" && LINES["Counting Camille"]) Object.keys(CAMILLE_EXTRA).forEach(k => { const L = LINES["Counting Camille"]; L[k] = (L[k] || []).concat(CAMILLE_EXTRA[k]); });
 Object.assign(HYPE, {easeSpeed:3, easeStroke:3, easeNo:2});
 /* chance that a persona who is already on her preferred settings asks you to ease off instead (per demand check) */
 const EASE_CH = {"Mischievous Mia":.2,"Sleepy Sadie":.18,"Mocking Margot":.18,"Cuckolding Veronica":.18,"Hypnotic Helena":.18,"Flirty Fiona":.18,"Chef Gianna":.2,"Nurse Ingrid":.18,"Satin Sasha":.18,"Lilith":.2,"Chaos Cassie":.16,"Coach Colleen":.15,"Relentless Roxy":.05,"Bratty Bella":.07,"Jealous Juliet":.07};
