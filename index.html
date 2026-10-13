@@ -289,7 +289,7 @@
   <strong class="subHead">Vibration bursts</strong>
   <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:10px"><input type="checkbox" id="vibOn"> Personalities can switch to a short vibration burst</label>
   <div class="row"><div><label for="vibWidth">Vibration stroke width (% of full length)</label><input id="vibWidth" type="number" min="2" max="30" value="6"></div></div>
-  <p class="hint">In tease mode, the one in control can now and then narrow the stroke to this width in the middle of your range and run it at your full speed slider, so it buzzes instead of strokes. Then she rests and your range comes back. How often and how long is set per personality under Personas.</p>
+  <p class="hint">In tease mode, the one in control can now and then narrow the stroke to this width in the middle of your range and run it at the Vibration speed set under Customize (it ignores the speed slider, the speed cap and the end slowdown), so it buzzes instead of strokes. Then she rests and your range comes back. How often and how long is set per personality under Personas.</p>
     </section>
     <section class="panel" data-key="tease" hidden>
     <label for="activePersona" style="margin-top:0">Active persona</label>
@@ -574,7 +574,9 @@ function sendStroke(){ return api("PUT", "/slide", strokeRange()); }
 function syncVibe(){
   const want = running && runTease && !onBreak && !ctlAway() && !!tz && !!tz.cur && tz.cur.type === "vibrate";
   if (want === vibeOn) return;
-  vibeOn = want; lastVelAt = 0; sendStroke().catch(e => status(e.message, true));
+  vibeOn = want; lastVelAt = 0;
+  /* changing the stroke window can make the device drop back to its old speed, so send the speed again once the window is set */
+  sendStroke().then(() => { lastVelAt = 0; lastVel = null; if (running) pushVelocity(true); }).catch(e => status(e.message, true));
 }
 
 /* ---------- speed engine ---------- */
@@ -705,6 +707,8 @@ function velocityAt(elapsedMs, leftMs){
     }
     v = n("speed", 50) * f;
   }
+  /* a vibration burst runs at its own vibration speed: it ignores the speed slider, the speed cap and the end-of-session slowdown */
+  if (tease && tz && tz.cur && tz.cur.type === "vibrate") return Math.max(1, Math.min(100, Math.round(n("vibSpeed", 100))));
   const slowMs = n("slow", 0) * 1000;
   if (slowMs > 0 && leftMs < slowMs){ const es = n("endSlow", 40) / 100; v *= es + (1 - es) * Math.max(0, leftMs) / slowMs; }
   v = Math.min(v, cap);
@@ -725,7 +729,8 @@ async function pushVelocity(force){
     try { await api("PUT", "/hamp/velocity", {velocity: v}); await api("PUT", "/hamp/start"); } catch(e){ status(e.message, true); }
     return;
   }
-  if (!force && ((lastVel !== null && Math.abs(v - lastVel) < 3) || now - lastVelAt < 1500)) return;
+  const vibing = tz && tz.cur && tz.cur.type === "vibrate";
+  if (!force && !(vibing && now - lastVelAt > 3000) && ((lastVel !== null && Math.abs(v - lastVel) < 3) || now - lastVelAt < 1500)) return;
   lastVel = v; lastVelAt = now;
   api("PUT", "/hamp/velocity", {velocity: v}).catch(e => status(e.message, true));
 }
@@ -970,6 +975,8 @@ async function start(){
     await api("PUT", "/hamp/start");
   } catch(e){ setButtons(); return status(e.message, true); }
   total = ms; endAt = Date.now() + ms; running = true; paused = false; warned = false; winArmed = winGoal() > 0 && level() < winGoal(); runTease = $("teaseOn").checked; runHidden = runTease && $("tRandom").checked;
+  if (!runTease){ currentPersona = ""; updateTimerPortrait(""); }   // a manual session has no persona in control, so no portrait either
+  else { if (!currentPersona && $("activePersona").value) currentPersona = $("activePersona").value; updateTimerPortrait(currentPersona); }
   setButtons(); lockScreen();
   status((runSim ? "Simulation: " : "") + (capped ? "Shortened to " + (runHidden ? "fit" : fmt(ms) + " to fit") + " your daily limit." : "") + (runHidden ? " The end time is hidden." : "") + (runTease ? " Stopping or pausing now counts as failing this session." : ""));
   nextChatAt = Date.now() + 20000 + Math.random() * 20000;
@@ -1161,6 +1168,7 @@ function updateTimerPortrait(p){
   const b = $("tPort"); if (!b) return;
   b.dataset.p = p; b.hidden = true;
   const key = p && NAMEKEY[p]; if (!key) return;
+  if (!(room.includes(p) || (running && runTease && p === currentPersona))) return;   // no picture for someone who isn't here
   findAvImgs(key).then(list => {
     if (!list.length || b.dataset.p !== p) return;
     const im = new Image(); im.alt = ""; im.src = (teasing[key] && teasing[key].url) || list[0]; b.replaceChildren(im);
@@ -1441,7 +1449,7 @@ function startTease(p, why){
     const priv = why === "private" || why === "privMid", secs = priv ? rnd(30, 50) : why === "preview" ? rnd(15, 25) : rnd(20, 35);
     const t = teasing[key] = {url: pick, p, why}; nextTeaseAt[p + ":last"] = pick;
     nextTeaseAt[p] = Date.now() + (6 + Math.random() * 4) * 60000;   // cooldown before she'll tease the open room again
-    refreshAvatars(p); sayAs(p, "teaseShow");
+    refreshAvatars(p); sayAs(p, "teaseShow"); bbAdd(p, "teases");
     mark("tease", SHORT[p] + (priv ? " teased you in private" : why === "preview" ? " flashed a preview" : " teased the room"));
     if (!privateShow){
       addMsg("sys", "👀 " + SHORT[p] + " is giving the room a peek.");
@@ -1883,7 +1891,7 @@ function crowdTick(){
 /* Blackbook: per-persona stats for the friends list, kept in localStorage */
 let bb = store.get("handyBlackbook", {});
 const joinedAt = {};
-const BB_KEYS = ["inv", "acc", "dec", "busy", "off", "noR", "full", "joins", "ctrl", "sess", "fails", "mins", "seen", "hang", "handed", "takeovers", "wins"];
+const BB_KEYS = ["inv", "acc", "dec", "busy", "off", "noR", "full", "joins", "ctrl", "sess", "fails", "mins", "seen", "hang", "handed", "takeovers", "wins", "teases"];
 const bbRec = p => { if (!bb[p]) bb[p] = {}; const r = bb[p]; BB_KEYS.forEach(k => { if (!r[k]) r[k] = 0; }); return r; };
 function bbAdd(p, k, n){ if (!SHORT[p]) return; const r = bbRec(p); r[k] = r[k] + (n == null ? 1 : n); store.set("handyBlackbook", bb); }
 /* keeps join counts and time in the lounge right, whatever path moved the persona in or out */
@@ -1899,7 +1907,7 @@ function renderRoom(){
     const c = document.createElement("span"); c.className = "rchip";
     c.append(avatarEl(p), SHORT[p] + (p === currentPersona ? " ★" : "")); c.classList.add("kick"); c.title = "Click to kick " + SHORT[p] + " out"; c.setAttribute("role", "button"); c.tabIndex = 0; c.onclick = () => kickOut(p); c.onkeydown = e => { if (e.key === "Enter" || e.key === " ") kickOut(p); }; box.append(c);
   });
-  renderCrowd(); renderFriends();
+  renderCrowd(); renderFriends(); updateTimerPortrait(currentPersona);
 }
 function chatHeader(){ renderRoom(); }
 const MAXROOM = 5;
@@ -2042,9 +2050,9 @@ function renderFriends(){
     const r = bbRec(p), det = document.createElement("details"); det.className = "bbk"; det.dataset.persona = p; det.open = !!bbOpen[p];
     det.addEventListener("toggle", () => { bbOpen[p] = det.open; });
     const sm = document.createElement("summary");
-    sm.textContent = "Blackbook: " + r.inv + " invited · " + r.joins + " joined · " + r.sess + " sessions · " + r.fails + " fails";
+    sm.textContent = "Blackbook: " + r.inv + " invited · " + r.joins + " joined · " + r.sess + " sessions · " + r.fails + " fails" + (r.teases ? " · " + r.teases + " teases" : "");
     const g = document.createElement("div"); g.className = "bbGrid";
-    g.innerHTML = [["Invited", r.inv], ["Accepted", r.acc], ["Declined", r.dec], ["Busy", r.busy], ["Offline", r.off], ["No reply", r.noR], ["Room full", r.full], ["Joined lounge", r.joins], ["Took control", r.ctrl], ["Handed control", r.handed], ["Takeovers", r.takeovers], ["Left hanging", r.hang], ["Sessions", r.sess], ["Fails", r.fails], ["Wins", r.wins], ["Minutes in lounge", Math.round(r.mins)], ["Last seen", r.seen ? new Date(r.seen).toLocaleString() : "never"]].map(([k, v]) => "<div><span>" + k + "</span><b>" + v + "</b></div>").join("");
+    g.innerHTML = [["Invited", r.inv], ["Accepted", r.acc], ["Declined", r.dec], ["Busy", r.busy], ["Offline", r.off], ["No reply", r.noR], ["Room full", r.full], ["Joined lounge", r.joins], ["Took control", r.ctrl], ["Handed control", r.handed], ["Takeovers", r.takeovers], ["Left hanging", r.hang], ["Sessions", r.sess], ["Fails", r.fails], ["Wins", r.wins], ["Teases given", r.teases], ["Minutes in lounge", Math.round(r.mins)], ["Last seen", r.seen ? new Date(r.seen).toLocaleString() : "never"]].map(([k, v]) => "<div><span>" + k + "</span><b>" + v + "</b></div>").join("");
     const pr = PROFILE[p] || {}, prof = document.createElement("div"); prof.className = "bbGrid one";
     prof.innerHTML = [["Age", pr.age], ["Lives in", pr.loc], ["Status", pr.status], ["Job", pr.job], ["Ethnicity", pr.eth], ["Orientation", pr.orient], ["Hobbies", (pr.hobbies || []).join(", ")], ["Fun fact", pr.quirk]].map(([k, v]) => "<div><span>" + k + "</span><b>" + (v == null ? "" : v) + "</b></div>").join("");
     det.append(sm, portraitBtn(p), prof, g); box.append(det);
