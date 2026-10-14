@@ -186,6 +186,10 @@
   .rchip.kick{cursor:pointer}
   .rchip.kick:hover{outline:1px solid var(--stop);text-decoration:line-through}
   @media (min-width:1001px){.timer{max-height:calc(100vh - 28px);overflow:auto}}
+  #sliderSet.owned{outline:2px dashed var(--ownc, var(--accent));outline-offset:4px;border-radius:10px}
+  #sliderSet.owned input[type=range]{opacity:.55;cursor:not-allowed}
+  .ownLock{margin:0 0 6px;font-weight:600;font-size:.9em}
+  .prompt.ownCard{border-style:double;border-width:4px}
   .prompt{display:flex;flex-direction:column;gap:6px;border:2px solid var(--accent);border-radius:14px;padding:8px 10px;background:var(--panel);box-shadow:0 2px 8px rgba(0,0,0,.12);max-width:100%}
   .ptxt{font-size:.85rem}
   .pbtns{display:flex;flex-direction:column;gap:8px;align-items:stretch}
@@ -241,7 +245,8 @@
   <button type="button" id="simBtn" class="teaseBtn simBtn" aria-pressed="false" title="Runs everything as normal but sends nothing to the Handy. No connection key needed. Simulated sessions aren't logged and don't count toward limits or lockouts.">Simulation: off</button>
 
   <p id="status" role="status">Enter your key and press Start.</p>
-  <div class="liveSet">
+  <div class="liveSet" id="sliderSet">
+  <p class="ownLock" id="ownLock" hidden></p>
   <label for="speed">Speed: <span id="speedVal">50</span>%</label>
   <input id="speed" type="range" min="1" max="100" value="50">
 
@@ -318,6 +323,7 @@
     <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:10px"><input type="checkbox" id="interactOn"> Personalities ask questions and make demands</label>
     <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:6px"><input type="checkbox" id="stormOn"> Personalities storm off if you refuse too many demands (each has her own tolerance)</label>
     <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:6px"><input type="checkbox" id="privOn"> Personalities can ask to go private (locks the room, gets more intense)</label>
+    <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:6px"><input type="checkbox" id="ownOn"> Personalities can claim you ("I own you"): she takes over your speed and stroke until you break free</label>
     <div class="grid" id="persFields"></div>
     <p class="hint">Whoever is in control keeps a target speed and stroke length and nudges you toward it 5 points at a time. Each demand has Do it, Match her target and Refuse buttons. Refusing makes her more insistent. Questions come with answer buttons, and a few of the answers change what happens next (a rest, a hold, a fresh build-up).</p>
 
@@ -429,7 +435,7 @@ mkFields("teaseFields", TEASE); mkFields("customFields", CUSTOM);
 ["privMin","lifeRate"].forEach(id => $("persFields").append($(id).parentElement));
 const FIELDS = ["vibSpeed","winLevel","vibWidth","speed","smin","smax","min","sec","ramp","slow","pattern","period","daily","cool","failLock","aimCtl","lubeEvery","lubeGap","lubePark"].concat(TEASE.map(t=>t[0]), CUSTOM.map(c=>c[0]));
 FIELDS.forEach(id => { const v = store.get("h_"+id, null); if (v !== null) $(id).value = v; });
-const BOOLS = {beepEnd:true, beepWarn:true, awake:true, teaseOn:false, tStop:true, hideClock:false, tRandom:false, failCharge:false, lubeOn:true, lubeReg:true, fansOn:true, crowdBoost:true, interactOn:true, stormOn:true, privOn:true, simOn:false, vibOn:true};
+const BOOLS = {beepEnd:true, beepWarn:true, awake:true, teaseOn:false, tStop:true, hideClock:false, tRandom:false, failCharge:false, lubeOn:true, lubeReg:true, fansOn:true, crowdBoost:true, interactOn:true, stormOn:true, privOn:true, ownOn:true, simOn:false, vibOn:true};
 Object.keys(BOOLS).forEach(id => { $(id).checked = store.get("h_"+id, BOOLS[id]); $(id).onchange = () => store.set("h_"+id, $(id).checked); });
 let presets = store.get("handyPresets", [300, 600, 900, 1800]);   // seconds
 
@@ -755,7 +761,7 @@ function hexA(h, a){ const m = /^#?([0-9a-f]{6})$/i.exec(h || ""); if (!m) retur
 const whoColor = w => PCOL[w] || "#0f7b8a";
 const whoName = w => w === "__you" ? "Manual" : (SHORT[w] || w);
 var marks = [];
-const MKIND = {move:["◆","Move"], fake:["✕","Fake-out"], yes:["✓","Obeyed"], no:["✗","Refused"], free:["★","Free rein"], ask:["?","Answered"], lube:["L","Lube break"], tease:["♥","Tease"], priv:["🔒","Private show"], life:["!","Real-life event"], hold:["H","Hold"], rest:["R","Rest"]};
+const MKIND = {move:["◆","Move"], fake:["✕","Fake-out"], yes:["✓","Obeyed"], no:["✗","Refused"], free:["★","Free rein"], ask:["?","Answered"], lube:["L","Lube break"], tease:["♥","Tease"], priv:["🔒","Private show"], life:["!","Real-life event"], own:["⛓","Owned"], hold:["H","Hold"], rest:["R","Rest"]};
 function mark(kind, label){
   if (!(running || paused) || !MKIND[kind]) return;
   marks.push({i: hist.length, kind, label: label || MKIND[kind][1], who: runTease && currentPersona ? currentPersona : "__you"});
@@ -1031,6 +1037,8 @@ function update(){
 async function finish(msg, timeUp, failed){
   emptyHalt = false; removeOffer("emptyRoom");
   strokeCapNow = 100; nextLimitAskAt = 0; removeOffer("strokeAsk");   // the stroke limit only lasts for one session
+  if (owned) endOwn(failed ? "fail" : "end");   // ownership ends with the session
+  nextOwnAt = 0;                                  // and the cooldown after breaking free doesn't carry over
   endAllTeases();
   if (simOn()) setTimeout(simRestart, 25000 + Math.random() * 30000);   // simulated user starts another session later
   if (failed){ dip = Math.min(45, dip + 30); momentum = Math.max(0, momentum - 20); excite = 0; }   // fails hit the room hard
@@ -1525,9 +1533,11 @@ function endAllTeases(){ Object.keys(teasing).forEach(k => { const t = teasing[k
 function teaseTick(now){
   const p = currentPersona;
   if (!teaseNow() || !p || !room.includes(p) || privateShow || lifeEv || teasing[NAMEKEY[p]]) return;
-  if (ctlWho !== p || now - ctlAt < 4 * 60000 || now < (nextTeaseAt[p] || 0)) return;
-  const rate = TEASE_RATE[tierOf(fans.length)] || 0; if (!rate) return;
-  if (Math.random() < rate / 100 / 60) startTease(p, "room");
+  const own = owned && owned.p === p;   // owning you makes her far more likely to show off, whatever the crowd size
+  if (own){ if (now < (owned.nextTease || 0)) return; }
+  else if (ctlWho !== p || now - ctlAt < 4 * 60000 || now < (nextTeaseAt[p] || 0)) return;
+  const rate = own ? OWN_TEASE * (1 + (TEASE_RATE[tierOf(fans.length)] || 0) / 4) : TEASE_RATE[tierOf(fans.length)] || 0; if (!rate) return;
+  if (Math.random() < rate / 100 / 60){ startTease(p, own ? "own" : "room"); if (own) owned.nextTease = now + rnd(150, 240) * 1000; }
 }
 function addMsg(kind, text, replyEl){
   const d = document.createElement("div"); d.className = "msg " + kind;
@@ -1657,6 +1667,7 @@ function pruneOffers(){
 const HYPE = {fake:6,fakeAfter:3,hold:3,holdMid:2,rest:2,restMid:1,build:2,challenge:10,defend:5,insist:5,resist:5,takeover:14,lose:6,keep:6,fail:12,win:12,enter:4,tempt:5,askControl:5,banter:2,watch:3,enjoy:4,heckle:4,spectate:3,crowd:3,jealousStay:4,jealousLeave:5,excitedStay:4};
 function sayAs(name, cat, action, vars){
   if (!name || !room.includes(name)) return;   // only personas in the lounge can speak
+  if (name === freedFrom && Date.now() < freedUntil && cat !== "ownFree") return;   // you just broke free: she only pouts on her way out
   const l = LINES[name]; if (!l) return;
   let arr = l[cat] && l[cat].length ? l[cat] : (SHARED[cat] || null); if (!arr) return;
   vars = vars || {};
@@ -1714,7 +1725,7 @@ function setStrokeLimit(p, len, wasFull){
 function limitTick(now){
   if (strokeCapNow >= 100 || now < nextLimitAskAt || !teaseNow()) return;
   const p = currentPersona;
-  if (!p || !room.includes(p) || challenge || ask || demand || lifeEv || !$("interactOn").checked) return;
+  if (!p || !room.includes(p) || challenge || ask || demand || lifeEv || owned || !$("interactOn").checked) return;
   nextLimitAskAt = now + 60000;   // placeholder until she's answered or ignored
   const a = ask = {p, qid: "stroke", el: null};
   const done = (cat, mine) => { if (ask === a) ask = null; if (strokeCapNow < 100) nextLimitAskAt = Date.now() + 120000 + Math.random() * 80000; if (cat) setTimeout(() => sayAs(p, cat, null, {replyTo: mine}), 600); };
@@ -1730,7 +1741,7 @@ function limitTick(now){
   }});
 }
 function commentSettings(kind){
-  if (!currentPersona || Date.now() < suppressUntil) return;
+  if (!currentPersona || Date.now() < suppressUntil || owned) return;   // while she owns you she just sets it herself
   const now = Date.now(); if (now - lastCommentAt < 20000) return;
   const sp = +$("speed").value, rng = +$("smax").value - +$("smin").value;
   let cat = null, act = null;
@@ -1971,7 +1982,7 @@ function crowdTick(){
 /* Blackbook: per-persona stats for the friends list, kept in localStorage */
 let bb = store.get("handyBlackbook", {});
 const joinedAt = {};
-const BB_KEYS = ["inv", "acc", "dec", "busy", "off", "noR", "full", "joins", "ctrl", "sess", "fails", "mins", "seen", "hang", "handed", "takeovers", "wins", "teases"];
+const BB_KEYS = ["inv", "acc", "dec", "busy", "off", "noR", "full", "joins", "ctrl", "sess", "fails", "mins", "seen", "hang", "handed", "takeovers", "wins", "teases", "owned", "freed", "ownMins"];
 const bbRec = p => { if (!bb[p]) bb[p] = {}; const r = bb[p]; BB_KEYS.forEach(k => { if (!r[k]) r[k] = 0; }); return r; };
 function bbAdd(p, k, n){ if (!SHORT[p]) return; const r = bbRec(p); r[k] = r[k] + (n == null ? 1 : n); store.set("handyBlackbook", bb); }
 /* keeps join counts and time in the lounge right, whatever path moved the persona in or out */
@@ -1985,7 +1996,7 @@ function renderRoom(){
   const box = $("roomWho"); box.innerHTML = "";
   room.forEach(p => {
     const c = document.createElement("span"); c.className = "rchip";
-    c.append(avatarEl(p), SHORT[p] + (p === currentPersona ? " ★" : "")); c.classList.add("kick"); c.title = "Click to kick " + SHORT[p] + " out"; c.setAttribute("role", "button"); c.tabIndex = 0; c.onclick = () => kickOut(p); c.onkeydown = e => { if (e.key === "Enter" || e.key === " ") kickOut(p); }; box.append(c);
+    c.append(avatarEl(p), SHORT[p] + (p === currentPersona ? (owned && owned.p === p ? " ⛓" : " ★") : "")); c.classList.add("kick"); c.title = "Click to kick " + SHORT[p] + " out"; c.setAttribute("role", "button"); c.tabIndex = 0; c.onclick = () => kickOut(p); c.onkeydown = e => { if (e.key === "Enter" || e.key === " ") kickOut(p); }; box.append(c);
   });
   renderCrowd(); renderFriends(); updateTimerPortrait(currentPersona);
 }
@@ -2031,7 +2042,7 @@ const BORE_DEF = {"Livestream Lexi":3,"High-Energy Holly":2,"Starlet Sloane":2,"
 };
 const boreRate = p => { const e = document.getElementById("bore_" + NAMEKEY[p]); const v = e ? parseFloat(e.value) : NaN; return isNaN(v) ? (BORE_DEF[p] != null ? BORE_DEF[p] : 3) : Math.max(0, Math.min(100, v)); };
 function boredTick(){
-  if (!running || !runTease || onBreak || lifeEv || challenge || privateShow || !room.includes(currentPersona)) return;
+  if (!running || !runTease || onBreak || lifeEv || challenge || privateShow || owned || !room.includes(currentPersona)) return;
   if (Math.random() * 100 < boreRate(currentPersona) * 0.25 / 60) leaveRoom(currentPersona, false, true);   // update() runs about every 250 ms
 }
 /* The room empties mid-session: the device stops where it is (not a fail) until Start is pressed. */
@@ -2045,7 +2056,7 @@ function awayTick(){
   awayPrev = away;
 }
 function haltEmpty(){
-  bbAdd(currentPersona, "hang");   // she walked out and left the room empty
+  if (!(currentPersona === freedFrom && Date.now() < freedUntil + 5000)) bbAdd(currentPersona, "hang");   // she walked out and left the room empty (not when you broke free of her)
   remaining = Math.max(0, endAt - Date.now());
   running = false; paused = true; emptyHalt = true; clearInterval(tick); devStopped = true;
   setButtons();
@@ -2133,9 +2144,9 @@ function renderFriends(){
     const r = bbRec(p), det = document.createElement("details"); det.className = "bbk"; det.dataset.persona = p; det.open = !!bbOpen[p];
     det.addEventListener("toggle", () => { bbOpen[p] = det.open; });
     const sm = document.createElement("summary");
-    sm.textContent = "Blackbook: " + r.inv + " invited · " + r.joins + " joined · " + r.sess + " sessions · " + r.fails + " fails" + (r.teases ? " · " + r.teases + " teases" : "");
+    sm.textContent = "Blackbook: " + r.inv + " invited · " + r.joins + " joined · " + r.sess + " sessions · " + r.fails + " fails" + (r.teases ? " · " + r.teases + " teases" : "") + (r.owned ? " · owned you " + r.owned + "×" : "");
     const g = document.createElement("div"); g.className = "bbGrid";
-    g.innerHTML = [["Invited", r.inv], ["Accepted", r.acc], ["Declined", r.dec], ["Busy", r.busy], ["Offline", r.off], ["No reply", r.noR], ["Room full", r.full], ["Joined lounge", r.joins], ["Took control", r.ctrl], ["Handed control", r.handed], ["Takeovers", r.takeovers], ["Left hanging", r.hang], ["Sessions", r.sess], ["Fails", r.fails], ["Wins", r.wins], ["Teases given", r.teases], ["Minutes in lounge", Math.round(r.mins)], ["Last seen", r.seen ? new Date(r.seen).toLocaleString() : "never"]].map(([k, v]) => "<div><span>" + k + "</span><b>" + v + "</b></div>").join("");
+    g.innerHTML = [["Invited", r.inv], ["Accepted", r.acc], ["Declined", r.dec], ["Busy", r.busy], ["Offline", r.off], ["No reply", r.noR], ["Room full", r.full], ["Joined lounge", r.joins], ["Took control", r.ctrl], ["Handed control", r.handed], ["Takeovers", r.takeovers], ["Left hanging", r.hang], ["Sessions", r.sess], ["Fails", r.fails], ["Wins", r.wins], ["Teases given", r.teases], ["Owned you", r.owned], ["You broke free", r.freed], ["Minutes owning you", Math.round(r.ownMins)], ["Minutes in lounge", Math.round(r.mins)], ["Last seen", r.seen ? new Date(r.seen).toLocaleString() : "never"]].map(([k, v]) => "<div><span>" + k + "</span><b>" + v + "</b></div>").join("");
     const pr = PROFILE[p] || {}, prof = document.createElement("div"); prof.className = "bbGrid one";
     prof.innerHTML = [["Age", pr.age], ["Lives in", pr.loc], ["Status", pr.status], ["Job", pr.job], ["Ethnicity", pr.eth], ["Orientation", pr.orient], ["Hobbies", (pr.hobbies || []).join(", ")], ["Fun fact", pr.quirk]].map(([k, v]) => "<div><span>" + k + "</span><b>" + (v == null ? "" : v) + "</b></div>").join("");
     det.append(sm, portraitBtn(p), prof, g); box.append(det);
@@ -2384,6 +2395,7 @@ function setPersonaFields(name, jitter){
 }
 function switchController(name){
   if (!SHORT[name] || name === currentPersona) return;
+  if (owned && room.includes(owned.p)) return;   // no one takes control from the persona who owns you
   const prevCtl = currentPersona;
   if (prevCtl && room.includes(prevCtl)){ bbAdd(prevCtl, "handed"); bbAdd(name, "takeovers"); }   // control passed between personas still in the lounge
   bbAdd(name, "ctrl"); removeOffer("emptyRoom");
@@ -2396,7 +2408,7 @@ function switchController(name){
   midCat = "build"; midAt = Date.now() + 8000;
 }
 function beginChallenge(ch){
-  if (!running || !runTease || onBreak || challenge || denyAll || privateShow) return;
+  if (!running || !runTease || onBreak || challenge || denyAll || privateShow || owned) return;
   const ctl = currentPersona; if (!ctl || ch === ctl) return;
   const c = challenge = {ch, ctl};
   attempts[ch] = (attempts[ch] || 0) + 1;
@@ -2446,7 +2458,7 @@ function setDenyAll(on){
   } else { nextChallengeAt = Date.now() + 20000; if (running) addMsg("sys", "Control requests are allowed again."); }
 }
 function startChallenge(){
-  if (!running || !runTease || onBreak || challenge || privateShow || denyAll || lifeEv) return;
+  if (!running || !runTease || onBreak || challenge || privateShow || denyAll || lifeEv || owned) return;
   nextChallengeAt = Date.now() + (50000 + Math.random() * 40000) / aggr();
   const others = room.filter(p => p !== currentPersona);
   if (!others.length) return;   // challenges are only between personas already in the lounge
@@ -2576,7 +2588,7 @@ function privTick(now){
     if (now > nextPrivTeaseAt){ nextPrivTeaseAt = now + (2 + Math.random() * 2) * 60000; if (Math.random() < 0.35) startTease(currentPersona, "privMid"); }
     return;
   }
-  if (!$("privOn").checked || challenge || demand || ask || offers.some(o => o.id === "priv") || !room.includes(currentPersona)) return;
+  if (!$("privOn").checked || owned || challenge || demand || ask || offers.some(o => o.id === "priv") || !room.includes(currentPersona)) return;
   if (now - ctlAt < n("privMin", 6) * 60000 || now < nextPrivAt) return;
   if (!runHidden && endAt - now < 120000) return;
   requestPrivate(currentPersona);
@@ -2595,7 +2607,7 @@ function lifePick(p){
 }
 function lifeTick(now){
   if (lifeEv && now > lifeEv.nextSnore && (lifeEv.type === "sleep" || lifeEv.type === "pass")){ lifeEv.nextSnore = now + 22000 + Math.random() * 12000; sayAs(lifeEv.p, "life_snore"); }
-  if (lifeEv || !teaseNow() || !currentPersona || !room.includes(currentPersona) || challenge || demand || ask) return;
+  if (lifeEv || owned || !teaseNow() || !currentPersona || !room.includes(currentPersona) || challenge || demand || ask) return;
   const rate = n("lifeRate", 3);
   if (rate <= 0 || now < lifeNextAt || total - Math.max(0, endAt - now) < 120000) return;
   if (Math.random() < rate / 6000) startLife(lifePick(currentPersona));
@@ -2727,6 +2739,14 @@ const INV_DEF = {"Livestream Lexi":65,"High-Energy Holly":55,"Starlet Sloane":40
   "Family-Friend Nancy":65,
   "Heartbreaker Jenna":55
 };
+/* "I own you": chance per minute (%) that she claims you, once the ramp below is at full strength. Dominant personas claim more often. */
+const OWN_DEF = {"Patient Priscilla":2,"Mischievous Mia":3,"Strict Ms. Vance":5,"Chaos Cassie":3,"Sweet-Talker Sienna":2,"Relentless Roxy":5,"Sleepy Sadie":1,"Drill Sergeant Dana":5,"Mocking Margot":5,"Cuckolding Veronica":5,"Counting Camille":3,"Gambling Gigi":3,"Goddess Isadora":5,"Bratty Bella":4,"Hypnotic Helena":5,"Coach Colleen":3,"Doctor Delphine":3,"Jealous Juliet":6,"Queen Valentina":5,"Pouty Penelope":2,"Flirty Fiona":2,"Stage-Manager Simone":3,
+  "Chef Gianna":3,"Inspector Vale":4,"Unit Nine":4,"Captain Sable":3,"Madame Zara":3,"Madame Olenka":5,"Pampered Paloma":3,"Makeover Marisol":3,"Turnabout Tamsin":5,"Enthroned Elodie":5,"Mighty Magda":5,"Glitch":4,"Nurse Ingrid":1,
+  "High-Energy Holly":3,"Starlet Sloane":3,"Office Olivia":4,"Satin Sasha":3,"Livestream Lexi":3,"Lilith":6,"Lyric Lola":3,"Old Flame Bobbi":2,"Family-Friend Nancy":3,"Heartbreaker Jenna":5};
+const OWN_RAMP = [5, 20];   // minutes in control: no chance before 5, rising to full strength at 20
+const OWN_TEASE = 10;       // tease chance per minute while she owns you (higher in a big crowd)
+const ownPct = p => { const e = document.getElementById("own_" + NAMEKEY[p]); const v = e ? parseFloat(e.value) : NaN; return isNaN(v) ? (OWN_DEF[p] != null ? OWN_DEF[p] : 3) : Math.max(0, Math.min(100, v)); };
+var owned = null, nextOwnAt = 0, freedFrom = "", freedUntil = 0;
 (function(){
   const box = $("persCfg"), SHORT0 = Object.assign({}, SHORT);   // SHORT0: the built-in names, for resetting
   ALL.forEach(p => {
@@ -2738,7 +2758,8 @@ const INV_DEF = {"Livestream Lexi":65,"High-Energy Holly":55,"Starlet Sloane":40
       + '<div><label for="yld_' + k + '">Gives up control (%)</label><input id="yld_' + k + '" type="number" min="0" max="100" value="' + YIELD_DEF[p] + '"></div>'
       + '<div><label for="vibS_' + k + '">Vibration length (s)</label><input id="vibS_' + k + '" type="number" min="2" max="60" value="' + v[1] + '"></div>'
       + '</div>'
-      + '<div class="grid"><div><label for="bore_' + k + '">Gets bored (% per minute)</label><input id="bore_' + k + '" type="number" min="0" max="100" value="' + (BORE_DEF[p] != null ? BORE_DEF[p] : 3) + '"></div></div>'
+      + '<div class="grid"><div><label for="bore_' + k + '">Gets bored (% per minute)</label><input id="bore_' + k + '" type="number" min="0" max="100" value="' + (BORE_DEF[p] != null ? BORE_DEF[p] : 3) + '"></div>'
+      + '<div><label for="own_' + k + '">Claims you, "I own you" (% per minute, full strength)</label><input id="own_' + k + '" type="number" min="0" max="100" step="0.5" value="' + (OWN_DEF[p] != null ? OWN_DEF[p] : 3) + '"></div></div>'
       + '<strong class="subHead">Friend invites</strong>'
       + '<div class="grid"><div><label for="inv_' + k + '">Accepts invites (%)</label><input id="inv_' + k + '" type="number" min="0" max="100" value="' + (INV_DEF[p] != null ? INV_DEF[p] : 40) + '"></div>'
       + '<div><label for="invMsg_' + k + '">Busy message (optional)</label><input id="invMsg_' + k + '" type="text" maxlength="120" placeholder="e.g. On a call, back at nine"></div></div>'
@@ -2772,7 +2793,7 @@ function renderPersCfg(){
   $("persCfgNone").hidden = !!p; $("persCfgHint").hidden = !p;
 }
 function beginDirect(ch){
-  if (!running || !runTease || onBreak || challenge || denyAll || privateShow || lifeEv) return;
+  if (!running || !runTease || onBreak || challenge || denyAll || privateShow || lifeEv || owned) return;
   const ctl = currentPersona; if (!ctl || ch === ctl) return;
   const c = challenge = {ch, ctl, direct: true};
   attempts[ch] = (attempts[ch] || 0) + 1;
@@ -2787,7 +2808,7 @@ function beginDirect(ch){
   });
 }
 function giveUpTick(now){
-  if (!teaseNow() || !currentPersona || challenge || lifeEv || privateShow || denyAll || demand || ask) return;
+  if (!teaseNow() || !currentPersona || challenge || lifeEv || privateShow || denyAll || demand || ask || owned) return;
   if (now - ctlAt < 180000 || ctlWho !== currentPersona) return;
   const others = room.filter(p => p !== currentPersona); if (!others.length) return;
   if (Math.random() >= yieldPct(currentPersona) / 5 / 6000) return;
@@ -3004,7 +3025,7 @@ function declineEase(d){
 }
 function makeDemand(){
   const now = Date.now(), p = currentPersona;
-  if (!p || !room.includes(p) || !teaseNow() || challenge || ask || demand || lifeEv || !$("interactOn").checked) return;
+  if (!p || !room.includes(p) || !teaseNow() || challenge || ask || demand || lifeEv || owned || !$("interactOn").checked) return;
   nextDemandAt = now + demandInterval(p);
   if (TARGETS[p] && TARGETS[p].chaos) rollChaos(p);
   const t = targetOf(p), sp = +$("speed").value, ln = curLen(), gs = t.speed - sp, gl = t.len - ln;
@@ -3111,7 +3132,7 @@ function refuseDemand(d, ignored){
 }
 
 function askQuestion(p, qid){
-  if (ask || demand || challenge || lifeEv || !room.includes(p) || !$("interactOn").checked) return;
+  if (ask || demand || challenge || lifeEv || (owned && qid !== "mood") || !room.includes(p) || !$("interactOn").checked) return;
   const q = QDEFS[qid], a = ask = {p, qid, el: null};
   sayAs(p, q.cat, null, {onShow: el => {
     if (ask !== a) return; a.el = el;
@@ -3161,13 +3182,122 @@ function askRandomQuestion(){
   const r = Math.random(); askQuestion(p, r < 0.55 ? "feel" : "next");
 }
 function interactTick(now, busy){
-  privTick(now); lifeTick(now); giveUpTick(now); idleTick(now); manualTick(now); limitTick(now); teaseTick(now);
+  ownTick(now); privTick(now); lifeTick(now); giveUpTick(now); idleTick(now); manualTick(now); limitTick(now); teaseTick(now);
   if (!$("interactOn").checked) return;
-  if (teaseNow() && !challenge && !ask && !demand){
+  if (teaseNow() && !challenge && !ask && !demand && !owned){
     if (now > nextAskAt){ nextAskAt = now + (65000 + Math.random() * 45000) / Math.sqrt(aggr()); askRandomQuestion(); }
     else if (now > nextDemandAt) makeDemand();
   }
   if (!busy && !locked && !ask && room.length && now > nextMoodAt){ nextMoodAt = now + 110000 + Math.random() * 60000; askQuestion(pickOne(room), "mood"); }
+}
+/* ---------- "I own you": after a long stretch in control she may claim you ----------
+   While she owns you: your speed, stroke and tease timing are locked, she sets them herself (toward her target, with some
+   variation), she throws in her favourite moves, she stops asking you anything, she teases far more often, and no one else
+   can take control. Break free unlocks everything; she pouts and leaves the lounge. Stop and Esc still stop the device. */
+Object.keys(OWN_LINES).forEach(k => { if (LINES[k]) Object.assign(LINES[k], OWN_LINES[k]); });
+Object.assign(HYPE, {ownClaim: 10, ownAdjust: 3, ownMid: 3, ownFree: 6, ownSpec: 4, ownFreeSpec: 4});
+NICKCATS.push("ownClaim", "ownAdjust", "ownMid");
+const OWN_LOCK = ["speed", "smin", "smax", "tStop"].concat(TEASE.map(t => t[0])), ownWas = {};
+function lockControls(on){
+  OWN_LOCK.forEach(id => { const e = $(id); if (!e) return; if (on){ if (!(id in ownWas)) ownWas[id] = e.disabled; e.disabled = true; } else if (id in ownWas){ e.disabled = ownWas[id]; delete ownWas[id]; } });
+  const box = $("sliderSet"), note = $("ownLock"), p = owned && owned.p;
+  if (box){ box.classList.toggle("owned", !!on); box.style.setProperty("--ownc", on && p ? PCOL[p] || "" : ""); }
+  if (note){ note.hidden = !on; note.textContent = on && p ? "⛓ " + SHORT[p] + " owns you. Speed and stroke are locked until you break free." : ""; note.style.color = on && p ? PCOL[p] || "" : ""; }
+}
+function ownCard(p){
+  removeOffer("ownCard");
+  const el = document.createElement("div"); el.className = "prompt ownCard"; el.style.borderColor = PCOL[p] || "";
+  const head = document.createElement("div"); head.className = "ptxt";
+  const b = document.createElement("b"); b.textContent = SHORT[p]; b.style.color = PCOL[p] || ""; b.dataset.persona = p;
+  head.append(avatarEl(p), b, " owns you. She sets your speed and stroke, and no one else can take control.");
+  const row = document.createElement("div"), w = document.createElement("div"); row.className = "pbtns"; w.className = "pc";
+  const btn = document.createElement("button"); btn.type = "button"; btn.className = "pbtn danger"; btn.textContent = "Break free";
+  const nt = "She pouts and leaves the lounge. Your controls unlock and the others can ask for control again.";
+  btn.title = nt; btn.onclick = breakFree;
+  const s = document.createElement("span"); s.className = "pnote"; s.textContent = nt;
+  w.append(btn, s); row.append(w); el.append(head, row);
+  offers.push({id: "ownCard", el, exp: Infinity, valid: () => !!owned && owned.p === p}); $("offers").append(el); syncRow();
+}
+function claimOwn(p){
+  const now = Date.now();
+  owned = {p, since: now, nextAdj: now + 7000, nextMove: now + 25000 + Math.random() * 20000, nextMid: now + 35000 + Math.random() * 15000, nextTease: now + 60000, simFreeAt: now + (100 + Math.random() * 200) * 1000};
+  challenge = null; demand = null; ask = null;
+  ["ch", "demand", "ask", "priv", "strokeAsk", "fullStroke", "speedUp", "lifeCard"].forEach(removeOffer);
+  offers.filter(o => (o.id || "").indexOf("give:") === 0).forEach(o => removeOffer(o.id));
+  lockControls(true); ownCard(p); renderRoom();
+  bbAdd(p, "owned"); mark("own", SHORT[p] + " owns you");
+  sayAs(p, "ownClaim");
+  setTimeout(() => { if (owned && owned.p === p) addMsg("sys", "⛓ " + SHORT[p] + " owns you. She sets your speed and stroke now, stops asking, and no one else can take control. Press Break free to take it back. Stop and Esc still stop the device."); }, 1500);
+  status(SHORT[p] + " owns you. Stop and Esc still stop the device.");
+  bump(22, 20); pop = Math.min(100, pop + 10);   // a claim is a big moment for the room
+  if (!privateShow && $("fansOn").checked) for (let i = 0; i < 3 + Math.floor(Math.random() * 4); i++) setTimeout(() => { if (owned && !privateShow){ addFan(p); renderCrowd(); } }, 1000 + i * 800);
+  room.filter(x => x !== p).sort(() => Math.random() - 0.5).slice(0, 2).forEach((o, i) =>
+    setTimeout(() => { if (owned && owned.p === p && room.includes(o)) sayAs(o, "ownSpec", null, {other: p, replyTo: p}); }, 4000 + i * 3500 + Math.random() * 1500));
+  if (Math.random() < 0.6) setTimeout(() => { if (owned && owned.p === p && !privateShow){ startTease(p, "own"); owned.nextTease = Date.now() + rnd(150, 240) * 1000; } }, 6000);
+}
+/* she moves your settings toward her target, with some variation, at most 15 points at a time */
+function ownAdjust(p, now){
+  owned.nextAdj = now + 25000 + Math.random() * 25000;
+  const t = targetOf(p), sp = +$("speed").value, ln = curLen(), cap = lenCap();
+  const goalS = clamp(t.speed + rnd(-10, 10), 25, 100), goalL = clamp(t.len + rnd(-12, 6), Math.min(30, cap), cap);
+  const ns = clamp(5 * Math.round((sp + clamp(goalS - sp, -15, 15)) / 5), 5, 100);
+  const nl = Math.min(cap, clamp(5 * Math.round((ln + clamp(goalL - ln, -15, 15)) / 5), 5, 100));
+  const ds = Math.abs(ns - sp) >= 3, dl = Math.abs(nl - ln) >= 3;
+  if (!ds && !dl) return;
+  if (ds) setSpeedTo(ns);
+  if (dl) setLenTo(nl);
+  addMsg("sys", "⛓ " + SHORT[p] + " set your " + [ds ? "speed to " + ns + "%" : "", dl ? "stroke to " + nl + "%" : ""].filter(Boolean).join(" and ") + ".");
+  if (Math.random() < 0.6) sayAs(p, "ownAdjust");
+  bump(2, 2);
+}
+/* she throws in one of her favourite moves, or holds you where you are */
+function ownMove(p, now){
+  owned.nextMove = now + 60000 + Math.random() * 45000;
+  if (!tz) resetTease();
+  if (Math.random() < 0.2){ forceHold(rnd(10, 18)); sayAs(p, "hold"); return; }
+  const low = n("tLow", 15), pkMin = n("tPeakMin", 60), pk = Math.min(100, rnd(pkMin, Math.max(pkMin, n("tPeakMax", 90))) * 1.05);
+  const bMin = n("tBuildMin", 20), bd = rnd(bMin, Math.max(bMin, n("tBuildMax", 60))) * 0.7;
+  const favs = (MOVE_FAV[p] || MOVES).filter(m => m !== lastMove && moveChance(p, m) > 0);
+  tz.q = []; tz.cur = null; queueMove(pickOne(favs.length ? favs : MOVES), low, pk, bd);   // the move starts on the next tick
+}
+function endOwn(why){
+  if (!owned) return null;
+  const o = owned; owned = null;
+  bbAdd(o.p, "ownMins", (Date.now() - o.since) / 60000);
+  removeOffer("ownCard"); lockControls(false); renderRoom();
+  return o;
+}
+function breakFree(){
+  if (!owned) return;
+  const p = owned.p, now = Date.now(); endOwn("free");
+  bbAdd(p, "freed"); freedFrom = p; freedUntil = now + 6000;
+  const mine = addMsg("me", "I'm breaking free.");
+  mark("own", "Broke free from " + SHORT[p]);
+  addMsg("sys", "You broke free from " + SHORT[p] + ". Your controls are unlocked.");
+  status("You broke free from " + SHORT[p] + ".");
+  sayAs(p, "ownFree", null, {replyTo: mine});
+  bump(14, 12);
+  const others = room.filter(x => x !== p);
+  if (others.length) setTimeout(() => { const o = room.filter(x => x !== p); if (o.length) sayAs(pickOne(o), "ownFreeSpec", null, {other: p, replyTo: p}); }, 5500 + Math.random() * 1500);
+  if (privateShow && privateShow.p === p){ privateShow = null; addMsg("sys", "🔒 The room reopens."); renderRoom(); }
+  setTimeout(() => { if (room.includes(p)) leaveRoom(p, true, true); }, 4200);   // she pouts, then walks out
+  nextChallengeAt = now + 25000; nextDemandAt = now + 60000; nextAskAt = now + 45000; nextOwnAt = now + 5 * 60000; nextPrivAt = now + 3 * 60000;
+}
+function ownTick(now){
+  if (owned){
+    const p = owned.p;
+    if (!(running || paused) || !runTease || currentPersona !== p || !room.includes(p)){ endOwn("gone"); return; }
+    if (!teaseNow()) return;   // lube break: she still owns you, she just waits
+    if (now > owned.nextAdj) ownAdjust(p, now);
+    if (now > owned.nextMove) ownMove(p, now);
+    if (now > owned.nextMid){ owned.nextMid = now + 40000 + Math.random() * 35000; sayAs(p, "ownMid"); }
+    if (simOn() && now > owned.simFreeAt) breakFree();   // the simulated user breaks free after a few minutes
+    return;
+  }
+  const p = currentPersona;
+  if (!teaseNow() || !$("ownOn").checked || !p || !room.includes(p) || ctlWho !== p || challenge || demand || ask || lifeEv || now < nextOwnAt) return;
+  const ramp = clamp(((now - ctlAt) / 60000 - OWN_RAMP[0]) / (OWN_RAMP[1] - OWN_RAMP[0]), 0, 1);
+  if (ramp > 0 && Math.random() < ownPct(p) / 100 * ramp * (1 + 0.5 * crowdLevel()) / 60) claimOwn(p);   // checked once a second
 }
 /* Emotes: quick reactions. Expressive ones stir the room up, calm one settles it. */
 const EMOTES = [

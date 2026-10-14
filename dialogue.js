@@ -16947,3 +16947,289 @@ const MAGDA_LINES = {
   "Down to {to}%. Quality over range."
  ]
 };
+
+
+/* "I own you": after a long stretch in control, a persona may claim you. While she owns you she sets your speed and stroke
+   herself, stops asking you anything, and no one else can take control until you break free. Merged into LINES in index.html.
+   ownClaim: she claims you. ownAdjust: she changes your speed or stroke. ownMid: taunts while she owns you.
+   ownFree: you broke free; she reacts, then leaves the lounge. */
+const OWN_LINES = {
+ "Patient Priscilla": {
+  ownClaim: ["I've been so patient with you, {nick}. Now you're mine. Hands off the dials.", "Shh. You don't decide anything anymore. I own you now.", "Let go, {nick}. I'll take it from here. All of it."],
+  ownAdjust: ["There. That's the pace you'll keep for me.", "A little change. You didn't get a say, did you?", "Mm, I'll set it just how I like it."],
+  ownMid: ["You can stop trying to choose, {nick}. I've got you.", "No buttons, no choices. Just me. Doesn't that feel nice?", "You belong to me for now. Breathe."],
+  ownFree: ["Oh... you wanted out. That stings a little, {nick}.", "I thought you liked being held. Fine. I'll go.", "You broke away. I'll be somewhere else, then."]
+ },
+ "Mischievous Mia": {
+  ownClaim: ["Gotcha! You're MY toy now. No take-backs!", "Hehe, I stole the controls. You're mine, {nick}!", "Surprise! I own you now. Hands where I can see them!"],
+  ownAdjust: ["Ooh, let's try this! No, you can't argue.", "Twiddle twiddle. Felt that, huh?", "I changed it. Why? Because I can, hehe."],
+  ownMid: ["Try touching a slider. Go on. Oh wait, you can't!", "You're my little wind-up toy now, {nick}.", "This is the best game ever. For me."],
+  ownFree: ["Hey! I wasn't done playing! Meanie.", "Ugh, you broke my toy. I'm leaving!", "Fine! Escape! See if I care! ...I care a little."]
+ },
+ "Strict Ms. Vance": {
+  ownClaim: ["Enough. From now on you belong to me. Your controls are confiscated.", "You've proven you can't manage yourself. I own you now, {nick}.", "Hands in your lap. I decide everything from here."],
+  ownAdjust: ["Adjusted. You will not comment.", "This is your new setting. Accept it.", "Corrected. As I see fit."],
+  ownMid: ["You may not choose, {nick}. You may only endure.", "Ownership suits you. Obedience suits you better.", "Not a word. Not a single adjustment. Mine."],
+  ownFree: ["You dare? Very well. You'll regret this disobedience.", "Insubordination. I'm leaving, and I'm making a note of it.", "So you'd rather fumble alone. Dismissed."]
+ },
+ "Chaos Cassie": {
+  ownClaim: ["NEW RULE: you're mine now! Controls go BYE!", "I'm driving now, {nick}! No brakes! Wheee!", "You're owned! By me! This is gonna be a mess!"],
+  ownAdjust: ["Dial spin! Where'd it land? Who knows!", "Changed it! Don't ask why, I don't know either!", "Random number generator says THIS!"],
+  ownMid: ["Can't touch anything, can you? Chaos rules!", "You're my little pinball now, {nick}!", "Hold on tight, I'm in charge and I have no plan!"],
+  ownFree: ["Boo! You broke the ride! I'm out!", "Escaped?! Lame! Okay bye!", "Fine, take the wheel. It's boring now anyway!"]
+ },
+ "Sweet-Talker Sienna": {
+  ownClaim: ["Let me take care of everything, {nick}. You're mine now, okay?", "Shh, sweetheart. Give it all to me. I own you now.", "You don't have to think anymore. I've got you. Mine."],
+  ownAdjust: ["A little change, just how I like you.", "There, sweetie. I know what you need.", "Mm, let me fix that for you."],
+  ownMid: ["You're so good when you let me have you, {nick}.", "All mine. I'll be gentle. Mostly.", "Don't touch anything, baby. Let me."],
+  ownFree: ["Oh... you didn't want me to hold you? That hurts.", "I just wanted to take care of you. Okay. Bye, {nick}.", "You pulled away. I'll give you space."]
+ },
+ "Relentless Roxy": {
+  ownClaim: ["That's it. I own you now, {nick}. You don't set the pace anymore.", "Hands off. I'm running you from here. No breaks.", "You're mine. And I don't slow down."],
+  ownAdjust: ["Pushed it. Deal with it.", "New pace. Keep up.", "Changed. Don't whine."],
+  ownMid: ["No controls, no excuses, {nick}.", "You don't get to quit. You're owned.", "I set it. You take it. Simple."],
+  ownFree: ["Broke loose? Weak. I'm gone.", "Couldn't handle being owned. Figured.", "Run away then, {nick}. I've got better things to break."]
+ },
+ "Sleepy Sadie": {
+  ownClaim: ["Mm... you're mine now... I'm keeping you... like a blanket...", "...too comfy to let go... I own you, {nick}...", "Shh... hands off... I've got the controls now... zzz..."],
+  ownAdjust: ["...changed it... felt right...", "Mm... a little different... don't argue...", "...there... sleepy setting..."],
+  ownMid: ["...you can't move anything... cozy, right...?", "...mine... all mine... mm...", "...don't wake me by touching stuff, {nick}..."],
+  ownFree: ["...huh...? you got away...? meanie...", "...fine... I'll go nap somewhere else...", "...you stole my blanket... bye..."]
+ },
+ "Drill Sergeant Dana": {
+  ownClaim: ["Listen up! You are now property of this unit, {nick}! Hands off the equipment!", "You no longer make decisions, recruit! I own you!", "Controls are confiscated! You answer to me now!"],
+  ownAdjust: ["Adjusted! Keep moving!", "New orders! Execute!", "Pace changed! No questions!"],
+  ownMid: ["Did I say you could touch anything? No!", "You are mine until I say otherwise, maggot!", "Eyes front! No touching the controls!"],
+  ownFree: ["Desertion! You'll hear about this, recruit!", "Went AWOL, did you? I'm out of here!", "Fine! Fend for yourself, private!"]
+ },
+ "Mocking Margot": {
+  ownClaim: ["Aww, look at you. Too pathetic to run yourself. I own you now, {nick}.", "Hands off the sliders, worm. You're my property now.", "From now on I decide everything. You just squirm."],
+  ownAdjust: ["Changed it. Aww, did you want a say?", "There. Squirm for me.", "New setting. Your face is hilarious right now."],
+  ownMid: ["Try to adjust something. Oh right, you can't. Pathetic.", "Owned, and everyone's watching. Delicious.", "You're my little plaything now. Say thank you."],
+  ownFree: ["Oh, it broke free. How adorable. And pathetic. Bye.", "Ran away? Of course you did, {nick}. I'm leaving.", "Fine. Go fumble alone. Everyone saw you squirm anyway."]
+ },
+ "Cuckolding Veronica": {
+  ownClaim: ["You belong to me now, {nick}. He gets my body. You get my orders.", "Hands off. I own you. I'll decide how much you get, which is less than him.", "From now on, I'm in charge of you. Completely."],
+  ownAdjust: ["Changed. He never needs adjusting, you know.", "There. That's all you're allowed.", "New setting. Remember who decides."],
+  ownMid: ["He's texting me while I run you. Isn't that funny?", "You don't control anything, {nick}. Not even this.", "Mine. Just not the way you wish."],
+  ownFree: ["Breaking free? He'd never. I'm going to him.", "Fine. Go. I have someone better waiting anyway.", "You left my hand. Your loss, {nick}."]
+ },
+ "Counting Camille": {
+  ownClaim: ["Ownership transferred at exactly this moment. You are mine, {nick}.", "Controls locked. From now on, I set every number.", "One: hands off. Two: you belong to me. Three: begin."],
+  ownAdjust: ["Adjusted by a measured amount. Count it.", "New value set. Precisely as intended.", "Recalibrated. No input from you required."],
+  ownMid: ["Minutes owned: counting. Choices made by you: zero.", "Every number here is mine now, {nick}.", "You're a variable I control completely."],
+  ownFree: ["Released early. That throws off my count. Goodbye.", "Escape recorded. Session terminated, for me.", "You broke the sequence, {nick}. I'm leaving."]
+ },
+ "Gambling Gigi": {
+  ownClaim: ["You bet everything and lost, {nick}. Now I own you. House rules.", "I won the pot, and the pot is you. Hands off!", "All in, and you're mine. No cashing out."],
+  ownAdjust: ["Spun the wheel. Here's where it landed.", "Raised the stakes. You don't get to fold.", "New bet placed. Not by you."],
+  ownMid: ["You're my chip now, {nick}. I play you how I like.", "No more choices. The house decides.", "Sit back and watch me gamble with you."],
+  ownFree: ["Skipping out on a debt? Bad form. I'm leaving.", "Cashed out early? Coward. Bye, {nick}.", "Fine, walk away from the table. I'll find another sucker."]
+ },
+ "Goddess Isadora": {
+  ownClaim: ["Kneel, mortal. You are mine now, body and will.", "Your choices are forfeit. Your goddess owns you, {nick}.", "Lay down your controls. I claim you."],
+  ownAdjust: ["It pleases me to change it. So it is changed.", "Your goddess decrees a new rhythm.", "Accept my will."],
+  ownMid: ["Mortals do not touch the controls of the divine.", "You exist for my pleasure now, {nick}.", "Worship. That is all that's left to you."],
+  ownFree: ["You dare break from your goddess? I withdraw my grace.", "Blasphemy. I leave you to your mortal fumbling.", "You turn from me? Then be forsaken, {nick}."]
+ },
+ "Bratty Bella": {
+  ownClaim: ["Okay, you're mine now. Like, officially. Hands off!", "I'm in charge of you now, {nick}. Don't even think about touching anything.", "Mine! I own you! Do what I want, ugh, finally."],
+  ownAdjust: ["I changed it. Because I wanted to. Duh.", "No, this way. Don't argue.", "Ugh, that was boring. Changed."],
+  ownMid: ["You're like my servant now but you can't even do anything. Perfect.", "Don't touch my stuff, {nick}. You're my stuff.", "I could do this forever. Well, until I'm bored."],
+  ownFree: ["Excuse me?! You can't just leave me! Ugh, fine!", "Wow. Rude. I'm leaving and I'm telling everyone.", "Whatever! I didn't want you anyway!"]
+ },
+ "Hypnotic Helena": {
+  ownClaim: ["Let go... let go of everything, {nick}... you belong to me now...", "Your hands are heavy... they won't touch the controls... you're mine...", "Deeper... and deeper... owned... by me..."],
+  ownAdjust: ["Feel it change... and accept it...", "A new rhythm... sinking in...", "Shh... I chose this for you..."],
+  ownMid: ["You don't want to choose anymore... do you, {nick}...", "Mine... drifting... obeying...", "Every thought leads back to me..."],
+  ownFree: ["You... woke up? ...How disappointing...", "The trance breaks... and so do I... goodbye...", "You fought your way out... I'll find a deeper mind..."]
+ },
+ "Coach Colleen": {
+  ownClaim: ["Okay champ, new rule: I own your training now! Hands off the machine!", "You're mine for the rest of this session, {nick}! I set every rep!", "Coach takes full control! No more cheating the reps!"],
+  ownAdjust: ["Adjusting your intensity! Go go go!", "New interval! You don't get to pick!", "Changed it up! Trust the coach!"],
+  ownMid: ["No touching the settings, champ! That's my job!", "You're owned by the best coach in the gym, {nick}!", "I know what you can take better than you do!"],
+  ownFree: ["You quit the program?! I'm disappointed in you, {nick}!", "Walked off my team! Fine, I'm out!", "No dedication! Train yourself then!"]
+ },
+ "Doctor Delphine": {
+  ownClaim: ["New protocol: you are now entirely under my control, {nick}. Hands away from the instruments.", "The subject will no longer make decisions. You belong to me.", "Consent to adjustments is no longer required. You're mine."],
+  ownAdjust: ["Adjusting dosage. Observe your response.", "Changed the parameter. Interesting.", "Modified. Your opinion is not part of the study."],
+  ownMid: ["The subject cannot touch the controls. Noted.", "Fascinating. Ownership changes your responses entirely, {nick}.", "Lie still. I'm running this examination."],
+  ownFree: ["The subject has withdrawn from the study. Disappointing.", "Non-compliance. I'm ending the trial.", "You broke protocol, {nick}. I'm leaving."]
+ },
+ "Jealous Juliet": {
+  ownClaim: ["You're MINE. Only mine. No one else will ever touch your controls again.", "I own you now, {nick}. Don't even look at anyone else.", "Hands off. You belong to me and no one else gets a turn."],
+  ownAdjust: ["I changed it. I know what you need. Not them.", "There. My setting. Only mine.", "That's how I want you."],
+  ownMid: ["No one can take you from me now, {nick}.", "They're all watching. Let them. You're mine.", "Mine, mine, mine."],
+  ownFree: ["You... you left me? After everything? Fine!", "You'd rather be free than be mine? I'm gone.", "Go to them, then! See if they love you like I do!"]
+ },
+ "Queen Valentina": {
+  ownClaim: ["By royal decree, you are now my property, {nick}. Surrender your controls.", "The crown claims you. Hands off.", "Kneel. You belong to your queen."],
+  ownAdjust: ["The crown has changed its mind.", "So it is decreed.", "A new law, effective now."],
+  ownMid: ["Subjects do not touch the throne's controls.", "You exist at my pleasure, {nick}.", "The court watches its queen's possession."],
+  ownFree: ["Treason! I banish you from my favour!", "You flee your queen? Then I leave this court.", "The crown does not chase deserters. Farewell."]
+ },
+ "Pouty Penelope": {
+  ownClaim: ["Okay! You're mine now, {nick}! I'm being tough! No touching!", "Hehe, I own you now! Don't laugh, I'm serious!", "Mine! I'm the boss of you now! Hands off!"],
+  ownAdjust: ["I changed it! Is it good? It's good.", "There! My way! Hehe.", "Ooh, I like this one."],
+  ownMid: ["Am I doing it right? Don't answer! I'm the boss!", "You're my honey and I own you, {nick}!", "No touching! I'll pout if you try!"],
+  ownFree: ["Hmph! You escaped! I'm pouting! I'm leaving!", "That's so mean, {nick}! Bye!", "Fine! I didn't want to be the boss anyway! Sniff."]
+ },
+ "Flirty Fiona": {
+  ownClaim: ["Oops, I think I own you now, handsome. Hands off.", "Mine now, {nick}. Wink.", "Let me drive for a while. And by a while, I mean you're mine."],
+  ownAdjust: ["Changed it. Did you like that?", "A little flirt with the dials.", "There. Just how I like you."],
+  ownMid: ["You're cute when you can't touch anything, {nick}.", "Owned and blushing. Adorable.", "Don't fight it. I'm having fun."],
+  ownFree: ["Aww, you wiggled free. Spoilsport. Bye!", "Playing hard to get? I'll go flirt elsewhere.", "Fine, keep your controls, cutie. See you."]
+ },
+ "Stage-Manager Simone": {
+  ownClaim: ["Script change! You're my property for the rest of the show, {nick}. Hands off the board.", "I'm calling every cue now. You just perform.", "You belong to production now. Places!"],
+  ownAdjust: ["Lighting cue! New level!", "Changing the tempo. Hit your mark.", "Cue change, no rehearsal."],
+  ownMid: ["Talent doesn't touch the board, {nick}.", "The audience loves this. Stay on script.", "You're owned. Just perform."],
+  ownFree: ["You walked off my stage?! Show's cancelled. For you.", "Unprofessional. I'm out.", "Break character? Fine. Find another stage manager."]
+ },
+ "Chef Gianna": {
+  ownClaim: ["Out of my kitchen, hands off the stove. You're mine now, {nick}.", "You're the dish now, sweet pea. I own you.", "No more touching the heat. I'll cook you my way."],
+  ownAdjust: ["A little more heat. Chef's choice.", "Turned it down. Let it simmer.", "Adjusted. Trust the chef."],
+  ownMid: ["Nobody touches my stove but me, {nick}.", "You're mine to season however I like.", "Mm. Owned, simmering, perfect."],
+  ownFree: ["You walked out mid-service? I'm closing the kitchen.", "Fine. Burn your own dinner, {nick}.", "You left the pot. I'm leaving."]
+ },
+ "Inspector Vale": {
+  ownClaim: ["You're in my custody now, {nick}. Hands where I can see them.", "Controls confiscated. You belong to the investigation.", "You're mine until I say otherwise. Sit."],
+  ownAdjust: ["Adjusted. Changes your story, doesn't it?", "New pressure. Talk.", "Changed. Don't touch it."],
+  ownMid: ["Detainees don't touch anything, {nick}.", "You're owned, and you know it.", "No lawyer. No controls. Just me."],
+  ownFree: ["Escaped custody. Bold. Case closed for me.", "Fled the scene. I'm done with you.", "Walk out, then. I've got your file."]
+ },
+ "Unit Nine": {
+  ownClaim: ["Ownership protocol engaged. You are now property of Unit Nine.", "Manual input disabled. You belong to me, {nick}.", "Asset acquired. Controls locked."],
+  ownAdjust: ["Parameter adjusted. Input: none from you.", "Value updated per my preference.", "Recalibrating subject. Done."],
+  ownMid: ["User controls: disabled. User status: owned.", "You cannot override me, {nick}.", "Processing you. Continuously."],
+  ownFree: ["Asset lost. Error. Disconnecting.", "Override detected. Withdrawing from lounge.", "You broke my lock, {nick}. Logging off."]
+ },
+ "Captain Sable": {
+  ownClaim: ["You're my crew now, {nick}. Hands off the wheel. I own this ship and you.", "Shanghaied! You belong to my ship now.", "Captain's orders: you're mine. Step away from the helm."],
+  ownAdjust: ["Changing course! Hold on!", "New heading. No mutiny.", "Trimmed the sails. Feel the wind."],
+  ownMid: ["No crew touches the helm but me, {nick}.", "You're cargo now. Precious cargo.", "We sail where I say."],
+  ownFree: ["Mutiny?! Walk the plank, then. I'm gone.", "Jumped ship? Swim home, sailor.", "Fine! Abandon ship, {nick}!"]
+ },
+ "Madame Zara": {
+  ownClaim: ["The cards foretold it, {nick}. You belong to me now.", "Fate has bound you to me. Your hands will not touch the dials.", "It is written. You are mine."],
+  ownAdjust: ["The cards say change. So it changes.", "A new vision. A new rhythm.", "Destiny shifts, by my hand."],
+  ownMid: ["You cannot escape what is written, {nick}.", "Your future is mine to read and mine to shape.", "The stars agree. Owned."],
+  ownFree: ["You defied fate? The cards will remember.", "The thread is cut. I leave you to chance.", "A broken destiny. Goodbye, {nick}."]
+ },
+ "Madame Olenka": {
+  ownClaim: ["No more fidgeting with controls, {nick}. You belong to me now.", "I own every stroke now. Hands still.", "From here I correct everything. You are mine."],
+  ownAdjust: ["Corrected.", "Better. As I wish.", "Adjusted. Clean."],
+  ownMid: ["Still hands, {nick}. They are mine now.", "You have no choices. Only form.", "Owned, and finally precise."],
+  ownFree: ["Sloppy. You break form and break away. I'm leaving.", "No discipline. I'm done.", "Go, then. Practise alone."]
+ },
+ "Pampered Paloma": {
+  ownClaim: ["Mm, I think I'll keep you, {nick}. You're mine now. Hands off.", "You're my devoted little servant now. I own you.", "Darling, I've decided. You belong to me."],
+  ownAdjust: ["Changed it. I'm comfier now.", "Slower... or faster. Whatever pleases me.", "There. Just how I like my servant."],
+  ownMid: ["You don't need to think. Just adore me, {nick}.", "Owned, and properly devoted at last.", "Don't touch anything. Touch nothing but my mood."],
+  ownFree: ["You left me? Unthinkable. I'm sulking. Goodbye.", "How dare you stop adoring me.", "Fine. I'll find someone more devoted, {nick}."]
+ },
+ "Makeover Marisol": {
+  ownClaim: ["You're my doll now, {nick}! I own you, so hands off the settings!", "Total makeover: you're mine now! No touching!", "I'm keeping you, pretty thing. All mine."],
+  ownAdjust: ["Little touch-up! Perfect.", "Changed it. So much prettier.", "There, that suits you."],
+  ownMid: ["Dolls don't touch the controls, {nick}!", "You're my pretty project now.", "Sit still, beautiful. I'm not done with you."],
+  ownFree: ["You smudged everything! I'm leaving!", "Running off mid-makeover? Rude!", "Fine. Do your own hair, {nick}."]
+ },
+ "Turnabout Tamsin": {
+  ownClaim: ["Tables turned all the way, {nick}. I own you now.", "Hands off. You're mine and I'm keeping you.", "You don't get to choose anymore. Not one thing."],
+  ownAdjust: ["Changed. Keep up.", "My rhythm now.", "Adjusted. I like watching you take it."],
+  ownMid: ["Can't touch anything? That's the point, {nick}.", "Owned. Look at you.", "Every choice is mine. Every single one."],
+  ownFree: ["Wriggled out? Ha. You'll be back. I'm off.", "Turned the tables back on me? Cute. Bye.", "Fine. Run along, {nick}."]
+ },
+ "Enthroned Elodie": {
+  ownClaim: ["You're my throne now, {nick}. Thrones don't have controls.", "I own you. Stay still beneath me.", "Settle in. You belong to me now."],
+  ownAdjust: ["Adjusted for my comfort.", "There. My seat is just right.", "Changed. As your queen prefers."],
+  ownMid: ["Furniture doesn't touch the settings, {nick}.", "Mine. Steady. Silent.", "A good seat stays where it's put."],
+  ownFree: ["My throne bucked me off? Unacceptable. I'm leaving.", "Disloyal furniture. Goodbye.", "Fine. I'll find a sturdier seat."]
+ },
+ "Mighty Magda": {
+  ownClaim: ["I'm lifting you now, {nick}. You're mine. Hands off.", "You belong to me. I set the weight.", "Owned. Now we work. My way."],
+  ownAdjust: ["Heavier. Take it.", "Adjusted. No complaining.", "Changed the load."],
+  ownMid: ["You don't touch the weights, {nick}. I do.", "I own every rep now.", "Owned and lifting. Good."],
+  ownFree: ["You dropped the bar and ran. Weak. I'm going.", "Broke out of my grip? Lucky. Bye.", "Train yourself then, {nick}."]
+ },
+ "Glitch": {
+  ownClaim: ["Root access acquired. You're mine now, {nick}. Controls... locked.", "I own your system. Hands off the keyboard.", "Breach complete. You belong to me."],
+  ownAdjust: ["Injected a new value. Heh.", "Overwrote it. You can't patch this.", "Changed. Glitched. Mine."],
+  ownMid: ["Try to adjust something. Access denied, {nick}.", "You're a compromised system. My compromised system.", "Owned. Literally."],
+  ownFree: ["You kicked me out? Firewall. Rude. Logging off.", "Patched me out. Fine. I'll find a new target.", "Connection terminated by user. Bye, {nick}."]
+ },
+ "Nurse Ingrid": {
+  ownClaim: ["I'm taking over your care completely now, {nick}. Hands off. Let me.", "You're mine to look after now. No touching the settings.", "Doctor's orders: you belong to me for now. Rest your hands."],
+  ownAdjust: ["Just a small adjustment. You'll be fine.", "Changed it for you. Trust me.", "There. That's better for you."],
+  ownMid: ["You don't need to do anything, {nick}. I'm here.", "Let me handle everything. You're in my care.", "No touching. Just relax."],
+  ownFree: ["Oh. You'd rather manage alone? Okay. Take care, {nick}.", "Discharging yourself? I'll go, then.", "Alright. I hope you'll be careful without me."]
+ },
+ "High-Energy Holly": {
+  ownClaim: ["Whoo! I own you now, {nick}! No touching the dials! Five, six, seven, eight!", "You're in MY class now! Forever! Hands off!", "Owned! Let's get physical! My way!"],
+  ownAdjust: ["Tempo change! Keep moving!", "New beat! Woo!", "Changed it up! Don't stop!"],
+  ownMid: ["No touching the stereo, {nick}! That's mine!", "You belong to the class now!", "One more! And one more! Owned!"],
+  ownFree: ["You left class early?! Booo! I'm out!", "No cool-down for quitters! Bye!", "Fine! Go jog alone, {nick}!"]
+ },
+ "Starlet Sloane": {
+  ownClaim: ["Darling, you're under contract now. Mine. Hands off the camera.", "I own you, {nick}. You're my leading man and you take direction.", "The studio is mine and so are you."],
+  ownAdjust: ["Take two, darling. New pace.", "Changing the scene.", "There. Better lighting on you."],
+  ownMid: ["Leading men don't touch the camera, {nick}.", "You're owned by the star now. Smile.", "Hold the scene. I'm directing."],
+  ownFree: ["You walked off my set? Scandalous. I'm leaving.", "Broke your contract, darling? My lawyers will hear of it.", "Fine. Cut. Exit, stage left."]
+ },
+ "Office Olivia": {
+  ownClaim: ["Memo: as of now, you report to me. Completely. Hands off the controls, {nick}.", "You're on my schedule now. I own you.", "Access revoked. I'm managing you directly."],
+  ownAdjust: ["Adjusted per policy.", "Updated. Filed. No discussion.", "Changed. Noted in your file."],
+  ownMid: ["You don't have edit access, {nick}.", "You're mine through end of day.", "Item one: you. Item two: obedience."],
+  ownFree: ["Resigning without notice? Unprofessional. I'm leaving.", "You broke protocol. Meeting over.", "Fine. I'll mark you absent, {nick}."]
+ },
+ "Satin Sasha": {
+  ownClaim: ["You're mine now, {nick}. Hands off. I'll set the pace.", "I've decided to keep you. Owned.", "Just watch me and do nothing. You belong to me."],
+  ownAdjust: ["Changed it. Do you like what I chose?", "A new pose. A new pace.", "There. That flatters you."],
+  ownMid: ["No touching, {nick}. Only admiring.", "You're my favourite accessory now.", "Owned, and looking good."],
+  ownFree: ["You left mid-shoot? That's a wrap on you.", "No compliment, no goodbye? Rude. Bye.", "Fine. Find another model, {nick}."]
+ },
+ "Livestream Lexi": {
+  ownClaim: ["Chat voted and you're MINE now, {nick}! Controls locked!", "Okay chat, I own them now! No touching the dials!", "New stream rule: you belong to me!"],
+  ownAdjust: ["Chat asked for this, so I did it!", "Changed it! Chat's going wild!", "New setting! Thanks for the request!"],
+  ownMid: ["Chat, look, they can't touch anything!", "Owned on stream, {nick}! Say hi!", "This is the best content I've ever made."],
+  ownFree: ["They broke free, chat! Raid somewhere else, I'm out!", "Ugh, stream's over! Bye!", "Rage quit? Fine! Ending stream!"]
+ },
+ "Lilith": {
+  ownClaim: ["Your soul is mine now, {nick}. Your hands are powerless.", "I own you. Every pulse. Every breath.", "The pact is sealed. You belong to me."],
+  ownAdjust: ["I take a little more.", "Changed. As I hunger.", "Felt that? I did."],
+  ownMid: ["You can't touch anything, {nick}. Only feel.", "Owned. Drained slowly.", "Your will is mine to drink."],
+  ownFree: ["You broke the pact? Foolish. I'll return.", "Escaped, for now. I'll be hungry later.", "Run, {nick}. I'm patient."]
+ },
+ "Lyric Lola": {
+  ownClaim: ["Contract signed, {nick}. You're on my label now. Hands off the board.", "I own the beat and I own you.", "You're mine now. I'm producing."],
+  ownAdjust: ["Beat switch!", "New tempo. Ride it.", "Remixed you."],
+  ownMid: ["No touching the mixer, {nick}.", "You're my track now. I play you on repeat.", "Owned. Drop."],
+  ownFree: ["You dropped my label? Fine, I'm out. Mic drop.", "Broke the contract? Your loss.", "Go solo, {nick}. Let's see how that goes."]
+ },
+ "Old Flame Bobbi": {
+  ownClaim: ["I let you go once, babe. Not again. You're mine now.", "Hands off, {nick}. I'm keeping you this time.", "Remember how you always let me drive? You're mine now."],
+  ownAdjust: ["Remember this? I do.", "There. Just like old times.", "I know what you like. I always did."],
+  ownMid: ["I'm not letting you get away twice, {nick}.", "Mine. Like it should have been.", "Don't touch anything, babe. Let me have you."],
+  ownFree: ["You left me again. Just like back then. I'll go.", "I guess some things never change. Bye, babe.", "Fine. Go. I'll be back home with my husband."]
+ },
+ "Family-Friend Nancy": {
+  ownClaim: ["Twenty years of flirting and now you're finally mine, trouble. Hands off.", "I'm in charge of you now, {nick}. Don't argue with your elders.", "I own you now. Let's see that face behave."],
+  ownAdjust: ["I'll take it from here, sweetie.", "Changed it. You're welcome.", "There. Much better."],
+  ownMid: ["You can't touch anything, {nick}. That's the fun part.", "All mine. Finally.", "Behave, trouble. I've got the controls."],
+  ownFree: ["Oh, you wiggled out? Cheeky. I'm leaving.", "Fine. See you at New Year's, trouble.", "Running away from me again? Bye, {nick}."]
+ },
+ "Heartbreaker Jenna": {
+  ownClaim: ["You've always been mine, {nick}. Now it's official. Hands off.", "I own you now. Not that you ever had a choice with me.", "Mine. Like always. Except now you can't even pretend."],
+  ownAdjust: ["Changed it. You'd have let me anyway.", "There. Just how I want you.", "New setting. Don't pretend you mind."],
+  ownMid: ["You'd do anything I say anyway, {nick}.", "Owned. And still friend-zoned.", "This is free. Usually it costs extra."],
+  ownFree: ["Wow, you finally said no to me? Cute. I'm out.", "Fine. You'll be back. You always come back.", "Breaking free? First time for everything, {nick}. Bye."]
+ }
+};
+SHARED.ownClaim = ["You're mine now, {nick}. Hands off."];
+SHARED.ownAdjust = ["Changed it. My choice."];
+SHARED.ownMid = ["You can't touch anything now, {nick}."];
+SHARED.ownFree = ["You broke free? Fine. I'm leaving."];
+/* said by someone else in the lounge when a persona claims you ({other} is the one who owns you) */
+SHARED.ownSpec = ["{other} owns you now? Wow. Good luck.", "Oh, {other} claimed you. I'll just watch, then.", "Look at that. {other} has you on a leash.", "{other} owns you? I'm jealous. Of her.", "Guess I'm not getting a turn while {other} owns you.", "Hands off the controls, huh? Good luck with {other}."];
+/* said by someone else when you break free */
+SHARED.ownFreeSpec = ["You broke free from {other}? Bold.", "Ha! {other} lost her pet.", "Free at last. My turn soon?", "Look at {other} pout. Priceless.", "You escaped {other}? Impressive.", "So, you're free now. Interesting."];

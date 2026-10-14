@@ -92,7 +92,7 @@ Low and peak values are percentages of the speed slider, so the slider is always
 ### Personalities
 There are 45 personalities. Their settings live in `index.html`:
 - tease timing presets (`PERSONAS`, including whether she fully stops during rests)
-- color (`PCOL`), short name (`SHORT`), name key (`NAMEKEY`), reactions (`REACT`), stubbornness (`STUBBORN`), nicknames (`NICKS`, `NICKRATE`), special-move chances (`MOVE_FAV` and `MOVE_OFF` as the defaults), how readily she gives up control (`YIELD_DEF`), vibration defaults (`VIB_DEF`), demand targets (`TARGETS`), mercy (`MERCY`) and refusal tolerance (`TOL`)
+- color (`PCOL`), short name (`SHORT`), name key (`NAMEKEY`), reactions (`REACT`), stubbornness (`STUBBORN`), nicknames (`NICKS`, `NICKRATE`), special-move chances (`MOVE_FAV` and `MOVE_OFF` as the defaults), how readily she gives up control (`YIELD_DEF`), vibration defaults (`VIB_DEF`), demand targets (`TARGETS`), mercy (`MERCY`), refusal tolerance (`TOL`) and how often she claims you (`OWN_DEF`)
 
 Her lines live in `dialogue.js` (see below).
 
@@ -107,6 +107,7 @@ Picking a personality in the Tease panel's **Active persona** dropdown fills in 
 - Private shows lock the room and raise the intensity.
 - Teases: the persona swaps her picture (chat avatars, timer portrait) for one of her reward shots (`images/<key>/<key>_reward.png`, `_reward2`...) for 15 to 50 seconds, with a glow and a line from her (`TEASE_SHOW` / `TEASE_END` in `dialogue.js`). Going private always triggers one, asking to go private has a 25% chance of a preview, and a private show may bring more. In the open room it only happens when the crowd is Packed or bigger (2, 4 or 7% a minute at Packed, Hot, Legendary), after 4 minutes in control, with a 6 to 10 minute cooldown. An open-room tease hypes the room and draws viewers. Each tease she gives is counted in her Friends blackbook ("Teases given"). Tuning: `TEASE_RATE` and `TEASE_PREVIEW` in `index.html`.
 - Prize picture: `images/<key>/<key>_prize.png` is reserved for a real unlock reward. It's found (`avPrize`) but never used for teases and not shown in the profile.
+- "I own you": the longer a persona stays in control, the more likely she is to claim you. There's no chance for her first 5 minutes in control, then it ramps up to her full rate at 20 minutes (her "Claims you" setting under Personas, in % per minute; dominant personas default to 4 to 6, gentle ones to 1 or 2), and a busy crowd raises it a little. While she owns you, your speed, stroke and tease timing are locked (outlined in her colour) and she sets them herself every 25 to 50 seconds, moving up to 15 points toward her target with some variation. She also throws in her favourite moves or holds you, stops asking questions, making demands and offering private shows, and nobody else can take control. Teases become much more likely (10% a minute plus extra for the crowd size, about 60% straight away), and a claim hypes the room. Press **Break free** on her card: she pouts and leaves the lounge, your controls unlock, and the others can take control or ask for it again. Ownership also ends when the session ends. Stop, Pause and Esc work as always, and the max speed cap and your stroke limit still apply. Her blackbook counts "Owned you", "You broke free" and "Minutes owning you". The toggle is under Customize, the lines are `OWN_LINES` in `dialogue.js` (`ownClaim`, `ownAdjust`, `ownMid`, `ownFree`), and onlookers use `SHARED.ownSpec` and `SHARED.ownFreeSpec`. Tuning: `OWN_DEF`, `OWN_RAMP` and `OWN_TEASE` in `index.html`. In simulation, the simulated user breaks free after 2 to 5 minutes.
 - Real-life interruptions (cat on the keyboard, doorbell, phone call, dozing off, passing out) come with wake-up or hand-off options.
 
 ## Dialogue (`dialogue.js`)
@@ -133,16 +134,17 @@ How the blocks combine:
 - `SHARED` has fallback lines any personality can use (real-life events).
 - `VIBE_LINES` has what each personality says when a vibration burst starts (`act_vibrate`).
 - `__M`, `__QC` and `__QS` are comments on manual runs and reactions when you quit.
+- `OWN_LINES` has each personality's "I own you" lines: claiming you, changing your settings, taunts while she owns you, and her reaction when you break free.
 
 The order of the merges in `index.html` matters, so add new lines to existing blocks rather than moving merge code around.
 
 ### Adding a personality
-1. Add her to `PERSONA_LINES` in `dialogue.js`, plus an entry in `__M`, `__QC`, `__QS` and `VIBE_LINES`.
-2. In `index.html`, add `LINES["Her Name"] = PERSONA_LINES["Her Name"];` next to the others, and add her to `PERSONAS`, `PCOL`, `SHORT`, `NAMEKEY`, `REACT`, `STUBBORN`, `NICKS`, `NICKRATE`, `MOVE_FAV`, `MOVE_OFF`, `YIELD_DEF`, `TARGETS`, `MERCY`, `TOL` and `VIB_DEF`.
+1. Add her to `PERSONA_LINES` in `dialogue.js`, plus an entry in `__M`, `__QC`, `__QS`, `VIBE_LINES` and `OWN_LINES`.
+2. In `index.html`, add `LINES["Her Name"] = PERSONA_LINES["Her Name"];` next to the others, and add her to `PERSONAS`, `PCOL`, `SHORT`, `NAMEKEY`, `REACT`, `STUBBORN`, `NICKS`, `NICKRATE`, `MOVE_FAV`, `MOVE_OFF`, `YIELD_DEF`, `TARGETS`, `MERCY`, `TOL`, `VIB_DEF` and `OWN_DEF`.
 
 ## Safety features
 
-- **Esc** stops the device immediately at any time.
+- **Esc** stops the device immediately at any time, including while a persona owns you ("I own you" locks the speed and stroke sliders, never Stop, Pause or Esc).
 - The speed cap limits every mode.
 - Lube breaks: a break starts automatically after N minutes of running, and there's also a manual button. The device stops and parks slowly, and the clock freezes. The park position (Lube panel) counts from the rest end: 0 parks fully there, and it's sent to the device as 100 minus the setting.
 - Daily limit, cooldown and failure lockout (Limits). These are stored in `localStorage`, so clearing site data or switching browsers gets around them.
@@ -179,9 +181,11 @@ The session log can be exported as CSV.
 | `requestPrivate`, `privTick` | private shows |
 | `startLife`, `endLife`, `handOff` | real-life interruptions |
 | `makeDemand`, `askQuestion`, `interactTick` | demands and questions |
+| `ownTick`, `claimOwn`, `ownAdjust`, `ownMove`, `breakFree`, `lockControls` | "I own you" and breaking free |
 
 ## Changelog
 
+- **2026-10-14:** "I own you": after a long stretch in control, a persona may claim you. She locks your speed and stroke, sets them herself, stops asking, teases more, and no one else can take control until you press Break free. She then pouts and leaves. Every persona has her own lines and claim rate. Stats are in the blackbook.
 - **2026-10-14:** Each persona's pictures live in her own folder (`images/<key>/`). The app looks there first and falls back to loose files in `images/`. `make_avatars.py --tidy` sorts the folder.
 - **2026-10-14:** Lube break park position flipped so 0 is the rest end (the default). A saved 20, the old default, becomes 0.
 - **2026-10-14:** New personality: Heartbreaker Jenna, 38, your friend since your twenties. She knows about your crush, never felt the same, and leads you on anyway. Works as a paid flirt on VelvetLine.
