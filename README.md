@@ -10,6 +10,7 @@ There's no build step, no server and no dependencies. Open `index.html` in a bro
 |---|---|
 | `index.html` | The app: layout, styles, device control, tease engine, lounge logic (about 170 KB) |
 | `dialogue.js` | Everything the personalities say. It's pure data, loaded by `index.html` before the main script. |
+| `images/` | Persona pictures, one folder per persona named by her key: `images/lola/lola.png`, `lola2.png`..., `lola_reward.png`, `lola_reward2.png`..., `lola_prize.png`. Loose files (`images/lola.png`) still work for a persona with no folder. |
 
 Keep the two files in the same folder. `index.html` loads `dialogue.js` with a plain `<script src="dialogue.js">` tag, so double-clicking `index.html` still works with no server.
 
@@ -89,7 +90,7 @@ A cycle engine that builds, holds and rests with randomized timings. It also has
 Low and peak values are percentages of the speed slider, so the slider is always the ceiling.
 
 ### Personalities
-There are 31 personalities. Their settings live in `index.html`:
+There are 45 personalities. Their settings live in `index.html`:
 - tease timing presets (`PERSONAS`, including whether she fully stops during rests)
 - color (`PCOL`), short name (`SHORT`), name key (`NAMEKEY`), reactions (`REACT`), stubbornness (`STUBBORN`), nicknames (`NICKS`, `NICKRATE`), special-move chances (`MOVE_FAV` and `MOVE_OFF` as the defaults), how readily she gives up control (`YIELD_DEF`), vibration defaults (`VIB_DEF`), demand targets (`TARGETS`), mercy (`MERCY`) and refusal tolerance (`TOL`)
 
@@ -104,8 +105,8 @@ Picking a personality in the Tease panel's **Active persona** dropdown fills in 
 - A personality storms off after too many refusals.
 - Personalities challenge each other for control (Grant / Deny / Deny all) and can hand control over on their own (Personas panel).
 - Private shows lock the room and raise the intensity.
-- Teases: the persona swaps her picture (chat avatars, timer portrait) for one of her reward shots (`images/<key>_reward.png`, `_reward2`...) for 15 to 50 seconds, with a glow and a line from her (`TEASE_SHOW` / `TEASE_END` in `dialogue.js`). Going private always triggers one, asking to go private has a 25% chance of a preview, and a private show may bring more. In the open room it only happens when the crowd is Packed or bigger (2, 4 or 7% a minute at Packed, Hot, Legendary), after 4 minutes in control, with a 6 to 10 minute cooldown. An open-room tease hypes the room and draws viewers. Each tease she gives is counted in her Friends blackbook ("Teases given"). Tuning: `TEASE_RATE` and `TEASE_PREVIEW` in `index.html`.
-- Prize picture: `images/<key>_prize.png` is reserved for a real unlock reward. It's found (`avPrize`) but never used for teases and not shown in the profile.
+- Teases: the persona swaps her picture (chat avatars, timer portrait) for one of her reward shots (`images/<key>/<key>_reward.png`, `_reward2`...) for 15 to 50 seconds, with a glow and a line from her (`TEASE_SHOW` / `TEASE_END` in `dialogue.js`). Going private always triggers one, asking to go private has a 25% chance of a preview, and a private show may bring more. In the open room it only happens when the crowd is Packed or bigger (2, 4 or 7% a minute at Packed, Hot, Legendary), after 4 minutes in control, with a 6 to 10 minute cooldown. An open-room tease hypes the room and draws viewers. Each tease she gives is counted in her Friends blackbook ("Teases given"). Tuning: `TEASE_RATE` and `TEASE_PREVIEW` in `index.html`.
+- Prize picture: `images/<key>/<key>_prize.png` is reserved for a real unlock reward. It's found (`avPrize`) but never used for teases and not shown in the profile.
 - Real-life interruptions (cat on the keyboard, doorbell, phone call, dozing off, passing out) come with wake-up or hand-off options.
 
 ## Dialogue (`dialogue.js`)
@@ -143,7 +144,7 @@ The order of the merges in `index.html` matters, so add new lines to existing bl
 
 - **Esc** stops the device immediately at any time.
 - The speed cap limits every mode.
-- Lube breaks: a break starts automatically after N minutes of running, and there's also a manual button. The device stops and parks slowly, and the clock freezes.
+- Lube breaks: a break starts automatically after N minutes of running, and there's also a manual button. The device stops and parks slowly, and the clock freezes. The park position (Lube panel) counts from the rest end: 0 parks fully there, and it's sent to the device as 100 minus the setting.
 - Daily limit, cooldown and failure lockout (Limits). These are stored in `localStorage`, so clearing site data or switching browsers gets around them.
 - An optional screen wake lock while running.
 
@@ -181,6 +182,11 @@ The session log can be exported as CSV.
 
 ## Changelog
 
+- **2026-10-14:** Each persona's pictures live in her own folder (`images/<key>/`). The app looks there first and falls back to loose files in `images/`. `make_avatars.py --tidy` sorts the folder.
+- **2026-10-14:** Lube break park position flipped so 0 is the rest end (the default). A saved 20, the old default, becomes 0.
+- **2026-10-14:** New personality: Heartbreaker Jenna, 38, your friend since your twenties. She knows about your crush, never felt the same, and leads you on anyway. Works as a paid flirt on VelvetLine.
+- **2026-10-14:** New personality: Family-Friend Nancy, 55, divorced, a longtime friend of your family. The flirting started at the family New Year's parties when you were both adults, and she's done waiting.
+- **2026-10-14:** New personality: Old Flame Bobbi, your college sweetheart, now 45, married and a real estate agent back in your hometown. She talks to you like the one that got away and wants to rekindle it.
 - **2026-10-12:** Teases: personas swap their picture for a reward shot now and then (always when going private, sometimes when asking, rarely in a hot open room), hyping the room. `<key>_prize.png` is reserved for a future unlock.
 - **2026-10-12:** The short-stroke prompt has an "I can't take a full stroke" answer. It sets a stroke limit for the session that every persona respects. While it's set, the one in control checks in every few minutes to ask if you can take more. Every persona replies in character.
 - **2026-10-11:** Lounge header is tighter. The simulated Handy box sits beside the header, heat bar and names, and is always visible.

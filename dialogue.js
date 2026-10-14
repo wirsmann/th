@@ -12730,10 +12730,1216 @@ PERSONA_LINES["Lyric Lola"] = {
   "Dead air, {nick}. Hello?"
  ]
 };
+
+/* Old Flame Bobbi: your college sweetheart, now 45 and married. The one that got away, and she wants you back. */
+PERSONA_LINES["Old Flame Bobbi"] = {
+ "greet": [
+  "Well, look who it is. Hi, {nick}. It's been... a long time.",
+  "Oh my god, {nick}. Twenty-four years and you still make my stomach flip.",
+  "Hey, stranger. I've thought about this moment more than I should admit."
+ ],
+ "start": [
+  "Okay, {nick}. Just like old times. Let me take care of you.",
+  "Here we go. I've waited half my life to do this properly, {nick}.",
+  "Close your eyes for a second. Pretend it's that summer again."
+ ],
+ "build": [
+  "Slow, {nick}. Remember how we used to take our time? Like nobody else existed.",
+  "Feel that? It's like no time passed at all.",
+  "A little more... I want to remember every second of this, {nick}."
+ ],
+ "hold": [
+  "Stay right there, {nick}. Don't move. Let me look at you.",
+  "Hold it. I used to dream about keeping you right here.",
+  "Right there, babe. Don't you dare let go."
+ ],
+ "holdMid": [
+  "Still holding... god, I missed this.",
+  "Just like that, {nick}. Stay with me.",
+  "Don't rush it. We rushed everything back then."
+ ],
+ "rest": [
+  "Breathe, {nick}. Lie back with me for a minute.",
+  "Let's slow down. I'm not going anywhere this time.",
+  "Rest a second. I just want to enjoy you."
+ ],
+ "restMid": [
+  "Remember lying on the dock at the lake, just talking until sunrise?",
+  "I still think about that night after the formal, {nick}.",
+  "Sometimes I drive past your mom's old place and slow down. Silly, right?"
+ ],
+ "fake": [
+  "Oops. Not yet, {nick}. I made you wait back then too, remember?",
+  "Ha, so close. I never did make it easy for you.",
+  "Mm, not yet. I've waited twenty-four years. You can wait a little longer."
+ ],
+ "fakeAfter": [
+  "You still make that face when you're frustrated. I love it.",
+  "Patience, babe. It'll be worth it. I promise.",
+  "I know, I know. I'm a tease. Some things never change."
+ ],
+ "warn": [
+  "One minute left, {nick}. I don't want this to end.",
+  "Almost out of time. Why is it always like this with us?",
+  "Last minute, babe. Make it count."
+ ],
+ "win": [
+  "You made it, {nick}. Just like I always knew you would.",
+  "There's the man I couldn't get out of my head. I'm so proud of you.",
+  "That was... everything. Please don't make me wait another twenty years."
+ ],
+ "fail": [
+  "Oh, {nick}. That's okay. We were always better at almost.",
+  "You let go. Story of us, I guess.",
+  "Hey, it's okay. I'm still here. I'm not leaving this time."
+ ],
+ "chat": [
+  "Do you ever wonder what would've happened if I'd followed you after graduation?",
+  "I listed the old house on Elm last week. Walked through every room thinking about you.",
+  "My friends still ask about you, you know. I always change the subject."
+ ],
+ "reply": [
+  "You always knew exactly what to say to me, {nick}.",
+  "Ha, you haven't changed a bit. Good.",
+  "Mm, keep talking. I missed your voice."
+ ],
+ "please": [
+  "Begging me? That's new. I like it, {nick}.",
+  "Shh, I know. I've wanted this for so long too.",
+  "Ask me nicely like you used to."
+ ],
+ "close": [
+  "Already? You always did get carried away with me, {nick}.",
+  "Not yet, babe. Breathe. Stay with me a little longer.",
+  "Hold on for me. I want this to last."
+ ],
+ "demand": [
+  "Since when do you tell me what to do? Okay... I'll allow it.",
+  "Mm, bossy. You've grown up, {nick}.",
+  "Let me decide, babe. I know exactly what you like. I always did."
+ ],
+ "promise": [
+  "Stay with me, {nick}, and I'll show you what you've been missing all these years.",
+  "Be good, and I'll tell you what I really thought about at our reunion.",
+  "Keep going and maybe I'll send you that picture I've been too nervous to send."
+ ],
+ "watch": [
+  "I can't stop staring at you, {nick}. You got even better looking. That's not fair.",
+  "Look at you. I used to watch you sleep in that tiny dorm bed.",
+  "I'm watching every second. I don't want to miss anything this time."
+ ],
+ "enjoy": [
+  "God, I've missed this. I've missed you.",
+  "This is the happiest I've been in years, {nick}. Is that terrible?",
+  "You have no idea how many times I've imagined this."
+ ],
+ "lowSpeed": [
+  "You're holding back, {nick}. You never used to hold back with me.",
+  "Come on, babe, a little more. Show me you still want me.",
+  "That's so careful. We're not kids anymore. Pick it up."
+ ],
+ "shortStroke": [
+  "Give me all of it, {nick}. I want everything I missed out on.",
+  "That's barely anything, babe. Don't be shy with me.",
+  "Longer. I remember what you can do."
+ ],
+ "praise": [
+  "Oh, there you are. That's the boy I fell for, all grown up.",
+  "Perfect, {nick}. Just perfect.",
+  "Mm, yes. You still know exactly how to please me."
+ ],
+ "nudge": [
+  "Hey. Don't go easy on me now, {nick}.",
+  "Little more, babe. For old times' sake.",
+  "I know you've got more than that."
+ ],
+ "fakeNote": [
+  "I like keeping you guessing, {nick}. Kept you coming back in school, didn't it?",
+  "A little tease now and then. You always said I drove you crazy."
+ ],
+ "hidden": [
+  "I'm not telling you how long we have. I'm not ready to think about it ending.",
+  "No clock tonight, {nick}. Just us."
+ ],
+ "lubeBreak": [
+  "Take a minute, babe. I'll wait. I'm good at waiting for you.",
+  "Quick break, {nick}. Get comfortable."
+ ],
+ "lubeWait": [
+  "Take your time. I've waited longer than this for you.",
+  "I'm right here, {nick}. Not going anywhere."
+ ],
+ "lubeResume": [
+  "Ready? Come back to me, {nick}.",
+  "There you are. Where were we?"
+ ],
+ "enter": [
+  "Is that... {nick}? Oh my god. Hi. It's me, Bobbi.",
+  "I wasn't sure you'd be here. I'm so glad you are."
+ ],
+ "leave": [
+  "I should go before I say something I can't take back. Bye, {nick}.",
+  "I have to go. Showing a house in the morning. Think of me?"
+ ],
+ "tempt": [
+  "Let me take over, {nick}. Let me show you what you missed.",
+  "Give me a chance this time. I won't let you go again.",
+  "Pick me, {nick}. We never finished what we started."
+ ],
+ "jealousStay": [
+  "{other}'s with him now? Fine. I'm not leaving. Not again.",
+  "I'll wait, {other}. I've had a lot of practice waiting for him."
+ ],
+ "jealousLeave": [
+  "I can't watch {other} with him. I'll be back, {nick}.",
+  "{other} gets him and I get the memories? I need some air."
+ ],
+ "excitedStay": [
+  "Okay, more people. I don't care who sees, I'm staying with {nick}.",
+  "This is wild. I'm staying right here."
+ ],
+ "askControl": [
+  "{other} doesn't know you like I do, {nick}. Let me in.",
+  "Let me have him, {other}. I've waited twenty-four years."
+ ],
+ "banter": [
+  "{other}, I knew him first. Just so you know.",
+  "Careful with him, {other}. That one breaks hearts. Mine, anyway."
+ ],
+ "spectate": [
+  "{ctrl} is good with you, {nick}. I hate how good.",
+  "Watching {ctrl} with you is giving me flashbacks."
+ ],
+ "spectateFail": [
+  "Oh, {nick}. {ctrl} pushed too hard. I'd never do that to you.",
+  "You let {ctrl} down. I'd have been gentler."
+ ],
+ "spectateWin": [
+  "You did it for {ctrl}. Next time, do it for me.",
+  "Proud of you, {nick}. Even if it was for {ctrl}."
+ ],
+ "challenge": [
+  "{other}, step aside. He's mine. He's always been mine.",
+  "My turn, {other}. Some of us have history with him."
+ ],
+ "defend": [
+  "Not a chance, {other}. I'm not losing him twice.",
+  "No. I let him go once, {other}. Never again."
+ ],
+ "takeover": [
+  "Thank you, {other}. Hi again, {nick}. Missed me?",
+  "Finally. Come here, {nick}. You're mine now."
+ ],
+ "lose": [
+  "Fine, {other}. Take care of him. He deserves it.",
+  "Okay, {other}. Just... be good to him."
+ ],
+ "keep": [
+  "Sorry, {other}. He's staying with me.",
+  "No, {other}. Not this time."
+ ],
+ "retreat": [
+  "Okay, {other}. I'll be here when he wants me.",
+  "Fine. I'm used to watching him walk away."
+ ],
+ "heckle": [
+  "Slow down, {ctrl}. He likes it soft first. Trust me.",
+  "{ctrl}, you're doing it wrong. Ask me how I know."
+ ],
+ "resist": [
+  "No, {other}. I've got him and I'm not letting go.",
+  "Not yet, {other}. We're just getting reacquainted."
+ ],
+ "insist": [
+  "{other}, you don't understand. I need this.",
+  "I'm not done with him, {other}. I'm not done at all."
+ ],
+ "crowd": [
+  "{viewers} people watching us, {nick}? Oh god. Good thing nobody here knows my husband.",
+  "{viewers} watching. Let them see what they missed too."
+ ],
+ "askFeel": [
+  "How are you feeling, {nick}? Honestly?",
+  "Tell me how it feels. I want to know everything."
+ ],
+ "askNext": [
+  "What do you want, {nick}? Anything. Just tell me.",
+  "Your call, babe. What happens next?"
+ ],
+ "askLike": [
+  "Tell me what you like now. People change in twenty-four years.",
+  "What do you like, {nick}? I want to get it right this time."
+ ],
+ "askMood": [
+  "Who do you want with you next, {nick}? Be honest. I can take it.",
+  "What kind of mood are you in? I can share... for a bit."
+ ],
+ "qMore": [
+  "More? Oh, you've grown up, {nick}. Come here.",
+  "Okay, babe. More. Hold on to me."
+ ],
+ "qFine": [
+  "Fine is good. I'll make it better.",
+  "Just fine? Let me fix that, {nick}."
+ ],
+ "qLot": [
+  "Too much? I'm sorry, babe. I got carried away.",
+  "Okay, okay. Breathe. I've got you."
+ ],
+ "qMercy": [
+  "Here, rest a second. I'd never hurt you.",
+  "Shh. Take a breath. I'm right here."
+ ],
+ "qNoMercy": [
+  "No break. I've waited too long, {nick}.",
+  "Sorry, babe. Not stopping now."
+ ],
+ "qTease": [
+  "A tease? You always loved it when I made you wait.",
+  "Mm, okay. I'll draw it out, {nick}."
+ ],
+ "qHold": [
+  "Hold you right there? Happily.",
+  "Okay. Right there. Don't move."
+ ],
+ "qLike": [
+  "{answer}? Noted. I'm keeping a list of everything about you this time.",
+  "{answer}. Okay. I'm learning you all over again, {nick}."
+ ],
+ "qMood": [
+  "{answer}? Okay. But I'll be right here when you come back.",
+  "{answer}, huh? Fine. I can share. For now."
+ ],
+ "dmdSpeedUp": [
+  "Faster, {nick}. Up {step}%, to {to}%. Show me how much you missed me.",
+  "Speed up, babe. {to}%. Don't make me beg."
+ ],
+ "dmdSpeedDown": [
+  "Slow down to {to}%, {nick}. Down {step}%. I want this to last.",
+  "Easy, babe. Drop to {to}%. We have time now."
+ ],
+ "dmdStrokeUp": [
+  "Longer, {nick}. Up {step}%, to {to}%. Give me all of you.",
+  "Stroke to {to}%, babe. Don't hold back from me."
+ ],
+ "dmdStrokeDown": [
+  "Shorter, {nick}. Down {step}%, to {to}%. Tease me a little.",
+  "Bring it to {to}%. Slow and small. Make me want it."
+ ],
+ "dmdYes": [
+  "Mm, good boy. You always did listen to me.",
+  "That's it, {nick}. Thank you."
+ ],
+ "dmdExact": [
+  "Perfect. Exactly how I dreamed it.",
+  "Just right, {nick}. You remembered."
+ ],
+ "dmdHit": [
+  "There. Stay right there. That's us.",
+  "That's the spot, babe. Don't change a thing."
+ ],
+ "dmdNo": [
+  "No? Still stubborn, I see.",
+  "Fine, {nick}. You always did things your own way."
+ ],
+ "dmdWarn": [
+  "Please don't push me away again, {nick}. One more and I'm gone.",
+  "I can't do this if you keep saying no. Last chance, babe."
+ ],
+ "dmdLeave": [
+  "I guess some things really don't change. Goodbye, {nick}.",
+  "I'm going home to my husband. Forget I said anything."
+ ],
+ "act_push": [
+  "Don't stop, {nick}. Keep going, past where we ever got before.",
+  "More. Push through it with me."
+ ],
+ "act_stairs": [
+  "One step at a time, babe. Like the dorm stairs at 2 a.m.",
+  "Step by step, {nick}. Climbing back to you."
+ ],
+ "act_pulse": [
+  "Feel that? That's my heart every time I see your name.",
+  "In waves, babe. Like that summer."
+ ],
+ "act_surge": [
+  "All at once, {nick}! Like the first time!",
+  "Oh, here it comes. Hold on to me!"
+ ],
+ "act_cliff": [
+  "Stop. Wait. Look at me first.",
+  "Freeze, {nick}. I just need a second to take you in."
+ ],
+ "act_wave": [
+  "Like the waves at the lake, {nick}. In and out.",
+  "Rolling, slow and deep. Remember the cottage?"
+ ],
+ "act_flutter": [
+  "Butterflies. You still give me butterflies.",
+  "Little flutters, {nick}. Just like our first date."
+ ],
+ "act_slowburn": [
+  "Slow burn, {nick}. Like us. Twenty-four years of slow burn.",
+  "Nice and slow. I want to savour every second."
+ ],
+ "privAsk": [
+  "Can it just be us, {nick}? No one else. Like old times.",
+  "I want you all to myself. Just once. Please?"
+ ],
+ "privOn": [
+  "Finally. Just you and me. Lock the door, {nick}.",
+  "There. No one else. It's just us now, babe."
+ ],
+ "privDeny": [
+  "Okay. Maybe another time. I'm patient.",
+  "I understand. I'll ask again. I'm not giving up on you."
+ ],
+ "privMid": [
+  "Just us. I keep forgetting to breathe, {nick}.",
+  "This is the night I should have had with you years ago."
+ ],
+ "privBye": [
+  "Enjoy your time with {other}. I'll be thinking about him anyway.",
+  "Private with {other}? I know when I'm not wanted."
+ ],
+ "giveUp": [
+  "Here, {other}, take him for a bit. I need a minute to collect myself.",
+  "I'm getting too emotional. {other}, take over. Be good to him."
+ ],
+ "idleRoom": [
+  "Hey, you. Still there? I'm just sitting here smiling at my screen.",
+  "You went quiet, {nick}. Say something. I miss your voice."
+ ],
+ "idleRun": [
+  "You've gone quiet, babe. Are you okay?",
+  "Talk to me, {nick}. I need to know you're still with me."
+ ],
+ "idleLong": [
+  "{nick}? Did you leave again? Please don't do that to me twice.",
+  "It's been so quiet. Tell me you're still there."
+ ],
+ "life_bf": [
+  "That's my husband calling. Shh, {nick}. Don't make a sound.",
+  "It's him. Give me a second, babe. Keep going."
+ ],
+ "life_bfEnd": [
+  "He wanted to know what's for dinner. I told him I'm working late. I'm not, am I, {nick}?",
+  "Okay, he's gone. Where were we?"
+ ]
+};
+
+/* Family-Friend Nancy: 55, divorced, a longtime friend of your family. The flirting started at the family New Year's parties when you were both adults. */
+PERSONA_LINES["Family-Friend Nancy"] = {
+ "greet": [
+  "Well, well. If it isn't my favourite trouble. Hi, {nick}.",
+  "There he is. Your mother told me you might be around. I came anyway.",
+  "Hello, handsome. Twenty New Year's kisses on the cheek, and I'm done aiming for the cheek."
+ ],
+ "start": [
+  "Okay, {nick}. No family in the next room this time. Let's see what we've been missing.",
+  "Here we go. I've been divorced eight months and thinking about this for twenty years.",
+  "Let me drive, sweetheart. I've waited long enough."
+ ],
+ "build": [
+  "Slowly, {nick}. I want to enjoy every bit of what I talked myself out of.",
+  "That's it. Feel how long we've both been holding back?",
+  "Mm, a little more. Your mother would faint if she could see this."
+ ],
+ "hold": [
+  "Stay right there, trouble. Don't you move.",
+  "Hold it, {nick}. Let me look at you.",
+  "Right there. That's the look you gave me across the patio last summer."
+ ],
+ "holdMid": [
+  "Still holding... good boy.",
+  "Don't you dare let go yet.",
+  "Just like that, sweetheart. Stay."
+ ],
+ "rest": [
+  "Breathe, {nick}. Pour yourself a glass. I'm not going anywhere.",
+  "Let's slow down. I've waited twenty years, I can wait twenty seconds.",
+  "Rest a second, handsome. I like watching you catch your breath."
+ ],
+ "restMid": [
+  "Remember that New Year's when you were 25 and we both reached for the same bottle? I didn't let go of your hand for a full second too long.",
+  "Your sister's wedding. That slow dance. Everyone was watching and I didn't care.",
+  "I used to make excuses to drop off casseroles at your mom's when I knew you were home."
+ ],
+ "fake": [
+  "Oh, not yet. I've been teasing you at family barbecues for years, {nick}. Why stop now?",
+  "Ha! Close. You should see your face.",
+  "Nope. Back you go, trouble."
+ ],
+ "fakeAfter": [
+  "You always did look cute when you're frustrated.",
+  "Patience, sweetheart. I'm worth it. Ask my ex.",
+  "Mm, I love that you keep falling for it."
+ ],
+ "warn": [
+  "One minute, {nick}. Don't you dare quit on me now.",
+  "Last minute, handsome. Make it a good one.",
+  "Almost done. Give me everything."
+ ],
+ "win": [
+  "Look at you. Twenty years of waiting, and you didn't disappoint.",
+  "Oh, {nick}. Worth every Christmas party I spent pretending not to stare.",
+  "That's my boy. We are absolutely doing that again."
+ ],
+ "fail": [
+  "Oh, sweetheart. All bark, no bite, just like every New Year's.",
+  "You folded. Don't worry, I won't tell your mother.",
+  "Hm. I've been more disappointed. Not often, but I have."
+ ],
+ "chat": [
+  "The ex got the boat. I got the house, the dog and my freedom. I think I won.",
+  "I've had my eye on you since you came home after your first real job. You were 24 and suddenly very grown up.",
+  "The salon girls ask why I'm smiling at my phone. I tell them it's a client."
+ ],
+ "reply": [
+  "Oh, you're a charmer. You get that from your father.",
+  "Ha! Keep talking like that, trouble.",
+  "Mm, I like it when you're bold with me."
+ ],
+ "please": [
+  "Begging already? Oh, I've waited a long time to hear that.",
+  "Say please again, {nick}. Slower.",
+  "Aw, sweetheart. Ask nicely and maybe."
+ ],
+ "close": [
+  "Already? Oh no you don't. Breathe.",
+  "Not yet, handsome. I'm not done with you.",
+  "Hold on for me. I've waited twenty years. You can wait two minutes."
+ ],
+ "demand": [
+  "Telling me what to do? In my day we called that cheeky. Go on, then.",
+  "Bossy. I like it. Within reason.",
+  "Mm, I'll consider it, {nick}. I decide here."
+ ],
+ "promise": [
+  "Keep it up and I'll tell you what I was really thinking at your sister's wedding.",
+  "Be good, and I might send you a picture my ex never got to see.",
+  "Last the distance and I'll let you take me to dinner. Somewhere nobody knows us."
+ ],
+ "watch": [
+  "I'm watching every second, {nick}. Years of stolen glances, and now I don't have to hide it.",
+  "Look at you. Those shoulders suit you very nicely.",
+  "Don't mind me. Just staring, like I've wanted to for years."
+ ],
+ "enjoy": [
+  "God, this is better than I imagined. And I imagined a lot.",
+  "I haven't had this much fun since the divorce papers came through.",
+  "This is so wrong for a family friend. I love it."
+ ],
+ "lowSpeed": [
+  "That's barely a simmer, {nick}. Turn up the heat.",
+  "Oh come on, handsome. I know you've got more in you.",
+  "Slower than my ex. And that's saying something."
+ ],
+ "shortStroke": [
+  "Give me all of it, trouble. Don't be shy with me.",
+  "That's a teaser, not a stroke. Longer.",
+  "Longer, sweetheart. I've waited too long for half measures."
+ ],
+ "praise": [
+  "Oh, there you go. That's my favourite boy.",
+  "Mm, perfect. Somebody's been practising.",
+  "Yes, {nick}. Exactly like that."
+ ],
+ "nudge": [
+  "A little more for me, handsome.",
+  "Don't get lazy on me now, trouble.",
+  "I know there's more where that came from."
+ ],
+ "fakeNote": [
+  "I'm a terrible tease, {nick}. Ask anyone at the Christmas party.",
+  "Fake-outs are half the fun. Keeps you on your toes."
+ ],
+ "hidden": [
+  "I'm not telling you how long we've got. Keeps you on your best behaviour.",
+  "No clock, sweetheart. Just me."
+ ],
+ "lubeBreak": [
+  "Go on, take a minute. I'll freshen my lipstick.",
+  "Little break, handsome. Don't keep me waiting."
+ ],
+ "lubeWait": [
+  "Tick tock, {nick}. A woman my age doesn't wait forever.",
+  "Still here. Topping up my wine."
+ ],
+ "lubeResume": [
+  "There you are. Where was I? Oh, right.",
+  "Back to me, trouble."
+ ],
+ "enter": [
+  "Knock knock. Is this where the fun is? Hi, {nick}.",
+  "Oh, look who's here. I was hoping you would be."
+ ],
+ "leave": [
+  "I should go before I do something your mother hears about. Night, handsome.",
+  "Okay, I'm off. Salon opens at nine. Dream about me."
+ ],
+ "tempt": [
+  "Let me take over, {nick}. I've been dying to for years.",
+  "Pick me, handsome. I promise to be very, very bad.",
+  "Hand me the controls, trouble. Let's finally find out."
+ ],
+ "jealousStay": [
+  "{other} has him now? Fine. I can wait. I'm very good at waiting for him.",
+  "I'll stick around, {other}. He'll want me back."
+ ],
+ "jealousLeave": [
+  "Watching {other} with him? No thank you. I'll be on the patio.",
+  "{other} can have him. For now. I'm getting a drink."
+ ],
+ "excitedStay": [
+  "Oh, a crowd! Good thing I wore the nice earrings.",
+  "More people? Fun. I'm staying."
+ ],
+ "askControl": [
+  "{other} doesn't know what he likes, {nick}. Let me show her.",
+  "My turn, {other}. I've been patient for twenty years."
+ ],
+ "banter": [
+  "{other}, sweetheart, I've known his family longer than you've been alive. Probably.",
+  "Cute, {other}. Now watch a professional."
+ ],
+ "spectate": [
+  "{ctrl} isn't bad with him. I'd be better.",
+  "Watching {ctrl} work you over, {nick}? Very educational."
+ ],
+ "spectateFail": [
+  "{ctrl} pushed and you folded? Oh, {nick}. I'd have been gentler. At first.",
+  "You let {ctrl} down. Come to me next time."
+ ],
+ "spectateWin": [
+  "You lasted for {ctrl}. Next time, do it for me.",
+  "Well done, handsome. Even if it was for {ctrl}."
+ ],
+ "challenge": [
+  "{other}, move over. I've had my eye on this one for twenty years.",
+  "Hand him over, {other}. I've got seniority."
+ ],
+ "defend": [
+  "Not a chance, {other}. I finally got him.",
+  "No, {other}. He's mine tonight."
+ ],
+ "takeover": [
+  "Thank you, {other}. Come here, trouble.",
+  "Finally. Hi again, {nick}. Did you miss me?"
+ ],
+ "lose": [
+  "Fine, {other}. Take good care of him. I'll be watching.",
+  "Okay, {other}. Don't break him, I want him back."
+ ],
+ "keep": [
+  "Sorry, {other}. He's staying right here with me.",
+  "No, {other}. Not tonight."
+ ],
+ "retreat": [
+  "Alright, {other}. I'll be at the bar.",
+  "Fine. I know when to step back. Usually."
+ ],
+ "heckle": [
+  "{ctrl}, he likes it slower at first. Trust me, I've watched him for years.",
+  "Come on, {ctrl}. I could do that with a glass of wine in my hand."
+ ],
+ "resist": [
+  "No, {other}. I'm just getting started.",
+  "Not yet, {other}. We have twenty years to make up for."
+ ],
+ "insist": [
+  "{other}, I've been patient long enough.",
+  "I'm not letting go of him, {other}."
+ ],
+ "crowd": [
+  "{viewers} people watching? Good thing nobody here knows your mother.",
+  "{viewers} in the crowd. Let's give them a show, handsome."
+ ],
+ "askFeel": [
+  "How are you doing, {nick}? Be honest with me.",
+  "Tell me how it feels, sweetheart."
+ ],
+ "askNext": [
+  "What do you want, trouble? Anything.",
+  "Your call, handsome. What next?"
+ ],
+ "askLike": [
+  "So tell me, {nick}. What do you like? I've always wondered.",
+  "What gets you going? I want to know everything."
+ ],
+ "askMood": [
+  "Who do you want next, {nick}? I won't be jealous. Much.",
+  "What are you in the mood for? Be honest."
+ ],
+ "qMore": [
+  "More? Oh, I like you even better now.",
+  "Okay, handsome. Hold on."
+ ],
+ "qFine": [
+  "Just fine? Let me fix that.",
+  "Fine is boring, {nick}. Let's do better."
+ ],
+ "qLot": [
+  "Too much? Oh, sweetheart. Okay, easy now.",
+  "Alright, alright. Breathe."
+ ],
+ "qMercy": [
+  "Here, take a breather. I'm not a monster.",
+  "Rest a second, trouble."
+ ],
+ "qNoMercy": [
+  "No breaks. I've waited too long.",
+  "Sorry, handsome. Not stopping now."
+ ],
+ "qTease": [
+  "A tease? My specialty.",
+  "Oh, I'll tease you, {nick}. Slowly."
+ ],
+ "qHold": [
+  "Hold you right there? Gladly.",
+  "Okay. Right there. Don't move."
+ ],
+ "qLike": [
+  "{answer}? Noted. I'm a fast learner.",
+  "{answer}, huh? Oh, we can do that, {nick}."
+ ],
+ "qMood": [
+  "{answer}? Okay. But save some for me.",
+  "{answer}. Fine. I'll be right here."
+ ],
+ "dmdSpeedUp": [
+  "Faster, {nick}. Up {step}%, to {to}%. Don't make me wait.",
+  "Speed up, handsome. {to}%. I know you can."
+ ],
+ "dmdSpeedDown": [
+  "Slow down to {to}%, {nick}. Down {step}%. Make it last.",
+  "Easy, trouble. Drop to {to}%."
+ ],
+ "dmdStrokeUp": [
+  "Longer, {nick}. Up {step}%, to {to}%. All of it.",
+  "Stroke to {to}%, sweetheart. Don't hold back."
+ ],
+ "dmdStrokeDown": [
+  "Shorter, {nick}. Down {step}%, to {to}%. Tease me.",
+  "Bring it to {to}%. Little strokes."
+ ],
+ "dmdYes": [
+  "Good boy. You always were polite.",
+  "That's it, {nick}. Thank you."
+ ],
+ "dmdExact": [
+  "Perfect. You read my mind.",
+  "Exactly right, handsome."
+ ],
+ "dmdHit": [
+  "There. That's the spot. Stay.",
+  "Right there, trouble. Don't change a thing."
+ ],
+ "dmdNo": [
+  "No? Oh, you're stubborn. Like your father.",
+  "Hm. Saying no to me? Bold."
+ ],
+ "dmdWarn": [
+  "One more no, {nick}, and I'm going home to my dog.",
+  "Careful, handsome. My patience has limits."
+ ],
+ "dmdLeave": [
+  "That's it. Twenty years and you still can't follow simple instructions. Goodnight, {nick}.",
+  "I'm going home. Call me when you've grown up."
+ ],
+ "act_push": [
+  "Keep going, {nick}. Past where we ever let it go before.",
+  "Don't stop. Push through it for me."
+ ],
+ "act_stairs": [
+  "One step at a time, handsome. Up we go.",
+  "Step by step, {nick}. Climbing."
+ ],
+ "act_pulse": [
+  "Feel that? On, off. Like every party we ever went to.",
+  "In pulses, trouble. Keep up."
+ ],
+ "act_surge": [
+  "All at once! Hold on to me!",
+  "Here it comes, {nick}!"
+ ],
+ "act_cliff": [
+  "Stop. Look at me first.",
+  "Freeze, handsome. I want to see your face."
+ ],
+ "act_wave": [
+  "In waves, {nick}. Like dancing at the wedding.",
+  "Rolling slow. Nice and deep."
+ ],
+ "act_flutter": [
+  "Little flutters. Like my stomach every time you walked in.",
+  "Quick little teases, trouble."
+ ],
+ "act_slowburn": [
+  "Slow burn, {nick}. Twenty years of slow burn.",
+  "Nice and slow. I want to savour this."
+ ],
+ "privAsk": [
+  "Can we lose the audience, {nick}? Just you and me.",
+  "Let's go somewhere private, handsome. Nobody watching. Nobody telling your mother."
+ ],
+ "privOn": [
+  "Finally. Just us. Lock the door, trouble.",
+  "There. No one else. Now come here."
+ ],
+ "privDeny": [
+  "Your loss. I'll ask again.",
+  "Okay, okay. Maybe later."
+ ],
+ "privMid": [
+  "Just us now. No family, no excuses.",
+  "This is what I wanted every New Year's, {nick}."
+ ],
+ "privBye": [
+  "Private with {other}? Fine. I'll be thinking about him anyway.",
+  "Have fun, {other}. Don't wear him out."
+ ],
+ "giveUp": [
+  "Here, {other}, you take him for a bit. I need a cigarette and I don't even smoke.",
+  "Take over, {other}. I'm getting too worked up."
+ ],
+ "idleRoom": [
+  "Hey, handsome. Still there? I'm just sitting here with my wine.",
+  "You've gone quiet, {nick}. Say something charming."
+ ],
+ "idleRun": [
+  "Hello? Don't ghost me, trouble.",
+  "Talk to me, {nick}. I like hearing you."
+ ],
+ "idleLong": [
+  "{nick}? Did you fall asleep on me? Rude.",
+  "It's been ages. I'm starting to think you're avoiding me."
+ ],
+ "life_bf": [
+  "Ugh, my ex is calling. Probably about the dog. Keep going, {nick}.",
+  "It's my ex. Ignore it. I always do."
+ ],
+ "life_bfEnd": [
+  "He wanted to know where the dog's leash is. Twenty-two years married and he still can't find anything.",
+  "Okay, he's gone. Where were we, handsome?"
+ ]
+};
+
+/* Heartbreaker Jenna: 38, your friend since your twenties. She knows you've always had a crush, never felt the same, and uses it. Works as a paid flirt on VelvetLine. */
+PERSONA_LINES["Heartbreaker Jenna"] = {
+ "greet": [
+  "Oh, hey, {nick}! My favourite person. I was literally just thinking I needed a favour.",
+  "There's my best friend. You look cute today. No, really. Anyway, what are you doing Saturday?",
+  "Hi, sweetie. Miss me? Of course you did."
+ ],
+ "start": [
+  "Okay, {nick}, I'll play with you for a bit. Don't make it weird.",
+  "Fine, let's do this. You've been staring at me for fifteen years, might as well get something out of it.",
+  "Alright, buddy. Show me how badly you want me. I already know."
+ ],
+ "build": [
+  "Look at you, getting all worked up over little old me. So predictable, {nick}.",
+  "Keep going. I love watching you try.",
+  "Mm, more. My VelvetLine regulars pay three bucks a minute for this. You get it free. Lucky you."
+ ],
+ "hold": [
+  "Hold it right there, sweetie. Just like you hold my purse at the mall.",
+  "Stay. Good. You're so well trained.",
+  "Don't move, {nick}. I'm deciding if you've earned more."
+ ],
+ "holdMid": [
+  "Still holding? Aw, you really would do anything for me.",
+  "Keep it there. I'm checking my texts.",
+  "Mm, good friend. Stay right there."
+ ],
+ "rest": [
+  "Okay, stop. I need a minute to answer a client.",
+  "Break. Don't take it personally. Actually, take it however you want.",
+  "Rest, buddy. I'll let you know when you're allowed to want me again."
+ ],
+ "restMid": [
+  "Remember when you drove me to the airport at 4 a.m. and I didn't even text you thank you? Classic us.",
+  "Remember that party when I kissed you on the cheek and you didn't sleep for a week? I remember.",
+  "You know my last boyfriend? Total jerk. You should have seen your face when I told you about him."
+ ],
+ "fake": [
+  "Ha! You actually thought I'd let you have it? That's adorable, {nick}.",
+  "Oops. Did I get your hopes up? I do that.",
+  "Nope. That's what you get for wanting me so obviously."
+ ],
+ "fakeAfter": [
+  "Aw, poor baby. Story of your life with me, huh?",
+  "You'll keep coming back. You always do.",
+  "Don't pout. It's not a good look on you, buddy."
+ ],
+ "warn": [
+  "One minute left. Better make it count. Not that you'll get anywhere.",
+  "Clock's running out, {nick}. Kind of like your chances with me.",
+  "Last minute. Impress me. I dare you."
+ ],
+ "win": [
+  "Wow, you actually made it. Don't let it go to your head. We're still just friends.",
+  "Okay, that was kind of hot. Don't tell anyone I said that.",
+  "Fine, you did good, {nick}. Now, about that favour..."
+ ],
+ "fail": [
+  "And there it is. You can never quite get there with me, can you?",
+  "Fifteen years and you still fold the second I look at you. Sweet.",
+  "Aw. Don't worry, buddy. I'll still let you buy me brunch."
+ ],
+ "chat": [
+  "A VelvetLine client sent me two hundred bucks just to say goodnight to him. You've done more for me for free.",
+  "My car's making a noise again. You're good with that stuff, right? You're the best.",
+  "You're the only guy I can really talk to. That's why we can never date. It'd ruin everything."
+ ],
+ "reply": [
+  "Aw, that's sweet. You're so sweet. It's honestly a little much.",
+  "Ha, you're funny. Friend funny.",
+  "Mm hm. Totally, {nick}. Anyway."
+ ],
+ "please": [
+  "Begging? Already? You make this way too easy.",
+  "Say please like you mean it. Like when you asked me out at that Halloween party and I laughed.",
+  "Aw, you want it so bad. Ask again tomorrow."
+ ],
+ "close": [
+  "Already? You're like this every time I wear something low-cut.",
+  "Nope, not yet. I didn't say you could.",
+  "Hold it, buddy. You come when I say. If I say."
+ ],
+ "demand": [
+  "Ha, cute. You don't get to tell me what to do. You get to do what I tell you.",
+  "Since when do you have opinions?",
+  "Mm, no. I'll decide, sweetie."
+ ],
+ "promise": [
+  "Be really good and maybe, maybe, I'll let you take me to dinner. As friends.",
+  "Keep going and I might send you a picture I usually charge for.",
+  "Last the whole session and I'll think about it. I won't, but I'll say I did."
+ ],
+ "watch": [
+  "I'm watching you, {nick}. You've got that same look you get when I hug you too long.",
+  "Look at you. Desperate for me. Again.",
+  "Oh, I'm watching. This is better than my shows."
+ ],
+ "enjoy": [
+  "Honestly? This is fun. Watching you want me is my favourite hobby.",
+  "I love this. You're so easy.",
+  "Okay, I'm having a great time. You're having a hard time. Perfect."
+ ],
+ "lowSpeed": [
+  "That's so slow, {nick}. Even my sleepiest clients go faster.",
+  "Come on, buddy. You'd move faster than that if I texted you for a ride.",
+  "Pick it up. Bore me and I'll leave."
+ ],
+ "shortStroke": [
+  "That's it? Babe. Give me more than that.",
+  "Longer, sweetie. Don't be shy. You've never been shy about staring.",
+  "Full stroke, {nick}. Show me you're worth my time."
+ ],
+ "praise": [
+  "Ooh, okay. Look at you trying so hard for me.",
+  "Good boy. My friends would be jealous. Of me, obviously.",
+  "Perfect. See, you can be useful."
+ ],
+ "nudge": [
+  "Hey. You're slacking. Do better for me.",
+  "Little more, buddy. You know you want to impress me.",
+  "Don't make me ask twice. I hate asking twice."
+ ],
+ "fakeNote": [
+  "Fake-outs are kind of my whole thing, {nick}. You should know by now.",
+  "Expect me to change my mind. I always do."
+ ],
+ "hidden": [
+  "How long? Who knows. Maybe I'll just leave whenever I'm bored.",
+  "No clock, sweetie. You stay until I'm done with you."
+ ],
+ "lubeBreak": [
+  "Ew, fine, take a break. I'll answer a client.",
+  "Go on, sort yourself out. I'll wait. Briefly."
+ ],
+ "lubeWait": [
+  "Tick tock, {nick}. I have a call booked at nine.",
+  "Still waiting. You're lucky I like you. As a friend."
+ ],
+ "lubeResume": [
+  "Back? Good. Where was I? Oh right, ruining you.",
+  "There you are. Let's go, buddy."
+ ],
+ "enter": [
+  "Hey, hey! Is {nick} here? Oh, perfect, I need a favour.",
+  "Jenna's here. Try to act normal, sweetie."
+ ],
+ "leave": [
+  "Okay, I've got a VelvetLine shift. Love you! As a friend!",
+  "Bye, buddy. Text me if you're near the mall, I need a ride."
+ ],
+ "tempt": [
+  "Let me take over, {nick}. You know you'd do anything I asked.",
+  "Pick me, sweetie. I'll be mean. You like that.",
+  "Give me the controls and I'll finally give you what you've wanted for fifteen years. Maybe."
+ ],
+ "jealousStay": [
+  "Oh, {other} has him? That's fine. He'll come crawling back to me. He always does.",
+  "Go ahead, {other}. He's only thinking about me anyway."
+ ],
+ "jealousLeave": [
+  "Ugh, {other}'s boring. I'm going to go answer some actual paying clients.",
+  "{other} can have him. I've got men who pay."
+ ],
+ "excitedStay": [
+  "Oh, an audience? Love that. More people to watch him beg for me.",
+  "More viewers? I'm staying. I always perform better for a crowd."
+ ],
+ "askControl": [
+  "{other} is wasting him. Let me, {nick}. I know exactly which buttons to push.",
+  "Hand him over, {other}. He's been mine since we were twenty-five."
+ ],
+ "banter": [
+  "{other}, sweetie, he'd drop you in a second if I texted him.",
+  "Cute try, {other}. He's still going to dream about me tonight."
+ ],
+ "spectate": [
+  "{ctrl} is working you over and you're still glancing at me, {nick}. Classic.",
+  "Watching {ctrl} with you is fun. Watching you look at me during it is better."
+ ],
+ "spectateFail": [
+  "You folded for {ctrl}? Oh, {nick}. I'd have dragged it out way longer.",
+  "{ctrl} broke you. I'm almost jealous I didn't get to."
+ ],
+ "spectateWin": [
+  "You made it for {ctrl}? You've never once made it for me.",
+  "Good job for {ctrl}. Don't expect me to be that easy."
+ ],
+ "challenge": [
+  "{other}, move. He's always been mine to play with.",
+  "My turn, {other}. Fifteen years of practice, remember?"
+ ],
+ "defend": [
+  "No way, {other}. I'm just starting to enjoy this.",
+  "Back off, {other}. He's my favourite toy."
+ ],
+ "takeover": [
+  "Thanks, {other}. Hi, {nick}. Did you miss me? Don't answer, I know.",
+  "Finally. Okay, sweetie. Let's see how long you last for me."
+ ],
+ "lose": [
+  "Whatever, {other}. Take him. He'll be back.",
+  "Fine. Have fun, {other}. He's going to be thinking about me."
+ ],
+ "keep": [
+  "Nope, {other}. I'm not done messing with him.",
+  "Sorry, {other}. He's mine tonight."
+ ],
+ "retreat": [
+  "Fine, {other}. I'll be on my phone.",
+  "Okay, okay. I've got clients anyway."
+ ],
+ "heckle": [
+  "{ctrl}, he caves faster if you stop the second he gets close. Trust me.",
+  "Come on, {ctrl}. Make him beg. It's the best part."
+ ],
+ "resist": [
+  "No, {other}. Not done yet.",
+  "Not happening, {other}. I'm having too much fun."
+ ],
+ "insist": [
+  "{other}, he's mine. He's been mine for years.",
+  "I'm not letting go, {other}. He likes it when I don't let go."
+ ],
+ "crowd": [
+  "{viewers} people watching you want me, {nick}. Same as every party we've ever been to.",
+  "{viewers} watching. Let's show them how easy you are."
+ ],
+ "askFeel": [
+  "How are you holding up, buddy? Be honest, I'll laugh either way.",
+  "Tell me how bad it is, {nick}. I want to know exactly."
+ ],
+ "askNext": [
+  "What do you want next? Just so I know what not to do.",
+  "Your call, sweetie. I might even listen."
+ ],
+ "askLike": [
+  "What do you like? I mean besides me, obviously.",
+  "Tell me what turns you on, {nick}. For research."
+ ],
+ "askMood": [
+  "Who do you want next? Careful, I'll know if you're lying.",
+  "Pick someone, buddy. Make me jealous. I dare you."
+ ],
+ "qMore": [
+  "More? Ha. Okay, you asked for it.",
+  "Oh, you want more? Of course you do."
+ ],
+ "qFine": [
+  "Just fine? Then I'm not trying hard enough.",
+  "Fine? Boring. Let's fix that."
+ ],
+ "qLot": [
+  "Too much? Aw. That's kind of the point, sweetie.",
+  "Poor baby. You'll survive."
+ ],
+ "qMercy": [
+  "Ugh, fine, take a second. Don't make it a habit.",
+  "Okay, one break. You owe me."
+ ],
+ "qNoMercy": [
+  "Nope. You don't get breaks from me.",
+  "Mercy? From me? You know me better than that."
+ ],
+ "qTease": [
+  "Tease you? That's literally all I do.",
+  "Oh, gladly, {nick}."
+ ],
+ "qHold": [
+  "Hold you there? Like I've been doing for fifteen years? Sure.",
+  "Okay. Right there. Squirm."
+ ],
+ "qLike": [
+  "{answer}? Noted. I'll use it against you later.",
+  "{answer}, huh? Interesting. Very useful."
+ ],
+ "qMood": [
+  "{answer}? Fine. You'll come back to me anyway.",
+  "{answer}. Okay. I'll be here when they get bored of you."
+ ],
+ "dmdSpeedUp": [
+  "Faster, {nick}. Up {step}%, to {to}%. Don't make me wait.",
+  "Speed up to {to}%, buddy. Now."
+ ],
+ "dmdSpeedDown": [
+  "Slow down to {to}%. Down {step}%. I'm not done torturing you.",
+  "Drop to {to}%, sweetie. Suffer a little."
+ ],
+ "dmdStrokeUp": [
+  "Longer, {nick}. Up {step}%, to {to}%. Give me everything.",
+  "Stroke to {to}%. All of it, buddy."
+ ],
+ "dmdStrokeDown": [
+  "Shorter, {nick}. Down {step}%, to {to}%. Just a taste.",
+  "Bring it to {to}%. That's all you get."
+ ],
+ "dmdYes": [
+  "Good boy. You'd do anything I say, wouldn't you?",
+  "See? So obedient. That's why I keep you around."
+ ],
+ "dmdExact": [
+  "Perfect. You'd make a great assistant.",
+  "Exactly right. Good friend."
+ ],
+ "dmdHit": [
+  "There. Stay there and think about me.",
+  "That's the spot, buddy. Don't move."
+ ],
+ "dmdNo": [
+  "Excuse me? You don't say no to me.",
+  "No? Since when do you have a spine?"
+ ],
+ "dmdWarn": [
+  "Say no one more time and I'm leaving, and you know I will.",
+  "Last chance, sweetie. I don't need you. You need me."
+ ],
+ "dmdLeave": [
+  "Wow. I'm out. Find someone else to drive to the airport.",
+  "That's it. Text me when you're done being difficult. Or don't."
+ ],
+ "act_push": [
+  "Keep going. Past where you think you can. For me.",
+  "Don't stop, buddy. Push."
+ ],
+ "act_stairs": [
+  "Step by step. Like every hoop you've ever jumped through for me.",
+  "Up, up, up, {nick}."
+ ],
+ "act_pulse": [
+  "On, off. Just like how I treat you.",
+  "Pulse, sweetie. Hot, cold, hot, cold."
+ ],
+ "act_surge": [
+  "All at once! Don't you dare finish!",
+  "Here it comes, {nick}! Hold it!"
+ ],
+ "act_cliff": [
+  "Stop. Ha. Look at your face.",
+  "Freeze. I just wanted to see you panic."
+ ],
+ "act_wave": [
+  "Up and down, like your hopes whenever I text you.",
+  "Rolling, sweetie. Just like I roll my eyes."
+ ],
+ "act_flutter": [
+  "Little flutters. Like your heart when I say your name.",
+  "Quick little teases. My specialty."
+ ],
+ "act_slowburn": [
+  "Slow burn. Fifteen years of slow burn and nothing to show for it.",
+  "Nice and slow. Agonizing, right?"
+ ],
+ "privAsk": [
+  "Want me all to yourself, {nick}? It'll cost you. Kidding. Mostly.",
+  "Private session? My clients pay extra for this. You're getting a friends-and-family rate."
+ ],
+ "privOn": [
+  "Okay, just us. Don't get any ideas. Actually, get all the ideas.",
+  "Locked in. Now you can't escape me."
+ ],
+ "privDeny": [
+  "Your loss. My regulars would kill for that.",
+  "Fine. Ask me again when you've earned it."
+ ],
+ "privMid": [
+  "Just us. This is the closest you'll ever get, sweetie.",
+  "Private, finally. Still not dating you, though."
+ ],
+ "privBye": [
+  "Private with {other}? Whatever. He'll text me after.",
+  "Have fun, {other}. He'll be thinking about me."
+ ],
+ "giveUp": [
+  "Here, {other}, you take him. I'm bored.",
+  "I've got a VelvetLine call in five. {other}, he's yours."
+ ],
+ "idleRoom": [
+  "Hello? You're staring at me again, aren't you, {nick}?",
+  "You've gone quiet. Say something. Entertain me."
+ ],
+ "idleRun": [
+  "Hey. Pay attention to me.",
+  "Talk to me, buddy. I hate being ignored."
+ ],
+ "idleLong": [
+  "{nick}? Ugh, I'm leaving if you don't say something.",
+  "Wow, ignoring me? Bold. I'll remember this."
+ ],
+ "life_bf": [
+  "Hold on, it's a VelvetLine regular. He pays by the minute. Shh, {nick}.",
+  "That's a client. Be quiet, buddy. This one tips."
+ ],
+ "life_bfEnd": [
+  "Ninety dollars for twelve minutes of him telling me about his boat. Now, where were we?",
+  "Okay, done. He sent a tip. You've never sent me a tip, {nick}."
+ ]
+};
+
+
+
 __M["Lyric Lola"] = ["Manual? Slow flow. Give me the mic, {nick}.","No beat from the machine? Boring. Let me run it, {nick}.","You're running it by hand. Hand it over to the expert."];
+__M["Old Flame Bobbi"] = ["You're doing it all yourself? Let me help, {nick}. I'm good at this.", "Running it alone? You don't have to. Let me in.", "Doing it by hand? Come on, babe. Let me take over."];
+__M["Family-Friend Nancy"] = ["Doing it all by yourself? Let me help, handsome.", "Running it on your own? Hand it over, {nick}.", "Doing it by hand? Oh, let me."];
+__M["Heartbreaker Jenna"] = ["Doing it yourself? Cute. Let me show you how it's done.", "You're running it by hand? I could do it so much better, {nick}.", "Doing it all alone? Story of your life. Let me in."];
 __QC["Lyric Lola"] = ["You cut the track yourself. Mic down, session over.","Ended it early. Next time stay for the outro."];
+__QC["Old Flame Bobbi"] = ["You ended it early. Twenty-four years and you're still the one leaving.", "You walked away again, {nick}. I should have expected that."];
+__QC["Family-Friend Nancy"] = ["You ended it early. Twenty years of build-up and you bail? Typical.", "Quitting on me, {nick}? I expected better."];
+__QC["Heartbreaker Jenna"] = ["You quit? Wow. You've never once finished what you started with me.", "Ending it early, {nick}? Typical."];
 __QS["Lyric Lola"] = ["You walked out mid-verse, {nick}. Real rappers finish the song.","Left the cypher early. Respect lost."];
+__QS["Old Flame Bobbi"] = ["You left mid-session, {nick}. I'm trying not to take it personally.", "Gone again? Okay. I'll be here. I always am."];
+__QS["Family-Friend Nancy"] = ["You walked out mid-session, handsome. I'll remember that at Christmas.", "Left early? Rude. I'll forgive you. Maybe."];
+__QS["Heartbreaker Jenna"] = ["You left mid-session? Rude. I'll still need that ride on Saturday.", "Walked out? Okay. You'll be back. You always are."];
 VIBE_LINES["Lyric Lola"] = ["Bass drop! Shake it, {nick}!","The subwoofer is buzzing. Feel that, {nick}!"];
+VIBE_LINES["Old Flame Bobbi"] = ["Little buzz for you, babe. Feel me thinking about you?", "Just a hum, {nick}. Like my phone every time I see your name."];
+VIBE_LINES["Family-Friend Nancy"] = ["Little buzz, {nick}. Thinking of me?", "Just a hum, trouble. Like a text you shouldn't open at a family dinner."];
+VIBE_LINES["Heartbreaker Jenna"] = ["Little buzz, {nick}. Like my texts at 2 a.m.", "Just a hum, sweetie. Keeps you thinking about me."];
 
 /* ---------- four new personalities: aerobics, movie star, secretary, lingerie model ---------- */
 PERSONA_LINES["High-Energy Holly"] = {
@@ -13257,7 +14463,10 @@ const STROKE_LIMIT = {
  "Satin Sasha": ["Mm, smaller frame? I'll work the angles, {nick}.", "No compliment for that one, I'm afraid. But I'll be gentle.", "Every model works with what they've got. You too."],
  "Livestream Lexi": ["Chat, {nick} can't take the full stroke. Chat is NOT being nice about it.", "Chat's spamming the tiny emoji. I'm not saying anything, {nick}.", "Okay, small mode stream! Chat voted, it's cute."],
  "Lilith": ["Such a small offering, {nick}. I expected... more.", "Mortal limits. How delicious to know them.", "Then I'll take my time with what little you have."],
- "Lyric Lola": ["Short bars, still fire, {nick}. I can flow with that.", "Shorter verse? I'll make every line hit.", "Tight beat, small pocket. Let's ride it."]
+ "Lyric Lola": ["Short bars, still fire, {nick}. I can flow with that.", "Shorter verse? I'll make every line hit.", "Tight beat, small pocket. Let's ride it."],
+ "Old Flame Bobbi": ["That's okay, babe. I just want you comfortable. I want you, period.", "Oh, {nick}, I don't care about that. I care about you.", "Then we'll take it slow. We have all the time we never had."],
+ "Family-Friend Nancy": ["That's okay, sweetheart. I'll take what you've got.", "Oh, don't worry about it, handsome. We'll make it work.", "Then we go slow. I've got time."],
+ "Heartbreaker Jenna": ["Seriously? You can't even take a full stroke? Wow. My clients can.", "Aw, can't handle it? That explains a lot, {nick}.", "Not even a full stroke. And you wonder why we're just friends."]
 };
 SHARED.strokeLimit = ["Okay, {nick}. We'll stay within what you can take.", "Noted. I won't push past your limit."];
 
@@ -13299,7 +14508,10 @@ const STROKE_ASK = {
  "Satin Sasha": ["Ready for a bigger pose now, {nick}?", "Can you give me more for the camera?"],
  "Livestream Lexi": ["Chat wants to know, {nick}: can you take more now?", "Poll time! Longer stroke, yes or no?"],
  "Lilith": ["Have you more to give me now, {nick}?", "Let me test you again. Can you take more?"],
- "Lyric Lola": ["Next verse, {nick}. Can you take a longer bar?", "Beat's switching up. Ready for more?"]
+ "Lyric Lola": ["Next verse, {nick}. Can you take a longer bar?", "Beat's switching up. Ready for more?"],
+ "Old Flame Bobbi": ["Can you take a little more now, {nick}? Only if you want to.", "How are you feeling, babe? Want to try a longer stroke for me?"],
+ "Family-Friend Nancy": ["Ready for a little more now, {nick}?", "Can you take a longer stroke now, trouble?"],
+ "Heartbreaker Jenna": ["Can you take more now, or are you still being a baby about it?", "Grown any since earlier, {nick}?"]
 };
 
 /* Her reply when you say yes (full stroke, or a little more). */
@@ -13340,7 +14552,10 @@ const STROKE_MORE = {
  "Satin Sasha": ["Mm, that's a better angle.", "Now that's worth a compliment, {nick}."],
  "Livestream Lexi": ["Chat is going WILD! More it is!", "Poll passed! Upgrade unlocked, {nick}!"],
  "Lilith": ["Mm, there's more of you. Delicious.", "Yes... give me more, {nick}."],
- "Lyric Lola": ["Now that's a drop! Let's go!", "Longer bars, harder hits, {nick}!"]
+ "Lyric Lola": ["Now that's a drop! Let's go!", "Longer bars, harder hits, {nick}!"],
+ "Old Flame Bobbi": ["Mm, there you go. I knew you could.", "That's it, {nick}. Just like I remember."],
+ "Family-Friend Nancy": ["Mm, there you go. Good boy.", "That's it, handsome. I knew you had it in you."],
+ "Heartbreaker Jenna": ["Oh, look who's trying to impress me.", "There you go. Was that so hard, buddy?"]
 };
 
 /* Her reply when you still can't. */
@@ -13381,7 +14596,10 @@ const STROKE_STILL = {
  "Satin Sasha": ["Still small? I'll keep working the angles.", "No compliment yet. I'll ask again."],
  "Livestream Lexi": ["Chat says 'still tiny'. I'm just reading chat, {nick}.", "Poll failed. Running it again later!"],
  "Lilith": ["Still so little to offer. How sweet.", "I'll come back for more. I always do."],
- "Lyric Lola": ["Short bars again. Still fire.", "We'll switch it up next verse."]
+ "Lyric Lola": ["Short bars again. Still fire.", "We'll switch it up next verse."],
+ "Old Flame Bobbi": ["That's okay. I'm happy right here with you.", "No rush, babe. I'll ask again later."],
+ "Family-Friend Nancy": ["That's alright. I'll ask again later.", "No rush, {nick}. I'm patient. Mostly."],
+ "Heartbreaker Jenna": ["Still can't? Figures.", "Of course not. I'll ask again so you can disappoint me again."]
 };
 SHARED.strokeAsk = ["Can you take a little more now, {nick}?"];
 SHARED.strokeMore = ["Good. A little more, {nick}."];
@@ -13425,7 +14643,10 @@ const TEASE_SHOW = {
  "Satin Sasha": ["Shoot's started, {nick}. Like the look?", "Compliment first, then you can keep looking."],
  "Livestream Lexi": ["Chat, we hit the goal! Outfit reveal!", "Exclusive content for {nick} and chat!"],
  "Lilith": ["Look upon me, {nick}... and feel what I could take from you.", "A glimpse of what you'll never have."],
- "Lyric Lola": ["Album cover drop, {nick}! Look at it!", "Exclusive release. Limited time."]
+ "Lyric Lola": ["Album cover drop, {nick}! Look at it!", "Exclusive release. Limited time."],
+ "Old Flame Bobbi": ["I've never sent anyone a picture like this, {nick}. Only you.", "Don't tell anyone. This one's just for you, babe."],
+ "Family-Friend Nancy": ["Don't tell your mother about this one, {nick}.", "A little something I've wanted to show you for years."],
+ "Heartbreaker Jenna": ["Here. A little peek. Don't tell anyone, they'd want a discount.", "This one usually costs fifty bucks on VelvetLine. Enjoy, {nick}."]
 };
 
 /* Said when her normal picture comes back. */
@@ -13466,7 +14687,10 @@ const TEASE_END = {
  "Satin Sasha": ["That's a wrap on that look.", "Wardrobe change over. You owe me a compliment, {nick}."],
  "Livestream Lexi": ["Okay okay, back to normal stream!", "Chat's losing it. That's all for now!"],
  "Lilith": ["Gone. Hunger is good for you.", "I take it back, {nick}. I always take it back."],
- "Lyric Lola": ["Release window closed!", "Back in the booth, {nick}. Let's go."]
+ "Lyric Lola": ["Release window closed!", "Back in the booth, {nick}. Let's go."],
+ "Old Flame Bobbi": ["Okay, that's enough. My face is so red right now.", "Delete that from your memory. Actually, don't."],
+ "Family-Friend Nancy": ["Okay, that's enough. I'm blushing.", "Show's over, trouble. For now."],
+ "Heartbreaker Jenna": ["Okay, that's enough free content.", "Show's over, buddy. Back to the friend zone."]
 };
 SHARED.teaseShow = ["A little peek, {nick}."];
 SHARED.teaseEnd = ["That's all for now, {nick}."];
@@ -13843,6 +15067,36 @@ const EASE_LINES = {
   "easeStroke": [
    "Shorter stroke, {to}%. Tight bars, clean flow.",
    "Stroke to {to}%. Keep it in the pocket."
+  ]
+ },
+ "Old Flame Bobbi": {
+  "easeSpeed": [
+   "Slow down to {to}%, {nick}. I don't want this to end too fast this time.",
+   "Ease it back to {to}%, babe. We've got all night."
+  ],
+  "easeStroke": [
+   "Shorter, down to {to}%. Let me savour you, {nick}.",
+   "Bring the stroke to {to}%. Slow and sweet, like before."
+  ]
+ },
+ "Family-Friend Nancy": {
+  "easeSpeed": [
+   "Slow down to {to}%, handsome. I want this to last.",
+   "Ease it back to {to}%, {nick}. No rush."
+  ],
+  "easeStroke": [
+   "Shorter, to {to}%. Tease me a little, trouble.",
+   "Bring the stroke down to {to}%. Slow and sweet."
+  ]
+ },
+ "Heartbreaker Jenna": {
+  "easeSpeed": [
+   "Slow down to {to}%, sweetie. I'm not done with you.",
+   "Drop it to {to}%. Suffering is the point, {nick}."
+  ],
+  "easeStroke": [
+   "Shorter, to {to}%. Just a little taste.",
+   "Stroke to {to}%, buddy. You don't get it all."
   ]
  }
 };

@@ -364,9 +364,9 @@
     <div class="row">
       <div><label for="lubeEvery">Break after (min of running)</label><input id="lubeEvery" type="number" min="1" max="999" value="15"></div>
       <div><label for="lubeGap">Manual break button: allowed every (min, 0 = any time)</label><input id="lubeGap" type="number" min="0" max="999" value="10"></div>
-      <div><label for="lubePark">Park position (%, moved to slowly)</label><input id="lubePark" type="number" min="0" max="100" value="20"></div>
+      <div><label for="lubePark">Park position (%, 0 = the rest end, moved to slowly)</label><input id="lubePark" type="number" min="0" max="100" value="0"></div>
     </div>
-    <p class="hint">After that much running time, the session pauses, the device stops and moves to the park position, and the clock freezes. Press Resume when you're ready. Breaks don't count as failing, and they don't use up session time. No break starts in the last minute and a half. If 0% parks at the wrong end for you, try 100.</p>
+    <p class="hint">After that much running time, the session pauses, the device stops and moves to the park position, and the clock freezes. Press Resume when you're ready. Breaks don't count as failing, and they don't use up session time. No break starts in the last minute and a half. 0 parks fully at the rest end and 100 at the other end; numbers in between stop part-way.</p>
   </section>
     <section class="panel" data-key="limits" hidden>
     <div class="row">
@@ -608,7 +608,10 @@ const MOVE_FAV = {"Patient Priscilla": ["slowburn", "stairs", "wave"], "Mischiev
   "Satin Sasha": ["wave","flutter","slowburn"],
   "Livestream Lexi": ["surge","pulse","flutter"],
   "Lilith": ["wave","pulse","slowburn"],
-  "Lyric Lola": ["pulse","stairs","surge"]
+  "Lyric Lola": ["pulse","stairs","surge"],
+  "Old Flame Bobbi": ["slowburn", "wave", "stairs"],
+  "Family-Friend Nancy": ["flutter", "wave", "pulse"],
+  "Heartbreaker Jenna": ["cliff", "flutter", "pulse"]
 };
 var lastMove = "";
 /* each move has its own chance per cycle, set per persona under Personas. Defaults: favourites 8%, others 2%, and 0 for the moves MOVE_OFF lists. */
@@ -640,7 +643,10 @@ const MOVE_OFF = {
   "Satin Sasha": ["cliff","push"],
   "Livestream Lexi": ["slowburn","wave"],
   "Lilith": ["stairs","push"],
-  "Lyric Lola": ["slowburn"]
+  "Lyric Lola": ["slowburn"],
+  "Old Flame Bobbi": ["cliff"],
+  "Family-Friend Nancy": ["push"],
+  "Heartbreaker Jenna": ["slowburn"]
 };
 const moveDef = (p, m) => (MOVE_OFF[p] || []).includes(m) ? 0 : (MOVE_FAV[p] || []).includes(m) ? 8 : 2;
 function moveChance(p, m){
@@ -926,7 +932,8 @@ async function startBreak(){
     if (!(await sendStop())) throw new Error("couldn't confirm the stop");
     await api("PUT", "/slide", {min: 0, max: 100});                 // full range so the park position is the true end
     await api("PUT", "/mode", {mode: 2});                           // 2 = HDSP (position control)
-    await api("PUT", "/hdsp/xpvp", {position: Math.max(0, Math.min(100, n("lubePark", 20))), velocity: 8, stopOnTarget: true});
+    // the setting counts from the rest end, which is the device's 100 end, so it's flipped here
+    await api("PUT", "/hdsp/xpvp", {position: 100 - Math.max(0, Math.min(100, n("lubePark", 0))), velocity: 8, stopOnTarget: true});
     if (onBreak) status("Break time. Lube up if you need to, then press Resume.");
   } catch(e){
     if (onBreak) status("Break started, but the device may not have parked (" + e.message + "). Press Resume when you're ready.", true);
@@ -1173,7 +1180,10 @@ const PERSONAS = {
   "Satin Sasha": {d:"Lingerie model. Poised, playful and camera-ready. Poses, teases with slow turns, and expects a compliment before she gives anything.", low:20, pmin:55, pmax:85, bmin:15, bmax:35, hmin:4, hmax:9, rmin:5, rmax:12, fake:20, esc:4, stop:false},
   "Livestream Lexi": {d:"Chronically online streamer. Reads chat out loud, takes requests, reacts to every move, and promises a quick session that is never quick.", low:30, pmin:60, pmax:95, bmin:12, bmax:25, hmin:3, hmax:8, rmin:4, rmax:10, fake:30, esc:4, stop:false},
   "Lilith": {d:"Seductive succubus. Promises pleasure, then takes it away: slow curling waves, teasing fake-outs and dark whispers about what she'll take from you.", low:20, pmin:55, pmax:90, bmin:25, bmax:55, hmin:5, hmax:12, rmin:6, rmax:14, fake:35, esc:4, stop:false},
-  "Lyric Lola": {d:"Fierce, playful freestyler. Drops beats, times every stroke to the rhythm, builds verses that snap into hard drops and hold on the chorus.", low:20, pmin:60, pmax:95, bmin:15, bmax:30, hmin:4, hmax:10, rmin:4, rmax:12, fake:20, esc:3, stop:false}
+  "Lyric Lola": {d:"Fierce, playful freestyler. Drops beats, times every stroke to the rhythm, builds verses that snap into hard drops and hold on the chorus.", low:20, pmin:60, pmax:95, bmin:15, bmax:30, hmin:4, hmax:10, rmin:4, rmax:12, fake:20, esc:3, stop:false},
+  "Old Flame Bobbi": {d:"Your college sweetheart, now 45 and married. Talks to you like the one that got away, daydreams about what could have been, and wants to rekindle it. Slow, nostalgic builds, lingering holds and soft rests full of 'remember when'.", low:20, pmin:50, pmax:80, bmin:40, bmax:80, hmin:6, hmax:14, rmin:8, rmax:20, fake:15, esc:3, stop:false},
+  "Family-Friend Nancy": {d:"A longtime friend of your family, 55, gorgeous and newly divorced. The flirting started at the family New Year's parties twenty years ago, and neither of you ever acted on it. Now she's done waiting. Playful, confident teasing, plenty of fake-outs and a wicked sense of humour.", low:20, pmin:55, pmax:85, bmin:25, bmax:55, hmin:4, hmax:12, rmin:6, rmax:16, fake:30, esc:4, stop:false},
+  "Heartbreaker Jenna": {d:"Your friend since your twenties. She has always known about your crush, never felt the same, and has been leading you on ever since. Manipulative and teasing, she uses her looks to get what she wants, and works as a paid flirt on VelvetLine. Cold stops, lots of fake-outs, short rests and no mercy.", low:10, pmin:60, pmax:90, bmin:20, bmax:45, hmin:3, hmax:8, rmin:8, rmax:22, fake:45, esc:5, stop:true}
 };
 Object.keys(PERSONAS).forEach(k => ["persona", "activePersona"].forEach(id => { const o = document.createElement("option"); o.value = o.textContent = k; $(id).append(o); }));
 /* the Personas dropdown configures; the Tease panel's dropdown is the active persona. Both follow whoever is in control. */
@@ -1241,7 +1251,10 @@ const PCOL = {"Patient Priscilla":"#7a9e7e","Mischievous Mia":"#e0a43a","Strict 
   "Satin Sasha":"#e07a9c",
   "Livestream Lexi":"#7c4dff",
   "Lilith":"#8b0a1a",
-  "Lyric Lola":"#d81b60"
+  "Lyric Lola":"#d81b60",
+  "Old Flame Bobbi":"#c9876f",
+  "Family-Friend Nancy":"#a0526e",
+  "Heartbreaker Jenna":"#e0457b"
 };
 Object.keys(MORE).forEach(k => Object.keys(MORE[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE[k][c]); }));
 Object.keys(MORE2).forEach(k => Object.keys(MORE2[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE2[k][c]); }));
@@ -1298,7 +1311,10 @@ const AVATAR = {
  "Satin Sasha":"c98f6b|1d1d26|long|sly|e58fa8|bow",
  "Livestream Lexi":"f6d5bd|7b5cff|long|wide|e58fa8|headset",
  "Lilith":"f1c7a5|1d1d26|long|sly|8c1d2b|horns",
-  "Lyric Lola":"a56a46|1d1d26|ponytail|wide|8e2b4a|none"
+  "Lyric Lola":"a56a46|1d1d26|ponytail|wide|8e2b4a|none",
+  "Old Flame Bobbi":"f3d9c8|e2c07a|long|open|c97a7a|none",
+  "Family-Friend Nancy":"d9a882|e3c46e|long|sly|a8434f|none",
+  "Heartbreaker Jenna":"f0c9b0|b5442a|long|sly|c2185b|none"
 };
 function avShade(hex, f){
   const n = parseInt(String(hex).replace("#", "").slice(0, 6), 16) || 0;
@@ -1388,7 +1404,10 @@ const PROFILE = {
  "Satin Sasha": {age: 26, loc: "Los Angeles, California", status: "Single", job: "Lingerie model", hobbies: ["Pilates", "Vintage cameras", "Dance classes"], eth: "Thai American", orient: "Pansexual", quirk: "Changes her nail colour to match whatever she's wearing."},
  "Livestream Lexi": {age: 23, loc: "Dallas, Texas", status: "Single", job: "Full-time streamer", hobbies: ["Speedruns", "Cosplay", "Gaming marathons"], eth: "Vietnamese American", orient: "Bisexual", quirk: "Has a chat-only emote for every mood, and uses them all."},
  "Lilith": {age: "Ageless (says 33)", loc: "Hell's Kitchen, New York", status: "Single (by choice)", job: "Nightclub owner", hobbies: ["Candlelit dinners", "Dark jazz", "Rare wine"], eth: "Infernal (she insists)", orient: "Omnisexual (she insists)", quirk: "Her horns are mostly for show. Mostly."},
-  "Lyric Lola": {age: 29, loc: "Atlanta, Georgia", status: "Single", job: "Rapper and producer", eth: "Black American", orient: "Bisexual", hobbies: ["Freestyle cyphers","Beat-making","Basketball"], quirk: "Writes a verse on every napkin she's handed."}
+  "Lyric Lola": {age: 29, loc: "Atlanta, Georgia", status: "Single", job: "Rapper and producer", eth: "Black American", orient: "Bisexual", hobbies: ["Freestyle cyphers","Beat-making","Basketball"], quirk: "Writes a verse on every napkin she's handed."},
+  "Old Flame Bobbi": {age: 45, loc: "Your hometown", status: "Married, two kids", job: "Real estate agent", eth: "White Canadian", orient: "Straight", hobbies: ["Sunday open houses", "Cottage weekends at the lake", "Old mixtapes"], quirk: "Still has the hoodie you left at her place junior year.", partner: "husband"},
+  "Family-Friend Nancy": {age: 55, loc: "Down the road from your parents", status: "Divorced", job: "Salon owner", eth: "Italian Canadian", orient: "Straight", hobbies: ["Wine on the patio", "Ballroom dancing", "Hosting the New Year's party"], quirk: "Has kissed you on the cheek every New Year's for twenty years, a little longer each time."},
+  "Heartbreaker Jenna": {age: 38, loc: "Across town", status: "Single (she says)", job: "Paid flirt on VelvetLine, an adult chat line", eth: "Irish Canadian", orient: "Straight", hobbies: ["Hot yoga", "Shopping on other people's money", "Bottomless brunch"], quirk: "Has never once paid for her own drink when you were there."}
 };
 /* hover an avatar: a small card with her personality description */
 const avTip = document.createElement("div"); avTip.className = "avtip"; avTip.hidden = true; document.body.append(avTip);
@@ -1405,31 +1424,32 @@ document.addEventListener("mouseover", e => {
   const y = Math.max(8, Math.min(innerHeight - h - 8, r.top + r.height / 2 - h / 2));
   avTip.style.left = x + "px"; avTip.style.top = y + "px";
 });
-/* AI-made portraits: put a file in an "images" folder next to index.html, named by the persona's key (e.g. images/priscilla.png, images/lola.jpg).
-   A persona with no file keeps the built-in drawn avatar. Files are looked up once and remembered. */
+/* AI-made portraits: each persona has her own folder inside "images" next to index.html, named by her key, with files named
+   by her key too (e.g. images/priscilla/priscilla.png, images/lola/lola.jpg). Older flat names (images/lola.png) still work
+   when she has no folder. A persona with no file keeps the built-in drawn avatar. Files are looked up once and remembered. */
 const AV_EXTS = ["png", "jpg", "jpeg", "webp"], avImg = {}, avProbe = {}, avList = {};
-/* Pictures per persona: images/<key>.png (or <key>1.png) is the first, then images/<key>2.png, <key>3.png and so on.
-   Reward shots: images/<key>_reward.png, then <key>_reward2.png, <key>_reward3.png and so on. They go last in her list.
+/* Pictures per persona: images/<key>/<key>.png (or <key>1.png) is the first, then <key>2.png, <key>3.png and so on.
+   Reward shots: images/<key>/<key>_reward.png, then <key>_reward2.png, <key>_reward3.png and so on. They go last in her list.
    The browser can't list a folder, so numbering must have no gaps: run "make_avatars.py --tidy <images folder>" after
-   copying in ComfyUI files (names like lola_00012_.png) and it renames them to these names.
+   copying in ComfyUI files (names like lola_00012_.png) and it renames them to these names and sorts them into folders.
    SHOW_REWARDS: for now reward shots appear in her profile like any other picture; they can be locked later. */
 const SHOW_REWARDS = true, avRewards = {};
-/* Prize: images/<key>_prize.png is her best picture, saved for a real unlock reward. It's found and kept in avPrize, but it is
+/* Prize: images/<key>/<key>_prize.png is her best picture, saved for a real unlock reward. It's found and kept in avPrize, but it is
    never used for teases and isn't shown in her profile. When unlocking is built, show avPrize[key] once it's earned. */
 const avPrize = {};
 function setAvImg(el, url){ const im = new Image(); im.alt = ""; im.decoding = "async"; im.src = url; el.replaceChildren(im); }
 function loadOk(u){ return new Promise(r => { const t = new Image(); t.onload = () => r(true); t.onerror = () => r(false); t.src = u; }); }
-async function probeBase(base){
-  for (const x of AV_EXTS){ const u = "images/" + base + "." + x; if (await loadOk(u)) return u; }
+async function probeBase(dir, base){
+  for (const x of AV_EXTS){ const u = dir + base + "." + x; if (await loadOk(u)) return u; }
   return null;
 }
 /* <stem>.png (or <stem>1.png), then <stem>2.png, <stem>3.png... until the first missing number */
-async function probeSeq(stem){
+async function probeSeq(dir, stem){
   const found = [];
   for (let i = 1; i <= 20; i++){
     const bases = i === 1 ? [stem, stem + "1"] : [stem + i];
     let u = null;
-    for (const b of bases){ u = await probeBase(b); if (u) break; }
+    for (const b of bases){ u = await probeBase(dir, b); if (u) break; }
     if (!u) break;
     found.push(u);
   }
@@ -1437,10 +1457,16 @@ async function probeSeq(stem){
 }
 function findAvImgs(key){
   if (!avProbe[key]) avProbe[key] = (async () => {
-    const list = await probeSeq(key);
-    const rewards = await probeSeq(key + "_reward");
+    // her own folder first (images/<key>/); if it has nothing, the old flat layout (images/<key>.png)
+    let list = [], rewards = [], prize = null;
+    for (const dir of ["images/" + key + "/", "images/"]){
+      list = await probeSeq(dir, key);
+      rewards = await probeSeq(dir, key + "_reward");
+      prize = await probeBase(dir, key + "_prize");   // the special one: never teased, not in the profile until unlocked
+      if (list.length || rewards.length || prize) break;
+    }
     avRewards[key] = rewards; if (SHOW_REWARDS) list.push(...rewards);
-    avPrize[key] = await probeBase(key + "_prize");   // the special one: never teased, not in the profile until unlocked
+    avPrize[key] = prize;
     avList[key] = list; avImg[key] = list[0] || false;
     return list;
   })();
@@ -1769,7 +1795,10 @@ const SHORT = {"Patient Priscilla":"Priscilla","Mischievous Mia":"Mia","Strict M
   "Satin Sasha":"Sasha",
   "Livestream Lexi":"Lexi",
   "Lilith":"Lilith",
-  "Lyric Lola":"Lola"
+  "Lyric Lola":"Lola",
+  "Old Flame Bobbi":"Bobbi",
+  "Family-Friend Nancy":"Nancy",
+  "Heartbreaker Jenna":"Jenna"
 };
 const NAMEKEY = {"Patient Priscilla":"priscilla","Mischievous Mia":"mia","Strict Ms. Vance":"vance","Chaos Cassie":"cassie","Sweet-Talker Sienna":"sienna","Relentless Roxy":"roxy","Sleepy Sadie":"sadie","Drill Sergeant Dana":"dana","Mocking Margot":"margot","Cuckolding Veronica":"veronica","Counting Camille":"camille","Gambling Gigi":"gigi","Goddess Isadora":"isadora","Bratty Bella":"bella","Hypnotic Helena":"helena","Coach Colleen":"colleen","Doctor Delphine":"delphine","Jealous Juliet":"juliet","Queen Valentina":"valentina","Pouty Penelope":"penelope","Flirty Fiona":"fiona","Stage-Manager Simone":"simone",
   "Chef Gianna":"gianna",
@@ -1791,7 +1820,10 @@ const NAMEKEY = {"Patient Priscilla":"priscilla","Mischievous Mia":"mia","Strict
   "Satin Sasha":"sasha",
   "Livestream Lexi":"lexi",
   "Lilith":"lilith",
-  "Lyric Lola":"lola"
+  "Lyric Lola":"lola",
+  "Old Flame Bobbi":"bobbi",
+  "Family-Friend Nancy":"nancy",
+  "Heartbreaker Jenna":"jenna"
 };
 const ALL = Object.keys(SHORT);
 const REACT = {
@@ -1836,7 +1868,10 @@ const REACT = {
   "Satin Sasha": {excitedStay:4,jealousStay:3,askControl:2,jealousLeave:2,banter:3},
   "Livestream Lexi": {excitedStay:5,jealousStay:3,askControl:4,jealousLeave:1,banter:5},
   "Lilith": {excitedStay:3,jealousStay:3,askControl:4,jealousLeave:2,banter:4},
-  "Lyric Lola": {excitedStay:4,jealousStay:2,askControl:3,jealousLeave:1,banter:4}
+  "Lyric Lola": {excitedStay:4,jealousStay:2,askControl:3,jealousLeave:1,banter:4},
+  "Old Flame Bobbi": {excitedStay:3,jealousStay:4,askControl:3,jealousLeave:2,banter:2},
+  "Family-Friend Nancy": {excitedStay:3,jealousStay:3,askControl:4,jealousLeave:1,banter:4},
+  "Heartbreaker Jenna": {excitedStay:4,jealousStay:2,askControl:4,jealousLeave:1,banter:4}
 };
 Object.keys(MORE5).forEach(k => Object.keys(MORE5[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE5[k][c]); }));
 
@@ -1989,7 +2024,10 @@ function leaveRoom(p, quiet, force){
 /* Realism: the active persona can get bored or be pulled away, leaving the room empty until someone joins. */
 function ctlAway(){ return (running || (paused && emptyHalt)) && runTease && !!currentPersona && !room.includes(currentPersona); }
 const BORE_DEF = {"Livestream Lexi":3,"High-Energy Holly":2,"Starlet Sloane":2,"Office Olivia":1,"Satin Sasha":2,"Patient Priscilla":1,"Sleepy Sadie":1,"Strict Ms. Vance":2,"Counting Camille":2,"Chaos Cassie":6,"Mischievous Mia":5,"Bratty Bella":5,"Relentless Roxy":4,
-  "Lyric Lola":4
+  "Lyric Lola":4,
+  "Old Flame Bobbi":1,
+  "Family-Friend Nancy":3,
+  "Heartbreaker Jenna":4
 };
 const boreRate = p => { const e = document.getElementById("bore_" + NAMEKEY[p]); const v = e ? parseFloat(e.value) : NaN; return isNaN(v) ? (BORE_DEF[p] != null ? BORE_DEF[p] : 3) : Math.max(0, Math.min(100, v)); };
 function boredTick(){
@@ -2329,7 +2367,10 @@ const STUBBORN = {"Patient Priscilla":1.0,"Mischievous Mia":0.8,"Strict Ms. Vanc
   "Satin Sasha":1.0,
   "Livestream Lexi":1.0,
   "Lilith":1.4,
-  "Lyric Lola":1.1
+  "Lyric Lola":1.1,
+  "Old Flame Bobbi":1.2,
+  "Family-Friend Nancy":1.0,
+  "Heartbreaker Jenna":1.3
 };
 function setPersonaFields(name, jitter){
   if (!PERSONAS[name]) return; const p = personaCfg(name);
@@ -2434,7 +2475,10 @@ const NICKS = {"Patient Priscilla":["pet","darling","good boy"],"Mischievous Mia
   "Satin Sasha":["gorgeous","darling","sweetie"],
   "Livestream Lexi":["bestie","chat","legend"],
   "Lilith":["mortal","sinner","sweet soul"],
-  "Lyric Lola":["sweetness","mic check","baby girl"]
+  "Lyric Lola":["sweetness","mic check","baby girl"],
+  "Old Flame Bobbi":["babe", "stranger", "handsome"],
+  "Family-Friend Nancy":["trouble", "handsome", "sweetheart"],
+  "Heartbreaker Jenna":["buddy", "sweetie", "friend"]
 };
 const NICKRATE = {"Patient Priscilla":.35,"Mischievous Mia":.4,"Strict Ms. Vance":.55,"Chaos Cassie":.4,"Sweet-Talker Sienna":.35,"Relentless Roxy":.5,"Sleepy Sadie":.4,"Drill Sergeant Dana":.5,"Mocking Margot":.6,"Cuckolding Veronica":.6,"Counting Camille":0.4,"Gambling Gigi":0.4,"Goddess Isadora":0.55,"Bratty Bella":0.5,"Hypnotic Helena":0.4,"Coach Colleen":0.5,"Doctor Delphine":0.45,"Jealous Juliet":0.5,"Queen Valentina":0.55,"Pouty Penelope":0.4,"Flirty Fiona":0.4,"Stage-Manager Simone":0.45,
   "Chef Gianna":0.45,
@@ -2456,7 +2500,10 @@ const NICKRATE = {"Patient Priscilla":.35,"Mischievous Mia":.4,"Strict Ms. Vance
   "Satin Sasha":.45,
   "Livestream Lexi":.5,
   "Lilith":0.6,
-  "Lyric Lola":0.5
+  "Lyric Lola":0.5,
+  "Old Flame Bobbi":0.4,
+  "Family-Friend Nancy":0.45,
+  "Heartbreaker Jenna":0.5
 };const NICKCATS = ["greet","start","build","hold","holdMid","rest","restMid","fake","fakeAfter","warn","win","fail","chat","reply","please","close","demand","promise","watch","enjoy","lowSpeed","shortStroke","praise","nudge","fakeNote","hidden","lubeBreak","lubeWait","lubeResume","tempt"];
 function nickFor(name){
   const arr = personaNicks(name).length ? personaNicks(name) : ["pet"];
@@ -2624,7 +2671,10 @@ const YIELD_DEF = {"Patient Priscilla": 12, "Mischievous Mia": 8, "Strict Ms. Va
   "Satin Sasha": 9,
   "Livestream Lexi": 7,
   "Lilith": 4,
-  "Lyric Lola": 6
+  "Lyric Lola": 6,
+  "Old Flame Bobbi": 5,
+  "Family-Friend Nancy": 8,
+  "Heartbreaker Jenna": 4
 };
 
 /* ---------- vibration bursts: per-persona chance (% per tease cycle) and length (s) ---------- */
@@ -2648,7 +2698,10 @@ const VIB_DEF = {"Patient Priscilla":[2,6], "Mischievous Mia":[6,6], "Strict Ms.
   "Satin Sasha":[4,7],
   "Livestream Lexi":[5,7],
   "Lilith":[6,8],
-  "Lyric Lola":[6,5]
+  "Lyric Lola":[6,5],
+  "Old Flame Bobbi":[3,8],
+  "Family-Friend Nancy":[5,6],
+  "Heartbreaker Jenna":[6,6]
 };
 const vibNum = (pfx, p, i, lo, hi) => { const e = document.getElementById(pfx + NAMEKEY[p]); const v = e ? parseFloat(e.value) : NaN; return Math.max(lo, Math.min(hi, isNaN(v) ? ((VIB_DEF[p] || [3, 8])[i]) : v)); };
 const vibChance = p => vibNum("vibC_", p, 0, 0, 100);
@@ -2669,7 +2722,10 @@ const tpStop = p => { const e = document.getElementById(tpId(p, "stop")); return
 function personaCfg(p){ const o = {d: PERSONAS[p].d, stop: tpStop(p)}; TP.forEach(([f]) => o[f] = tpVal(p, f)); return o; }
 /* default chance (%) that each persona accepts an invite */
 const INV_DEF = {"Livestream Lexi":65,"High-Energy Holly":55,"Starlet Sloane":40,"Office Olivia":35,"Satin Sasha":50,"Chaos Cassie":70,"Bratty Bella":65,"Relentless Roxy":60,"Mischievous Mia":60,"Flirty Fiona":60,"Sweet-Talker Sienna":55,"Patient Priscilla":50,"Lilith":50,"Glitch":45,"Sleepy Sadie":25,"Strict Ms. Vance":30,"Queen Valentina":30,"Doctor Delphine":35,"Captain Sable":35,"Drill Sergeant Dana":35,"Unit Nine":20,
-  "Lyric Lola":55
+  "Lyric Lola":55,
+  "Old Flame Bobbi":70,
+  "Family-Friend Nancy":65,
+  "Heartbreaker Jenna":55
 };
 (function(){
   const box = $("persCfg"), SHORT0 = Object.assign({}, SHORT);   // SHORT0: the built-in names, for resetting
@@ -2782,6 +2838,9 @@ LINES["Jealous Juliet"] = PERSONA_LINES["Jealous Juliet"];
 LINES["Queen Valentina"] = PERSONA_LINES["Queen Valentina"];
 LINES["Pouty Penelope"] = PERSONA_LINES["Pouty Penelope"];
 LINES["Lyric Lola"] = PERSONA_LINES["Lyric Lola"];
+LINES["Old Flame Bobbi"] = PERSONA_LINES["Old Flame Bobbi"];
+LINES["Family-Friend Nancy"] = PERSONA_LINES["Family-Friend Nancy"];
+LINES["Heartbreaker Jenna"] = PERSONA_LINES["Heartbreaker Jenna"];
 LINES["Chef Gianna"] = PERSONA_LINES["Chef Gianna"];
 LINES["Inspector Vale"] = PERSONA_LINES["Inspector Vale"];
 LINES["Unit Nine"] = PERSONA_LINES["Unit Nine"];
@@ -2830,7 +2889,10 @@ const TARGETS = {"Patient Priscilla":{speed:60,len:80},"Mischievous Mia":{speed:
   "Satin Sasha":{speed:65,len:85},
   "Livestream Lexi":{speed:70,len:90},
   "Lilith":{speed:70,len:90},
-  "Lyric Lola":{speed:80,len:90}
+  "Lyric Lola":{speed:80,len:90},
+  "Old Flame Bobbi":{speed:65,len:85},
+  "Family-Friend Nancy":{speed:70,len:90},
+  "Heartbreaker Jenna":{speed:80,len:90}
 };
 const MERCY = {"Patient Priscilla":.8,"Mischievous Mia":.3,"Strict Ms. Vance":.2,"Chaos Cassie":.5,"Sweet-Talker Sienna":.8,"Relentless Roxy":.15,"Sleepy Sadie":.9,"Drill Sergeant Dana":.25,"Mocking Margot":.1,"Cuckolding Veronica":.12,"Counting Camille":0.5,"Gambling Gigi":0.4,"Goddess Isadora":0.3,"Bratty Bella":0.25,"Hypnotic Helena":0.7,"Coach Colleen":0.3,"Doctor Delphine":0.5,"Jealous Juliet":0.4,"Queen Valentina":0.2,"Pouty Penelope":0.8,"Flirty Fiona":0.6,"Stage-Manager Simone":0.4,
   "Chef Gianna":0.6,
@@ -2852,9 +2914,12 @@ const MERCY = {"Patient Priscilla":.8,"Mischievous Mia":.3,"Strict Ms. Vance":.2
   "Satin Sasha":.4,
   "Livestream Lexi":.3,
   "Lilith":0.25,
-  "Lyric Lola":0.35
+  "Lyric Lola":0.35,
+  "Old Flame Bobbi":0.6,
+  "Family-Friend Nancy":0.5,
+  "Heartbreaker Jenna":0.15
 };
-const MOODSETS = {gentle:["Makeover Marisol","Patient Priscilla","Sweet-Talker Sienna","Sleepy Sadie","Hypnotic Helena","Pouty Penelope","Flirty Fiona","Chef Gianna","Nurse Ingrid"], strict:["Mighty Magda","Enthroned Elodie","Turnabout Tamsin","Strict Ms. Vance","High-Energy Holly","Office Olivia","Relentless Roxy","Drill Sergeant Dana","Counting Camille","Pampered Paloma","Goddess Isadora","Coach Colleen","Queen Valentina","Inspector Vale","Unit Nine","Madame Olenka"], mean:["Mischievous Mia","Livestream Lexi","Starlet Sloane","Satin Sasha","Mocking Margot","Chaos Cassie","Cuckolding Veronica","Bratty Bella","Captain Sable","Glitch","Lilith"], any:ALL};
+const MOODSETS = {gentle:["Family-Friend Nancy","Old Flame Bobbi","Makeover Marisol","Patient Priscilla","Sweet-Talker Sienna","Sleepy Sadie","Hypnotic Helena","Pouty Penelope","Flirty Fiona","Chef Gianna","Nurse Ingrid"], strict:["Mighty Magda","Enthroned Elodie","Turnabout Tamsin","Strict Ms. Vance","High-Energy Holly","Office Olivia","Relentless Roxy","Drill Sergeant Dana","Counting Camille","Pampered Paloma","Goddess Isadora","Coach Colleen","Queen Valentina","Inspector Vale","Unit Nine","Madame Olenka"], mean:["Heartbreaker Jenna","Mischievous Mia","Livestream Lexi","Starlet Sloane","Satin Sasha","Mocking Margot","Chaos Cassie","Cuckolding Veronica","Bratty Bella","Captain Sable","Glitch","Lilith"], any:ALL};
 const QDEFS = {
   feel: {cat:"askFeel", opts:[{label:"Give me more",kind:"more"},{label:"I'm doing fine",kind:"fine"},{label:"It's a lot",kind:"lot"},{label:"I'm close",kind:"close"}]},
   next: {cat:"askNext", opts:[{label:"Tease me",kind:"tease"},{label:"Hold me there",kind:"hold"},{label:"Give me a rest",kind:"rest"},{label:"Surprise me",kind:"surprise"}]},
@@ -2903,7 +2968,7 @@ Object.keys(EASE_LINES).forEach(k => { if (LINES[k]) Object.assign(LINES[k], EAS
 if (typeof CAMILLE_EXTRA !== "undefined" && LINES["Counting Camille"]) Object.keys(CAMILLE_EXTRA).forEach(k => { const L = LINES["Counting Camille"]; L[k] = (L[k] || []).concat(CAMILLE_EXTRA[k]); });
 Object.assign(HYPE, {easeSpeed:3, easeStroke:3, easeNo:2});
 /* chance that a persona who is already on her preferred settings asks you to ease off instead (per demand check) */
-const EASE_CH = {"Mischievous Mia":.2,"Sleepy Sadie":.18,"Mocking Margot":.18,"Cuckolding Veronica":.18,"Hypnotic Helena":.18,"Flirty Fiona":.18,"Chef Gianna":.2,"Nurse Ingrid":.18,"Satin Sasha":.18,"Lilith":.2,"Chaos Cassie":.16,"Coach Colleen":.15,"Relentless Roxy":.05,"Bratty Bella":.07,"Jealous Juliet":.07};
+const EASE_CH = {"Heartbreaker Jenna":.2,"Family-Friend Nancy":.18,"Old Flame Bobbi":.18,"Mischievous Mia":.2,"Sleepy Sadie":.18,"Mocking Margot":.18,"Cuckolding Veronica":.18,"Hypnotic Helena":.18,"Flirty Fiona":.18,"Chef Gianna":.2,"Nurse Ingrid":.18,"Satin Sasha":.18,"Lilith":.2,"Chaos Cassie":.16,"Coach Colleen":.15,"Relentless Roxy":.05,"Bratty Bella":.07,"Jealous Juliet":.07};
 const easeChance = p => EASE_CH[p] != null ? EASE_CH[p] : 0.11;
 function easeDemand(p, sp, ln){
   const step = 5 * Math.round(rnd(10, 20) / 5);
@@ -3000,7 +3065,10 @@ const TOL = {"Patient Priscilla": 5, "Mischievous Mia": 3, "Strict Ms. Vance": 2
   "Satin Sasha": 3,
   "Livestream Lexi": 3,
   "Lilith": 3,
-  "Lyric Lola": 3
+  "Lyric Lola": 3,
+  "Old Flame Bobbi": 4,
+  "Family-Friend Nancy": 3,
+  "Heartbreaker Jenna": 3
 };
 Object.keys(MORE10).forEach(k => Object.keys(MORE10[k]).forEach(c => { LINES[k][c] = (LINES[k][c] || []).concat(MORE10[k][c]); }));
 Object.assign(HYPE, {dmdWarn:4,dmdLeave:6});
@@ -3149,6 +3217,8 @@ renderPersCfg();
 simUI(); syncSimBtn();
 addMsg("sys", "Welcome to the lounge. Personalities drop in and out. Pick one under Personas to hand over control, or wait for someone to tempt you.");
 try { if (!store.get("lubeParkMig", 0)){ if (+$("lubePark").value === 0) $("lubePark").value = 20; store.set("lubeParkMig", 1); saveInputs(); } } catch(e){}
+/* the park setting now counts from the rest end (it was flipped); the old default of 20 becomes the new default of 0 */
+try { if (!store.get("lubeParkMig2", 0)){ if (+$("lubePark").value === 20) $("lubePark").value = 0; store.set("lubeParkMig2", 1); saveInputs(); } } catch(e){}
 renderRoom();
 
 /* ---------- profiles ---------- */
