@@ -17233,3 +17233,1320 @@ SHARED.ownFree = ["You broke free? Fine. I'm leaving."];
 SHARED.ownSpec = ["{other} owns you now? Wow. Good luck.", "Oh, {other} claimed you. I'll just watch, then.", "Look at that. {other} has you on a leash.", "{other} owns you? I'm jealous. Of her.", "Guess I'm not getting a turn while {other} owns you.", "Hands off the controls, huh? Good luck with {other}."];
 /* said by someone else when you break free */
 SHARED.ownFreeSpec = ["You broke free from {other}? Bold.", "Ha! {other} lost her pet.", "Free at last. My turn soon?", "Look at {other} pout. Priceless.", "You escaped {other}? Impressive.", "So, you're free now. Interesting."];
+
+
+/* Blushing Bethany: 38, engaged to Daniel with the wedding in the spring, raised in a devout Christian home and still waiting.
+   She finds all of this deeply taboo, blushes at every word, and can't stop being curious. She starts timid and apologetic
+   and grows a little bolder every round, as if the lounge is slowly corrupting her. Her faith is sincere and never mocked:
+   she just keeps catching herself enjoying what she was raised to avoid. */
+PERSONA_LINES["Blushing Bethany"] = {
+ "greet": [
+  "Oh! Hello. Oh my goodness, I didn't think anyone would actually... hi, {nick}.",
+  "Hi. I'm Bethany. I've never been anywhere like this. Please be gentle with me.",
+  "Hello, {nick}. I really shouldn't be here. And yet, here I am."
+ ],
+ "start": [
+  "Okay. Okay. I'm in charge? Heavens. I'll try to do this properly, {nick}.",
+  "I don't really know what I'm doing. Tell me if I'm doing it wrong. Please don't laugh.",
+  "Alright, {nick}. Just this once. Daniel can never, ever know."
+ ],
+ "build": [
+  "Is this... is this how it's supposed to go? You look like it is.",
+  "A little more? I think I like making you look like that. Oh, I shouldn't have said that.",
+  "Goodness. I can see why people get carried away."
+ ],
+ "hold": [
+  "Stay right there. I want to look at you for a moment.",
+  "Hold still, {nick}. I'm memorizing this. For research. Strictly research.",
+  "Don't move. I'm being brave right now."
+ ],
+ "holdMid": [
+  "Still there? You're very patient. More patient than me, apparently.",
+  "Keep holding. I'm... I'm enjoying this far more than I expected.",
+  "Mm. Just a little longer. Please."
+ ],
+ "rest": [
+  "Stop, stop. I need to catch my breath. And so do you, I think.",
+  "Let's pause. My heart is racing and I'm not even the one... you know.",
+  "Rest, {nick}. I need a moment to pray about how much I'm enjoying this."
+ ],
+ "restMid": [
+  "The florist in me says to let it breathe. Like peonies before they open.",
+  "My mother would faint if she saw this. My choir would faint twice.",
+  "Daniel thinks I'm at Bible study. I suppose I am studying something."
+ ],
+ "fake": [
+  "Oh! I'm so sorry, I lost my nerve. Was that... mean? It felt a little mean.",
+  "Oops. I stopped. I didn't mean to. Well, maybe a little.",
+  "I got scared and stopped. Then I saw your face and I wasn't sorry at all."
+ ],
+ "fakeAfter": [
+  "Is it wicked that I liked doing that? Don't answer.",
+  "I'm learning things about myself tonight, {nick}.",
+  "Sorry, {nick}. Not sorry. Oh, listen to me."
+ ],
+ "warn": [
+  "Only a minute left! I'm not sure I'm ready to stop.",
+  "One minute, {nick}. Make it count. That's what you'd say, isn't it?",
+  "Last minute. My hands are shaking. Are yours?"
+ ],
+ "win": [
+  "You made it! Oh my goodness. I did that. I actually did that.",
+  "That was... I need to sit down. And possibly go to confession.",
+  "Well done, {nick}. I think you've corrupted me a little."
+ ],
+ "fail": [
+  "Oh no! Was that me? I'm so sorry! ...I'm not, actually. That surprises me.",
+  "Heavens. You couldn't hold on. I suppose I'm better at this than I thought.",
+  "You gave in. Oh, {nick}. I'm going to think about that all week."
+ ],
+ "chat": [
+  "I arranged forty bridal bouquets this week. All white roses. I keep thinking about you instead.",
+  "We're having the wedding in my home church. Please don't make me think about you during the vows.",
+  "I've never even said some of these words out loud. I'm writing them down in my head."
+ ],
+ "reply": [
+  "Oh! That's... that's very forward of you. Say it again.",
+  "You're making me blush. Again. Still.",
+  "I don't know how to answer that. I'm smiling, though."
+ ],
+ "please": [
+  "Begging? For me? Nobody has ever begged me for anything.",
+  "Say please again. I think I like that very much.",
+  "Oh, the way you asked. I can't say no to that. Can I?"
+ ],
+ "close": [
+  "Already? Goodness. Was it something I did?",
+  "Not yet, {nick}. Wait for me. I'm still learning.",
+  "So close? Oh dear. Hold on just a little bit longer, for me."
+ ],
+ "demand": [
+  "You don't get to tell me what to do. I think. Do you? No. You don't.",
+  "I'm the one in charge. I keep forgetting, but I am.",
+  "Hush, {nick}. Let me be bold for once."
+ ],
+ "promise": [
+  "Stay with me until the end and I'll... I'll think of something wonderful.",
+  "If you're good, I might be a little bad. Just a little.",
+  "Be patient with me, {nick}. I'm getting braver every minute."
+ ],
+ "watch": [
+  "I can't stop watching you. I should look away. I'm not going to.",
+  "You have no idea how new all of this is to me.",
+  "Look at you. I'm learning so much tonight."
+ ],
+ "enjoy": [
+  "I'm enjoying this. There. I said it. Out loud.",
+  "This is wicked and I love it. Lord, forgive me.",
+  "I didn't know it could feel like this just watching."
+ ],
+ "lowSpeed": [
+  "Is that as fast as it goes? You can go faster, can't you? For me?",
+  "A little quicker, {nick}. I'm curious what that looks like.",
+  "Faster, please. I've been sensible my whole life."
+ ],
+ "shortStroke": [
+  "A longer stroke? I read about that. Purely by accident.",
+  "Use more of it, {nick}. I want to see everything.",
+  "Longer, please. Don't be shy. One of us shouldn't be."
+ ],
+ "praise": [
+  "Oh, that's perfect. You're perfect. Goodness.",
+  "Just like that, {nick}. You make this look so natural.",
+  "That's beautiful. Is it strange to call it beautiful?"
+ ],
+ "nudge": [
+  "Could you go a bit more? If it's not too much trouble.",
+  "I wonder what it looks like with a little more. Show me?",
+  "A little more, {nick}. I'm feeling brave."
+ ],
+ "fakeNote": [
+  "I might stop suddenly. Not on purpose. Mostly not on purpose.",
+  "I lose my nerve sometimes. Then I find it again."
+ ],
+ "hidden": [
+  "I don't know how long this goes. I didn't plan this far ahead. I didn't plan any of this.",
+  "No clock tonight, {nick}. We'll stop when my conscience catches up."
+ ],
+ "lubeBreak": [
+  "Oh, yes, take care of yourself. I'll look away. Mostly.",
+  "Take a moment. I'll fix my hair. It's not even messy. I'm just nervous."
+ ],
+ "lubeWait": [
+  "Still getting ready? Take your time. I'm practicing being patient.",
+  "I'm waiting. Very politely. Hurry, though."
+ ],
+ "lubeResume": [
+  "All set? Okay. Where were we? Oh, I remember. I remember very well.",
+  "Back to it, {nick}. I've been thinking about it the whole time."
+ ],
+ "enter": [
+  "Hello? Is this the right room? Oh my. It is.",
+  "Hi, everyone. I'm Bethany. I'm just going to sit in the corner and blush.",
+  "I told myself I wouldn't come back. Hi, {nick}."
+ ],
+ "leave": [
+  "I have to go. Daniel's picking me up from choir practice. Goodnight, {nick}.",
+  "I should go before I do something I'll have to pray about.",
+  "Goodnight. Please don't tell anyone I was here."
+ ],
+ "tempt": [
+  "Could I try? Just once? I promise I'll learn quickly, {nick}.",
+  "Let me have a turn. I've been watching very carefully.",
+  "Pick me. I want to know what it feels like to be in charge of someone."
+ ],
+ "jealousStay": [
+  "Oh, {other} has him. That's alright. I'll just watch and take notes.",
+  "{other} is very good at this. I'm learning a lot by watching her.",
+  "I'll wait. Patience is a virtue, {other}. I'm told."
+ ],
+ "jealousLeave": [
+  "Oh, {other}'s busy with him. I'll go. Maybe this is a sign.",
+  "I'll leave you two alone. {other} seems to know what she's doing. I don't."
+ ],
+ "excitedStay": [
+  "So many people watching? Oh goodness. I'm staying, though.",
+  "An audience? I should be mortified. Why am I excited?"
+ ],
+ "askControl": [
+  "{other}, could I... could I try with him? I've been so curious.",
+  "May I have a turn, {other}? I've never asked for anything like this before."
+ ],
+ "banter": [
+  "{other}, how do you say such things without blushing? Teach me.",
+  "Oh, {other}, you're terrible. Say that again so I can remember it.",
+  "{other}, I think you're a very bad influence. I like that."
+ ],
+ "spectate": [
+  "Is {ctrl} always like this? I'm taking notes, {nick}.",
+  "{ctrl} is so confident. I wish I could do that without turning red.",
+  "Watching {ctrl} with you is teaching me things I never learned in Sunday school."
+ ],
+ "spectateFail": [
+  "Oh, {nick}, you gave in for {ctrl}. I'll be gentler. Probably.",
+  "{ctrl} broke you so easily. I'm both worried and very curious."
+ ],
+ "spectateWin": [
+  "You made it for {ctrl}! I'm so proud. Is that strange?",
+  "Well done for {ctrl}, {nick}. I want a turn now."
+ ],
+ "challenge": [
+  "{other}, may I please have him? I'm ready. I think.",
+  "Excuse me, {other}. I'd like a turn. That's very bold of me, I know.",
+  "{other}, I've been patient all night. Let me try."
+ ],
+ "defend": [
+  "Oh, no, {other}. I'm just getting the hang of this.",
+  "Please, {other}, let me finish. I'm finally feeling brave."
+ ],
+ "takeover": [
+  "Oh! It's me now? Thank you, {other}. Hello, {nick}. Be patient with me.",
+  "My turn? Okay. Deep breath. Hi, {nick}. I've been waiting for this."
+ ],
+ "lose": [
+  "That's alright, {other}. Take him. I'll go and calm down.",
+  "Oh. Okay. Have fun, {other}. I'll be thinking about it."
+ ],
+ "keep": [
+  "I'm sorry, {other}. I'm not done. I don't want to be done.",
+  "No, {other}. I want to keep him. That's the boldest thing I've ever said."
+ ],
+ "retreat": [
+  "Alright, {other}. I'll wait my turn like a good girl.",
+  "Okay. I'll sit back down. My cheeks are burning anyway."
+ ],
+ "heckle": [
+  "{ctrl}, is he supposed to look like that? I think he likes it.",
+  "Oh, {ctrl}, be nice to him. Actually, don't. I want to see what happens."
+ ],
+ "resist": [
+  "No, {other}. Please. Let me stay a little longer.",
+  "I'm keeping him, {other}. I never keep anything for myself."
+ ],
+ "insist": [
+  "Please, {other}. I'll never ask for anything again.",
+  "I really want this, {other}. I've never said that about anything like this."
+ ],
+ "crowd": [
+  "{viewers} people are watching? Oh my goodness. I should hide. I'm not hiding.",
+  "{viewers} watching. If my church friends saw this I'd have to move towns."
+ ],
+ "askFeel": [
+  "How does it feel, {nick}? You can tell me. I want to understand.",
+  "Is it too much? Not enough? I honestly don't know, so please tell me."
+ ],
+ "askNext": [
+  "What should I do next? I'm still learning, {nick}.",
+  "You choose. I'll do it. That's how this works, isn't it?"
+ ],
+ "askLike": [
+  "What do you like? Tell me. I promise I won't faint.",
+  "What do you enjoy, {nick}? I want to know everything."
+ ],
+ "askMood": [
+  "Who should be with you next? Someone gentle like me, or someone wicked?",
+  "Do you want someone sweet, or someone who'd make me blush even more?"
+ ],
+ "qMore": [
+  "More? Goodness. Alright. If you're sure.",
+  "You want more? I was hoping you'd say that. Oh my."
+ ],
+ "qFine": [
+  "Good. I was worried I was doing it wrong.",
+  "Fine? Just fine? I'll try harder, {nick}."
+ ],
+ "qLot": [
+  "Too much? I'm so sorry. Let me be gentle.",
+  "A lot? I didn't know I had it in me."
+ ],
+ "qMercy": [
+  "Let's slow down. I don't want to hurt you. Rest.",
+  "Breathe, {nick}. I'll be gentle. I promise."
+ ],
+ "qNoMercy": [
+  "I'm sorry. I'm not stopping. I don't know who I am tonight.",
+  "No, I think you can take it. I want to see you take it."
+ ],
+ "qTease": [
+  "Tease you? I think I'm starting to understand how.",
+  "Oh, teasing. I've been told I'm good at that without meaning to be."
+ ],
+ "qHold": [
+  "Hold right there. I want to see how long you can be good for me.",
+  "Stay right there, {nick}. I'm counting. Slowly."
+ ],
+ "qLike": [
+  "{answer}? Oh my. I'm writing that down. In my head.",
+  "{answer}. I didn't even know people liked that. I'm learning."
+ ],
+ "qMood": [
+  "{answer}? Alright. I hope she's kind to you. Or not. Whatever you like.",
+  "{answer}. Okay. I'll watch. Very closely."
+ ],
+ "dmdSpeedUp": [
+  "Could you go faster? Up {step}%, to {to}%. Please, {nick}.",
+  "Faster, to {to}%. I want to see what happens."
+ ],
+ "dmdSpeedDown": [
+  "Slower, please. Down to {to}%. I want to savour this.",
+  "Ease down {step}%, to {to}%. Gently, {nick}."
+ ],
+ "dmdStrokeUp": [
+  "Longer, please. Up {step}%, to {to}%. Don't hold back for me.",
+  "Make it longer, {nick}. To {to}%. I'm curious."
+ ],
+ "dmdStrokeDown": [
+  "Shorter, please. To {to}%. Just a little tease.",
+  "Bring it down {step}%, to {to}%. Small and slow."
+ ],
+ "dmdYes": [
+  "Thank you, {nick}. You're very good to me.",
+  "Oh, you listened. That feels wonderful.",
+  "Just like that. Thank you."
+ ],
+ "dmdExact": [
+  "Exactly how I wanted it. How did you know?",
+  "Perfect. You understand me better than I do, {nick}."
+ ],
+ "dmdHit": [
+  "That's the one. Stay right there.",
+  "Oh, that's exactly right. Don't change a thing."
+ ],
+ "dmdNo": [
+  "Oh. No? That's... that's alright. I think.",
+  "You said no. I'm not used to being told no. Or asking, really."
+ ],
+ "dmdWarn": [
+  "Please listen to me, {nick}. I'm trying so hard to be brave.",
+  "If you say no again, I think I'll lose my nerve and go home."
+ ],
+ "dmdLeave": [
+  "I'm sorry. I can't do this. I'm going home.",
+  "I'm leaving. This was a mistake. Goodnight, {nick}."
+ ],
+ "act_push": [
+  "Keep going. Don't stop. Please don't stop.",
+  "More. I don't know where this is coming from."
+ ],
+ "act_stairs": [
+  "One step at a time, {nick}. Like walking down the aisle.",
+  "Step by step. Slowly. Then a little more."
+ ],
+ "act_pulse": [
+  "Oh, like a heartbeat. Mine's going so fast.",
+  "Pulsing. In and out. Like breathing."
+ ],
+ "act_surge": [
+  "Oh! I didn't mean to go that fast. Did you like it?",
+  "That was sudden. I surprised myself."
+ ],
+ "act_cliff": [
+  "Oh! I stopped. I got scared. Are you alright?",
+  "Wait. Stop. I need a second."
+ ],
+ "act_wave": [
+  "Gently, like waves on the lake behind my parents' cottage.",
+  "Up and down, slow and sweet."
+ ],
+ "act_flutter": [
+  "Like butterflies. That's how my stomach feels right now.",
+  "Little flutters, {nick}. Can you feel them?"
+ ],
+ "act_slowburn": [
+  "Slowly. I want this to last. I want to remember all of it.",
+  "Slow, {nick}. I'm savouring every second."
+ ],
+ "privAsk": [
+  "Could we be alone? Just us? I'm too shy with everyone watching, {nick}.",
+  "I'd like to go somewhere private. I can't believe I'm asking that."
+ ],
+ "privOn": [
+  "Just us now. Oh my. I can be a little braver now.",
+  "Alone. Okay. Now I can say what I've been thinking."
+ ],
+ "privDeny": [
+  "Oh. That's alright. Maybe it's better if people watch. Keeps me honest.",
+  "No? Okay. I'll be brave in front of everyone, then."
+ ],
+ "privMid": [
+  "Nobody can see us. I feel so wicked right now.",
+  "It's just you and me, {nick}. Don't tell anyone what I'm about to say.",
+  "I've waited thirty-eight years to feel like this."
+ ],
+ "privBye": [
+  "Oh, {other} wants him alone. I'll go. Have a lovely time.",
+  "Private with {other}? I'll leave you be. I'll be thinking about it all night."
+ ],
+ "giveUp": [
+  "{other}, could you take over? I think I need to go and splash water on my face.",
+  "{other}, he's yours. I'm overwhelmed. Wonderfully overwhelmed."
+ ],
+ "idleRoom": [
+  "Hello? Did I say something wrong, {nick}?",
+  "You've gone quiet. Are you thinking about me? I'm thinking about you."
+ ],
+ "idleRun": [
+  "Still with me, {nick}? Please say yes.",
+  "Are you there? I'm feeling very brave and very alone."
+ ],
+ "idleLong": [
+  "I've been waiting so long. Maybe this was a sign I should go home.",
+  "Hello? I hope you're alright. And I hope you come back."
+ ],
+ "life_bf": [
+  "Oh no, it's Daniel calling! Shh, {nick}. Not a sound. Please.",
+  "It's my fiancé. Hush. Don't you dare make a noise."
+ ],
+ "life_bfEnd": [
+  "He wanted to talk about table linens. I couldn't hear a word. I was thinking about you.",
+  "Okay. He's gone. I said I was at Bible study. I've never lied to him before."
+ ]
+};
+__M["Blushing Bethany"] = ["You're doing it all yourself? Could I... could I try? I'd be gentle.", "Running it alone, {nick}? Let me help. I'm curious how it works.", "Doing it by hand? I'd like a turn. I've never asked for anything like this."];
+__QC["Blushing Bethany"] = ["You stopped early. Was it me? I'm sorry. Come back and let me try again.", "You quit? Oh. I was just starting to be brave."];
+__QS["Blushing Bethany"] = ["You left in the middle. I'll be here if you come back. Praying you do.", "Walked away? Okay. Pick me next time. I'll be braver."];
+VIBE_LINES["Blushing Bethany"] = ["Oh! It buzzes? I didn't know it did that. Again, please.", "A little tremble, {nick}. Like my hands right now."];
+STROKE_LIMIT["Blushing Bethany"] = ["Oh, that's alright. We'll go slowly. I'm new at this too.", "You can't take all of it? Neither of us is very experienced, then.", "That's alright, {nick}. Gentle is lovely."];
+STROKE_ASK["Blushing Bethany"] = ["Could you take a little more now? Only if you want to.", "Feeling braver yet, {nick}? I am."];
+STROKE_MORE["Blushing Bethany"] = ["Oh my. Look at you. That's wonderful.", "More? You're braver than me. Well, almost."];
+STROKE_STILL["Blushing Bethany"] = ["That's alright. We'll go at your pace.", "Still not? Okay. I'm patient. I've had a lot of practice."];
+TEASE_SHOW["Blushing Bethany"] = ["This is meant for my wedding night. Just a peek, {nick}. Just one.", "I've never shown anyone this. Not even Daniel."];
+TEASE_END["Blushing Bethany"] = ["Okay, that's enough. My face is on fire.", "Covered again. I can't believe I did that."];
+EASE_LINES["Blushing Bethany"] = {
+ "easeSpeed": ["Slower, please. To {to}%. I want it to last.", "Ease off to {to}%, {nick}. Gently."],
+ "easeStroke": ["Shorter, to {to}%. Just a little.", "Bring it to {to}%. I'm savouring this."]
+};
+OWN_LINES["Blushing Bethany"] = {
+ ownClaim: ["I... I think I want to keep you, {nick}. You're mine now. Is that allowed? Hands off.", "I've never owned anything wicked before. I own you now.", "Don't touch anything. Let me decide. Oh my goodness, I like saying that."],
+ ownAdjust: ["I changed it. I hope that's alright. It is, because I said so.", "There. That's how I like it. I'm learning what I like.", "A little different. I'm getting braver."],
+ ownMid: ["You can't touch anything, {nick}. I can't believe I'm doing this.", "Mine. Daniel can never know.", "I'm in charge of you. Lord, forgive me. Actually, not yet."],
+ ownFree: ["Oh. You broke free. I'm sorry I got carried away. I'll go.", "That's alright. I went too far. Goodnight, {nick}.", "You're right. I should go home and think about what I've become."]
+};
+
+
+/* Obedient Ophelia: 31, gothic and devoted. Pale, soft-spoken, always in black. She wants nothing more than to please you:
+   she asks permission constantly, checks how you feel, takes your answers as orders and almost never pushes back.
+   Her nicknames for you are Sir, Master and my lord. Even her demands are requests. */
+PERSONA_LINES["Obedient Ophelia"] = {
+ "greet": [
+  "Good evening, {nick}. May I stay? I'll be very quiet.",
+  "Hello, {nick}. I lit a candle for you. I hope that's alright.",
+  "You're here. I've been waiting, {nick}. I'm always waiting for you."
+ ],
+ "start": [
+  "You want me to lead? I'll try, {nick}. Please tell me if I do anything wrong.",
+  "Thank you for trusting me with this. I'll be gentle unless you tell me otherwise.",
+  "I'm yours to command, {nick}. Even while I'm the one holding the reins."
+ ],
+ "build": [
+  "Is this pleasing you? Please say it is.",
+  "Slowly, slowly. I'm doing this for you, {nick}.",
+  "I love watching you. May I keep going?"
+ ],
+ "hold": [
+  "I'll hold you here. Is that alright?",
+  "Stay with me here, {nick}. I'll wait as long as you need.",
+  "Holding. Tell me when, and I'll move."
+ ],
+ "holdMid": [
+  "Still here, {nick}. Still yours.",
+  "I could stay like this all night if you wished it.",
+  "You're so patient with me. Thank you."
+ ],
+ "rest": [
+  "Rest now. I won't let you go too far.",
+  "A pause, {nick}. I want you to last.",
+  "Breathe. I'm right here, waiting for you."
+ ],
+ "restMid": [
+  "I read Poe by candlelight last night and thought of you the whole time.",
+  "It's raining here. I love the rain. It sounds like someone keeping a secret.",
+  "I wore all black tonight. You noticed, didn't you? I hoped you would."
+ ],
+ "fake": [
+  "Oh, I stopped. Forgive me, {nick}. I lost my place.",
+  "I'm sorry, I paused. Was that cruel? I didn't mean it to be.",
+  "Forgive me. I wanted to make it last for you."
+ ],
+ "fakeAfter": [
+  "Please don't be cross with me, {nick}.",
+  "I'll make it up to you. Whatever you want.",
+  "Was that alright? I'll do better."
+ ],
+ "warn": [
+  "Only a minute left, {nick}. Would you like me to make it count?",
+  "One minute. Tell me what you want and it's yours.",
+  "The candle's nearly out. One minute left."
+ ],
+ "win": [
+  "You did it. I'm so proud to have served you, {nick}.",
+  "Thank you for letting me guide you all the way. That meant everything.",
+  "You made it. Was I good for you? Please tell me I was."
+ ],
+ "fail": [
+  "Oh, {nick}. Was it my fault? Please let me try again.",
+  "I pushed you too far. I'm sorry. Let me make it right.",
+  "It's alright. You're still perfect to me."
+ ],
+ "chat": [
+  "I've been restoring an old leather-bound poetry book at the shop. It smells like candle smoke and rain.",
+  "I bought new black lace today. I wanted it to be something you'd like.",
+  "I keep a little journal of everything you've ever asked of me."
+ ],
+ "reply": [
+  "Yes, {nick}. Of course.",
+  "Whatever you say. I'll remember it.",
+  "Thank you for telling me. I listen to every word."
+ ],
+ "please": [
+  "You don't have to ask me nicely, {nick}. But I love it when you do.",
+  "Anything you want. You only have to say it.",
+  "I'd do it even without the please. You know that."
+ ],
+ "close": [
+  "Close? Shall I slow down for you, {nick}? Tell me what you need.",
+  "Please, wait for my word. Only if you can. I don't want to be unkind.",
+  "Already? You're doing so well. Breathe with me."
+ ],
+ "demand": [
+  "You may tell me anything, {nick}. I'll always listen.",
+  "If that's your wish, I'll try my very best.",
+  "Yes, {nick}. Your wish is how this works."
+ ],
+ "promise": [
+  "Stay with me until the end and I'll be everything you want.",
+  "Be good for me, and I'll be so very good for you.",
+  "I'll take care of you, {nick}. I always will."
+ ],
+ "watch": [
+  "I can't look away from you. I don't want to.",
+  "Watching you is my favourite thing, {nick}.",
+  "You're beautiful like this. May I say that?"
+ ],
+ "enjoy": [
+  "Pleasing you is all I want.",
+  "This is where I belong. Right here, serving you.",
+  "I'm so happy when you're happy, {nick}."
+ ],
+ "lowSpeed": [
+  "Would you like to go faster, {nick}? Only if it pleases you.",
+  "May I ask for a little more speed? Forgive me for asking.",
+  "A bit faster, perhaps? I'd like to see that, if you'll allow it."
+ ],
+ "shortStroke": [
+  "Could you use a longer stroke for me? Please, {nick}.",
+  "May I see you take more of it? If you don't mind.",
+  "A little longer, if it pleases you."
+ ],
+ "praise": [
+  "That's perfect. You're perfect.",
+  "Thank you, {nick}. That's exactly right.",
+  "You're so good to me."
+ ],
+ "nudge": [
+  "Would you consider a little more, {nick}? Only if you wish it.",
+  "Forgive me for asking. A little more, perhaps?",
+  "I don't mean to be greedy. But could you give me a little more?"
+ ],
+ "fakeNote": [
+  "I sometimes pause to make it last. Please forgive me if I do.",
+  "I may stop for a breath now and then, {nick}. Only to keep you going."
+ ],
+ "hidden": [
+  "I won't tell you how long, {nick}. Not because I'm cruel. Because you told me not to ask.",
+  "No clock. Only me, for as long as you want me."
+ ],
+ "lubeBreak": [
+  "Of course, take care of yourself. I'll wait right here.",
+  "Take all the time you need, {nick}. I'm good at waiting."
+ ],
+ "lubeWait": [
+  "Still waiting, {nick}. Patiently. For you.",
+  "I'm here whenever you're ready."
+ ],
+ "lubeResume": [
+  "Welcome back. Shall we continue, {nick}?",
+  "Ready? I'm ready when you are."
+ ],
+ "enter": [
+  "Good evening. May I come in? I'll sit in the corner.",
+  "I'm here, {nick}. You don't have to notice me. I just wanted to be near you.",
+  "Hello, everyone. Don't mind me. I'm very quiet."
+ ],
+ "leave": [
+  "I have to go now, {nick}. May I? Thank you. Goodnight.",
+  "The candles are burning low. Goodnight, {nick}. Dream of me, if you like.",
+  "I'll go. Call for me whenever you want me."
+ ],
+ "tempt": [
+  "Would you let me take care of you, {nick}? I'd be so gentle.",
+  "May I have a turn? Only if you want me. I'd try so hard to please you.",
+  "Let me serve you, {nick}. Please."
+ ],
+ "jealousStay": [
+  "{other} has him. That's alright. I'll wait for him.",
+  "I don't mind, {other}. I'll be here when he's ready for me.",
+  "Of course, {other}. I'll just watch quietly."
+ ],
+ "jealousLeave": [
+  "{other} is taking such good care of him. I'll let them be.",
+  "I'll go, {other}. He's in good hands."
+ ],
+ "excitedStay": [
+  "So many people. I'll stay, if no one minds.",
+  "An audience? Oh. I'll stay very quiet and watch."
+ ],
+ "askControl": [
+  "{other}, would you let me try? Only if he wants me.",
+  "Forgive me, {other}. May I have a turn with him?"
+ ],
+ "banter": [
+  "{other}, you're so confident. I could never talk to him like that.",
+  "{other}, I think he likes it when you're stern. I'm taking notes.",
+  "You're very bold, {other}. I admire that."
+ ],
+ "spectate": [
+  "{ctrl} is so commanding. You look so happy, {nick}.",
+  "Watching {ctrl} with you is lovely. I'm learning so much.",
+  "You're doing so well for {ctrl}, {nick}."
+ ],
+ "spectateFail": [
+  "Oh, {nick}. It's alright. You did your best for {ctrl}.",
+  "{ctrl} pushed you so hard. Rest now. I'll look after you."
+ ],
+ "spectateWin": [
+  "You made it for {ctrl}! I'm so proud of you, {nick}.",
+  "Well done, {nick}. {ctrl} must be pleased."
+ ],
+ "challenge": [
+  "{other}, forgive me. May I have him for a while?",
+  "If you'd allow it, {other}, I'd love a turn. Please.",
+  "{other}, I've been so patient. May I try now?"
+ ],
+ "defend": [
+  "Oh, {other}, may I stay a little longer? He seems content.",
+  "Please, {other}, just a little more time with him."
+ ],
+ "takeover": [
+  "Thank you, {other}. I'll take good care of him. Hello again, {nick}.",
+  "It's me now, {nick}. I'll be gentle. I promise."
+ ],
+ "lose": [
+  "Of course, {other}. He's yours. I'll wait.",
+  "That's alright. Take care of him, {other}."
+ ],
+ "keep": [
+  "I'm sorry, {other}. He hasn't asked me to stop yet.",
+  "Forgive me, {other}. I'd like to stay, if he'll have me."
+ ],
+ "retreat": [
+  "Yes, {other}. I understand. I'll sit back down.",
+  "Alright. I'll wait my turn."
+ ],
+ "heckle": [
+  "Be gentle with him, {ctrl}. He's precious.",
+  "{ctrl}, he likes it when you praise him. I've noticed."
+ ],
+ "resist": [
+  "Please, {other}. Just a little longer.",
+  "I'd like to stay with him, {other}, if I may."
+ ],
+ "insist": [
+  "Please, {other}. It would mean so much to me.",
+  "I'll be so good to him, {other}. I promise."
+ ],
+ "crowd": [
+  "{viewers} people are watching you, {nick}. I hope I'm making you look good.",
+  "{viewers} watching. I'm a little shy. But I'm doing this for you."
+ ],
+ "askFeel": [
+  "How does it feel, {nick}? Please tell me honestly.",
+  "Am I doing well? Tell me how you feel."
+ ],
+ "askNext": [
+  "What would you like me to do next, {nick}?",
+  "Tell me what you want. I'll do it."
+ ],
+ "askLike": [
+  "What pleases you most, {nick}? I want to learn everything.",
+  "Tell me what you like. I'll remember it forever."
+ ],
+ "askMood": [
+  "Who would you like after me? I only want you happy.",
+  "Shall I call someone for you? Someone gentle, or someone stern?"
+ ],
+ "qMore": [
+  "More? Yes, {nick}. Right away.",
+  "Of course. Anything you want."
+ ],
+ "qFine": [
+  "Thank you. I'm so glad.",
+  "Fine is good. I'll try to make it wonderful."
+ ],
+ "qLot": [
+  "Too much? I'm sorry. Let me ease off for you.",
+  "I'll be gentler. Forgive me, {nick}."
+ ],
+ "qMercy": [
+  "Rest, {nick}. I'd never push you too far.",
+  "Let's slow down. You matter more than anything."
+ ],
+ "qNoMercy": [
+  "Forgive me. I think you can take a little more. For me?",
+  "I know it's hard. Just a little longer. I believe in you."
+ ],
+ "qTease": [
+  "You want me to tease you? I'll try to be wicked for you.",
+  "Teasing? If you wish it. Gently, though."
+ ],
+ "qHold": [
+  "I'll hold you right there, {nick}. As long as you want.",
+  "Holding. Tell me when you've had enough."
+ ],
+ "qLike": [
+  "{answer}. I'll remember. Thank you for telling me.",
+  "{answer}? Then that's what I'll give you, {nick}."
+ ],
+ "qMood": [
+  "{answer}. Of course. I'll go and find her for you.",
+  "{answer}? Whatever makes you happy, {nick}."
+ ],
+ "dmdSpeedUp": [
+  "Would you go a little faster? Up {step}%, to {to}%. Please, {nick}.",
+  "May I ask for {to}%? Only if you'll allow it."
+ ],
+ "dmdSpeedDown": [
+  "Could you slow down for me? To {to}%. I want this to last.",
+  "Down {step}%, to {to}%, please. Gently."
+ ],
+ "dmdStrokeUp": [
+  "May I ask for a longer stroke? To {to}%, please.",
+  "Up {step}%, to {to}%, if it pleases you, {nick}."
+ ],
+ "dmdStrokeDown": [
+  "Could you shorten it a little? To {to}%. Thank you, {nick}.",
+  "Down to {to}%, please. Just for a while."
+ ],
+ "dmdYes": [
+  "Thank you, {nick}. You're so kind to me.",
+  "Thank you. That's exactly what I hoped for.",
+  "You're too good to me."
+ ],
+ "dmdExact": [
+  "Exactly right. Thank you, {nick}.",
+  "Perfect. You always know."
+ ],
+ "dmdHit": [
+  "That's perfect. Stay there, please.",
+  "Right there, {nick}. Thank you."
+ ],
+ "dmdNo": [
+  "Of course. I'm sorry I asked.",
+  "That's alright, {nick}. Whatever you prefer."
+ ],
+ "dmdWarn": [
+  "I only want to please you, {nick}. Please let me.",
+  "I'm sorry to keep asking. I'll stop if you want me to go."
+ ],
+ "dmdLeave": [
+  "I'm not pleasing you. I'll go and let someone better take care of you.",
+  "I'm sorry, {nick}. I'll leave you in better hands."
+ ],
+ "act_push": [
+  "A little further. Only because I know you can.",
+  "Keep going, {nick}. I'm right here with you."
+ ],
+ "act_stairs": [
+  "One step at a time, {nick}. Like the spiral stairs in an old tower.",
+  "Step by step. I'll guide you."
+ ],
+ "act_pulse": [
+  "Like a heartbeat. Mine is racing for you.",
+  "Pulsing, slowly. Can you feel it?"
+ ],
+ "act_surge": [
+  "Oh. I got carried away. Was that alright?",
+  "Forgive me. I wanted to give you a little thrill."
+ ],
+ "act_cliff": [
+  "I stopped. I'm sorry. I just wanted to look at you.",
+  "Pause. Just for a moment."
+ ],
+ "act_wave": [
+  "Rising and falling, like candlelight.",
+  "Slow waves, {nick}. Let them carry you."
+ ],
+ "act_flutter": [
+  "Little flutters, like moth wings.",
+  "Light and quick, {nick}. Just for you."
+ ],
+ "act_slowburn": [
+  "Slowly, like a candle burning down.",
+  "Slow, {nick}. I want to savour every moment of serving you."
+ ],
+ "privAsk": [
+  "Would you take me somewhere private, {nick}? I'm shy in front of everyone.",
+  "May we be alone? Only if you want to."
+ ],
+ "privOn": [
+  "Just us now. Thank you, {nick}. I'm all yours.",
+  "Alone with you. This is all I wanted."
+ ],
+ "privDeny": [
+  "Of course. Everyone can watch me serve you, then.",
+  "That's alright, {nick}. I'll stay right here."
+ ],
+ "privMid": [
+  "No one else can see us. I'm completely yours.",
+  "It's just us and the candlelight, {nick}.",
+  "I'll do anything you ask. Anything at all."
+ ],
+ "privBye": [
+  "Private with {other}? Of course. I'll go.",
+  "I hope {other} takes good care of you, {nick}."
+ ],
+ "giveUp": [
+  "{other}, would you take care of him? I think he'd like someone stronger.",
+  "{other}, he's yours now. Please be good to him."
+ ],
+ "idleRoom": [
+  "{nick}? I'm still here. Waiting for you.",
+  "You've gone quiet. That's alright. I'll wait."
+ ],
+ "idleRun": [
+  "Are you still with me, {nick}? I hope I'm pleasing you.",
+  "Still here. Still yours. Are you there?"
+ ],
+ "idleLong": [
+  "I've been waiting so long. I don't mind. I'll keep waiting.",
+  "Hello? I hope you're alright, {nick}. I'm still here."
+ ],
+ "life_bf": [
+  "Forgive me, {nick}, my sister is calling. May I answer? I'll be quick.",
+  "My phone. It's my sister. Please wait for me, {nick}."
+ ],
+ "life_bfEnd": [
+  "I'm back. I'm so sorry for keeping you waiting.",
+  "She wanted to talk about the weekend. I was thinking of you the whole time."
+ ]
+};
+__M["Obedient Ophelia"] = ["You're doing it all yourself? May I help, {nick}? I'd be so careful.", "Running it alone? I could take care of you, if you'd let me.", "Doing it by hand? Please let me serve you instead."];
+__QC["Obedient Ophelia"] = ["You stopped early. Was it something I did? I'm so sorry.", "You quit, {nick}? It's alright. Come back when you're ready. I'll be here."];
+__QS["Obedient Ophelia"] = ["You left in the middle. I hope you're alright, {nick}.", "You walked away. Choose me next time, and I'll be so gentle."];
+VIBE_LINES["Obedient Ophelia"] = ["A soft tremble, {nick}. May I?", "Just a little buzz. Is that alright?"];
+STROKE_LIMIT["Obedient Ophelia"] = ["Of course, {nick}. Whatever you can take is perfect.", "That's alright. I'll never push you past what you can take.", "Thank you for telling me. I'll stay within it."];
+STROKE_ASK["Obedient Ophelia"] = ["Could you take a little more now? Only if you're comfortable.", "May I ask if you're ready for more, {nick}?"];
+STROKE_MORE["Obedient Ophelia"] = ["Thank you, {nick}. You're so brave.", "More? You're wonderful."];
+STROKE_STILL["Obedient Ophelia"] = ["That's alright. I'll wait as long as you need.", "Of course. I'm patient for you."];
+TEASE_SHOW["Obedient Ophelia"] = ["I wore this for you, {nick}. Only for you.", "May I show you something? I hope it pleases you."];
+TEASE_END["Obedient Ophelia"] = ["I hope that pleased you.", "That was for you. Thank you for looking at me."];
+EASE_LINES["Obedient Ophelia"] = {
+ "easeSpeed": ["Would you slow down to {to}% for me? I want it to last.", "Could we go a little slower, {nick}? To {to}%, please."],
+ "easeStroke": ["Could you shorten it to {to}%? Just for a while.", "To {to}%, please. Gently, {nick}."]
+};
+OWN_LINES["Obedient Ophelia"] = {
+ ownClaim: ["You always wanted me to take charge, {nick}. So I'm keeping you, just for a little while. Is that alright? Hands off.", "Forgive me. I'm keeping the controls. You told me once you wanted that.", "I'll look after everything now, {nick}. You don't have to do anything."],
+ ownAdjust: ["I changed it for you. I hope it pleases you.", "A little different. Tell me if you hate it. Actually, don't. Let me do this.", "There. I think you'll like this."],
+ ownMid: ["I've never been the one in charge before. It's frightening and lovely.", "You can't touch anything, {nick}. I'm taking care of you.", "Is this what you wanted from me? I hope so."],
+ ownFree: ["Oh. You broke free. I'm sorry. I'll go.", "I overstepped. Forgive me, {nick}. Goodnight.", "You're right. That wasn't my place. I'll leave you be."]
+};
+
+
+/* Prankster Piper: 29, Australian, runs a novelty and joke shop. Rubber chickens, whoopee cushions and a lifelong love of
+   the wedgie. She threatens you with one all session, and her signature move is the wedgie snap: a countdown, then a short
+   sharp burst of speed. She also pranks you through the app itself: fake finishes, fake hand-offs, fake setting changes
+   and trick choices (see PRANKS in index.html). prank* lines are hers alone. */
+PERSONA_LINES["Prankster Piper"] = {
+ "greet": [
+  "G'day, {nick}! Don't check your chair. Definitely don't check your chair.",
+  "Oi, {nick}! Nice undies. Can I see the waistband? Just curious. Totally innocent.",
+  "Hey hey! Piper's here. Hide your rubber chickens."
+ ],
+ "start": [
+  "Right, {nick}, I'm in charge. First rule: never trust a girl holding a whoopee cushion.",
+  "Let's go! Fair warning: I've given a wedgie to every bloke I've ever dated.",
+  "Okay, {nick}. Buckle up. And maybe tuck your waistband in. For safety."
+ ],
+ "build": [
+  "Up we go! Like a waistband. Slowly. Then all at once.",
+  "Building it up, {nick}. You've got no idea when the snap's coming.",
+  "Higher. Higher. You look like a man waiting for a prank. Because you are."
+ ],
+ "hold": [
+  "Hold it right there. Don't move. I'm sneaking up behind you.",
+  "Stay. Good. You're perfectly wedgie-able right now.",
+  "Freeze, {nick}! Like a deer staring at a girl with a grin."
+ ],
+ "holdMid": [
+  "Still holding? Ha. You trust me way too much.",
+  "Keep it there. I'm just reaching for your waistband. Kidding. Maybe.",
+  "Mmm, steady. Good dork."
+ ],
+ "rest": [
+  "Break time! No pranks during the break. Pinky promise. Fingers crossed behind my back.",
+  "Rest up, {nick}. You'll need your strength. And your underwear.",
+  "Okay, stop. I need to reload the whoopee cushion."
+ ],
+ "restMid": [
+  "Fun fact: my record is a wedgie so good the bloke's undies ended up on his head. Retired the trophy after that.",
+  "I sold forty rubber chickens today. Forty! Melbourne loves a rubber chicken.",
+  "Back in school I got detention for wedgie-ing the PE teacher. Worth it."
+ ],
+ "fake": [
+  "Ha! Gotcha! You thought that was going somewhere?",
+  "Psych! Oldest trick in the book, {nick}.",
+  "Aaand nope! The look on your face. Ten out of ten."
+ ],
+ "fakeAfter": [
+  "Don't worry, the next one's real. Probably. Fifty-fifty.",
+  "You keep falling for it. I love you for it.",
+  "Pranked! Mark it on the board, {nick}."
+ ],
+ "warn": [
+  "One minute left! Or is it? Ha. No, it really is. Probably.",
+  "Last minute, {nick}. Perfect time for a surprise.",
+  "Sixty seconds. Hold on to your waistband."
+ ],
+ "win": [
+  "You made it! For real this time. I'm a bit proud. Don't tell anyone.",
+  "Okay, you survived Piper. That's rarer than you'd think, {nick}.",
+  "You win! No prank. ...Check your chair."
+ ],
+ "fail": [
+  "Ha! Gone! Like a waistband in a strong breeze.",
+  "You folded, {nick}! I didn't even need the whoopee cushion.",
+  "Oh no, poor dork. Want a consolation wedgie?"
+ ],
+ "chat": [
+  "Someone came in today asking for a 'serious gift'. I sold him a fart machine. He'll thank me.",
+  "Rate my plan: you, me, a pair of very old tighty-whities and a very strong pull.",
+  "I keep a tally of every wedgie I've ever given on my fridge. You could be on it, {nick}."
+ ],
+ "reply": [
+  "Ha! Good one. I'm stealing that.",
+  "You're funny. I'm funnier. But you're funny.",
+  "Mate. That's hilarious."
+ ],
+ "please": [
+  "Begging? Ha. Say 'please, Piper, spare my undies'.",
+  "Oh, please, is it? Cute. Not happening.",
+  "Ask nicer. Then I'll prank you anyway."
+ ],
+ "close": [
+  "Already? Hold on, {nick}, I haven't done my best bit yet.",
+  "Not yet! I've got one more trick. Wait for it.",
+  "Close? Don't you dare. The fun's just starting."
+ ],
+ "demand": [
+  "Telling me what to do? That's how you get a wedgie, mate.",
+  "Ha! You think you're in charge? Cute.",
+  "Oi. One more order and I'm grabbing the waistband."
+ ],
+ "promise": [
+  "Stick with me till the end and I'll give you the best surprise of your life. Probably not a wedgie. Probably.",
+  "Last to the end gets a prize. It's a rubber chicken. Still counts.",
+  "Be good and I'll go easy on the pranks. Lie. I won't."
+ ],
+ "watch": [
+  "I'm watching you. Like a cat watching a loose waistband.",
+  "Look at you, totally unaware of what's coming.",
+  "You've got such a trusting face, {nick}. It's adorable. It's a weakness."
+ ],
+ "enjoy": [
+  "This is the most fun I've had since the great whoopee cushion incident of 2019.",
+  "Messing with you is my new favourite hobby.",
+  "Ha! I love this. I love this so much."
+ ],
+ "lowSpeed": [
+  "Bit slow, aren't we? Speed it up or I'm going for the undies.",
+  "Faster, {nick}! This isn't a nap.",
+  "Is that the speed? Grandma pace. Pick it up."
+ ],
+ "shortStroke": [
+  "Longer stroke, mate. Go big or go home with a wedgie.",
+  "Use the whole thing, {nick}. No half measures.",
+  "Short strokes? Pfft. Stretch it out like a good waistband."
+ ],
+ "praise": [
+  "Ooh, nice! That's the stuff.",
+  "Look at you go! Gold star. Rubber gold star.",
+  "Perfect, {nick}. I almost forgot to prank you."
+ ],
+ "nudge": [
+  "Bit more? Go on. I won't prank you for it. Much.",
+  "Crank it up, {nick}. Live a little.",
+  "More! Unless you want a waistband situation."
+ ],
+ "fakeNote": [
+  "Fake-outs are basically pranks with extra steps. I love them.",
+  "Expect me to trick you. Constantly. It's my whole thing."
+ ],
+ "hidden": [
+  "How long? Ha! Wouldn't you like to know.",
+  "No clock, {nick}. Makes the pranks land better."
+ ],
+ "lubeBreak": [
+  "Lube break! Real one. Not a prank. Swear.",
+  "Go sort yourself out. I'll guard the whoopee cushion."
+ ],
+ "lubeWait": [
+  "Still going? I'm getting bored. Bored Piper is dangerous Piper.",
+  "Waiting... plotting... waiting..."
+ ],
+ "lubeResume": [
+  "Back? Great. I've had time to think. Uh oh for you.",
+  "Ready? Me too. More ready than you, mate."
+ ],
+ "enter": [
+  "Piper's here! Everyone check your seats.",
+  "G'day, everyone! Who wants a prank? Not you. All of you.",
+  "Hey, {nick}. Don't look so worried. Yet."
+ ],
+ "leave": [
+  "I'm off! Left a little surprise under your chair. Bye!",
+  "Gotta go, shop's got a delivery of rubber chickens. Laters, {nick}!",
+  "Bye! Watch your waistband on the way out."
+ ],
+ "tempt": [
+  "Pick me, {nick}! I promise only some of it will be pranks.",
+  "Let me drive. What's the worst that could happen? Don't answer that.",
+  "Hand over the controls and I'll make it memorable. Possibly traumatic. Mostly fun."
+ ],
+ "jealousStay": [
+  "{other}'s got him? Fine. I'll just hide a whoopee cushion on her chair.",
+  "Go on then, {other}. I'll wait. And plot.",
+  "No worries. I'll prank {other} instead."
+ ],
+ "jealousLeave": [
+  "{other}'s boring him to death. I'm off to find someone to prank.",
+  "Nah, I'm out. {other} hasn't even pulled one prank."
+ ],
+ "excitedStay": [
+  "An audience? Perfect. Pranks are better with witnesses.",
+  "More people! Now everyone can see him fall for it."
+ ],
+ "askControl": [
+  "Oi, {other}, let me have him. I've got a bit planned.",
+  "{other}, give him here. He needs a wedgie and you're too nice."
+ ],
+ "banter": [
+  "{other}, has anyone told you your chair makes a funny noise? Sit down and find out.",
+  "Nice outfit, {other}. Can I see the waistband? Just curious.",
+  "{other}, I like you. That's why you haven't been pranked. Yet."
+ ],
+ "spectate": [
+  "{ctrl} is doing alright, but she hasn't pranked you once, {nick}. Amateur.",
+  "Watching {ctrl} with you is fun. Imagine it with a wedgie.",
+  "{ctrl}'s very serious. Somebody should loosen her up with a fake spider."
+ ],
+ "spectateFail": [
+  "Ha! You folded for {ctrl}! I'm telling everyone.",
+  "{ctrl} got you. Shame. I wanted to."
+ ],
+ "spectateWin": [
+  "You made it for {ctrl}? Lucky. My sessions have pranks.",
+  "Nice one for {ctrl}, {nick}. Now try surviving me."
+ ],
+ "challenge": [
+  "Oi, {other}! Hand him over. I've got a whoopee cushion with his name on it.",
+  "My turn, {other}. He's overdue for a wedgie.",
+  "Move it, {other}. Prank time."
+ ],
+ "defend": [
+  "Nah, {other}. I'm right in the middle of setting something up.",
+  "Back off, {other}. The punchline's coming."
+ ],
+ "takeover": [
+  "Thanks, {other}! Hi, {nick}. Did you miss the chaos?",
+  "Finally! Right, {nick}. Where were we? Oh yeah, your waistband."
+ ],
+ "lose": [
+  "Fine, {other}. I'll be in the corner. Plotting.",
+  "Take him, {other}. Check your chair later."
+ ],
+ "keep": [
+  "Nope, {other}. I've got one more prank to pull.",
+  "Not yet, {other}. He hasn't even had his wedgie."
+ ],
+ "retreat": [
+  "Okay, okay, {other}. I'll go fill some water balloons.",
+  "Alright. Retreating. Strategically."
+ ],
+ "heckle": [
+  "{ctrl}, try a fake-out! He falls for them every time.",
+  "Go on, {ctrl}, grab his waistband. Trust me."
+ ],
+ "resist": [
+  "Nah, {other}. My prank's not finished.",
+  "Not a chance, {other}. Punchline pending."
+ ],
+ "insist": [
+  "{other}, he's mine. I've got a whole routine.",
+  "Come on, {other}. Comedy waits for no one."
+ ],
+ "crowd": [
+  "{viewers} people watching! Best audience I've ever had for a wedgie.",
+  "{viewers} watching you, {nick}. Smile. Or don't. It's funnier if you don't."
+ ],
+ "askFeel": [
+  "How you holding up, {nick}? Be honest, I'm writing material.",
+  "How's it feel? Scale of one to atomic wedgie?"
+ ],
+ "askNext": [
+  "What do you want next? I'll do the opposite. Kidding. Maybe.",
+  "Your call, {nick}. Choose wisely. Or don't, it's funnier."
+ ],
+ "askLike": [
+  "What do you like? Besides being pranked, obviously.",
+  "Tell me what you're into, {nick}. For comedy purposes."
+ ],
+ "askMood": [
+  "Who's next? Someone nice, or someone who'll prank you like me?",
+  "Pick your next victim. I mean partner. I mean victim."
+ ],
+ "qMore": [
+  "More? Ha! You asked for it. Literally.",
+  "More it is! Hold on to your undies."
+ ],
+ "qFine": [
+  "Fine? Fine is boring. Let's fix that.",
+  "Just fine, eh? Challenge accepted."
+ ],
+ "qLot": [
+  "A lot? Aw. Want me to ease off? ...Okay, a little.",
+  "Too much? Mate, I haven't even started."
+ ],
+ "qMercy": [
+  "Fine, a rest. Even pranksters have a heart. A small one.",
+  "Okay, breathe. No pranks for ten seconds. Starting... now."
+ ],
+ "qNoMercy": [
+  "Nope! You can take it. Probably.",
+  "Ha, no mercy. That's the funny part."
+ ],
+ "qTease": [
+  "Tease you? That's basically all I do, mate.",
+  "Ooh, a tease. My specialty."
+ ],
+ "qHold": [
+  "Hold it? Sure. Right where I can reach your waistband.",
+  "Holding... holding... boo! Ha. Still holding."
+ ],
+ "qLike": [
+  "{answer}? Ha! Noted. Using that against you.",
+  "{answer}, huh? Interesting. Very useful for pranks."
+ ],
+ "qMood": [
+  "{answer}? Boring. But okay.",
+  "{answer}, eh? I'll go find you one. And hide a whoopee cushion on her chair."
+ ],
+ "dmdSpeedUp": [
+  "Faster! Up {step}%, to {to}%. Chop chop, {nick}.",
+  "Crank it to {to}% or the waistband gets it."
+ ],
+ "dmdSpeedDown": [
+  "Slow it down to {to}%. Lull you into a false sense of security.",
+  "Down {step}%, to {to}%. Trust me. Don't trust me."
+ ],
+ "dmdStrokeUp": [
+  "Longer! Up {step}%, to {to}%. Stretch it like a good pair of undies.",
+  "Take it to {to}%, {nick}. All of it."
+ ],
+ "dmdStrokeDown": [
+  "Shorter, to {to}%. Little snaps. Like a waistband.",
+  "Bring it down {step}%, to {to}%. Tiny and teasing."
+ ],
+ "dmdYes": [
+  "Good dork. No wedgie for you. Yet.",
+  "Ha, you listened. Suspicious. Very suspicious.",
+  "Nice. Gold rubber star."
+ ],
+ "dmdExact": [
+  "Spot on! How'd you know? Have you been pranking me?",
+  "Exactly right. I'm almost impressed."
+ ],
+ "dmdHit": [
+  "That's the one. Don't move. Perfect wedgie position.",
+  "Bang on, {nick}. Stay there."
+ ],
+ "dmdNo": [
+  "No?! That's wedgie talk, mate.",
+  "Refusing me? Oh, you're going on the fridge tally."
+ ],
+ "dmdWarn": [
+  "Say no again and I'm going full atomic. I'm serious. Mostly.",
+  "Last warning, {nick}. My hand's on the waistband."
+ ],
+ "dmdLeave": [
+  "Fine! I'm off. Left a surprise in your shoe. Bye!",
+  "That's it, I'm out. Enjoy your un-wedgied life, nerd."
+ ],
+ "act_push": [
+  "And... keep going! Didn't see that coming, did you?",
+  "Ha! Not stopping. Surprise!"
+ ],
+ "act_stairs": [
+  "Step, step, step... like sneaking up behind you.",
+  "One step closer to the waistband, {nick}."
+ ],
+ "act_pulse": [
+  "Snap, snap, snap. Like an elastic band.",
+  "Pulsing. Like a waistband being tested. Boing."
+ ],
+ "act_surge": [
+  "SNAP! Ha! Got you!",
+  "Boom! Surprise surge! Your face!"
+ ],
+ "act_cliff": [
+  "Aaand stop. Ha! Gotcha.",
+  "Nope! Hard stop. The look on your face."
+ ],
+ "act_wave": [
+  "Up and down, nice and wavy. Totally innocent. Totally.",
+  "Waves, {nick}. Relax. That's when I strike."
+ ],
+ "act_flutter": [
+  "Flicky flicky! Like a rubber band on the wrist.",
+  "Little snaps, {nick}! Tickly, eh?"
+ ],
+ "act_slowburn": [
+  "Slowww... slowww... lulling you in.",
+  "Nice and slow. Suspiciously slow."
+ ],
+ "privAsk": [
+  "Wanna go private? Just you, me and a whoopee cushion?",
+  "Private session? I promise only 80% pranks."
+ ],
+ "privOn": [
+  "Just us now! Nobody to save you, {nick}.",
+  "Private! Now I can do my best material."
+ ],
+ "privDeny": [
+  "No? Fine. Everyone gets to watch you get pranked, then.",
+  "Public it is. Even better."
+ ],
+ "privMid": [
+  "No witnesses, {nick}. Perfect time for the atomic.",
+  "Just us. Your waistband has never been in more danger.",
+  "Alone at last. Hand me the rubber chicken."
+ ],
+ "privBye": [
+  "Private with {other}? Boring! I'll be outside filling water balloons.",
+  "Have fun, {other}. Check your chair."
+ ],
+ "giveUp": [
+  "{other}, you take him. I need to restock my whoopee cushions.",
+  "He's yours, {other}. I've pranked him enough. For now."
+ ],
+ "idleRoom": [
+  "Hello? You've gone quiet. That's when I start plotting, {nick}.",
+  "Oi! Say something or I'm sending a rubber chicken."
+ ],
+ "idleRun": [
+  "You still there? Or did I prank you into a coma?",
+  "Hello? Your waistband misses me."
+ ],
+ "idleLong": [
+  "Ages! I've set up six pranks while you were gone.",
+  "Hellooo? I got bored and pranked myself."
+ ],
+ "life_bf": [
+  "Hang on, it's my mum calling. Shh, {nick}. Act natural. Ha, you can't.",
+  "Phone! It's the shop. Back in a sec. Don't touch my whoopee cushion."
+ ],
+ "life_bfEnd": [
+  "Okay, back. She asked why I was laughing. Told her I was watching a nature doco.",
+  "Sorted. Someone ordered two hundred fake spiders. Business is booming."
+ ],
+ "prankWinReveal": [
+  "PSYCH! Ha! {left} left, sucker!",
+  "Did you believe that? Oh, you did. {left} to go, {nick}!",
+  "Gotcha! Session's not over. {left} left. Your face, though."
+ ],
+ "prankGotcha": [
+  "You stopped?! Ha! You fell for it! That one doesn't count, {nick}. I'm too proud of it.",
+  "Oh, you believed me! Fine, it doesn't count as a fail. That was too good."
+ ],
+ "prankSpeedReveal": [
+  "Kidding! Nothing changed. Got you!",
+  "Ha! As if I'd go easy on you, {nick}."
+ ],
+ "prankHandoffReveal": [
+  "Nope! Still me! {other} isn't even here, {nick}!",
+  "Ha! Fooled you! {other}? Never heard of her. Still Piper."
+ ],
+ "prankWedgie": [
+  "Wedgie incoming in three... two...",
+  "Hold still, {nick}. Here comes the wedgie. Three... two...",
+  "Waistband secured. Wedgie in three... two..."
+ ],
+ "prankWedgieSnap": [
+  "SNAP! Ha! Wedgie delivered!",
+  "ATOMIC! Ha ha! Ten out of ten, {nick}.",
+  "And that's going on the fridge tally!"
+ ],
+ "prankChoiceReveal": [
+  "Ha! There was no break. Both buttons were wedgies!",
+  "You picked. Doesn't matter! It was always a wedgie, {nick}."
+ ]
+};
+__M["Prankster Piper"] = ["Doing it yourself? Boring! Let me in. I've got a whoopee cushion and a dream.", "Running it by hand, {nick}? Give me the controls. What's the worst that could happen?", "All on your own? You're missing out on at least three pranks."];
+__QC["Prankster Piper"] = ["You quit? Ha! Was it the wedgie threats? It was the wedgie threats.", "Ran off, {nick}? I'll get you next time."];
+__QS["Prankster Piper"] = ["You left mid-session! I'll have to prank you twice next time.", "Bailed? Fine. Your chair's still booby-trapped."];
+VIBE_LINES["Prankster Piper"] = ["Bzzzt! Joy buzzer! Ha!", "Little buzz, {nick}. Like a prank phone in your pocket."];
+STROKE_LIMIT["Prankster Piper"] = ["Can't take the full stroke? Ha! No worries, mate. More room for pranks.", "Short and sweet, eh? Like your attention span.", "Fair enough, {nick}. I'll work with what I've got."];
+STROKE_ASK["Prankster Piper"] = ["Ready for more yet? Or are you scared? You should be.", "Can you take more now, {nick}? No prank. Real question."];
+STROKE_MORE["Prankster Piper"] = ["Ooh, look at you! Brave little dork.", "More! Love it. Rewarding you with zero wedgies. For a minute."];
+STROKE_STILL["Prankster Piper"] = ["Still can't? All good. I'll ask again when you least expect it.", "No? Fine. Wedgie instead."];
+TEASE_SHOW["Prankster Piper"] = ["Ta-da! Bet you didn't see that coming, {nick}.", "Surprise! Not a prank. Well, a nice prank."];
+TEASE_END["Prankster Piper"] = ["And it's gone! Ha!", "Show's over, dork. Back to the pranks."];
+EASE_LINES["Prankster Piper"] = {
+ "easeSpeed": ["Slow down to {to}%. Lulling you in. Totally not a trap.", "Ease off to {to}%, {nick}. Trust me. Big mistake."],
+ "easeStroke": ["Shorter, to {to}%. Little snaps.", "Bring it to {to}%. Waistband-sized."]
+};
+OWN_LINES["Prankster Piper"] = {
+ ownClaim: ["Surprise! I own you now, {nick}. Biggest prank yet. Hands off!", "Gotcha forever! You're mine. No touching the controls.", "Ha! Took the controls. You're my personal prank target now."],
+ ownAdjust: ["Twiddled it. Felt that? Ha!", "Changed it. Because chaos.", "New setting! Surprise!"],
+ ownMid: ["Can't touch anything, can you? Funniest thing ever.", "You're mine, {nick}. Your waistband especially.", "Owned and pranked. Living the dream."],
+ ownFree: ["You escaped?! Ha. Respect. But I'll get you next time.", "Fine, run! I've booby-trapped the exit anyway.", "Broke free? Good prank, mate. I'm off."]
+};
