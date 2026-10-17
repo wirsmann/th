@@ -106,7 +106,30 @@ Picking a personality in the Tease panel's **Active persona** dropdown fills in 
 - Personalities challenge each other for control (Grant / Deny / Deny all) and can hand control over on their own (Personas panel).
 - Private shows lock the room and raise the intensity.
 - Teases: the persona swaps her picture (chat avatars, timer portrait) for one of her reward shots (`images/<key>/<key>_reward.png`, `_reward2`...) for 15 to 50 seconds, with a glow and a line from her (`TEASE_SHOW` / `TEASE_END` in `dialogue.js`). Going private always triggers one, asking to go private has a 25% chance of a preview, and a private show may bring more. In the open room it only happens when the crowd is Packed or bigger (2, 4 or 7% a minute at Packed, Hot, Legendary), after 4 minutes in control, with a 6 to 10 minute cooldown. An open-room tease hypes the room and draws viewers. Each tease she gives is counted in her Friends blackbook ("Teases given"). Tuning: `TEASE_RATE` and `TEASE_PREVIEW` in `index.html`.
-- Prize picture: `images/<key>/<key>_prize.png` is reserved for a real unlock reward. It's found (`avPrize`) but never used for teases and not shown in the profile.
+- Prize picture: `images/<key>/<key>_prize.png` is the top unlock (see Picture sets). It's never used for teases, and it stays out of her profile until it's earned.
+
+### Picture sets and unlocking
+A persona's profile (blackbook thumbnail and the portrait viewer) shows her own pictures first, then each picture set that's open, in this order: reward, bikini, 80s workout, fall, pageant, night club, topless, prize. A set is `images/<key>/<key>_<set>.png`, `_<set>2.png`... plus its angled views (`_<set>_side`, `_rear34`, `_back`, `_shoulder`, `_mirror`, `_mirrorback`), the names `make_avatars.py --tidy` gives them. Each sequence holds up to 60 pictures (`AV_MAX`), and it stops at the first missing number.
+
+Sets unlock from her blackbook stats, counted per persona:
+
+| Set | Unlocks at |
+|---|---|
+| Reward | always open |
+| Bikini | 3 sessions |
+| 80s workout | 6 sessions |
+| Fall | 2 wins |
+| Pageant | 5 wins |
+| Night club | owned you once |
+| Topless | 30 minutes owned in total |
+| Prize | 10 wins and 60 minutes owned |
+
+- **Locking is off for now.** The "Lock picture sets until earned" switch in the Friends panel is off by default, so every set shows. The prize is the exception: it stays hidden until earned, whatever the switch says.
+- **Unlocks are recorded either way** (`handyUnlocked` in `localStorage`). When you turn locking on, whatever you've already earned stays open, and clearing the blackbook doesn't take unlocks away.
+- **While locking is on,** reaching a threshold posts "🔓 Priscilla's Night club set unlocked..." in chat, and the pictures appear in her profile straight away. Her blackbook entry lists each set she has pictures for, with a ✓ or what's left (for example "🔒 12/30 minutes owned").
+- **Changing the rules:** edit `SETS` in `index.html`. Each set's `need` can list `sess`, `wins`, `owned` and `ownMins`, and every number listed has to be reached. An empty `need` is always open. `always: true` makes a set ignore the lock switch.
+- **Teases** still use every reward shot, locked or not.
+- **Lookups:** the browser can't list a folder, so it checks each name. Her first picture loads first. The sets and views are checked afterwards, a few at a time, so a big friends list can take a few seconds to fill in its picture counts.
 - "I own you": the longer a persona stays in control, the more likely she is to claim you. There's no chance for her first 5 minutes in control, then it ramps up to her full rate at 20 minutes (her "Claims you" setting under Personas, in % per minute; dominant personas default to 4 to 6, gentle ones to 1 or 2), and a busy crowd raises it a little. While she owns you, your speed, stroke and tease timing are locked (outlined in her colour) and she sets them herself every 25 to 50 seconds, moving up to 15 points toward her target with some variation. She also throws in her favourite moves or holds you, stops asking questions, making demands and offering private shows, and nobody else can take control. Teases become much more likely (10% a minute plus extra for the crowd size, about 60% straight away), and a claim hypes the room. Press **Break free** on her card: she pouts and leaves the lounge, your controls unlock, and the others can take control or ask for it again. Ownership also ends when the session ends. Stop, Pause and Esc work as always, and the max speed cap and your stroke limit still apply. Her blackbook counts "Owned you", "You broke free" and "Minutes owning you". The toggle is under Customize, the lines are `OWN_LINES` in `dialogue.js` (`ownClaim`, `ownAdjust`, `ownMid`, `ownFree`), and onlookers use `SHARED.ownSpec` and `SHARED.ownFreeSpec`. Tuning: `OWN_DEF`, `OWN_RAMP` and `OWN_TEASE` in `index.html`. In simulation, the simulated user breaks free after 2 to 5 minutes.
 - Pranks (Prankster Piper only, `PRANKS` in `index.html`): after 2 minutes in control she pulls one about every few minutes (5% a minute, with a 3 to 6 minute cooldown). A fake finish ("Time is up. You made it!"), a fake handoff to another persona, a fake "max speed lowered to 20%", a wedgie (she warns you, then snaps: a short burst at full speed, capped by your max speed), or a trick offer of a break that ends in a wedgie whichever button you press. Fair play: if you press Stop or Pause within 12 seconds of her fake finish, the session ends without counting as a fail. Her prank lines are the `prank...` categories in her `PERSONA_LINES`.
 - Real-life interruptions (cat on the keyboard, doorbell, phone call, dozing off, passing out) come with wake-up or hand-off options. While it lasts, she stays silent apart from the event's own lines (snoring, waking up).
@@ -157,6 +180,7 @@ Everything is stored in the browser's `localStorage`:
 - `handyKey` is the connection key, stored in plain text.
 - `h_*` keys are individual settings, including every per-persona tease timing, nickname and move chance.
 - `handyPresets`, `handyLog` (the last 200 sessions), `handyLockUntil`, `handyFame` and `handyPeak`.
+- `handyBlackbook` (per-persona stats) and `handyUnlocked` (which picture sets each persona has unlocked, and when).
 - Saved profiles cover every setting except the key and the limits.
 
 The session log can be exported as CSV.
@@ -183,10 +207,12 @@ The session log can be exported as CSV.
 | `startLife`, `endLife`, `handOff` | real-life interruptions |
 | `makeDemand`, `askQuestion`, `interactTick` | demands and questions |
 | `prankTick`, `startPrank`, `wedgieSnap`, `prankFooled` | Piper's pranks and the fake-finish grace |
+| `SETS`, `findAvBase`, `findAvImgs`, `avVisible`, `setOpen`, `checkUnlocks`, `setsGrid` | persona pictures, picture sets and unlocking |
 | `ownTick`, `claimOwn`, `ownAdjust`, `ownMove`, `breakFree`, `lockControls` | "I own you" and breaking free |
 
 ## Changelog
 
+- **2026-10-16:** Picture sets: profiles now show every set (reward, bikini, workout, fall, pageant, night club, topless and their angled views), up to 60 pictures per sequence instead of 20. Each set has an unlock rule based on her blackbook (sessions, wins, times owned, minutes owned). Locking is off by default; turn it on with "Lock picture sets until earned" in the Friends panel. The prize unlocks at 10 wins and 60 minutes owned.
 - **2026-10-16:** New personality: Prankster Piper, 29, a Greek-Australian joke shop owner from Melbourne who does stand-up and roller derby, and is into wedgies. She plays fake system messages on you (a fake finish, a fake handoff, a fake speed cap) and gives wedgies: a warning, then a sudden snap to full speed. Stopping because of her fake finish isn't counted as a fail. She loves surges, cliffs and flutters, calls you dork, sucker or mate, and is hard to take control from. Lime green chat colour (readable in light and dark mode). Her dialogue is `PERSONA_LINES["Prankster Piper"]` at the end of `dialogue.js`.
 - **2026-10-16:** New personality: Obedient Ophelia, 31, a pale gothic woman who restores old books and always dresses in black. She's submissive even while she leads: she asks permission constantly, calls you Sir, Master or my lord, phrases demands as requests, gives long holds and gentle strokes that never fully stop, and hands control away easily. Smoky ash-mauve chat colour (readable in light and dark mode), and a black velvet choker on her drawn avatar. Her dialogue is `PERSONA_LINES["Obedient Ophelia"]` at the end of `dialogue.js`.
 - **2026-10-16:** New personality: Blushing Bethany, 38, engaged and devout, still waiting for her wedding night. She finds the lounge deeply taboo and can't stop being curious: timid and apologetic at first, bolder every round (her peaks climb 12% a round). White and pearl look with a bridal veil, and a readable pearl-blush chat colour. Her dialogue is `PERSONA_LINES["Blushing Bethany"]` at the end of `dialogue.js`.

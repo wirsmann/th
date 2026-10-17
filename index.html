@@ -334,6 +334,10 @@
       <p class="hint" id="bbTotals"></p>
       <div id="friendsList"></div>
       <button type="button" class="mini" id="bbClear" style="margin-top:8px">Clear blackbook</button>
+      <strong class="subHead">Picture sets</strong>
+      <label style="display:flex;gap:8px;align-items:center;color:var(--ink);margin-top:10px"><input type="checkbox" id="setLocks"> Lock picture sets until earned</label>
+      <p class="hint">Off: every persona's sets (reward, bikini, night club, topless and the rest) show in her profile. On: a set only shows once you've earned it with her. Unlocks are counted either way, so turning this on keeps what you've already earned. Each blackbook entry lists her sets and what's left to unlock. The prize picture stays hidden until it's earned, whatever this is set to.</p>
+      <p class="hint" id="setRules"></p>
     </section>
     <section class="panel" data-key="speed" hidden>
     <div class="row">
@@ -435,7 +439,7 @@ mkFields("teaseFields", TEASE); mkFields("customFields", CUSTOM);
 ["privMin","lifeRate"].forEach(id => $("persFields").append($(id).parentElement));
 const FIELDS = ["vibSpeed","winLevel","vibWidth","speed","smin","smax","min","sec","ramp","slow","pattern","period","daily","cool","failLock","aimCtl","lubeEvery","lubeGap","lubePark"].concat(TEASE.map(t=>t[0]), CUSTOM.map(c=>c[0]));
 FIELDS.forEach(id => { const v = store.get("h_"+id, null); if (v !== null) $(id).value = v; });
-const BOOLS = {beepEnd:true, beepWarn:true, awake:true, teaseOn:false, tStop:true, hideClock:false, tRandom:false, failCharge:false, lubeOn:true, lubeReg:true, fansOn:true, crowdBoost:true, interactOn:true, stormOn:true, privOn:true, ownOn:true, simOn:false, vibOn:true};
+const BOOLS = {beepEnd:true, beepWarn:true, awake:true, teaseOn:false, tStop:true, hideClock:false, tRandom:false, failCharge:false, lubeOn:true, lubeReg:true, fansOn:true, crowdBoost:true, interactOn:true, stormOn:true, privOn:true, ownOn:true, simOn:false, vibOn:true, setLocks:false};
 Object.keys(BOOLS).forEach(id => { $(id).checked = store.get("h_"+id, BOOLS[id]); $(id).onchange = () => store.set("h_"+id, $(id).checked); });
 let presets = store.get("handyPresets", [300, 600, 900, 1800]);   // seconds
 
@@ -1459,50 +1463,120 @@ document.addEventListener("mouseover", e => {
 /* AI-made portraits: each persona has her own folder inside "images" next to index.html, named by her key, with files named
    by her key too (e.g. images/priscilla/priscilla.png, images/lola/lola.jpg). Older flat names (images/lola.png) still work
    when she has no folder. A persona with no file keeps the built-in drawn avatar. Files are looked up once and remembered. */
-const AV_EXTS = ["png", "jpg", "jpeg", "webp"], avImg = {}, avProbe = {}, avList = {};
+const AV_EXTS = ["png", "jpg", "jpeg", "webp"], avImg = {}, avProbe = {}, avList = {}, avBaseProbe = {};
 /* Pictures per persona: images/<key>/<key>.png (or <key>1.png) is the first, then <key>2.png, <key>3.png and so on.
-   Reward shots: images/<key>/<key>_reward.png, then <key>_reward2.png, <key>_reward3.png and so on. They go last in her list.
    The browser can't list a folder, so numbering must have no gaps: run "make_avatars.py --tidy <images folder>" after
    copying in ComfyUI files (names like lola_00012_.png) and it renames them to these names and sorts them into folders.
-   SHOW_REWARDS: for now reward shots appear in her profile like any other picture; they can be locked later. */
-const SHOW_REWARDS = true, avRewards = {};
-/* Prize: images/<key>/<key>_prize.png is her best picture, saved for a real unlock reward. It's found and kept in avPrize, but it is
-   never used for teases and isn't shown in her profile. When unlocking is built, show avPrize[key] once it's earned. */
-const avPrize = {};
+   AV_MAX is the most pictures read from one sequence (her own pictures, or one set, or one set's view). */
+const AV_MAX = 60;
+/* ---------- picture sets ----------
+   Each set is images/<key>/<key>_<set>.png, <key>_<set>2.png... plus its angled views (<key>_<set>_side.png, _rear34, _back...),
+   the same names make_avatars.py --tidy gives them. Her profile shows her own pictures, then every set that's unlocked, in this order.
+   need: what unlocks it, from her blackbook stats. Every number listed has to be reached (sess = sessions she ran, wins = wins with her
+   in control, owned = times she owned you, ownMins = total minutes she owned you). An empty need is always open.
+   The "Lock picture sets until earned" switch (Friends panel) is off by default, so every set shows. Unlocks are still recorded
+   while it's off, so whatever you've earned stays open when you turn it on. always: true ignores the switch (the prize stays
+   hidden until it's earned). single: one picture, no sequence or views. */
+const SETS = [
+  {id: "reward",    label: "Reward",      need: {}},
+  {id: "bikini",    label: "Bikini",      need: {sess: 3}},
+  {id: "workout",   label: "80s workout", need: {sess: 6}},
+  {id: "fall",      label: "Fall",        need: {wins: 2}},
+  {id: "pageant",   label: "Pageant",     need: {wins: 5}},
+  {id: "nightclub", label: "Night club",  need: {owned: 1}},
+  {id: "topless",   label: "Topless",     need: {ownMins: 30}},
+  {id: "prize",     label: "Prize",       need: {wins: 10, ownMins: 60}, always: true, single: true}
+];
+const SET_STATS = {sess: "sessions", wins: "wins", owned: "times owned", ownMins: "minutes owned"};
+const statLabel = (k, n) => n === 1 ? {sess: "session", wins: "win", owned: "time owned", ownMins: "minute owned"}[k] : SET_STATS[k];
+const AV_VIEWS = ["side", "rear34", "back", "shoulder", "mirror", "mirrorback"];
+let unlocked = store.get("handyUnlocked", {});   // {persona: {set id: time unlocked}}
+const avSets = {}, avRewards = {}, avPrize = {};
+/* avRewards: her reward shots, used for teases whether or not the set is locked. avPrize: never teased. */
+function keyPersona(key){ return Object.keys(NAMEKEY).find(p => NAMEKEY[p] === key) || ""; }
+function setMet(p, set){ const r = bbRec(p); return Object.keys(set.need).every(k => (r[k] || 0) >= set.need[k]); }
+function setOpen(p, set){
+  if ((unlocked[p] || {})[set.id] || setMet(p, set)) return true;
+  return !set.always && !$("setLocks").checked;
+}
+function setProgress(p, set){
+  const r = bbRec(p);
+  return Object.keys(set.need).map(k => Math.min(Math.round(r[k] || 0), set.need[k]) + "/" + set.need[k] + " " + SET_STATS[k]).join(", ");
+}
+/* called when a blackbook stat that unlocks sets goes up: records new unlocks and announces the ones that change what you see */
+function checkUnlocks(p){
+  const key = NAMEKEY[p]; if (!key) return;
+  const fresh = SETS.filter(s => !(unlocked[p] || {})[s.id] && Object.keys(s.need).length && setMet(p, s));
+  if (!fresh.length) return;
+  unlocked[p] = unlocked[p] || {}; fresh.forEach(s => { unlocked[p][s.id] = Date.now(); }); store.set("handyUnlocked", unlocked);
+  findAvImgs(key).then(() => {
+    const shown = fresh.filter(s => (s.always || $("setLocks").checked) && (avSets[key][s.id] || []).length);
+    if (!shown.length) return;
+    shown.forEach(s => { addMsg("sys", "🔓 " + SHORT[p] + "'s " + s.label + " set unlocked: " + avSets[key][s.id].length + " picture" + (avSets[key][s.id].length > 1 ? "s" : "") + " added to her profile."); });
+    refreshAvatars(p); renderFriends();
+  });
+}
 function setAvImg(el, url){ const im = new Image(); im.alt = ""; im.decoding = "async"; im.src = url; el.replaceChildren(im); }
-function loadOk(u){ return new Promise(r => { const t = new Image(); t.onload = () => r(true); t.onerror = () => r(false); t.src = u; }); }
-async function probeBase(dir, base){
-  for (const x of AV_EXTS){ const u = dir + base + "." + x; if (await loadOk(u)) return u; }
+/* Looking for files that don't exist costs a failed load each, and the sets add a lot of names to check, so the set and view
+   lookups wait in a slow lane (a few at a time) and never hold up her first picture. */
+const lowQ = []; let lowBusy = 0;
+function loadOk(u, low){
+  const go = () => new Promise(r => { const t = new Image(); t.onload = () => r(true); t.onerror = () => r(false); t.src = u; });
+  if (!low) return go();
+  return new Promise(res => {
+    lowQ.push(() => go().then(ok => { lowBusy--; res(ok); pump(); })); pump();
+  });
+}
+function pump(){ while (lowBusy < 6 && lowQ.length){ lowBusy++; lowQ.shift()(); } }
+async function probeBase(dir, base, low){
+  for (const x of AV_EXTS){ const u = dir + base + "." + x; if (await loadOk(u, low)) return u; }
   return null;
 }
 /* <stem>.png (or <stem>1.png), then <stem>2.png, <stem>3.png... until the first missing number */
-async function probeSeq(dir, stem){
+async function probeSeq(dir, stem, low){
   const found = [];
-  for (let i = 1; i <= 20; i++){
+  for (let i = 1; i <= AV_MAX; i++){
     const bases = i === 1 ? [stem, stem + "1"] : [stem + i];
     let u = null;
-    for (const b of bases){ u = await probeBase(dir, b); if (u) break; }
+    for (const b of bases){ u = await probeBase(dir, b, low); if (u) break; }
     if (!u) break;
     found.push(u);
   }
   return found;
 }
+/* first pass (fast): her folder and her own pictures. avBaseProbe resolves to {dir, list}. */
+function findAvBase(key){
+  if (!avBaseProbe[key]) avBaseProbe[key] = (async () => {
+    // her own folder first (images/<key>/); if it has nothing, the old flat layout (images/<key>.png)
+    for (const dir of ["images/" + key + "/", "images/"]){
+      const list = await probeSeq(dir, key), rew = list.length ? [] : await probeSeq(dir, key + "_reward");
+      if (list.length || rew.length) return {dir, list};
+    }
+    return {dir: "images/" + key + "/", list: []};
+  })();
+  return avBaseProbe[key];
+}
+/* second pass (slow lane): every set and its views */
 function findAvImgs(key){
   if (!avProbe[key]) avProbe[key] = (async () => {
-    // her own folder first (images/<key>/); if it has nothing, the old flat layout (images/<key>.png)
-    let list = [], rewards = [], prize = null;
-    for (const dir of ["images/" + key + "/", "images/"]){
-      list = await probeSeq(dir, key);
-      rewards = await probeSeq(dir, key + "_reward");
-      prize = await probeBase(dir, key + "_prize");   // the special one: never teased, not in the profile until unlocked
-      if (list.length || rewards.length || prize) break;
-    }
-    avRewards[key] = rewards; if (SHOW_REWARDS) list.push(...rewards);
-    avPrize[key] = prize;
-    avList[key] = list; avImg[key] = list[0] || false;
-    return list;
+    const {dir, list} = await findAvBase(key);
+    const sets = {};
+    await Promise.all(SETS.map(async s => {
+      if (s.single){ const u = await probeBase(dir, key + "_" + s.id, true); sets[s.id] = u ? [u] : []; return; }
+      const parts = await Promise.all([key + "_" + s.id].concat(AV_VIEWS.map(v => key + "_" + s.id + "_" + v)).map(st => probeSeq(dir, st, true)));
+      sets[s.id] = [].concat(...parts);
+    }));
+    avSets[key] = {base: list, ...sets};
+    avRewards[key] = sets.reward || []; avPrize[key] = (sets.prize || [])[0] || null;
   })();
-  return avProbe[key];
+  return avProbe[key].then(() => avVisible(key));
+}
+/* what her profile shows right now: her own pictures, then each open set */
+function avVisible(key){
+  const p = keyPersona(key), all = avSets[key] || {base: []}, list = all.base.slice();
+  SETS.forEach(s => { if (p && (all[s.id] || []).length && setOpen(p, s)) list.push(...all[s.id]); });
+  avList[key] = list; avImg[key] = list[0] || false;
+  return list;
 }
 function fillAvatar(el, name){
   el.innerHTML = avatarSVG(name);
@@ -1510,7 +1584,7 @@ function fillAvatar(el, name){
   el.classList.toggle("teasing", !!teasing[key]); if (teasing[key]){ el.style.setProperty("--c", PCOL[name] || ""); setAvImg(el, teasing[key].url); return; }
   if (avImg[key]){ setAvImg(el, avImg[key]); return; }
   if (avImg[key] === false) return;
-  findAvImgs(key).then(list => { if (list[0]) setAvImg(el, list[0]); });
+  findAvBase(key).then(b => { if (b.list[0]) setAvImg(el, b.list[0]); else findAvImgs(key).then(list => { if (list[0]) setAvImg(el, list[0]); }); });
 }
 function avatarEl(name){
   const el = document.createElement("span"); el.className = "av"; fillAvatar(el, name); el.setAttribute("aria-hidden", "true"); el.dataset.persona = name;
@@ -2021,7 +2095,7 @@ let bb = store.get("handyBlackbook", {});
 const joinedAt = {};
 const BB_KEYS = ["inv", "acc", "dec", "busy", "off", "noR", "full", "joins", "ctrl", "sess", "fails", "mins", "seen", "hang", "handed", "takeovers", "wins", "teases", "owned", "freed", "ownMins"];
 const bbRec = p => { if (!bb[p]) bb[p] = {}; const r = bb[p]; BB_KEYS.forEach(k => { if (!r[k]) r[k] = 0; }); return r; };
-function bbAdd(p, k, n){ if (!SHORT[p]) return; const r = bbRec(p); r[k] = r[k] + (n == null ? 1 : n); store.set("handyBlackbook", bb); }
+function bbAdd(p, k, n){ if (!SHORT[p]) return; const r = bbRec(p); r[k] = r[k] + (n == null ? 1 : n); store.set("handyBlackbook", bb); if (SET_STATS[k]) checkUnlocks(p); }
 /* keeps join counts and time in the lounge right, whatever path moved the persona in or out */
 function syncRoomTime(){
   const now = Date.now();
@@ -2189,11 +2263,34 @@ function renderFriends(){
     g.innerHTML = [["Invited", r.inv], ["Accepted", r.acc], ["Declined", r.dec], ["Busy", r.busy], ["Offline", r.off], ["No reply", r.noR], ["Room full", r.full], ["Joined lounge", r.joins], ["Took control", r.ctrl], ["Handed control", r.handed], ["Takeovers", r.takeovers], ["Left hanging", r.hang], ["Sessions", r.sess], ["Fails", r.fails], ["Wins", r.wins], ["Teases given", r.teases], ["Owned you", r.owned], ["You broke free", r.freed], ["Minutes owning you", Math.round(r.ownMins)], ["Minutes in lounge", Math.round(r.mins)], ["Last seen", r.seen ? new Date(r.seen).toLocaleString() : "never"]].map(([k, v]) => "<div><span>" + k + "</span><b>" + v + "</b></div>").join("");
     const pr = PROFILE[p] || {}, prof = document.createElement("div"); prof.className = "bbGrid one";
     prof.innerHTML = [["Age", pr.age], ["Lives in", pr.loc], ["Status", pr.status], ["Job", pr.job], ["Ethnicity", pr.eth], ["Orientation", pr.orient], ["Hobbies", (pr.hobbies || []).join(", ")], ["Fun fact", pr.quirk]].map(([k, v]) => "<div><span>" + k + "</span><b>" + (v == null ? "" : v) + "</b></div>").join("");
-    det.append(sm, portraitBtn(p), prof, g); box.append(det);
+    det.append(sm, portraitBtn(p), prof, g, setsGrid(p)); box.append(det);
   });
   const tot = ALL.reduce((a, p) => { const r = bbRec(p); a.inv += r.inv; a.joins += r.joins; a.sess += r.sess; a.fails += r.fails; a.mins += r.mins; return a; }, {inv: 0, joins: 0, sess: 0, fails: 0, mins: 0});
   $("bbTotals").textContent = tot.inv + " invites sent · " + tot.joins + " joined · " + tot.sess + " sessions · " + tot.fails + " fails · " + Math.round(tot.mins) + " minutes in the lounge";
 }
+/* Picture sets in her blackbook entry: what's open, how many pictures, and what's left to unlock the rest.
+   Filled in once her sets have been looked up; sets she has no pictures for are left out. */
+function setsGrid(p){
+  const g = document.createElement("div"); g.className = "bbGrid one bbSets"; const key = NAMEKEY[p];
+  if (!key) return g;
+  findAvImgs(key).then(() => {
+    const all = avSets[key] || {}, rows = [];
+    if ((all.base || []).length) rows.push(["Portraits", all.base.length + " ✓"]);
+    SETS.forEach(s => {
+      const n = (all[s.id] || []).length; if (!n) return;
+      const earned = (unlocked[p] || {})[s.id] || setMet(p, s), open = setOpen(p, s);
+      rows.push([s.label, open ? n + (earned || !Object.keys(s.need).length ? " ✓" : " (open, lock is off)") : "🔒 " + setProgress(p, s)]);
+    });
+    g.innerHTML = rows.length ? '<div><span><b>Pictures</b></span><b></b></div>' + rows.map(([k, v]) => "<div><span>" + k + "</span><b>" + v + "</b></div>").join("") : "";
+  });
+  return g;
+}
+function renderSetRules(){
+  const el = $("setRules"); if (!el) return;
+  el.textContent = "Unlocks: " + SETS.map(s => s.label + " " + (Object.keys(s.need).length ? Object.keys(s.need).map(k => s.need[k] + " " + statLabel(k, s.need[k])).join(" + ") : "always") + (s.always ? " (always locked until earned)" : "")).join(" · ") + ". All counted per persona.";
+}
+renderSetRules();
+$("setLocks").addEventListener("change", () => { ALL.forEach(p => { if (NAMEKEY[p] && avSets[NAMEKEY[p]]) refreshAvatars(p); }); renderFriends(); });
 /* Clicking an avatar or a name opens that persona in the blackbook. */
 function openBlackbook(p){
   if (!SHORT[p]) return;
